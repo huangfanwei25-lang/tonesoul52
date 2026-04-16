@@ -251,7 +251,7 @@ def test_render_markdown_contains_core_sections() -> None:
         "- Next bounded move: `run one real non-creator or external-use clean cycle for Phase 722`"
         in markdown
     )
-    assert "- Pack: `docs/plans/tonesoul_non_creator_external_cycle_pack_2026-04-10.md`" in markdown
+    assert "- Path: `docs/plans/tonesoul_non_creator_external_cycle_pack_2026-04-10.md`" in markdown
     assert "- Latest external cycle: `none`" in markdown
     assert "- Scenario count: `4`" in markdown
     assert "- `continuity_effectiveness` = `runtime_present`" in markdown
@@ -405,6 +405,7 @@ def test_run_preflight_points_to_repeated_validation_after_strong_external_pass(
         lambda: {
             "path": "docs/status/phase722_external_operator_cycle_2026-04-10.md",
             "classification": "strong external pass",
+            "cycle_shape": "single_surface",
         },
     )
 
@@ -419,5 +420,380 @@ def test_run_preflight_points_to_repeated_validation_after_strong_external_pass(
     )
     assert (
         "one bounded canonical surface plus one fresh status note"
+        in result["next_bounded_move"]["note"]
+    )
+
+
+def test_detect_external_cycle_status_prefers_latest_dual_surface_note(
+    monkeypatch, tmp_path: Path
+) -> None:
+    module = _load_script_module()
+    status_dir = tmp_path / "docs" / "status"
+    status_dir.mkdir(parents=True)
+    (status_dir / "phase722_external_operator_cycle_2026-04-10.md").write_text(
+        "# old\n> Result classification: `strong external pass`\n",
+        encoding="utf-8",
+    )
+    (status_dir / "phase722_external_dual_surface_cycle_2026-04-14.md").write_text(
+        "# new\n> Result classification: `strong external pass`\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(module, "REPO_ROOT", tmp_path)
+
+    result = module._detect_external_cycle_status()  # noqa: SLF001
+
+    assert result == {
+        "path": "docs/status/phase722_external_dual_surface_cycle_2026-04-14.md",
+        "classification": "strong external pass",
+        "cycle_shape": "dual_surface",
+    }
+
+
+def test_run_preflight_consolidates_after_repeated_strong_external_pass(
+    monkeypatch, tmp_path: Path
+) -> None:
+    module = _load_script_module()
+    validation_path = tmp_path / "wave.json"
+    validation_path.write_text(
+        json.dumps(
+            [
+                {
+                    "scenario": "clean_pass",
+                    "receiver_alert_count": 1,
+                    "council_calibration_status": "absent",
+                    "compaction_receiver_obligation": "should_consider",
+                }
+            ],
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        "scripts.start_agent_session.run_session_start_bundle",
+        lambda **kwargs: _sample_start_payload(),
+    )
+    monkeypatch.setattr(
+        module,
+        "_detect_external_cycle_status",
+        lambda: {
+            "path": "docs/status/phase722_external_dual_surface_cycle_2026-04-14.md",
+            "classification": "strong external pass",
+            "cycle_shape": "dual_surface",
+        },
+    )
+
+    result = module.run_preflight(agent="beta-preflight", validation_wave_path=validation_path)
+
+    assert result["external_cycle_status"]["classification"] == "strong external pass"
+    assert result["external_cycle_status"]["cycle_shape"] == "dual_surface"
+    assert result["next_bounded_move"]["step"].startswith(
+        "consolidate current-truth launch surfaces"
+    )
+    assert result["next_bounded_move"]["path"] == ("docs/plans/tonesoul_work_plan_v2_2026-04-14.md")
+    assert (
+        "two clean bounded non-creator cycles across two task shapes"
+        in result["next_bounded_move"]["note"]
+    )
+
+
+def test_detect_external_cycle_status_prefers_latest_preflight_refresh_note(
+    monkeypatch, tmp_path: Path
+) -> None:
+    module = _load_script_module()
+    status_dir = tmp_path / "docs" / "status"
+    status_dir.mkdir(parents=True)
+    (status_dir / "phase722_external_dual_surface_cycle_2026-04-14.md").write_text(
+        "# older\n> Result classification: `strong external pass`\n",
+        encoding="utf-8",
+    )
+    (status_dir / "phase722_external_preflight_refresh_cycle_2026-04-15.md").write_text(
+        "# newer\n> Result classification: `useful partial`\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(module, "REPO_ROOT", tmp_path)
+
+    result = module._detect_external_cycle_status()  # noqa: SLF001
+
+    assert result == {
+        "path": "docs/status/phase722_external_preflight_refresh_cycle_2026-04-15.md",
+        "classification": "useful partial",
+        "cycle_shape": "preflight_refresh",
+    }
+
+
+def test_run_preflight_routes_preflight_refresh_partial_to_same_pack(
+    monkeypatch, tmp_path: Path
+) -> None:
+    module = _load_script_module()
+    validation_path = tmp_path / "wave.json"
+    validation_path.write_text(
+        json.dumps(
+            [
+                {
+                    "scenario": "clean_pass",
+                    "receiver_alert_count": 1,
+                    "council_calibration_status": "absent",
+                    "compaction_receiver_obligation": "should_consider",
+                }
+            ],
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        "scripts.start_agent_session.run_session_start_bundle",
+        lambda **kwargs: _sample_start_payload(),
+    )
+    monkeypatch.setattr(
+        module,
+        "_detect_external_cycle_status",
+        lambda: {
+            "path": "docs/status/phase722_external_preflight_refresh_cycle_2026-04-15.md",
+            "classification": "useful partial",
+            "cycle_shape": "preflight_refresh",
+        },
+    )
+
+    result = module.run_preflight(agent="beta-preflight", validation_wave_path=validation_path)
+
+    assert result["external_cycle_status"]["classification"] == "useful partial"
+    assert result["external_cycle_status"]["cycle_shape"] == "preflight_refresh"
+    assert result["next_bounded_move"]["step"].startswith(
+        "repair the preflight-refresh evidence seam"
+    )
+    assert result["next_bounded_move"]["path"] == (
+        "docs/plans/tonesoul_non_creator_external_cycle_preflight_refresh_pack_2026-04-15.md"
+    )
+    assert "rerun the same bounded pack" in result["next_bounded_move"]["note"]
+
+
+def test_run_preflight_routes_preflight_refresh_strong_pass_to_phase726_review(
+    monkeypatch, tmp_path: Path
+) -> None:
+    module = _load_script_module()
+    validation_path = tmp_path / "wave.json"
+    validation_path.write_text(
+        json.dumps(
+            [
+                {
+                    "scenario": "clean_pass",
+                    "receiver_alert_count": 1,
+                    "council_calibration_status": "absent",
+                    "compaction_receiver_obligation": "should_consider",
+                }
+            ],
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        "scripts.start_agent_session.run_session_start_bundle",
+        lambda **kwargs: _sample_start_payload(),
+    )
+    monkeypatch.setattr(
+        module,
+        "_detect_external_cycle_status",
+        lambda: {
+            "path": "docs/status/phase722_external_preflight_refresh_cycle_2026-04-15.md",
+            "classification": "strong external pass",
+            "cycle_shape": "preflight_refresh",
+        },
+    )
+    monkeypatch.setattr(
+        module,
+        "_detect_latest_phase726_review",
+        lambda: {
+            "path": "docs/status/phase726_go_nogo_2026-04-08.md",
+            "is_refreshed": False,
+        },
+    )
+
+    result = module.run_preflight(agent="beta-preflight", validation_wave_path=validation_path)
+
+    assert result["external_cycle_status"]["classification"] == "strong external pass"
+    assert result["external_cycle_status"]["cycle_shape"] == "preflight_refresh"
+    assert result["next_bounded_move"]["step"].startswith(
+        "refresh the collaborator-beta go/no-go review"
+    )
+    assert result["next_bounded_move"]["path"] == ("docs/status/phase726_go_nogo_2026-04-08.md")
+    assert (
+        "third bounded Phase 722 task shape has now landed cleanly"
+        in result["next_bounded_move"]["note"]
+    )
+
+
+def test_detect_latest_phase726_review_prefers_latest_dated_note(
+    monkeypatch, tmp_path: Path
+) -> None:
+    module = _load_script_module()
+    status_dir = tmp_path / "docs" / "status"
+    status_dir.mkdir(parents=True)
+    (status_dir / "phase726_go_nogo_2026-04-08.md").write_text("# older\n", encoding="utf-8")
+    (status_dir / "phase726_go_nogo_2026-04-15.md").write_text("# newer\n", encoding="utf-8")
+    monkeypatch.setattr(module, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(
+        module,
+        "PHASE726_REVIEW_ANCHOR",
+        tmp_path / "docs" / "status" / "phase726_go_nogo_2026-04-08.md",
+    )
+
+    result = module._detect_latest_phase726_review()  # noqa: SLF001
+
+    assert result == {
+        "path": "docs/status/phase726_go_nogo_2026-04-15.md",
+        "is_refreshed": True,
+    }
+
+
+def test_run_preflight_advances_to_phase724_after_phase726_refresh(
+    monkeypatch, tmp_path: Path
+) -> None:
+    module = _load_script_module()
+    validation_path = tmp_path / "wave.json"
+    validation_path.write_text(
+        json.dumps(
+            [
+                {
+                    "scenario": "clean_pass",
+                    "receiver_alert_count": 1,
+                    "council_calibration_status": "absent",
+                    "compaction_receiver_obligation": "should_consider",
+                }
+            ],
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        "scripts.start_agent_session.run_session_start_bundle",
+        lambda **kwargs: _sample_start_payload(),
+    )
+    monkeypatch.setattr(
+        module,
+        "_detect_external_cycle_status",
+        lambda: {
+            "path": "docs/status/phase722_external_preflight_refresh_cycle_2026-04-15_rerun.md",
+            "classification": "strong external pass",
+            "cycle_shape": "preflight_refresh",
+        },
+    )
+    monkeypatch.setattr(
+        module,
+        "_detect_latest_phase726_review",
+        lambda: {
+            "path": "docs/status/phase726_go_nogo_2026-04-15.md",
+            "is_refreshed": True,
+        },
+    )
+    monkeypatch.setattr(
+        module,
+        "_detect_latest_phase724_surface",
+        lambda: {
+            "path": "docs/status/phase724_launch_operations_surface_2026-04-15.md",
+            "is_refreshed": False,
+        },
+    )
+
+    result = module.run_preflight(agent="beta-preflight", validation_wave_path=validation_path)
+
+    assert result["next_bounded_move"]["step"].startswith(
+        "consolidate one current launch-operations surface"
+    )
+    assert result["next_bounded_move"]["path"] == (
+        "docs/status/phase724_launch_operations_surface_2026-04-15.md"
+    )
+    assert (
+        "already been refreshed against three clean bounded Phase 722 cycles"
+        in result["next_bounded_move"]["note"]
+    )
+
+
+def test_detect_latest_phase724_surface_prefers_latest_anchor(monkeypatch, tmp_path: Path) -> None:
+    module = _load_script_module()
+    status_dir = tmp_path / "docs" / "status"
+    status_dir.mkdir(parents=True)
+    (status_dir / "phase724_launch_operations_surface_2026-04-15.md").write_text(
+        "# current\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(module, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(
+        module,
+        "LAUNCH_OPERATIONS_SURFACE_ANCHOR",
+        tmp_path / "docs" / "status" / "phase724_launch_operations_surface_2026-04-15.md",
+    )
+
+    result = module._detect_latest_phase724_surface()  # noqa: SLF001
+
+    assert result == {
+        "path": "docs/status/phase724_launch_operations_surface_2026-04-15.md",
+        "is_refreshed": True,
+    }
+
+
+def test_run_preflight_points_to_current_phase724_surface_after_consolidation(
+    monkeypatch, tmp_path: Path
+) -> None:
+    module = _load_script_module()
+    validation_path = tmp_path / "wave.json"
+    validation_path.write_text(
+        json.dumps(
+            [
+                {
+                    "scenario": "clean_pass",
+                    "receiver_alert_count": 1,
+                    "council_calibration_status": "absent",
+                    "compaction_receiver_obligation": "should_consider",
+                }
+            ],
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        "scripts.start_agent_session.run_session_start_bundle",
+        lambda **kwargs: _sample_start_payload(),
+    )
+    monkeypatch.setattr(
+        module,
+        "_detect_external_cycle_status",
+        lambda: {
+            "path": "docs/status/phase722_external_preflight_refresh_cycle_2026-04-15_rerun.md",
+            "classification": "strong external pass",
+            "cycle_shape": "preflight_refresh",
+        },
+    )
+    monkeypatch.setattr(
+        module,
+        "_detect_latest_phase726_review",
+        lambda: {
+            "path": "docs/status/phase726_go_nogo_2026-04-15.md",
+            "is_refreshed": True,
+        },
+    )
+    monkeypatch.setattr(
+        module,
+        "_detect_latest_phase724_surface",
+        lambda: {
+            "path": "docs/status/phase724_launch_operations_surface_2026-04-15.md",
+            "is_refreshed": True,
+        },
+    )
+
+    result = module.run_preflight(agent="beta-preflight", validation_wave_path=validation_path)
+
+    assert result["next_bounded_move"]["step"].startswith(
+        "use the current launch-operations surface as the operator-facing anchor"
+    )
+    assert result["next_bounded_move"]["path"] == (
+        "docs/status/phase724_launch_operations_surface_2026-04-15.md"
+    )
+    assert (
+        "Phase 724 is now consolidated into one current operator-facing launch surface"
         in result["next_bounded_move"]["note"]
     )

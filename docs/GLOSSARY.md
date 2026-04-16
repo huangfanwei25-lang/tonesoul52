@@ -18,6 +18,21 @@
 
 ---
 
+## Formula Status Quick Registry
+
+在 README、AGENTS、簡報或對外說明裡看到符號公式時，先看這張表，不要直接把它當成 runtime truth。
+
+| formula | status | executable owner | repeat rule |
+|------|------|------|------|
+| `T = W × (E × D)` | conceptual | component owners: `tonesoul/tension_engine.py`, `tonesoul/resistance.py`; canonical reading: [`#tension`](#tension) | 不要把它重述成「程式碼逐字實作」 |
+| `Δs = 1 - cos(Intent, Generated)` | heuristic | `tonesoul/semantic_control.py` | 可以描述成可執行 heuristic，不要包裝成嚴格理論定律 |
+| `POAV = (parsimony + orthogonality + audibility + verifiability) / 4` | heuristic | `tonesoul/poav.py` | 這是 operational score，不是數學定理 |
+| `S_oul = Σ (T[i] × e^(-α × (t - t[i])))` | conceptual / web-demo executable | `apps/web/src/lib/soulEngine.ts` | 可當 web 側積分模型；不要直接升格成 repo-wide runtime law |
+
+如果某個公式不在這張表，先去 `docs/MATH_FOUNDATIONS.md` 看它的數學地位與誠實問題，再決定能不能引用。
+
+---
+
 ## 核心術語
 
 ### tension

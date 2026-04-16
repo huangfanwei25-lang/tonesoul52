@@ -3,6 +3,7 @@
 > Purpose: repo-grounded baseline for current entry surfaces after correcting drift between the prior entrypoint pass and the live repo state.
 > Last Updated: 2026-03-29
 > Authority: reality-alignment aid. Does not outrank runtime code, tests, `AXIOMS.json`, or canonical architecture contracts.
+> Status: historical 2026-03-29 baseline. Use current entry surfaces for live routing, and use this file as a reality-pass record rather than the latest entry policy.
 
 ---
 

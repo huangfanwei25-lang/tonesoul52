@@ -1,6 +1,6 @@
 # ToneSoul Collaborator-Beta Preflight
 
-> Generated at `2026-04-10T16:31:50Z`.
+> Generated at `2026-04-15T11:16:24Z`.
 
 - Overall status: `go`
 - Current tier: `collaborator_beta`
@@ -9,16 +9,16 @@
 - Scope posture: `guided collaborator beta only; file-backed remains launch default and public launch stays deferred`
 - Target reading: `next_target_tier names the next maturity target, not current readiness or public-launch permission.`
 - Claim trigger: `claim when you are about to edit a shared path; read-only inspection can stay unclaimed`
-- Aegis posture: `compromised` / `Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks.`
-- Next bounded move: `run the dual-surface repeated external cycle under a different operator or task shape`
+- Aegis posture: `intact` / `Treat aegis_compromised as a visible caution in the current beta posture, not as an implicit public-launch stop or a reason to ignore the rest of the bounded receiver checks.`
+- Next bounded move: `use the current launch-operations surface as the operator-facing anchor and keep launch claims bounded`
 
 ## Entry Stack
 
 | Surface | Status | Key detail |
 |---|---|---|
-| session-start | ok | readiness=pass track=quick_change claim=not_required mode=lightweight_review |
+| session-start | ok | readiness=pass track=system_track claim=required mode=elevated_council |
 | packet | ok | current=collaborator_beta next=public_launch backend=file-backed |
-| diagnose | ok | embedded_from_session_start | readiness=pass | aegis=compromised (aegis=compromised) |
+| diagnose | ok | embedded_from_session_start | readiness=pass | aegis=intact (aegis=intact) |
 
 ## Validation Wave
 
@@ -33,9 +33,9 @@
 
 ## Next Bounded Move
 
-- Latest external cycle: `strong external pass`
-- Pack: `docs/plans/tonesoul_non_creator_external_cycle_dual_surface_pack_2026-04-10.md`
-- Note: `One clean external/non-creator cycle now exists; next repeated validation should exercise one bounded canonical surface plus one fresh status note before widening any launch claims.`
+- Latest external cycle: `strong external pass / preflight_refresh`
+- Path: `docs/status/phase724_launch_operations_surface_2026-04-15.md`
+- Note: `Phase 724 is now consolidated into one current operator-facing launch surface; keep public launch deferred, keep launch claims evidence-bounded, and reopen this lane only if a new contradiction or a higher evidence tier appears.`
 
 ### Blocked Overclaims
 - `continuity_effectiveness` = `runtime_present`

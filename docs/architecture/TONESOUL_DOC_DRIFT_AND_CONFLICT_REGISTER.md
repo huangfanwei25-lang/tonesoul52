@@ -3,6 +3,7 @@
 > Purpose: compare the prior entrypoint cleanup recommendations against the current repo state and classify each as still valid, drifted, already fixed, or invalidated.
 > Last Updated: 2026-03-29
 > Authority: drift-reconciliation register. Does not outrank runtime code or canonical contracts.
+> Status: historical 2026-03-29 reconciliation snapshot. Major entry cleanup landed on 2026-04-14, so this file should be read as lineage, not as the latest unresolved work queue.
 
 ---
 

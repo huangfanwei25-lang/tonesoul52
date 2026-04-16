@@ -420,7 +420,9 @@ def _probe_hook_chain_trigger_clarity(
         state_path=state_path,
         traces_path=traces_path,
         no_ack=True,
-        tier=0,
+        # Hook-chain packaging is intentionally deferred out of Tier 0 fast-path
+        # payloads, so probe the Tier 1 orientation shell where the readout lives.
+        tier=1,
     )
     hook_chain = dict(payload.get("hook_chain") or {})
     mutation_preflight = dict(payload.get("mutation_preflight") or {})

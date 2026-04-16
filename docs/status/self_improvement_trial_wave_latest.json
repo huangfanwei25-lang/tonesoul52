@@ -1,9 +1,9 @@
 {
   "contract_version": "v1",
   "bundle": "self_improvement_trial_wave",
-  "agent": "codex-phase846-smoke",
+  "agent": "codex-self-improvement-refresh",
   "status": "completed",
-  "summary_text": "self_improvement_trial_wave promote=17 park=1 retire=0 blocked=0",
+  "summary_text": "self_improvement_trial_wave promote=18 park=1 retire=0 blocked=0",
   "receiver_rule": "Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.",
   "trial_families": [
     "cross_consumer_parity_packaging",
@@ -23,10 +23,11 @@
     "claude_priority_correction_clarity",
     "hot_memory_pull_boundary_clarity",
     "memory_panel_tier_subordination_clarity",
-    "status_panel_operator_copy_clarity"
+    "status_panel_operator_copy_clarity",
+    "dashboard_command_shelf_activation_clarity"
   ],
   "outcome_counts": {
-    "promote": 17,
+    "promote": 18,
     "park": 1,
     "retire": 0,
     "blocked": 0,
@@ -124,7 +125,7 @@
       "analyzer_closeout": {
         "status": "promote",
         "result_story": "Deliberation-mode hint packaging now cleanly separates active escalation pressure from conditional escalation ladders.",
-        "evidence_bundle_summary": "deliberation_hint_probe mode=lightweight_review active=0 conditional=2 review=5 split=yes",
+        "evidence_bundle_summary": "deliberation_hint_probe mode=elevated_council active=1 conditional=3 review=4 split=yes",
         "unresolved_items": [
           "packaging wins do not prove better reasoning quality",
           "future shell consumers must preserve the active/conditional distinction"
@@ -420,7 +421,7 @@
       "analyzer_closeout": {
         "status": "promote",
         "result_story": "Hook chain now says which bounded preflight is currently relevant and why, without inventing a new hook family.",
-        "evidence_bundle_summary": "hook_chain_probe recommended=publish_push_posture target=publish_push.posture_preflight selection=yes hooks=3",
+        "evidence_bundle_summary": "hook_chain_probe recommended=shared_edit_path_overlap target=shared_code_edit.path_overlap_preflight selection=yes hooks=3",
         "unresolved_items": [
           "clearer hook-chain packaging does not prove better planning quality or stronger permissions",
           "future shells must keep current_recommendation subordinate to mutation_preflight and bounded hook scope"
@@ -457,7 +458,7 @@
       "analyzer_closeout": {
         "status": "promote",
         "result_story": "Consumer misread guards now say where the misread appears, what correction to apply, and which correction matters first.",
-        "evidence_bundle_summary": "consumer_misread_guard_probe guards=4 priority=compaction_not_completion surface=closeout_attention + compaction summary claude_sync=yes",
+        "evidence_bundle_summary": "consumer_misread_guard_probe guards=4 priority=observer_stable_not_verified surface=observer_window.stable claude_sync=yes",
         "unresolved_items": [
           "priority misread correction improves shared interpretation, not transport or reasoning quality",
           "future consumers must keep the same guard set and priority rule"
@@ -494,7 +495,7 @@
       "analyzer_closeout": {
         "status": "promote",
         "result_story": "Subsystem parity now says which family produced the current focus, what pressures made it current, and what bounded operator action follows.",
-        "evidence_bundle_summary": "subsystem_parity_focus_probe target=publish_push.posture_preflight source=mutation_preflight_hooks pressures=3 shell_sync=yes",
+        "evidence_bundle_summary": "subsystem_parity_focus_probe target=shared_code_edit.path_overlap_preflight source=mutation_preflight_hooks pressures=3 shell_sync=yes",
         "unresolved_items": [
           "clearer next_focus rationale improves orientation, not planning quality or authority",
           "future shells must keep next_focus subordinate to mutation_preflight and canonical_center"
@@ -699,7 +700,44 @@
         "visibility": "status_surface_only",
         "carry_forward_rule": "may inform future dashboard status-panel packaging, but does not authorize new authority or a second operator control plane"
       }
+    },
+    {
+      "candidate_record": {
+        "candidate_id": "dashboard_command_shelf_activation_clarity_v1",
+        "target_surface": "dashboard.command_shelf.commands",
+        "target_consumer": "dashboard_operator_shell",
+        "baseline_story": "The dashboard command shelf already pointed back to CLI/runtime entry surfaces, but dynamic commands still read too much like one flat browser-side menu.",
+        "candidate_story": "Command shelf now exposes source, activation, and return cues so bounded moves and deep pulls stay visibly subordinate to the tier model.",
+        "success_metric": "command_shelf_probe.present and consumer_drift_report.status == aligned",
+        "failure_mode_watch": "command metadata starts reading like permission authority or flattens Tier 0 and Tier 2 into one workflow menu",
+        "rollback_path": "restore the prior command-shelf packaging and drop the extra activation metadata",
+        "overclaim_to_avoid": "clearer command-shelf packaging is not stronger planning, automation, or runtime authority",
+        "scope_limit": "dashboard command-shelf packaging only; no command execution layer, no permission system, no governance promotion"
+      },
+      "analyzer_closeout": {
+        "status": "promote",
+        "result_story": "Dashboard command shelf now states where each command comes from, why it is visible, and when to fall back to a smaller tier.",
+        "evidence_bundle_summary": "command_shelf_probe next_source=mutation_preflight.next_followup next_activation=yes deep_return=yes",
+        "unresolved_items": [
+          "clearer command-shelf activation packaging improves operator discipline, not planning quality or automation authority",
+          "future dashboard changes must keep bounded moves and deep pulls visibly subordinate to the tier model"
+        ],
+        "failure_pressure": "low",
+        "rollback_posture": "bounded_restore",
+        "promotion_limit": "does not authorize browser-side command execution, stronger permissions, or a new operator control plane",
+        "overclaim_warning": "clearer command-shelf activation cues are not better planning, stronger governance, or safer mutation authority",
+        "next_action": "hold self-improvement v0 at the status surface and require explicit ratification before opening a new active bucket"
+      },
+      "result_surface": {
+        "surface_status": "promoted_result",
+        "registry_recommendation": "promotion_ready_result",
+        "supersession_posture": "active_until_newer_command_shelf_activation_trials_exist",
+        "replay_rule": "prefer_status_surface_then_probe_current_command_shelf_shape_before_reusing_the_story",
+        "residue_posture": "keep_visible_as_current_packaging_result",
+        "visibility": "status_surface_only",
+        "carry_forward_rule": "may inform future dashboard command-shelf packaging, but does not authorize browser-side execution, stronger permissions, or a new authority lane"
+      }
     }
   ],
-  "next_short_board": "Phase 847: Eighteenth Trial Candidate Admission"
+  "next_short_board": "Explicitly ratify the next active bucket; do not silently auto-open queued governance-depth work."
 }

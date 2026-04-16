@@ -155,7 +155,7 @@ When the question is about conceptual lineage:
 
 1. `knowledge/`
 2. `docs/philosophy/`
-3. historical specs such as `MGGI_SPEC.md` and `TAE-01_Architecture_Spec.md`
+3. historical specs such as `docs/SEMANTIC_SPINE_SPEC.md`, `docs/TRUTH_STRUCTURE.md`, and `docs/MGGI_MANIFESTO.md`
 
 When the question is about adversarial governance behavior:
 

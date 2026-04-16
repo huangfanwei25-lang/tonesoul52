@@ -198,10 +198,12 @@ Redis/live coordination remains a path, not the mature default claim.
 ### Invariant 6: Later Agents Start From Structured Entry, Not Repo-Wide Guessing
 
 The expected order remains:
-1. `AI_ONBOARDING.md`
-2. `docs/AI_QUICKSTART.md`
-3. `python scripts/start_agent_session.py --agent <your-id>`
-4. optional deeper reads only after the bounded entry surfaces are understood
+1. `docs/AI_QUICKSTART.md`
+2. `python scripts/start_agent_session.py --agent <your-id>`
+3. `AI_ONBOARDING.md`
+4. `docs/foundation/README.md`
+5. `task.md`
+6. optional deeper reads only after the bounded entry surfaces are understood
 
 ## Why ToneSoul Keeps Adding These Contracts
 
@@ -264,12 +266,14 @@ It is "make the current center easier for a successor to see and continue safely
 If you are a new agent or a future maintainer:
 
 1. `README.md`
-2. `AI_ONBOARDING.md`
+2. `docs/foundation/README.md`
 3. `docs/AI_QUICKSTART.md`
-4. `DESIGN.md`
-5. `docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md`
-6. `python scripts/start_agent_session.py --agent <your-id>`
-7. only then open deeper contracts relevant to the current short board
+4. `python scripts/start_agent_session.py --agent <your-id>`
+5. `AI_ONBOARDING.md`
+6. `task.md`
+7. `DESIGN.md`
+8. `docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md`
+9. only then open deeper contracts relevant to the current short board
 
 If you are continuing implementation work, also read:
 - `task.md`

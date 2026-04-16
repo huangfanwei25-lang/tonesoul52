@@ -17,8 +17,29 @@ ToneSoul 的張力系統本質上是把 Transformer 內部的 Attention 機制**
 | Attention 權重 → 決定生成方向 | Tension score → 決定治理動作（放行/標記/阻擋） |
 | 殘差連接（記住之前的層） | 記憶衰減 + 結晶（記住之前的 session） |
 
+對照表中的 `Δs = 1 - cos(I, G)` 對應 heuristic owner：`semantic_control.py`。
+
 **Tension Score 是 ToneSoul 版的「外部 Attention」第一個實作。**
 它不是嚴格數學模型，而是可調參數的啟發式組合函數。
+
+---
+
+## 讀法契約
+
+本文件的公式只允許四種狀態：
+
+- `rigorous`：數學物件本身是標準定義，repo 也明確在用
+- `heuristic`：有 executable owner，但權重、閾值、耦合方式是工程選擇
+- `conceptual`：用來描述關係，不等於 runtime 逐字公式
+- `retired`：歷史殘留，只能作 lineage，不算現在的 truth claim
+
+每個公式區塊至少要回答三件事：
+
+- 用在哪
+- 它屬於哪一種公式
+- 還有哪些誠實問題沒有解決
+
+如果 entry doc 裡出現符號公式，請把 `docs/GLOSSARY.md` 視為快速 status/owner registry，把本文視為完整誠實盤點，而不是反過來。
 
 ---
 

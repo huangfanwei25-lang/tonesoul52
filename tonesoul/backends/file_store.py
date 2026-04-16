@@ -29,6 +29,7 @@ _DEFAULT_COMPACTIONS = _ROOT / ".aegis" / "compacted.json"
 _DEFAULT_SUBJECT_SNAPSHOTS = _ROOT / ".aegis" / "subject_snapshots.json"
 _DEFAULT_OBSERVER_CURSORS = _ROOT / ".aegis" / "observer_cursors.json"
 _DEFAULT_ROUTING_EVENTS = _ROOT / ".aegis" / "routing_events.json"
+_DEFAULT_COUNCIL_VERDICTS = _ROOT / ".aegis" / "council_verdicts.json"
 
 
 class FileStore:
@@ -47,6 +48,7 @@ class FileStore:
         subject_snapshots_path: Path | None = None,
         observer_cursors_path: Path | None = None,
         routing_events_path: Path | None = None,
+        council_verdicts_path: Path | None = None,
     ) -> None:
         self.gov_path = gov_path or _DEFAULT_GOV
         self.traces_path = traces_path or _DEFAULT_TRACES
@@ -62,6 +64,11 @@ class FileStore:
             self.claims_path.with_name("routing_events.json")
             if claims_path is not None
             else _DEFAULT_ROUTING_EVENTS
+        )
+        self.council_verdicts_path = council_verdicts_path or (
+            self.claims_path.with_name("council_verdicts.json")
+            if claims_path is not None
+            else _DEFAULT_COUNCIL_VERDICTS
         )
 
     # ── Governance state ────────────────────────────────────────────────────
@@ -373,6 +380,29 @@ class FileStore:
         self._purge_expired_list_entries(events)
         self._write_list_registry(self.routing_events_path, events)
         return events[: max(0, int(n))]
+
+    def append_council_verdict(
+        self,
+        data: Dict[str, Any],
+        *,
+        limit: int = 1000,
+        ttl_seconds: int = 7776000,
+    ) -> None:
+        verdicts = self._read_list_registry(self.council_verdicts_path)
+        self._purge_expired_list_entries(verdicts)
+        entry = dict(data)
+        if ttl_seconds > 0:
+            entry["expires_at"] = str(_time() + float(ttl_seconds))
+        verdicts.insert(0, entry)
+        if limit > 0:
+            verdicts = verdicts[: int(limit)]
+        self._write_list_registry(self.council_verdicts_path, verdicts)
+
+    def get_council_verdicts(self, n: int = 25) -> List[Dict[str, Any]]:
+        verdicts = self._read_list_registry(self.council_verdicts_path)
+        self._purge_expired_list_entries(verdicts)
+        self._write_list_registry(self.council_verdicts_path, verdicts)
+        return verdicts[: max(0, int(n))]
 
     def _read_json_file(self, path: Path) -> Dict[str, Any]:
         if not path.exists():

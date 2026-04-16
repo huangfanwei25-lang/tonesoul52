@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-06T10:24:26Z",
+  "generated_at": "2026-04-15T13:21:56Z",
   "canonical_center": {
     "present": true,
     "parent_surfaces": [
@@ -81,12 +81,14 @@
       "present": true,
       "status": "visible",
       "items": [
-        "Phase 774: realign the dashboard status panel to the tier model so it reinforces the operator shell instead of flattening authority"
+        "Self-improvement loop: admit one next bounded candidate only if it improves operator/runtime packaging without reopening governance, identity, or transport mythology",
+        "Launch readiness: current collaborator-beta launch-operations surface is consolidated; keep it aligned and do not widen launch claims until blocked overclaims move",
+        "Real-world usage validation: three clean external/non-creator bounded cycles now exist across three task shapes; collaborator beta remains CONDITIONAL GO, public launch stays deferred, and launch claims stay evidence-bounded"
       ],
       "source": "task.md > Water-Bucket Snapshot > Current short board",
-      "summary_text": "Phase 774: realign the dashboard status panel to the tier model so it reinforces the operator shell instead of flattening authority"
+      "summary_text": "Self-improvement loop: admit one next bounded candidate only if it improves operator/runtime packaging without reopening governance, identity, or transport mythology"
     },
-    "summary_text": "canonical_center short_board_items=1 source=task.md > Water-Bucket Snapshot > Current short board"
+    "summary_text": "canonical_center short_board_items=3 source=task.md > Water-Bucket Snapshot > Current short board"
   },
   "subsystem_parity": {
     "present": true,
@@ -94,7 +96,7 @@
       {
         "name": "session_start_bundle",
         "status": "baseline",
-        "current_signal": "readiness=pass track=quick_change claim=not_required",
+        "current_signal": "readiness=pass track=system_track claim=required",
         "strongest_truth": "Session-start exposes readiness, task/deliberation hints, import posture, and bounded successor guards.",
         "main_gap": "Cold successors still need one tighter parity readout for overall subsystem maturity.",
         "next_bounded_move": "keep first-hop bundle stable and successor-focused",
@@ -130,7 +132,7 @@
       {
         "name": "compaction_checkpoint_handoff",
         "status": "beta_usable",
-        "current_signal": "receiver_obligation=must_not_promote closeout=partial",
+        "current_signal": "receiver_obligation=must_not_promote closeout=complete",
         "strongest_truth": "Bounded resumability, closeout grammar, and promotion hazards are visible.",
         "main_gap": "Smooth summaries can still be over-read if successors ignore closeout and receiver posture.",
         "next_bounded_move": "tighten closeout surfacing where successors actually read first",
@@ -175,10 +177,10 @@
       {
         "name": "mutation_preflight_hooks",
         "status": "beta_usable",
-        "current_signal": "shared_code=bounded_local_edit_first compaction=review_only_handoff task_board=ratified_short_board_only commit=aegis_locked_commit launch_claims=bounded_collaborator_beta_only publish_push=review_before_push",
+        "current_signal": "shared_code=claim_before_shared_edits compaction=review_only_handoff task_board=docs_plans_first commit=aegis_locked_commit launch_claims=bounded_collaborator_beta_only publish_push=review_before_push",
         "strongest_truth": "Successor-facing mutation preflight now maps current write/mutate/publish decision points.",
         "main_gap": "Shared-edit overlap and publish/push posture are real, but task-board parking still depends too much on later agents remembering the scope guard from prose.",
-        "next_bounded_move": "task_board.parking_preflight",
+        "next_bounded_move": "shared_code_edit.path_overlap_preflight",
         "overclaim_to_avoid": "shared-edit mutation is now a full permission system"
       },
       {
@@ -199,9 +201,17 @@
     },
     "receiver_rule": "Use baseline lanes for normal continuation, beta_usable lanes for guided collaborator-beta work, partial lanes with explicit gap awareness, and deferred lanes as out of current scope.",
     "next_focus": {
-      "target": "task_board.parking_preflight",
-      "resolved_to": "task_board_governance.parking_preflight",
-      "reason": "Publish/push posture is now real; the next bounded governance gain is keeping outside ideas in docs/plans until the short board explicitly ratifies them."
+      "target": "shared_code_edit.path_overlap_preflight",
+      "resolved_to": "shared_code_edit.path_overlap_preflight",
+      "source_family": "mutation_preflight_hooks",
+      "focus_pressures": [
+        "readiness=pass",
+        "task_track=system_track",
+        "claim_recommendation=required"
+      ],
+      "operator_action": "Run the shared-edit preflight first so path overlap and claim gaps are resolved before broader mutation.",
+      "reason": "The current shortest board is still shared mutation clarity, so the successor should resolve overlap pressure before broader shell work.",
+      "why_now": "The current shortest board is still shared mutation clarity, so the successor should resolve overlap pressure before broader shell work."
     },
     "summary_text": "subsystem_parity baseline=3 beta_usable=5 partial=2 deferred=1 launch=collaborator_beta readiness=pass"
   },
@@ -227,7 +237,7 @@
           "import_posture.readiness"
         ],
         "receiver_rule": "apply_when_stable_review_when_contested",
-        "note": "observer_window counts: stable=5 contested=5 stale=3"
+        "note": "observer_window counts: stable=5 contested=4 stale=2"
       },
       {
         "layer": "live_coordination",
@@ -251,7 +261,7 @@
           "recent_traces"
         ],
         "receiver_rule": "ack_or_review_never_self_promote",
-        "note": "receiver_obligation=must_not_promote closeout=partial"
+        "note": "receiver_obligation=must_not_promote closeout=complete"
       },
       {
         "layer": "working_identity",
@@ -276,6 +286,14 @@
         "note": "Replay surfaces are available without current descriptive-only flags."
       }
     ],
+    "current_pull_boundary": {
+      "present": true,
+      "pull_posture": "review_handoff_before_deeper_pull",
+      "preferred_stop_at": "bounded_handoff",
+      "why_now": "bounded_handoff is still contested, so closeout or receiver-obligation pressure remains active.",
+      "operator_action": "Stop at bounded_handoff and review closeout plus receiver obligation before replay or working-identity surfaces.",
+      "receiver_rule": "Read contested handoff state before deeper replay; smooth summaries do not remove closeout pressure."
+    },
     "summary_text": "canonical_center=stable | low_drift_anchor=stale | live_coordination=stable | bounded_handoff=contested | working_identity=contested | replay_review=stable",
     "receiver_note": "Read the ladder from canonical_center downward. Parent layers orient or constrain child layers. Child summaries do not outrank parent truth."
   },
@@ -314,7 +332,7 @@
         "use_posture": "quarantine",
         "decay_posture": "ttl_then_compress",
         "compression_posture": "compress_with_closeout_guards",
-        "quarantine_reason": "receiver_obligation=must_not_promote closeout=partial",
+        "quarantine_reason": "receiver_obligation=must_not_promote closeout=complete",
         "note": "Compactions may orient resumability, but incomplete closeout or promotion hazards require quarantine."
       },
       {
@@ -342,30 +360,30 @@
   "repo_state_awareness": {
     "present": true,
     "classification": "baseline_unset",
-    "repo_head": "56452d3",
-    "dirty_count": 19,
+    "repo_head": "2b4cc44",
+    "dirty_count": 53,
     "repo_change_detected": true,
-    "coordination_update_count": 7,
+    "coordination_update_count": 11,
     "misread_risk": true,
-    "summary_text": "classification=baseline_unset head=56452d3 dirty=19 repo_changed=True coordination_updates=7",
+    "summary_text": "classification=baseline_unset head=2b4cc44 dirty=53 repo_changed=True coordination_updates=11",
     "receiver_note": "No observer baseline exists yet. Current git state is visible, but a quiet delta does not imply that nothing changed before this session-start snapshot.",
     "action_hint": "Ack after review to establish a baseline before treating later quiet delta as stability.",
     "alert_text": "No observer baseline yet; do not read missing delta as 'no repo change'.",
     "non_authority_rule": "Repo-state awareness is descriptive only. It does not authorize scope, override canonical planning, or replace readiness/claim checks."
   },
   "closeout_attention": {
-    "present": true,
-    "status": "partial",
-    "stop_reason": "",
-    "unresolved_count": 0,
-    "human_input_required": false,
-    "summary_text": "latest compaction closeout is partial; do not treat the handoff summary as completed work",
-    "detail": "status=partial unresolved=0",
-    "receiver_rule": "Read the closeout before the summary. A smooth compaction summary does not imply the previous session finished cleanly."
+    "present": false,
+    "status": "complete",
+    "source_family": "",
+    "attention_pressures": [],
+    "operator_action": "",
+    "why_now": "",
+    "summary_text": "latest compaction closeout is complete or not currently contested",
+    "receiver_rule": "No extra observer-window closeout lift is needed when the latest closeout is complete."
   },
   "consumer_contract": {
     "present": true,
-    "summary_text": "consumer_order=readiness -> canonical_center -> closeout_attention -> mutation_preflight -> deep_pull_only | closeout=partial | readiness=pass",
+    "summary_text": "consumer_order=readiness -> canonical_center -> closeout_attention -> mutation_preflight -> deep_pull_only | readiness=pass",
     "compatible_consumers": [
       "codex_cli",
       "claude_style_shell",
@@ -418,28 +436,148 @@
     "misread_guards": [
       {
         "name": "observer_stable_not_verified",
-        "rule": "Observer-window `stable` means currently unchallenged bounded orientation, not verified truth."
+        "rule": "Observer-window `stable` means currently unchallenged bounded orientation, not verified truth.",
+        "trigger_surface": "observer_window.stable",
+        "operator_action": "check readiness and canonical_center before trusting stable headlines or smooth shell summaries."
       },
       {
         "name": "compaction_not_completion",
-        "rule": "Compaction summaries remain subordinate to closeout status and unresolved items."
+        "rule": "Compaction summaries remain subordinate to closeout status and unresolved items.",
+        "trigger_surface": "closeout_attention + compaction summary",
+        "operator_action": "read closeout status and unresolved items before reusing any next-action prose from the handoff."
       },
       {
         "name": "working_style_not_identity",
-        "rule": "Working-style continuity can shape workflow, but must not be promoted into durable identity or policy."
+        "rule": "Working-style continuity can shape workflow, but must not be promoted into durable identity or policy.",
+        "trigger_surface": "working_style continuity + subject_snapshot",
+        "operator_action": "apply workflow habits only; do not promote them into vows, durable identity, or policy."
       },
       {
         "name": "council_agreement_not_accuracy",
-        "rule": "Council agreement and coherence remain descriptive unless separately calibrated by outcome evidence."
+        "rule": "Council agreement and coherence remain descriptive unless separately calibrated by outcome evidence.",
+        "trigger_surface": "council_dossier confidence surfaces",
+        "operator_action": "treat agreement as descriptive only unless separate outcome-backed calibration evidence exists."
       }
     ],
+    "priority_misread_guard": {
+      "name": "observer_stable_not_verified",
+      "rule": "Observer-window `stable` means currently unchallenged bounded orientation, not verified truth.",
+      "trigger_surface": "observer_window.stable",
+      "operator_action": "check readiness and canonical_center before trusting stable headlines or smooth shell summaries.",
+      "why_now": "bounded first-hop order still starts by rejecting observer smoothness as start permission."
+    },
     "receiver_rule": "All consumers should recover the same parent truth, the same closeout meaning, and the same mutation gates before they widen context or act.",
     "current_context": {
       "readiness_status": "pass",
-      "closeout_status": "partial",
+      "closeout_status": "complete",
       "short_board_visible": true,
-      "next_followup_target": "task_board.parking_preflight"
+      "next_followup_target": "shared_code_edit.path_overlap_preflight"
     }
+  },
+  "surface_versioning": {
+    "present": true,
+    "summary_text": "surface_versioning session_start=tiered_v1 observer_window=anchor_window_v1 packet=packet_v1 dashboard=dashboard_shell_v1 claude=claude_entry_v1",
+    "runtime_surfaces": [
+      {
+        "surface": "session_start",
+        "version": "tiered_v1",
+        "kind": "runtime_entry",
+        "derives_from": [
+          "readiness",
+          "canonical_center",
+          "consumer_contract"
+        ],
+        "fallback_to": "observer_window"
+      },
+      {
+        "surface": "observer_window",
+        "version": "anchor_window_v1",
+        "kind": "runtime_orientation",
+        "derives_from": [
+          "canonical_center",
+          "consumer_contract",
+          "delta_summary"
+        ],
+        "fallback_to": "r_memory_packet"
+      },
+      {
+        "surface": "r_memory_packet",
+        "version": "packet_v1",
+        "kind": "runtime_detail",
+        "derives_from": [
+          "runtime_adapter",
+          "operator_guidance"
+        ],
+        "fallback_to": ""
+      }
+    ],
+    "consumer_shells": [
+      {
+        "consumer": "codex_cli",
+        "surface": "session_start",
+        "version": "cli_entry_v1",
+        "derived_from": "session_start:tiered_v1"
+      },
+      {
+        "consumer": "dashboard_operator_shell",
+        "surface": "dashboard_tier_shell",
+        "version": "dashboard_shell_v1",
+        "derived_from": "session_start:tiered_v1"
+      },
+      {
+        "consumer": "claude_style_shell",
+        "surface": "claude_entry_adapter",
+        "version": "claude_entry_v1",
+        "derived_from": "session_start:tiered_v1"
+      }
+    ],
+    "compatibility_posture": {
+      "summary_text": "surface_compatibility codex=repo_native_entry dashboard=bounded_adapter claude=bounded_adapter fallback=session_start->observer_window->r_memory_packet",
+      "fallback_chain": [
+        "session_start:tiered_v1",
+        "observer_window:anchor_window_v1",
+        "r_memory_packet:packet_v1"
+      ],
+      "consumer_statuses": [
+        {
+          "consumer": "codex_cli",
+          "surface": "session_start",
+          "compatibility": "repo_native_entry",
+          "parity_requirement": "must_preserve_first_hop_order",
+          "fallback_order": [
+            "session_start:tiered_v1",
+            "observer_window:anchor_window_v1",
+            "r_memory_packet:packet_v1"
+          ]
+        },
+        {
+          "consumer": "dashboard_operator_shell",
+          "surface": "dashboard_tier_shell",
+          "compatibility": "bounded_adapter",
+          "parity_requirement": "must_preserve_first_hop_order",
+          "fallback_order": [
+            "session_start:tiered_v1",
+            "observer_window:anchor_window_v1",
+            "r_memory_packet:packet_v1"
+          ]
+        },
+        {
+          "consumer": "claude_style_shell",
+          "surface": "claude_entry_adapter",
+          "compatibility": "bounded_adapter",
+          "parity_requirement": "must_preserve_first_hop_order",
+          "fallback_order": [
+            "session_start:tiered_v1",
+            "observer_window:anchor_window_v1",
+            "r_memory_packet:packet_v1"
+          ]
+        }
+      ],
+      "shared_expectation": "All consumers should preserve the same first-hop order, closeout meaning, and mutation-gate story even when their panes or phrasing differ.",
+      "receiver_rule": "Use compatibility posture to confirm which shells are repo-native versus bounded adapters, then fall back through the shared chain instead of treating any consumer shell as sovereign truth."
+    },
+    "fallback_rule": "If a consumer shell is missing fields or looks mismatched, fall back to Tier 1 session-start first, then observer-window, and only then pull packet detail.",
+    "source_of_truth_rule": "Runtime truth remains in repo-native entry and readout surfaces. Consumer shells are bounded adapters and must not outrank their parent surfaces."
   },
   "stable": [
     {
@@ -465,11 +603,6 @@
   ],
   "contested": [
     {
-      "claim": "latest compaction closeout is 'partial'; do not read the handoff as completed work",
-      "evidence_source": "import_posture.compactions.closeout_status",
-      "detail": "status=partial unresolved=0"
-    },
-    {
       "claim": "latest compaction has carry_forward promotion hazard; must_not_promote",
       "evidence_source": "import_posture.compactions.promotion_hazards",
       "detail": "hazards=1"
@@ -491,34 +624,29 @@
   ],
   "stale": [
     {
-      "claim": "recent_traces are 293.2h old (threshold=48.0h)",
+      "claim": "recent_traces are 512.2h old (threshold=48.0h)",
       "evidence_source": "import_posture.recent_traces.freshness_hours",
-      "detail": "freshness_hours=293.2"
+      "detail": "freshness_hours=512.2"
     },
     {
-      "claim": "latest compaction is 140.6h old (threshold=72.0h)",
-      "evidence_source": "import_posture.compactions.freshness_hours",
-      "detail": "freshness_hours=140.6"
-    },
-    {
-      "claim": "subject snapshot is 140.7h old (threshold=96.0h)",
+      "claim": "subject snapshot is 359.7h old (threshold=96.0h)",
       "evidence_source": "import_posture.subject_snapshot.freshness_hours",
-      "detail": "freshness_hours=140.7"
+      "detail": "freshness_hours=359.7"
     }
   ],
   "delta_summary": {
     "first_observation": true,
     "has_updates": true,
     "new_compaction_count": 3,
-    "new_checkpoint_count": 0,
-    "new_trace_count": 2,
-    "summary_text": "first_observation=True new=compactions:3 checkpoints:0 traces:2"
+    "new_checkpoint_count": 3,
+    "new_trace_count": 3,
+    "summary_text": "first_observation=True new=compactions:3 checkpoints:3 traces:3"
   },
   "counts": {
     "stable": 5,
-    "contested": 5,
-    "stale": 3
+    "contested": 4,
+    "stale": 2
   },
-  "summary_text": "observer_window stable=5 contested=5 stale=3 delta_has_updates=True repo_state=baseline_unset closeout_attention=partial",
+  "summary_text": "observer_window stable=5 contested=4 stale=2 delta_has_updates=True repo_state=baseline_unset closeout_attention=complete",
   "receiver_note": "This observer window is advisory only. Items in 'stable' reflect current bounded posture but do not outrank canonical contracts. Items in 'contested' must not be treated as confirmed. Items in 'stale' should trigger a re-read before leaning on them. Do not promote this readout into canonical governance truth."
 }

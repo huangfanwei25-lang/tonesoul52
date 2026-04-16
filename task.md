@@ -15,47 +15,74 @@
   - Prefer real repeated validation and honest backend defaults over abstract theory lanes.
   - Keep public claims bounded by evidence level: tested, runtime-present, descriptive-only, and document-backed must remain distinct.
   - One durable design center over several overlapping "overview" files.
-- Phase 721: ~~consolidate launch baseline~~ → **done** (`docs/plans/tonesoul_launch_baseline_2026-04-08.md`)
-- Phase 722: run repeated live continuity validation waves (bounded wave + 1 strong external pass exist; next repeated validation should use a dual-surface lower-context task shape before any claim widening)
-- Phase 723: ~~backend decision~~ → **done** (file-backed, see `tonesoul_coordination_backend_decision_2026-03-30.md`)
-- Phase 724: consolidate one current launch-operations surface (readiness, health, rollback, freeze)
-- Phase 725: ~~public-claim honesty gate~~ → **done** (`claim_boundary` in session-start tier 0+2)
-- Phase 726: **collaborator-beta go/no-go review** — next milestone, blocked by B1 (e2e validation)
-- Phase 729: ~~design center~~ → **done** (`DESIGN.md`, 293 lines)
+- Phase 721: ~~consolidate launch baseline~~ **done** (`docs/plans/tonesoul_launch_baseline_2026-04-08.md`)
+- Phase 722: run repeated live continuity validation waves (bounded wave + 3 strong external/non-creator passes across 3 task shapes exist; keep public launch deferred, keep launch claims bounded, and refresh Phase 726 review before any widening)
+- Phase 723: ~~backend decision~~ **done** (file-backed, see `tonesoul_coordination_backend_decision_2026-03-30.md`)
+- Phase 724: ~~consolidate one current launch-operations surface~~ **done** (`docs/status/phase724_launch_operations_surface_2026-04-15.md`)
+- Phase 725: ~~public-claim honesty gate~~ **done** (`claim_boundary` in session-start tier 0+2)
+- Phase 726: ~~collaborator-beta go/no-go review~~ **done** (`docs/status/phase726_go_nogo_2026-04-08.md`, refreshed by `docs/status/phase726_go_nogo_2026-04-15.md`)
+- Phase 729: ~~design center~~ **done** (`DESIGN.md`, 293 lines)
 - Phase 730: add one 3-day execution program so the next agent can continue without reopening settled wording
+- Phase 731: ~~compress entry-surface ownership and first-hop routing~~ **done** (`README.md`, `docs/foundation/README.md`, `docs/README.md`, `docs/INDEX.md`, `docs/AI_QUICKSTART.md`, `AI_ONBOARDING.md`)
+- Phase 732: ~~sync Chinese public entry and retire dead historical-spec links from active entry contracts~~ **done** (`README.zh-TW.md`, entry contracts, historical-spec maps`)
+- Phase 733: ~~publish repo-aligned continuation work plan v2~~ **done** (`docs/plans/tonesoul_work_plan_v2_2026-04-14.md`)
+- Phase 734: ~~add high-traffic filename and entry index for render-safe lookup~~ **done** (`docs/foundation/FILENAME_AND_ENTRY_INDEX.md`, foundation/render guidance)
+- Phase 735: ~~refresh collaborator-beta preflight after the repeated Phase 722 dual-surface pass~~ **done** (`scripts/run_collaborator_beta_preflight.py`, `docs/status/collaborator_beta_preflight_latest.{json,md}`)
+- Phase 736: ~~publish fresh current-truth handoff after repeated Phase 722 evidence landed~~ **done** (`docs/status/codex_handoff_2026-04-14.md`)
+- Phase 737: ~~publish a third bounded Phase 722 preflight-refresh pack and refresh launch-readiness continuation pointers~~ **done** (`docs/plans/tonesoul_non_creator_external_cycle_preflight_refresh_{pack,note_template}_2026-04-15.md`, `docs/README.md`)
+- Phase 738: ~~publish fresh handoff after the third Phase 722 task shape landed~~ **done** (`docs/status/codex_handoff_2026-04-15.md`)
+- Phase 739: ~~publish one 8-hour 1.0 execution program for the current launch line~~ **done** (`docs/plans/tonesoul_8hour_execution_program_2026-04-15.md`)
+- Phase 740: ~~teach collaborator-beta preflight to recognize the Phase 722 preflight-refresh evidence family~~ **done** (`scripts/run_collaborator_beta_preflight.py`, `tests/test_run_collaborator_beta_preflight.py`)
+- Phase 741: ~~refresh current-truth handoff after the first preflight-refresh attempt and detector fix~~ **done** (`docs/status/codex_handoff_2026-04-15.md`, `docs/status/phase722_external_preflight_refresh_cycle_2026-04-15.md`)
+- Phase 742: ~~land the third clean Phase 722 preflight-refresh rerun and refresh canonical preflight truth~~ **done** (`docs/status/phase722_external_preflight_refresh_cycle_2026-04-15_rerun.md`, `docs/status/collaborator_beta_preflight_latest.{json,md}`)
+- Phase 743: ~~refresh the collaborator-beta go/no-go review against the three-clean-cycle evidence base~~ **done** (`docs/status/phase726_go_nogo_2026-04-15.md`)
+- Phase 744: ~~advance collaborator-beta preflight next-move routing past the refreshed Phase 726 review~~ **done** (`scripts/run_collaborator_beta_preflight.py`, `tests/test_run_collaborator_beta_preflight.py`)
+- Phase 745: ~~publish a refreshed current launch-operations surface for collaborator beta~~ **done** (`docs/status/phase724_launch_operations_surface_2026-04-15.md`)
+- Phase 746: ~~reroute collaborator-beta discovery surfaces to the refreshed Phase 724 operations anchor~~ **done** (`docs/README.md`, `docs/INDEX.md`, `scripts/run_collaborator_beta_preflight.py`)
+- Phase 747: ~~refresh launch-line handoff after Phase 724 landed~~ **done** (`docs/status/codex_handoff_2026-04-15.md`)
 
 ## Active Program: Agent Workspace And IDE Translation (2026-04-06)
 - Program Goal: translate ToneSoul's tiered runtime surfaces into an operator workspace / IDE.
 - Execution Guardrails:
   - Prefer view-model adapters and render budgets over raw packet dumps.
   - Preserve CLI parity and label discipline.
-- Remaining phases (精簡):
-  - Phase 769: adapt `apps/dashboard` workspace into the first operator shell
-  - Phase 774: realign dashboard status panel to tier model
-  - Phase 780: add one bounded operator walkthrough pack
-  - Phase 784: add one bounded retrieval-preview strip
-- Deferred: Tier-2 deep-governance drawer (Phase 770), memory panel subordination (781), command shelf (782), search boundary cue (783) — revisit after operator shell is proven useful
+- Status: baseline dashboard operator-shell lane landed through Phase 784; freeze this bucket unless a concrete workspace misread, role-parity regression, or operator-shell contradiction reopens it.
+- Landed follow-through:
+  - Phase 769: ~~adapt `apps/dashboard` workspace into the first operator shell~~ **done** (`apps/dashboard/frontend/pages/workspace.py`)
+  - Phase 774: ~~realign dashboard status panel to tier model~~ **done** (`apps/dashboard/frontend/components/status_panel.py`)
+  - Phase 780: ~~add one bounded operator walkthrough pack~~ **done** (`docs/plans/tonesoul_operator_walkthrough_pack_2026-04-06.md`, `apps/dashboard/frontend/utils/session_start.py`, `apps/dashboard/frontend/pages/workspace.py`)
+  - Phase 784: ~~add one bounded retrieval-preview strip~~ **done** (`apps/dashboard/frontend/pages/workspace.py`, `apps/dashboard/frontend/utils/search.py`)
+- Historical supporting phases already landed: 770-773, 781-783.
+- Reopen rule: do not treat this bucket as an active short board again unless the dashboard/operator shell starts misreading authority, retrieval provenance, or tier boundaries.
 
 ## Active Program: Knowledge Layer Foundation (2026-04-06)
 > Trimmed from: Research-Driven Memory Interop And Knowledge Layer
 
 - Program Goal: define the boundary between raw sources, compiled knowledge, and operator retrieval so they stop blurring.
-- Remaining phases (精簡):
-  - Phase 787: define knowledge-layer source taxonomy and parking policy
-  - Phase 788: define compiled-knowledge landing-zone spec
-  - Phase 789: define bounded operator-retrieval query contract
-- Deferred: cross-consumer drift validation (786), surface-versioning (785), launch-health trend (778), internal-state observability (779) — revisit after knowledge boundary is clear
+- Status: core boundary lane landed through Phase 791; defer live retrieval/runtime expansion until a later program reopens it.
+- Follow-through:
+  - Phase 787: ~~define knowledge-layer source taxonomy and parking policy~~ **done** (`docs/architecture/TONESOUL_KNOWLEDGE_LAYER_SOURCE_TAXONOMY_AND_PARKING_CONTRACT.md`)
+  - Phase 788: ~~define compiled-knowledge landing-zone spec~~ **done** (`docs/architecture/TONESOUL_COMPILED_KNOWLEDGE_LANDING_ZONE_SPEC.md`)
+  - Phase 789: ~~define bounded operator-retrieval query contract~~ **done** (`docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md`)
+  - Phase 790: ~~establish first Foundation Layer entry pack~~ **done** (`docs/foundation/README.md` + 6 thin guides)
+  - Phase 791: ~~publish four-pressure convergence map~~ **done** (`docs/plans/tonesoul_four_pressure_point_convergence_map_2026-04-14.md`)
+  - Phase 792: ~~land measurable four-pressure audit + structured quickstart smoke demo~~ **done** (`scripts/run_tonesoul_convergence_audit.py`, `examples/quickstart.py --json`)
+  - Phase 793: ~~tighten formula honesty taxonomy and calibrate pseudo-formula audit~~ **done** (`README.md`, `docs/GLOSSARY.md`, `docs/MATH_FOUNDATIONS.md`, `scripts/run_tonesoul_convergence_audit.py`)
+  - Phase 794: ~~extract runtime adapter normalization seam~~ **done** (`tonesoul/runtime_adapter_normalization.py`, `tests/test_runtime_adapter_normalization.py`)
+  - Phase 795: ~~extract runtime adapter routing seam~~ **done** (`tonesoul/runtime_adapter_routing.py`, `tests/test_runtime_adapter_routing.py`)
+  - Phase 796: ~~extract runtime adapter subject-refresh seam~~ **done** (`tonesoul/runtime_adapter_subject_refresh.py`, `tests/test_runtime_adapter_subject_refresh.py`)
+- Deferred: cross-consumer drift validation (786), surface-versioning (785), launch-health trend (778), internal-state observability (779) -- revisit after knowledge boundary is clear
 
 ## Active Program: Self-Improvement Loop v0 (2026-04-06)
 - Program Goal: let ToneSoul improve bounded operator/runtime surfaces through explicit evaluation, experiment lineage, and promotion discipline.
 - Execution Guardrails:
   - Treat this as bounded improvement for operator surfaces, not identity-rewrite.
   - Keep `R-memory`, `compiled knowledge`, `experiment lineage`, and `canonical governance truth` visibly separate.
-- Foundation (已完成): evaluator harness, experiment registry, mutation-space contract, analyzer gate, promotion-ready result surface, dashboard cue, shell boundary guard
-- Trial Execution Pattern: `admit candidate → run trial → classify result → register in lineage`
-- Progress: **17 trials promoted, 1 parked** (as of 2026-04-08, by Codex)
-  - Eighteenth candidate admitted. See `docs/status/self_improvement_trial_wave_latest.json` for current state.
-- Next: continue trial waves as new safe candidates emerge. Each trial follows the same admit→run→classify→register pattern; no need to list each one as a separate phase.
+- Foundation: evaluator harness, experiment registry, mutation-space contract, analyzer gate, promotion-ready result surface, dashboard cue, shell boundary guard
+- Trial Execution Pattern: `admit candidate -> run trial -> classify result -> register in lineage`
+- Progress: **18 trials promoted, 1 parked** (as of 2026-04-16, per `docs/status/self_improvement_trial_wave_latest.json`)
+- Current posture: no new admitted candidate is currently visible in the latest status surface; reuse the existing promotion limits and replay rules instead of inventing a new candidate ad hoc.
+- Next: admit one next bounded candidate only if it improves operator/runtime packaging without reopening governance, identity, or transport mythology. Each trial still follows `admit -> run -> classify -> register`; no need to list each one as a separate phase.
 
 ---
 
@@ -72,29 +99,30 @@
 - Collaborator-beta preflight, entry-validation, discoverable beta-facing status surfaces
 - Low-drift anchor / observer-window baseline
 - Outer-shell preflight chain for shared edits, publish/push, task-board parking
-- Self-improvement foundation + 17 promoted trials
+- Self-improvement foundation + 18 promoted trials
 - Governance-depth routing (light/standard/full) + grounding check + verification fail-stop
 - Cross-agent consistency wave (7/7 checks passing)
-- **紅隊審計 round 1+2: 17/18 findings fixed** (only #14 vow semantic analysis deferred)
+- Multi-agent review rounds 1+2: 17/18 findings fixed (only #14 vow semantic analysis deferred)
 
 **Current short board:**
-- Launch readiness: Phase 726 go/no-go review is the next meaningful milestone
-- Real-world usage validation: one strong external/non-creator bounded cycle now exists; next repeat should exercise a dual-surface lower-context task shape before any claim widening
+- Self-improvement loop: admit one next bounded candidate only if it improves operator/runtime packaging without reopening governance, identity, or transport mythology
+- Launch readiness: current collaborator-beta launch-operations surface is consolidated; keep it aligned and do not widen launch claims until blocked overclaims move
+- Real-world usage validation: three clean external/non-creator bounded cycles now exist across three task shapes; collaborator beta remains CONDITIONAL GO, public launch stays deferred, and launch claims stay evidence-bounded
 
-**Archived programs (已歸檔):**
-- R-Memory Maturation Roadmap (Phase 654-698) — baseline-frozen
-- Cross-Surface Consistency And Theme Rotation (Phase 713-719) — baseline-frozen
-- Consistency-First Governance Depth (Phase 848-854) — fully closed
+**Archived programs:**
+- R-Memory Maturation Roadmap (Phase 654-698) -- baseline-frozen
+- Cross-Surface Consistency And Theme Rotation (Phase 713-719) -- baseline-frozen
+- Consistency-First Governance Depth (Phase 848-854) -- fully closed
 - See `docs/chronicles/` for details
 
 ## Archive Index
 
 > Completed phases are archived in `docs/chronicles/`:
 
-- [task_archive_phase_001-100.md](docs/chronicles/task_archive_phase_001-100.md) — Phase 76-100
-- [task_archive_phase_101-200.md](docs/chronicles/task_archive_phase_101-200.md) — Phase 106-200
-- [task_archive_phase_201-300.md](docs/chronicles/task_archive_phase_201-300.md) — Phase 201-300
-- [task_archive_phase_301-400.md](docs/chronicles/task_archive_phase_301-400.md) — Phase 301-400
-- [task_archive_phase_401-500.md](docs/chronicles/task_archive_phase_401-500.md) — Phase 401-500
-- [task_archive_phase_501-600.md](docs/chronicles/task_archive_phase_501-600.md) — Phase 501-569
-- [task_archive_phase_570-854.md](docs/chronicles/task_archive_phase_570-854.md) — Phase 570-854 (2026-03-20 to 2026-04-08)
+- [task_archive_phase_001-100.md](docs/chronicles/task_archive_phase_001-100.md) -- Phase 76-100
+- [task_archive_phase_101-200.md](docs/chronicles/task_archive_phase_101-200.md) -- Phase 106-200
+- [task_archive_phase_201-300.md](docs/chronicles/task_archive_phase_201-300.md) -- Phase 201-300
+- [task_archive_phase_301-400.md](docs/chronicles/task_archive_phase_301-400.md) -- Phase 301-400
+- [task_archive_phase_401-500.md](docs/chronicles/task_archive_phase_401-500.md) -- Phase 401-500
+- [task_archive_phase_501-600.md](docs/chronicles/task_archive_phase_501-600.md) -- Phase 501-569
+- [task_archive_phase_570-854.md](docs/chronicles/task_archive_phase_570-854.md) -- Phase 570-854 (2026-03-20 to 2026-04-08)
