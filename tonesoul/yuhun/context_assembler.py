@@ -25,7 +25,6 @@ from typing import Optional
 
 from tonesoul.yuhun.dpr import DPRResult, RoutingDecision
 
-
 # ─────────────────────────────────────────────
 # 禁止源清單（永遠不進提示詞）
 # ─────────────────────────────────────────────
@@ -43,6 +42,7 @@ FORBIDDEN_PREFIXES = (
 
 class ContextViolationError(Exception):
     """context 來源違反 CONTEXT_BUDGET_SPEC 禁止清單"""
+
     pass
 
 
@@ -52,8 +52,8 @@ class ContextViolationError(Exception):
 
 _CONFLICT_CONTRACT_MAP = {
     "legal_ethics": "docs/architecture/TONESOUL_ADAPTIVE_DELIBERATION_MODE_CONTRACT.md",
-    "uncertainty":  "docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
-    "research":     "docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
+    "uncertainty": "docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
+    "research": "docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md",
 }
 
 _LEGAL_KEYWORDS = {"法律", "倫理", "隱私", "個資", "legal", "ethics", "privacy"}
@@ -77,6 +77,7 @@ def _classify_conflict_type(triggers: list[str]) -> str:
 # 輸出結構
 # ─────────────────────────────────────────────
 
+
 @dataclass
 class ContextPackage:
     """
@@ -89,6 +90,7 @@ class ContextPackage:
         3: contracts      — 相關架構契約摘要（COUNCIL_PATH 才帶）
         4: council_frame  — 議會框架摘要（COUNCIL_PATH 才帶）
     """
+
     routing: RoutingDecision
     user_request: str
     axioms_content: str = ""
@@ -121,6 +123,7 @@ class ContextPackage:
 # 驗證器
 # ─────────────────────────────────────────────
 
+
 def validate_context_sources(sources: list[str], repo_root: Optional[Path] = None) -> bool:
     """
     驗證 context 來源不包含禁止源
@@ -150,6 +153,7 @@ def validate_context_sources(sources: list[str], repo_root: Optional[Path] = Non
 # ─────────────────────────────────────────────
 # 核心組裝器
 # ─────────────────────────────────────────────
+
 
 class ContextAssembler:
     """
@@ -235,13 +239,33 @@ class ContextAssembler:
         """
         Layer 2：嘗試從 WorldSense 取穩定錨點記憶
 
+        WorldSense.stable_anchors() 回傳 StableAnchor dataclass，
+        包含 home_vector, low_drift_steps, mean_drift, stability_score。
+        這裡將其轉為 LLM 可讀的字串格式。
+
+        top_n: 目前未使用（WorldSense 不支援 top_n），留作未來擴充
         失敗時靜默返回空列表（錨點記憶是可選的）
         """
         try:
             from tonesoul.yuhun.world_sense import WorldSense
+
             ws = WorldSense()
-            anchors = ws.stable_anchors(top_n=top_n)
-            return [str(a) for a in anchors]
+            anchor = ws.stable_anchors()
+
+            # 無觀測資料時不輸出錨點（穩定分數為 0 且沒有低漂移步驟）
+            if anchor.stability_score == 0.0 and not anchor.low_drift_steps:
+                return []
+
+            lines = [
+                f"穩定性分數：{anchor.stability_score:.0%}",
+                f"平均漂移值：{anchor.mean_drift:.3f}",
+                f"語義原點（home_vector）：{anchor.home_vector}",
+            ]
+            if anchor.low_drift_steps:
+                steps_str = ", ".join(str(s) for s in anchor.low_drift_steps[:top_n])
+                lines.append(f"低漂移步驟（最近 {top_n} 個）：{steps_str}")
+
+            return lines
         except Exception:
             return []
 

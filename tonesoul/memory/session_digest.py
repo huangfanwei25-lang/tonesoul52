@@ -12,12 +12,7 @@ from uuid import uuid4
 
 
 def _utcnow_iso() -> str:
-    return (
-        datetime.now(timezone.utc)
-        .replace(microsecond=0)
-        .isoformat()
-        .replace("+00:00", "Z")
-    )
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def _tension_summary(events: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -40,9 +35,7 @@ def _tension_summary(events: List[Dict[str, Any]]) -> Dict[str, Any]:
         "max_severity": round(max(severities), 4),
         "avg_severity": round(sum(severities) / len(severities), 4),
         "resolved_count": len(resolved),
-        "unresolved_topics": [
-            str(e.get("topic", "unknown")) for e in unresolved
-        ],
+        "unresolved_topics": [str(e.get("topic", "unknown")) for e in unresolved],
     }
 
 

@@ -9,9 +9,7 @@ from pathlib import Path
 def _load_script_module():
     module_name = "test_run_successor_entry_validation_wave_module"
     module_path = (
-        Path(__file__).resolve().parents[1]
-        / "scripts"
-        / "run_successor_entry_validation_wave.py"
+        Path(__file__).resolve().parents[1] / "scripts" / "run_successor_entry_validation_wave.py"
     )
     spec = importlib.util.spec_from_file_location(module_name, module_path)
     assert spec is not None
@@ -80,6 +78,4 @@ def test_main_writes_optional_outputs(tmp_path: Path, capsys) -> None:
     assert json_out.exists()
     assert markdown_out.exists()
     assert payload["overall_status"] == "pass"
-    assert "observer_stable_is_execution_permission" in markdown_out.read_text(
-        encoding="utf-8"
-    )
+    assert "observer_stable_is_execution_permission" in markdown_out.read_text(encoding="utf-8")

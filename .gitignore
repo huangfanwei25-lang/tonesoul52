@@ -151,3 +151,6 @@ _consolidate_plans.py
 
 # Knowledge graph index (rebuildable artifact — run graphify-out/build_graph.py to regenerate)
 graphify-out/
+
+# YUHUN council agent definitions (private-track, dual-track boundary)
+.agent/agents/

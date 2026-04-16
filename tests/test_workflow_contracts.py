@@ -421,7 +421,7 @@ def test_commit_attribution_workflow_uses_backfill_schedule_path() -> None:
     assert "python scripts/verify_incremental_commit_attribution.py --strict" in run_cmd
     run_env = run_step.get("env", {})
     assert isinstance(run_env, dict)
-    assert run_env.get("COMMIT_ATTRIBUTION_ANCHOR") == "bed388c32c7c21826c6fa7525074d5caae672da8"
+    assert run_env.get("COMMIT_ATTRIBUTION_ANCHOR") == "72d8ccbf1b850bbc9d5e2abb500ff8738d42a109"
 
 
 def test_test_workflow_uses_black_gate_script_and_uploads_artifact() -> None:

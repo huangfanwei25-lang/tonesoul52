@@ -32,7 +32,9 @@ def build_claude_entry_adapter(*, session_start_payload: dict[str, Any]) -> dict
 
     payload = dict(session_start_payload or {})
     consumer_contract = dict(payload.get("consumer_contract") or {})
-    surface_versioning = dict(payload.get("surface_versioning") or {}) or build_surface_versioning_readout()
+    surface_versioning = (
+        dict(payload.get("surface_versioning") or {}) or build_surface_versioning_readout()
+    )
     canonical_center = dict(payload.get("canonical_center") or {})
     closeout_attention = dict(payload.get("closeout_attention") or {})
     mutation_preflight = dict(payload.get("mutation_preflight") or {})

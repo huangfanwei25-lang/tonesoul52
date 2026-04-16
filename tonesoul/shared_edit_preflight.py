@@ -62,9 +62,7 @@ def _claim_overlap_records(
             "summary": str(claim.get("summary", "")),
             "claim_paths": claim_paths,
             "overlap_paths": overlapping_paths,
-            "ownership": "self"
-            if str(claim.get("agent", "")).strip() == agent_id
-            else "other",
+            "ownership": "self" if str(claim.get("agent", "")).strip() == agent_id else "other",
         }
         if record["ownership"] == "self":
             self_records.append(record)
@@ -73,21 +71,19 @@ def _claim_overlap_records(
     return self_records, other_records
 
 
-def _candidate_paths_covered(
-    *, candidate_paths: list[str], records: list[dict[str, Any]]
-) -> bool:
+def _candidate_paths_covered(*, candidate_paths: list[str], records: list[dict[str, Any]]) -> bool:
     for candidate_path in candidate_paths:
         if not any(candidate_path in list(record.get("overlap_paths") or []) for record in records):
             return False
     return True
 
 
-def _candidate_path_gaps(
-    *, candidate_paths: list[str], records: list[dict[str, Any]]
-) -> list[str]:
+def _candidate_path_gaps(*, candidate_paths: list[str], records: list[dict[str, Any]]) -> list[str]:
     gaps: list[str] = []
     for candidate_path in candidate_paths:
-        covered = any(candidate_path in list(record.get("overlap_paths") or []) for record in records)
+        covered = any(
+            candidate_path in list(record.get("overlap_paths") or []) for record in records
+        )
         if not covered and candidate_path not in gaps:
             gaps.append(candidate_path)
     return gaps
@@ -105,7 +101,7 @@ def _flatten_overlap_paths(records: list[dict[str, Any]]) -> list[str]:
 def _claim_command(agent_id: str, candidate_paths: list[str]) -> str:
     path_args = " ".join(f'--path "{path}"' for path in candidate_paths)
     return (
-        f'python scripts/run_task_claim.py claim <task_id> --agent {agent_id} '
+        f"python scripts/run_task_claim.py claim <task_id> --agent {agent_id} "
         f'--summary "..." {path_args}'
     ).strip()
 
@@ -139,9 +135,7 @@ def _build_working_style_consumer(playbook: dict[str, Any] | None) -> dict[str, 
 
     non_promotion_rule = str(playbook.get("non_promotion_rule", "")).strip()
     if not non_promotion_rule:
-        non_promotion_rule = (
-            "Do not promote the visible working-style playbook into vows, canonical rules, or durable identity."
-        )
+        non_promotion_rule = "Do not promote the visible working-style playbook into vows, canonical rules, or durable identity."
 
     return {
         "present": True,
@@ -165,9 +159,7 @@ def build_shared_edit_preflight(
     """Build a bounded shared-edit preflight answer from visible claims and paths."""
     normalized_candidate_paths = _clean_paths(list(candidate_paths or []))
     readiness_status = str(readiness.get("status", "unknown") or "unknown")
-    claim_recommendation = str(
-        task_track_hint.get("claim_recommendation", "unknown") or "unknown"
-    )
+    claim_recommendation = str(task_track_hint.get("claim_recommendation", "unknown") or "unknown")
     task_track = str(task_track_hint.get("suggested_track", "unclassified") or "unclassified")
     mutation_summary = str(mutation_preflight.get("summary_text", "") or "").strip()
     working_style_consumer = _build_working_style_consumer(working_style_playbook)
@@ -185,9 +177,7 @@ def build_shared_edit_preflight(
         candidate_paths=normalized_candidate_paths,
         records=self_records,
     )
-    claim_gap_paths = (
-        raw_claim_gap_paths if claim_recommendation == "required" else []
-    )
+    claim_gap_paths = raw_claim_gap_paths if claim_recommendation == "required" else []
     other_overlap_paths = _flatten_overlap_paths(other_records)
     decision_pressures = {
         "blocked_readiness": readiness_status == "blocked",
@@ -200,37 +190,29 @@ def build_shared_edit_preflight(
     if not normalized_candidate_paths:
         decision = "insufficient_input"
         decision_basis = "missing_candidate_paths"
-        receiver_rule = "Pass at least one repo-relative path before asking for shared-edit overlap guidance."
+        receiver_rule = (
+            "Pass at least one repo-relative path before asking for shared-edit overlap guidance."
+        )
         recommended_command = ""
     elif readiness_status == "blocked":
         decision = "blocked"
         decision_basis = "blocked_readiness"
-        receiver_rule = (
-            "Readiness is blocked, so do not mutate shared paths until the blocking condition is cleared."
-        )
+        receiver_rule = "Readiness is blocked, so do not mutate shared paths until the blocking condition is cleared."
         recommended_command = ""
     elif other_records:
         decision = "coordinate"
         decision_basis = "other_agent_overlap"
-        receiver_rule = (
-            "Visible claim/path overlap with another agent requires coordination before any shared edit."
-        )
+        receiver_rule = "Visible claim/path overlap with another agent requires coordination before any shared edit."
         recommended_command = "python scripts/run_task_claim.py list"
     elif claim_recommendation == "required" and not self_claim_covers_all:
         decision = "claim_first"
         decision_basis = "missing_self_claim_coverage"
-        receiver_rule = (
-            "This task track expects a claim before shared edits; no self-owned claim covers all candidate paths yet."
-        )
+        receiver_rule = "This task track expects a claim before shared edits; no self-owned claim covers all candidate paths yet."
         recommended_command = _claim_command(agent_id, normalized_candidate_paths)
     else:
         decision = "clear"
-        decision_basis = (
-            "self_claim_covers_all" if self_claim_covers_all else "no_visible_conflict"
-        )
-        receiver_rule = (
-            "No visible conflicting claim overlaps are present for these candidate paths. Continue with bounded edits and keep the claim discipline visible."
-        )
+        decision_basis = "self_claim_covers_all" if self_claim_covers_all else "no_visible_conflict"
+        receiver_rule = "No visible conflicting claim overlaps are present for these candidate paths. Continue with bounded edits and keep the claim discipline visible."
         recommended_command = (
             "python scripts/run_task_claim.py list"
             if self_records

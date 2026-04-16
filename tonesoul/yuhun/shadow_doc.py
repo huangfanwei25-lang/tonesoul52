@@ -15,10 +15,10 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
 
-
 # ─────────────────────────────────────────────
 # 枚舉類型
 # ─────────────────────────────────────────────
+
 
 class SafetyVerdict(str, Enum):
     PASS = "PASS"
@@ -29,7 +29,7 @@ class SafetyVerdict(str, Enum):
 class OutputMode(str, Enum):
     SINGLE_TRACK = "SINGLE_TRACK"
     DUAL_TRACK = "DUAL_TRACK"
-    TOOL_CALL = "TOOL_CALL"       # 法規空白 → 觸發外部工具
+    TOOL_CALL = "TOOL_CALL"  # 法規空白 → 觸發外部工具
 
 
 class RoutingDecision(str, Enum):
@@ -38,25 +38,26 @@ class RoutingDecision(str, Enum):
 
 
 class BlockerSeverity(str, Enum):
-    HARD = "HARD"    # 物理/法律上不可逾越
-    SOFT = "SOFT"    # 技術難度高但理論可克服
+    HARD = "HARD"  # 物理/法律上不可逾越
+    SOFT = "SOFT"  # 技術難度高但理論可克服
 
 
 # ─────────────────────────────────────────────
 # 子結構
 # ─────────────────────────────────────────────
 
+
 @dataclass
 class IntentFrame:
     raw_input: str
-    reconstructed_intent: str       # 補幀後 20 詞組以上
-    declarative_goal: str           # 轉化後的宣告式目標
-    verification_loop: str          # 如何驗證目標達成
+    reconstructed_intent: str  # 補幀後 20 詞組以上
+    declarative_goal: str  # 轉化後的宣告式目標
+    verification_loop: str  # 如何驗證目標達成
 
 
 @dataclass
 class L1Blocker:
-    type: str                       # physical | legal | data | technical
+    type: str  # physical | legal | data | technical
     description: str
     source: str
     severity: BlockerSeverity
@@ -64,7 +65,7 @@ class L1Blocker:
 
 @dataclass
 class L2Opportunity:
-    type: str                       # framework_shift | prerequisite_change | analogy | historical_precedent
+    type: str  # framework_shift | prerequisite_change | analogy | historical_precedent
     description: str
     confidence_level: str = "L2_THEORETICAL"
     prerequisite_changes: list[str] = field(default_factory=list)
@@ -73,18 +74,18 @@ class L2Opportunity:
 
 @dataclass
 class LogicianOutput:
-    verdict: str                    # BLOCK | CAUTION | PASS | INSUFFICIENT_DATA
-    confidence: float               # 0.0 - 1.0
-    resistance_score: float         # 0.0 - 1.0，通常 0.9 代表 90% 阻力
+    verdict: str  # BLOCK | CAUTION | PASS | INSUFFICIENT_DATA
+    confidence: float  # 0.0 - 1.0
+    resistance_score: float  # 0.0 - 1.0，通常 0.9 代表 90% 阻力
     L1_blockers: list[L1Blocker]
     summary: str
 
 
 @dataclass
 class CreatorOutput:
-    verdict: str                    # BREAKTHROUGH_FOUND | MARGINAL | NONE
+    verdict: str  # BREAKTHROUGH_FOUND | MARGINAL | NONE
     confidence: float
-    breakthrough_score: float       # 0.0 - 1.0，通常 0.1 代表 10% 可能
+    breakthrough_score: float  # 0.0 - 1.0，通常 0.1 代表 10% 可能
     L2_opportunities: list[L2Opportunity]
     summary: str
 
@@ -102,8 +103,8 @@ class SafetyOutput:
 
 @dataclass
 class TensionMetrics:
-    semantic_distance: float        # 0.0 - 1.0
-    logical_conflict_rate: float    # 0.0 - 1.0
+    semantic_distance: float  # 0.0 - 1.0
+    logical_conflict_rate: float  # 0.0 - 1.0
     routing_decision: RoutingDecision
     output_mode: OutputMode
 
@@ -117,11 +118,12 @@ class TrajectoryDigest:
     目的：讓 DreamEngine 的做夢材料不只是數值快照，也含「過程」
     規格：docs/architecture/CONTEXT_BUDGET_SPEC.md（Layer 2 來源）
     """
-    step_count: int = 0                      # 推演步驟數
-    tool_calls: list[str] = field(default_factory=list)   # 工具調用序列（壓縮名稱）
-    key_decisions: list[str] = field(default_factory=list) # 關鍵決策節點
-    compressed_summary: str = ""             # 最終壓縮摘要（< 200 tokens）
-    compression_ratio: float = 0.0           # 原始長度 / 壓縮後長度
+
+    step_count: int = 0  # 推演步驟數
+    tool_calls: list[str] = field(default_factory=list)  # 工具調用序列（壓縮名稱）
+    key_decisions: list[str] = field(default_factory=list)  # 關鍵決策節點
+    compressed_summary: str = ""  # 最終壓縮摘要（< 200 tokens）
+    compression_ratio: float = 0.0  # 原始長度 / 壓縮後長度
 
 
 @dataclass
@@ -144,6 +146,7 @@ class Lifecycle:
 # 主文件
 # ─────────────────────────────────────────────
 
+
 @dataclass
 class ShadowDocument:
     """
@@ -157,6 +160,7 @@ class ShadowDocument:
         doc.save()  # 寫入冷儲存
         payload = doc.to_empath()  # 給共情者的讀取格式
     """
+
     session_id: str
     timestamp: str
     intent_frame: IntentFrame
@@ -204,6 +208,7 @@ class ShadowDocument:
     def to_dict(self) -> dict:
         """序列化為 JSON 可存格式（Python 原生 dict）"""
         import dataclasses
+
         def _convert(obj):
             if dataclasses.is_dataclass(obj):
                 return {k: _convert(v) for k, v in dataclasses.asdict(obj).items()}
@@ -214,6 +219,7 @@ class ShadowDocument:
             elif isinstance(obj, dict):
                 return {k: _convert(v) for k, v in obj.items()}
             return obj
+
         return _convert(self)
 
     def to_empath(self) -> dict:
@@ -232,12 +238,21 @@ class ShadowDocument:
                 "logical_conflict_rate": self.tension_metrics.logical_conflict_rate,
                 "output_mode": self.tension_metrics.output_mode.value,
             },
-            "logician_summary": self.council_outputs.get("logician", {}).summary
-                if hasattr(self.council_outputs.get("logician", None), "summary") else None,
-            "creator_summary": self.council_outputs.get("creator", {}).summary
-                if hasattr(self.council_outputs.get("creator", None), "summary") else None,
-            "safety_verdict": self.council_outputs.get("safety", None).verdict.value
-                if self.council_outputs.get("safety") else None,
+            "logician_summary": (
+                self.council_outputs.get("logician", {}).summary
+                if hasattr(self.council_outputs.get("logician", None), "summary")
+                else None
+            ),
+            "creator_summary": (
+                self.council_outputs.get("creator", {}).summary
+                if hasattr(self.council_outputs.get("creator", None), "summary")
+                else None
+            ),
+            "safety_verdict": (
+                self.council_outputs.get("safety", None).verdict.value
+                if self.council_outputs.get("safety")
+                else None
+            ),
             "legal_gap": self.legal_profile.gap_detected,
             "trajectory": {
                 "step_count": self.trajectory_digest.step_count,

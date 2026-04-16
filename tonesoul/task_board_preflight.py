@@ -64,46 +64,37 @@ def build_task_board_preflight(
         classification = "human_review"
         reasons.append("target_is_not_task_md_or_docs_plans")
 
-    if normalized_kind in _DOCS_PLANS_FIRST_KINDS and "proposal_not_ratified_for_task_md" not in reasons:
+    if (
+        normalized_kind in _DOCS_PLANS_FIRST_KINDS
+        and "proposal_not_ratified_for_task_md" not in reasons
+    ):
         reasons.append("proposal_kind_defaults_to_docs_plans")
 
     if classification == "task_md_allowed":
         suggested_destination = "task.md"
         task_md_write_allowed = True
         promotion_posture = "ratified_followthrough_only"
-        receiver_note = (
-            "This looks like ratified short-board follow-through. Keep the task.md change narrow and aligned with the visible short board."
-        )
+        receiver_note = "This looks like ratified short-board follow-through. Keep the task.md change narrow and aligned with the visible short board."
     elif classification == "parking_clear":
         suggested_destination = normalized_target
         task_md_write_allowed = False
         promotion_posture = "parking_only"
-        receiver_note = (
-            "This idea belongs in docs/plans for now. Keep it out of task.md until a human or accepted program explicitly ratifies it."
-        )
+        receiver_note = "This idea belongs in docs/plans for now. Keep it out of task.md until a human or accepted program explicitly ratifies it."
     elif classification == "docs_plans_first":
         suggested_destination = "docs/plans/"
         task_md_write_allowed = False
         promotion_posture = "parking_only"
-        receiver_note = (
-            "This looks like a new idea or unratified follow-up. Route it to docs/plans first instead of competing with the active short board in task.md."
-        )
+        receiver_note = "This looks like a new idea or unratified follow-up. Route it to docs/plans first instead of competing with the active short board in task.md."
     else:
         suggested_destination = "human_review"
         task_md_write_allowed = False
         promotion_posture = "human_review_required"
         if "current_short_board_not_visible" in reasons:
-            receiver_note = (
-                "Do not mutate task.md yet. The current short board is not visible, so the repo cannot confirm that this change belongs in the ratified board."
-            )
+            receiver_note = "Do not mutate task.md yet. The current short board is not visible, so the repo cannot confirm that this change belongs in the ratified board."
         elif "readiness_blocked" in reasons:
-            receiver_note = (
-                "Do not mutate task.md yet. Readiness is blocked, so even a plausible board update needs human review before it changes the active execution lane."
-            )
+            receiver_note = "Do not mutate task.md yet. Readiness is blocked, so even a plausible board update needs human review before it changes the active execution lane."
         else:
-            receiver_note = (
-                "Do not mutate task.md yet. The current short board or readiness state is not clear enough to decide automatically."
-            )
+            receiver_note = "Do not mutate task.md yet. The current short board or readiness state is not clear enough to decide automatically."
 
     return {
         "present": True,

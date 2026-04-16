@@ -19,9 +19,7 @@ def build_publish_push_preflight(
     launch_claim_posture = launch_claims_surface.get("launch_claim_posture") or {}
 
     readiness_status = str(readiness.get("status", "unknown") or "unknown")
-    repo_classification = str(
-        repo_state_awareness.get("classification", "unknown") or "unknown"
-    )
+    repo_classification = str(repo_state_awareness.get("classification", "unknown") or "unknown")
     closeout_status = str(compactions_surface.get("closeout_status", "") or "").strip()
     receiver_obligation = str(
         compactions_surface.get("receiver_obligation", "unknown") or "unknown"

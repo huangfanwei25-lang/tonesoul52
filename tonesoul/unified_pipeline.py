@@ -188,6 +188,7 @@ class UnifiedPipeline:
         if self._dpr is None:
             try:
                 from tonesoul.yuhun.dpr import route as dpr_route
+
                 self._dpr = dpr_route
             except Exception as e:
                 self._exc_trace.record("unified_pipeline", "_get_dpr", e)
@@ -198,6 +199,7 @@ class UnifiedPipeline:
         if self._context_assembler is None:
             try:
                 from tonesoul.yuhun.context_assembler import ContextAssembler
+
                 self._context_assembler = ContextAssembler(repo_root=self._repo_root)
             except Exception as e:
                 self._exc_trace.record("unified_pipeline", "_get_context_assembler", e)

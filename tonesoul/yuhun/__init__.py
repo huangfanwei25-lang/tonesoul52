@@ -2,7 +2,12 @@
 YUHUN Core Protocol v1.0 — yuhun 模組入口
 """
 
-from .context_assembler import ContextAssembler, ContextPackage, ContextViolationError, validate_context_sources
+from .context_assembler import (
+    ContextAssembler,
+    ContextPackage,
+    ContextViolationError,
+    validate_context_sources,
+)
 from .dpr import DPRResult, RoutingDecision, route
 from .shadow_doc import (
     BlockerSeverity,

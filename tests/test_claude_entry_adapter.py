@@ -44,8 +44,14 @@ def test_build_claude_entry_adapter_preserves_first_hop_order() -> None:
                 "required_read_order": [
                     {"surface": "readiness", "receiver_rule": "gate first"},
                     {"surface": "canonical_center", "receiver_rule": "read parent truth"},
-                    {"surface": "closeout_attention", "receiver_rule": "read closeout before summary"},
-                    {"surface": "mutation_preflight", "receiver_rule": "check side effects before action"},
+                    {
+                        "surface": "closeout_attention",
+                        "receiver_rule": "read closeout before summary",
+                    },
+                    {
+                        "surface": "mutation_preflight",
+                        "receiver_rule": "check side effects before action",
+                    },
                 ],
                 "misread_guards": [
                     {
@@ -78,7 +84,10 @@ def test_build_claude_entry_adapter_preserves_first_hop_order() -> None:
     assert adapter["must_read_now"][0]["surface"] == "readiness"
     assert adapter["must_not_assume"][0]["name"] == "compaction_not_completion"
     assert adapter["must_correct_first"]["name"] == "compaction_not_completion"
-    assert adapter["must_correct_first"]["trigger_surface"] == "closeout_attention + compaction summary"
+    assert (
+        adapter["must_correct_first"]["trigger_surface"]
+        == "closeout_attention + compaction summary"
+    )
     assert adapter["must_correct_first"]["operator_action"] == "read closeout first"
     assert adapter["priority_correction"]["name"] == "compaction_not_completion"
     assert adapter["priority_correction"]["blocked_assumption"] == (

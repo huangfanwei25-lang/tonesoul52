@@ -46,34 +46,20 @@ def _build_next_focus(
     source_family = "mutation_preflight_hooks"
     focus_pressures = [f"readiness={readiness_status}", f"task_track={task_track}"]
     operator_action = "Follow the currently surfaced bounded hook before widening context or opening a broader redesign lane."
-    reason = (
-        "Follow the next bounded mutation hook surfaced by mutation_preflight instead of assuming task-board parking is always the shortest remaining lane."
-    )
+    reason = "Follow the next bounded mutation hook surfaced by mutation_preflight instead of assuming task-board parking is always the shortest remaining lane."
 
     if target.startswith("shared_code_edit."):
         focus_pressures.append(f"claim_recommendation={claim_recommendation}")
-        operator_action = (
-            "Run the shared-edit preflight first so path overlap and claim gaps are resolved before broader mutation."
-        )
-        reason = (
-            "The current shortest board is still shared mutation clarity, so the successor should resolve overlap pressure before broader shell work."
-        )
+        operator_action = "Run the shared-edit preflight first so path overlap and claim gaps are resolved before broader mutation."
+        reason = "The current shortest board is still shared mutation clarity, so the successor should resolve overlap pressure before broader shell work."
     elif target.startswith("publish_push."):
         focus_pressures.append("outward_action_review=yes")
-        operator_action = (
-            "Run the publish/push preflight first so review cues, honesty cues, and hard blocks are separated before any outward action."
-        )
-        reason = (
-            "The current bounded friction is outward action posture, so publish/push review should be resolved before broader shell work."
-        )
+        operator_action = "Run the publish/push preflight first so review cues, honesty cues, and hard blocks are separated before any outward action."
+        reason = "The current bounded friction is outward action posture, so publish/push review should be resolved before broader shell work."
     elif target.startswith("task_board."):
         focus_pressures.append("parking_scope_review=yes")
-        operator_action = (
-            "Run the task-board preflight first so new ideas are parked or ratified without mutating the short board by assumption."
-        )
-        reason = (
-            "The current bounded friction is task-board parking scope, so the successor should resolve parking posture before broader shell work."
-        )
+        operator_action = "Run the task-board preflight first so new ideas are parked or ratified without mutating the short board by assumption."
+        reason = "The current bounded friction is task-board parking scope, so the successor should resolve parking posture before broader shell work."
 
     return {
         "target": target,
@@ -105,9 +91,7 @@ def build_subsystem_parity_readout(
     compaction_surface = surfaces.get("compactions") or {}
 
     readiness_status = str(readiness.get("status", "unknown") or "unknown")
-    claim_recommendation = str(
-        task_track_hint.get("claim_recommendation", "unknown") or "unknown"
-    )
+    claim_recommendation = str(task_track_hint.get("claim_recommendation", "unknown") or "unknown")
     task_track = str(task_track_hint.get("suggested_track", "unclassified") or "unclassified")
     working_style_status = str(
         working_style_validation.get("status", "insufficient") or "insufficient"
@@ -139,7 +123,7 @@ def build_subsystem_parity_readout(
             status="baseline",
             current_signal=(
                 "short_board_visible"
-                if bool((canonical_center.get('current_short_board') or {}).get('present'))
+                if bool((canonical_center.get("current_short_board") or {}).get("present"))
                 else "short_board_not_visible"
             ),
             strongest_truth="Stable/contested/stale observer window exists and is regression-backed.",

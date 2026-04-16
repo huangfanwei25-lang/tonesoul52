@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-08T15:38:31Z",
+  "generated_at": "2026-04-14T00:03:21Z",
   "overall_ok": true,
   "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
   "config": {
@@ -46,20 +46,96 @@
   "collection": {
     "ok": true,
     "mode": "git",
-    "command": "git -c core.quotepath=off diff --name-status --cached --diff-filter=ACMRD",
+    "command": "git -c core.quotepath=off show --pretty=format: --name-status --diff-filter=ACMRD HEAD",
     "exit_code": 0,
     "duration_seconds": 0.03,
-    "stdout_tail": "",
+    "stdout_tail": "D\t.agent/agents/yuhun_creator.md\nD\t.agent/agents/yuhun_empath.md\nD\t.agent/agents/yuhun_logician.md\nD\t.agent/agents/yuhun_safety_guard.md\nM\t.gitignore\nM\ttonesoul/unified_pipeline.py\nM\ttonesoul/yuhun/__init__.py\nA\ttonesoul/yuhun/context_assembler.py\nM\ttonesoul/yuhun/shadow_doc.py",
     "stderr_tail": "",
-    "entries": [],
-    "paths": []
+    "entries": [
+      {
+        "status_code": "D",
+        "status": "D",
+        "paths": [
+          ".agent/agents/yuhun_creator.md"
+        ]
+      },
+      {
+        "status_code": "D",
+        "status": "D",
+        "paths": [
+          ".agent/agents/yuhun_empath.md"
+        ]
+      },
+      {
+        "status_code": "D",
+        "status": "D",
+        "paths": [
+          ".agent/agents/yuhun_logician.md"
+        ]
+      },
+      {
+        "status_code": "D",
+        "status": "D",
+        "paths": [
+          ".agent/agents/yuhun_safety_guard.md"
+        ]
+      },
+      {
+        "status_code": "M",
+        "status": "M",
+        "paths": [
+          ".gitignore"
+        ]
+      },
+      {
+        "status_code": "M",
+        "status": "M",
+        "paths": [
+          "tonesoul/unified_pipeline.py"
+        ]
+      },
+      {
+        "status_code": "M",
+        "status": "M",
+        "paths": [
+          "tonesoul/yuhun/__init__.py"
+        ]
+      },
+      {
+        "status_code": "A",
+        "status": "A",
+        "paths": [
+          "tonesoul/yuhun/context_assembler.py"
+        ]
+      },
+      {
+        "status_code": "M",
+        "status": "M",
+        "paths": [
+          "tonesoul/yuhun/shadow_doc.py"
+        ]
+      }
+    ],
+    "paths": [
+      ".agent/agents/yuhun_creator.md",
+      ".agent/agents/yuhun_empath.md",
+      ".agent/agents/yuhun_logician.md",
+      ".agent/agents/yuhun_safety_guard.md",
+      ".gitignore",
+      "tonesoul/unified_pipeline.py",
+      "tonesoul/yuhun/__init__.py",
+      "tonesoul/yuhun/context_assembler.py",
+      "tonesoul/yuhun/shadow_doc.py"
+    ]
   },
   "metrics": {
-    "changed_path_count": 0,
+    "changed_path_count": 9,
     "violation_count": 0,
-    "private_deletion_count": 0
+    "private_deletion_count": 4
   },
   "violations": [],
   "issues": [],
-  "warnings": []
+  "warnings": [
+    "detected 4 deletions under blocked private paths (allowed cleanup)"
+  ]
 }

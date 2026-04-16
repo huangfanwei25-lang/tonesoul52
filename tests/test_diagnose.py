@@ -727,14 +727,20 @@ def test_full_diagnostic_is_cp950_safe_and_includes_shared_runtime(monkeypatch) 
     assert "launch_health_trend_posture:" in report
     assert "metric=coordination_backend_alignment:trendable" in report
     assert "metric=public_launch_forecast:forecast_later" in report
-    assert "watch=coordination_backend_alignment:alignment_stays_consistent_across_validation_waves" in report
+    assert (
+        "watch=coordination_backend_alignment:alignment_stays_consistent_across_validation_waves"
+        in report
+    )
     assert "blocker=continuity_effectiveness:runtime_present" in report
     assert "action=Use current launch language as collaborator-beta-only" in report
     assert "internal_state_observability:" in report
     assert "coordination=low drift=medium stop=medium deliberation=visible" in report
     assert "evidence=risk_posture:stable" in report
     assert "watch=coordination_strain:low" in report
-    assert "action=Keep shared side effects bounded and keep readiness/claim checks ahead of broader edits." in report
+    assert (
+        "action=Keep shared side effects bounded and keep readiness/claim checks ahead of broader edits."
+        in report
+    )
     assert "routing_summary:" in report
     assert "subject_refresh:" in report
     assert (

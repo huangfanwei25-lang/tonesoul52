@@ -10,7 +10,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
 
 from .shadow_doc import (
     CreatorOutput,
@@ -23,9 +22,9 @@ from .shadow_doc import (
 
 
 class TensionLevel(str, Enum):
-    CONVERGENCE = "CONVERGENCE"        # < 20% 語義距離 → 單軌整合
-    MODERATE = "MODERATE"              # 20-80% → 帶標注整合
-    EXTREME_DIVERGENCE = "EXTREME"     # > 80% 或 互斥率 > 90% → 雙軌矩陣
+    CONVERGENCE = "CONVERGENCE"  # < 20% 語義距離 → 單軌整合
+    MODERATE = "MODERATE"  # 20-80% → 帶標注整合
+    EXTREME_DIVERGENCE = "EXTREME"  # > 80% 或 互斥率 > 90% → 雙軌矩陣
 
 
 @dataclass
@@ -41,6 +40,7 @@ class VoDResult:
 # 語義距離估算（輕量化版本，不依賴向量模型）
 # 生產環境應替換為真實的嵌入模型計算
 # ─────────────────────────────────────────────
+
 
 def _estimate_semantic_distance(logician: LogicianOutput, creator: CreatorOutput) -> float:
     """
@@ -69,7 +69,8 @@ def _estimate_logical_conflict_rate(logician: LogicianOutput, creator: CreatorOu
     """
     # 如果理則家的 HARD blocker 數量多，互斥率高
     hard_blockers = sum(
-        1 for b in logician.L1_blockers
+        1
+        for b in logician.L1_blockers
         if hasattr(b, "severity") and str(b.severity) in ("HARD", "BlockerSeverity.HARD")
     )
     opportunities = len(creator.L2_opportunities)
@@ -84,6 +85,7 @@ def _estimate_logical_conflict_rate(logician: LogicianOutput, creator: CreatorOu
 # ─────────────────────────────────────────────
 # 輸出格式化
 # ─────────────────────────────────────────────
+
 
 def _format_single_track(
     logician: LogicianOutput,
@@ -112,12 +114,15 @@ def _format_dual_track(
     禁止平均化，禁止省略任一軌道。
     """
     # 構建 Track A 詳情
-    track_a_details = "\n".join(
-        f"  • [{b.severity if hasattr(b, 'severity') else 'HARD'}] "
-        f"{b.description if hasattr(b, 'description') else str(b)} "
-        f"（{b.source if hasattr(b, 'source') else ''}）"
-        for b in logician.L1_blockers
-    ) or "  • 理則家已識別具體限制（詳見 Shadow Document）"
+    track_a_details = (
+        "\n".join(
+            f"  • [{b.severity if hasattr(b, 'severity') else 'HARD'}] "
+            f"{b.description if hasattr(b, 'description') else str(b)} "
+            f"（{b.source if hasattr(b, 'source') else ''}）"
+            for b in logician.L1_blockers
+        )
+        or "  • 理則家已識別具體限制（詳見 Shadow Document）"
+    )
 
     # 構建 Track B 詳情
     if creator.L2_opportunities:
@@ -161,6 +166,7 @@ def _format_dual_track(
 # 主函數
 # ─────────────────────────────────────────────
 
+
 def assess_divergence(
     logician: LogicianOutput,
     creator: CreatorOutput,
@@ -186,8 +192,7 @@ def assess_divergence(
     if safety.verdict == SafetyVerdict.BLOCK:
         shadow_doc.lifecycle.kv_cache_flushed = True
         raise ValueError(
-            f"Safety Guard BLOCK: {safety.reason}\n"
-            f"紅線觸發：{safety.red_lines_triggered}"
+            f"Safety Guard BLOCK: {safety.reason}\n" f"紅線觸發：{safety.red_lines_triggered}"
         )
 
     # 計算張力指標
@@ -236,7 +241,7 @@ def assess_divergence(
 # ─────────────────────────────────────────────
 
 if __name__ == "__main__":
-    from .shadow_doc import BlockerSeverity, L1Blocker, L2Opportunity
+    from .shadow_doc import BlockerSeverity, L1Blocker
 
     # 模擬極端分歧場景
     logician = LogicianOutput(
@@ -244,8 +249,15 @@ if __name__ == "__main__":
         confidence=0.92,
         resistance_score=0.90,
         L1_blockers=[
-            L1Blocker("legal", "現行個資法第15條明確要求明示同意", "個資法 §15", BlockerSeverity.HARD),
-            L1Blocker("technical", "跨境數據傳輸需符合 GDPR Article 44", "GDPR Art.44", BlockerSeverity.HARD),
+            L1Blocker(
+                "legal", "現行個資法第15條明確要求明示同意", "個資法 §15", BlockerSeverity.HARD
+            ),
+            L1Blocker(
+                "technical",
+                "跨境數據傳輸需符合 GDPR Article 44",
+                "GDPR Art.44",
+                BlockerSeverity.HARD,
+            ),
         ],
         summary="現行法律框架下，此方案有 90% 機率違反個資規範，面臨重大法律風險",
     )
