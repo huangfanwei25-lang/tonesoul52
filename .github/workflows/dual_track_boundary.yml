@@ -43,9 +43,15 @@ jobs:
         run: |
           set -euo pipefail
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            base_ref="origin/${{ github.base_ref }}"
-            git fetch origin "${{ github.base_ref }}" --depth=1
-            git -c core.quotepath=off diff --name-status --diff-filter=ACMRD "$base_ref...HEAD" > changed_files.txt
+            base_sha="${{ github.event.pull_request.base.sha }}"
+            head_sha="${{ github.event.pull_request.head.sha }}"
+            if ! git cat-file -t "$base_sha" >/dev/null 2>&1; then
+              git fetch origin "${{ github.base_ref }}" --depth=200
+            fi
+            if ! git cat-file -t "$head_sha" >/dev/null 2>&1; then
+              git fetch origin "${{ github.event.pull_request.head.ref }}" --depth=200
+            fi
+            git -c core.quotepath=off diff --name-status --diff-filter=ACMRD "$base_sha...$head_sha" > changed_files.txt
           elif [ "${{ github.event_name }}" = "push" ]; then
             before_sha="${{ github.event.before }}"
             if [ -n "$before_sha" ] && [ "$before_sha" != "0000000000000000000000000000000000000000" ] && git cat-file -t "$before_sha" >/dev/null 2>&1; then

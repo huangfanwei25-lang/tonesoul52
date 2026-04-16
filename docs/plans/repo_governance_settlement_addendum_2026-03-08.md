@@ -60,3 +60,35 @@ Governance convergence should not confuse content truth with history hygiene.
 - metadata truth answers: "is the branch lineage acceptable?"
 
 They are related, but not interchangeable. A good settlement layer must expose both, and must teach operators which one is actually asking for action.
+
+## 2026-04-16 Red-Light Note
+
+Two CI reds looked related but were not the same class of problem:
+
+1. `Commit Attribution Check`
+   - Root cause: one non-docs commit (`e3cedb4`) lacked `Agent` / `Trace-Topic` trailers.
+   - Correct response: fix the commit message contract and re-run local parity.
+   - Incorrect response: loosen the attribution gate or pretend co-author trailers are the same thing.
+   - Governance note: day-to-day `push` / `pull_request` checks should stay incremental; historical trailer debt belongs to the backfill / planner lane.
+
+2. `Dual-Track Boundary Gate`
+   - Root cause: the workflow failed while resolving PR changed files, before `verify_dual_track_boundary.py` even ran.
+   - Specific failure: `git diff origin/master...HEAD` on the synthetic PR merge ref produced `no merge base`.
+   - Correct response: resolve PR changes from `github.event.pull_request.base.sha` and `head.sha`, not from `origin/<base>...HEAD`.
+
+### Red-Light Triage Order
+
+When repo governance turns red again:
+
+1. read the failing job log and identify whether the red is:
+   - content / policy failure,
+   - metadata / trailer failure,
+   - or workflow plumbing failure before the policy script ran
+2. re-read the narrow memory lane before editing:
+   - attribution -> `docs/governance/COMMUNICATION_STANDARD.md`
+   - attribution lineage / tree-equivalence -> `docs/plans/commit_attribution_base_switch_addendum_2026-03-08.md`
+   - public-private boundary -> `docs/ADR-001-dual-track-resolution.md`
+   - status artifact semantics -> `docs/status/README.md`
+3. only then change code, workflow, or history
+
+This order matters because "a red CI badge" is not one category of bug.
