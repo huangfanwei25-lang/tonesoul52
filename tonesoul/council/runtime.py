@@ -523,6 +523,24 @@ class CouncilRuntime:
         except Exception as exc:
             logger.debug("Structured transcript generation skipped: %s", exc)
 
+        persist_verdict = context.get("persist_council_verdict", True)
+        if persist_verdict is not False:
+            try:
+                from .persistence import persist_council_verdict
+
+                persistence = persist_council_verdict(request=request, verdict=verdict)
+                transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
+                transcript["council_persistence"] = persistence
+                verdict.transcript = transcript
+            except Exception as exc:
+                transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
+                transcript["council_persistence"] = {
+                    "status": "error",
+                    "error": str(exc),
+                }
+                verdict.transcript = transcript
+                logger.warning("Council verdict persistence skipped: %s", exc)
+
         return verdict
 
     def _resolve_perspective_config(

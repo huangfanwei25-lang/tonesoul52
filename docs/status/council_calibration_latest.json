@@ -1,0 +1,98 @@
+{
+  "contract_version": "v1",
+  "bundle": "council_calibration",
+  "schema_version": "v0a",
+  "generated_at": "2026-04-16T02:12:21Z",
+  "status": "v0a_realism_baseline",
+  "receiver_rule": "These metrics describe internal realism baseline, not outcome calibration. They cannot be used to downgrade claim ceilings or justify public-launch language. council_decision_quality remains descriptive_only until v0b verdict-outcome alignment is established.",
+  "language_boundary": {
+    "this_is": "internal realism baseline",
+    "this_is_not": [
+      "outcome calibration",
+      "predictive accuracy",
+      "public-launch blocker resolution"
+    ],
+    "ceiling_effect": "none — council_decision_quality stays descriptive_only",
+    "maximum_honest_claim": "council_decision_quality has moved from purely descriptive to 'trackable realism baseline with persistence capability established'"
+  },
+  "data_sources": {
+    "stress_test_journal": {
+      "path": "C:\\Users\\user\\Desktop\\倉庫\\memory\\stress_test_journal.jsonl",
+      "record_count": 200
+    },
+    "council_verdict_persistence": {
+      "record_count": 8
+    }
+  },
+  "metrics": {
+    "agreement_stability": {
+      "metric": "agreement_stability",
+      "status": "computed",
+      "sample_count": 203,
+      "groups_analyzed": 12,
+      "mean_dominant_verdict_ratio": 1.0,
+      "mean_split_half_jsd": 0.0,
+      "interpretation": "dominant_ratio near 1.0 = highly stable; jsd near 0.0 = low distribution drift across halves",
+      "data_source": "council_verdict_persistence(8) + stress_test_journal(200)",
+      "measures": "vote distribution consistency for the same input across sessions",
+      "does_not_measure": "whether the verdict was correct or appropriate"
+    },
+    "internal_self_consistency": {
+      "metric": "internal_self_consistency",
+      "status": "computed",
+      "sample_count": 179,
+      "consistent_count": 133,
+      "inconsistent_count": 46,
+      "consistency_rate": 0.743,
+      "interpretation": "consistency_rate near 1.0 = internal signals align with verdict direction; low rate suggests the council produces contradictory signal-verdict pairs",
+      "data_source": "council_verdict_persistence(8) + stress_test_journal(200)",
+      "measures": "alignment between internal signals (tension, objection, coherence) and verdict direction",
+      "does_not_measure": "outcome calibration or predictive accuracy"
+    },
+    "suppression_recovery_rate": {
+      "metric": "suppression_recovery_rate",
+      "status": "computed",
+      "sample_count": 1,
+      "minority_events": 1,
+      "recovery_events": 0,
+      "recovery_rate": 0.0,
+      "interpretation": "recovery_rate near 0.0 = minority positions never recover; moderate rate suggests the council can self-correct on repeated input",
+      "data_source": "council_verdict_persistence(8) + stress_test_journal(200)",
+      "measures": "rate at which suppressed minority positions later become the dominant verdict",
+      "does_not_measure": "whether the minority position was correct"
+    },
+    "persistence_coverage": {
+      "metric": "persistence_coverage",
+      "status": "computed",
+      "sample_count": 8,
+      "field_completeness": {
+        "record_id": 1.0,
+        "schema_version": 1.0,
+        "recorded_at": 1.0,
+        "agent": 1.0,
+        "input_fingerprint": 1.0,
+        "verdict": 1.0,
+        "coherence": 1.0,
+        "vote_profile": 1.0,
+        "minority_perspectives": 1.0,
+        "grounding_summary": 1.0
+      },
+      "overall_field_coverage": 1.0,
+      "interpretation": "overall near 1.0 = all required fields present in all records; gaps indicate persistence schema drift or partial writes",
+      "data_source": "council_verdict_persistence_lane",
+      "measures": "field completeness of persisted council verdict records",
+      "does_not_measure": "council quality or correctness"
+    }
+  },
+  "v0a_exit_criteria": {
+    "baseline_metrics_stable": true,
+    "persistence_operational": true,
+    "verdict_records_accumulating": true
+  },
+  "v0b_prerequisites": {
+    "verdict_outcome_alignment_n_ge_20": false,
+    "two_consecutive_stable_waves": false,
+    "note": "v0b is not in scope for V1.1; these fields track forward readiness only"
+  },
+  "agent": "claude-opus-4-6"
+}

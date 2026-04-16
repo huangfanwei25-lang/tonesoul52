@@ -25,4 +25,5 @@ OBSERVER_CURSOR_PREFIX = "ts:observer_cursors:"  # Per-agent since-last-seen cur
 KEY_COMPACTED = "ts:compacted"  # Non-canonical resumability/compaction lane
 KEY_SUBJECT_SNAPSHOTS = "ts:subject_snapshots"  # Stable non-canonical subject snapshot lane
 KEY_ROUTING_EVENTS = "ts:routing_events"  # Router adoption and ambiguity telemetry lane
+KEY_COUNCIL_VERDICTS = "ts:council_verdicts"  # Bounded council verdict persistence lane
 FIELD_KEY = "ts:field"  # Experimental semantic-field synthesis surface

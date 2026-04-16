@@ -32,6 +32,7 @@ from tonesoul.store_keys import (  # noqa: F401 — re-export
     COMMIT_LOCK_KEY,
     FIELD_KEY,
     KEY_COMPACTED,
+    KEY_COUNCIL_VERDICTS,
     KEY_GOVERNANCE,
     KEY_ROUTING_EVENTS,
     KEY_SUBJECT_SNAPSHOTS,
