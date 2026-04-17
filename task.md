@@ -41,6 +41,7 @@
 - Phase 746: ~~reroute collaborator-beta discovery surfaces to the refreshed Phase 724 operations anchor~~ **done** (`docs/README.md`, `docs/INDEX.md`, `scripts/run_collaborator_beta_preflight.py`)
 - Phase 747: ~~refresh launch-line handoff after Phase 724 landed~~ **done** (`docs/status/codex_handoff_2026-04-15.md`)
 - Phase 856: ~~harden backend durability, write-auth parity, and 500-redaction across runtime + API surfaces~~ **done** (`tonesoul/backends/file_store.py`, `tonesoul/runtime_adapter.py`, `api/_shared/{core.py,http_utils.py}`, `api/{chat.py,validate.py,health.py}`, `apps/api/server.py`, `tests/test_runtime_adapter.py`, `tests/test_store.py`, `tests/test_api_phase_a_security.py`, `tests/test_serverless_shared_core.py`, `tests/red_team/test_api_red_team_baseline.py`)
+- Phase 857: ~~record 2026-04-18 commit-attribution red-light as a process lesson after PR #11 was merged before CI could complete, leaving 55d9e34 and 64c94df without `Agent:`/`Trace-Topic:` trailers on master; decline to reintroduce the enforcement anchor since 93bf6a0 deliberately removed it, and restore master to a green state via one forward commit that carries proper trailers~~ **done** (`task.md`)
 
 ## Active Program: Agent Workspace And IDE Translation (2026-04-06)
 - Program Goal: translate ToneSoul's tiered runtime surfaces into an operator workspace / IDE.
