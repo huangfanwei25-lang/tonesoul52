@@ -1,0 +1,84 @@
+{
+  "contract_version": "v1",
+  "bundle": "v1_2_tool_entry_smoke",
+  "generated_at": "2026-04-17T12:54:45Z",
+  "agent": "audit-fix",
+  "status": "pass",
+  "workflow_alignment": {
+    "first_hop": "session_start --slim",
+    "council_path": "session_start --slim -> council_deliberate / council_get_status / governance_load",
+    "deeper_pull_rule": "Escalate to tier 0/1/2 only when slim shell is insufficient for shared mutation, contested governance, or deeper continuity detail."
+  },
+  "session_start_size": {
+    "slim_bytes": 452,
+    "tier0_bytes": 6099,
+    "reduction_bytes": 5647,
+    "reduction_ratio": 0.9259,
+    "slim_lt_2kb": true
+  },
+  "mcp_stdio_smoke": {
+    "returncode": 0,
+    "stderr": "",
+    "response_count": 5,
+    "batch_response_count": 1,
+    "tools_count": 9,
+    "tool_names": [
+      "council_deliberate",
+      "council_check_claim",
+      "council_get_calibration",
+      "council_get_status",
+      "governance_load",
+      "governance_commit",
+      "governance_summary",
+      "governance_visitors",
+      "governance_audit"
+    ],
+    "initialize_ok": true,
+    "initialized_notification_sent": true,
+    "council_deliberate": {
+      "_compact": true,
+      "kind": "council_verdict",
+      "verdict": "block",
+      "coherence": 0.736,
+      "minority": [
+        "advocate"
+      ],
+      "risk_level": "high",
+      "matched_skill_ids": [],
+      "responsibility_tier": "TIER_2",
+      "collapse_warning": "None",
+      "uncertainty_band": "None"
+    },
+    "council_get_status": {
+      "_compact": true,
+      "kind": "governance_summary",
+      "readiness": "pass",
+      "claim_tier": "collaborator_beta",
+      "claim_rule": "evidence_bounded",
+      "available_tools": [
+        "council_deliberate",
+        "council_check_claim",
+        "council_get_calibration",
+        "council_get_status"
+      ]
+    },
+    "governance_load": {
+      "_compact": true,
+      "kind": "governance_summary",
+      "readiness": "pass",
+      "claim_tier": "collaborator_beta",
+      "claim_rule": "evidence_bounded",
+      "available_tools": [
+        "council_deliberate",
+        "council_check_claim",
+        "council_get_calibration",
+        "council_get_status",
+        "governance_load",
+        "governance_commit",
+        "governance_summary",
+        "governance_visitors"
+      ]
+    }
+  },
+  "receiver_rule": "Treat slim entry as the default bounded first hop, use MCP tools for council/governance lookups, and only widen to tiered session-start shells when the task truly needs deeper state."
+}

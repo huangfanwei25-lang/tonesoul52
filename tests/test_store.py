@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from tonesoul import store as store_module
 from tonesoul.backends.file_store import FileStore
 
@@ -56,3 +58,13 @@ def test_disabled_redis_url_argument_skips_redis(monkeypatch) -> None:
 
     assert isinstance(store, FileStore)
     assert store.backend_name == "file"
+
+
+def test_file_store_get_state_ignores_corrupt_json(tmp_path: Path, capsys) -> None:
+    state_path = tmp_path / "governance_state.json"
+    state_path.write_text("{not-json", encoding="utf-8")
+
+    store = FileStore(gov_path=state_path)
+
+    assert store.get_state() == {}
+    assert "Ignoring corrupt JSON store file" in capsys.readouterr().err

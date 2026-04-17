@@ -331,7 +331,13 @@ def _extract_named_token(*header_names: str) -> str:
     return ""
 
 
-def _require_api_auth(*, required_token: str, config_error: str, unauthorized_error: str, header_names: tuple[str, ...]):
+def _require_api_auth(
+    *,
+    required_token: str,
+    config_error: str,
+    unauthorized_error: str,
+    header_names: tuple[str, ...],
+):
     fail_closed = _env_flag(_AUTH_FAIL_CLOSED_ENV, default=_is_production_env())
     if not required_token:
         if fail_closed:
@@ -1366,47 +1372,54 @@ def index():
 @app.route("/api/validate", methods=["POST"])
 def validate():
     """Run PreOutputCouncil on input text."""
+    auth_error = _require_write_api_auth()
+    if auth_error is not None:
+        return auth_error
+
     rate_limit_error = _apply_rate_limit("validate")
     if rate_limit_error is not None:
         return rate_limit_error
 
-    data = _json_payload()
-    if data is None:
-        return jsonify({"error": "Invalid JSON payload"}), 400
-    draft_output, error = _require_optional_string(data, "draft_output")
-    if error is not None:
-        return error
-    context, error = _require_optional_dict(data, "context")
-    if error is not None:
-        return error
-    user_intent, error = _require_optional_string(data, "user_intent")
-    if error is not None:
-        return error
+    try:
+        data = _json_payload()
+        if data is None:
+            return jsonify({"error": "Invalid JSON payload"}), 400
+        draft_output, error = _require_optional_string(data, "draft_output")
+        if error is not None:
+            return error
+        context, error = _require_optional_dict(data, "context")
+        if error is not None:
+            return error
+        user_intent, error = _require_optional_string(data, "user_intent")
+        if error is not None:
+            return error
 
-    draft_output = draft_output if draft_output is not None else ""
-    context = context if context is not None else {}
-    context, error = _prepare_escape_seed_context(context)
-    if error is not None:
-        return error
-    context, error = _prepare_vtp_context(context)
-    if error is not None:
-        return error
+        draft_output = draft_output if draft_output is not None else ""
+        context = context if context is not None else {}
+        context, error = _prepare_escape_seed_context(context)
+        if error is not None:
+            return error
+        context, error = _prepare_vtp_context(context)
+        if error is not None:
+            return error
 
-    council_request = CouncilRequest(
-        draft_output=draft_output,
-        context=context,
-        user_intent=user_intent,
-    )
-    verdict = council_runtime.deliberate(council_request)
+        council_request = CouncilRequest(
+            draft_output=draft_output,
+            context=context,
+            user_intent=user_intent,
+        )
+        verdict = council_runtime.deliberate(council_request)
 
-    # Convert to dict for JSON response
-    result = verdict.to_dict()
+        # Convert to dict for JSON response
+        result = verdict.to_dict()
 
-    # Transform votes for frontend compatibility
-    if "votes" not in result and hasattr(verdict, "transcript") and verdict.transcript:
-        result["votes"] = verdict.transcript.get("votes", [])
+        # Transform votes for frontend compatibility
+        if "votes" not in result and hasattr(verdict, "transcript") and verdict.transcript:
+            result["votes"] = verdict.transcript.get("votes", [])
 
-    return jsonify(result)
+        return jsonify(result)
+    except Exception as exc:
+        return _error_response("Failed to compute validation", 500, exc)
 
 
 @app.route("/api/memories", methods=["GET"])
@@ -1447,13 +1460,16 @@ def get_consolidation():
 @app.route("/api/health", methods=["GET"])
 def health():
     """Health check endpoint."""
-    return jsonify(
-        {
-            "status": "ok",
-            "version": "0.6.0",
-            "persistence": supabase_persistence.status_dict(),
-        }
-    )
+    try:
+        return jsonify(
+            {
+                "status": "ok",
+                "version": "0.6.0",
+                "persistence": supabase_persistence.status_dict(),
+            }
+        )
+    except Exception as exc:
+        return _error_response("Health check unavailable", 500, exc)
 
 
 @app.route("/api/governance_status", methods=["GET"])
@@ -1486,7 +1502,7 @@ def governance_status():
         try:
             page = supabase_persistence.list_audit_logs(limit=5, offset=0)
             logs = page.get("logs") if isinstance(page, dict) else []
-            for row in (logs or []):
+            for row in logs or []:
                 if not isinstance(row, dict):
                     continue
                 recent_verdicts.append(

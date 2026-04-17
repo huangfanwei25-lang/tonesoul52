@@ -1,14 +1,14 @@
-"""ToneSoul Runtime Adapter — the bridge that makes governance state survive across sessions and models.
+﻿"""ToneSoul Runtime Adapter ??the bridge that makes governance state survive across sessions and models.
 
 Implements RFC-015 Self-Dogfooding Runtime Adapter:
-- load(): session start — read governance_state.json, decay old tensions, return posture
-- commit(): session end — write session trace, update governance state, drift baseline
+- load(): session start ??read governance_state.json, decay old tensions, return posture
+- commit(): session end ??write session trace, update governance state, drift baseline
 
 Design principles:
-1. Model-agnostic — any AI agent (Claude, Codex, Gemini) can load/commit
-2. JSON in, JSON out — no markdown parsing, no model-specific formats
-3. Idempotent — load() without commit() produces zero diff
-4. Observable — every mutation is traceable
+1. Model-agnostic ??any AI agent (Claude, Codex, Gemini) can load/commit
+2. JSON in, JSON out ??no markdown parsing, no model-specific formats
+3. Idempotent ??load() without commit() produces zero diff
+4. Observable ??every mutation is traceable
 """
 
 from __future__ import annotations
@@ -61,7 +61,7 @@ logger = logging.getLogger(__name__)
 route_r_memory_signal = _route_r_memory_signal
 
 # ---------------------------------------------------------------------------
-# Constants (from RFC-015 §5, canonical source: soul_config.py)
+# Constants (from RFC-015 禮5, canonical source: soul_config.py)
 # ---------------------------------------------------------------------------
 
 TENSION_DECAY_ALPHA = SOUL.tension.decay_alpha_per_hour
@@ -82,7 +82,7 @@ _DEFAULT_TRACES_PATH = Path("memory/autonomous/session_traces.jsonl")
 
 @dataclass
 class GovernancePosture:
-    """What an agent sees at session start — the living governance state."""
+    """What an agent sees at session start ??the living governance state."""
 
     version: str = SCHEMA_VERSION
     last_updated: str = ""
@@ -125,7 +125,7 @@ class GovernancePosture:
 
 @dataclass
 class SessionTrace:
-    """What an agent writes at session end — one conversation's governance record."""
+    """What an agent writes at session end ??one conversation's governance record."""
 
     session_id: str = ""
     agent: str = "unknown"
@@ -217,7 +217,7 @@ def _freshness_hours(raw_timestamp: Any) -> Optional[float]:
 
 
 # ---------------------------------------------------------------------------
-# Core: tension decay (RFC-015 §5.1)
+# Core: tension decay (RFC-015 禮5.1)
 # ---------------------------------------------------------------------------
 
 
@@ -241,7 +241,7 @@ def decay_tensions(
 
 
 # ---------------------------------------------------------------------------
-# Core: baseline drift (RFC-015 §5.2)
+# Core: baseline drift (RFC-015 禮5.2)
 # ---------------------------------------------------------------------------
 
 
@@ -265,15 +265,15 @@ def drift_baseline(
 
     new["caution_bias"] = round(caution + rate * (avg_severity - caution), 4)
     new["innovation_bias"] = round(innovation + rate * ((1.0 - avg_severity) - innovation), 4)
-    # Autonomy drifts inversely with tension — high-tension sessions reduce autonomy
+    # Autonomy drifts inversely with tension ??high-tension sessions reduce autonomy
     autonomy = float(new.get("autonomy_level", 0.35))
-    target_autonomy = max(0.1, 1.0 - avg_severity)  # high severity → low target
+    target_autonomy = max(0.1, 1.0 - avg_severity)  # high severity ??low target
     new["autonomy_level"] = round(autonomy + rate * (target_autonomy - autonomy), 4)
     return new
 
 
 # ---------------------------------------------------------------------------
-# Core: soul integral update (RFC-015 §5.3)
+# Core: soul integral update (RFC-015 禮5.3)
 # ---------------------------------------------------------------------------
 
 
@@ -302,7 +302,7 @@ def update_soul_integral(
     rediscovery penalty.  Default 0.0 preserves backwards compatibility.
 
     When session_tensions is empty and wisdom_delta is 0, the integral
-    purely decays — it does NOT reset to zero.  The decay half-life
+    purely decays ??it does NOT reset to zero.  The decay half-life
     (~14h) ensures historical stress fades naturally.
     """
     hours = _hours_since(last_updated)
@@ -381,7 +381,7 @@ def _attach_reflex_state(posture: GovernancePosture) -> None:
         # Attach as runtime attribute (not part of dataclass schema)
         posture.reflex_decision = decision  # type: ignore[attr-defined]
     except Exception as exc:
-        logger.debug("Reflex arc skipped: %s", exc)  # optional — failure must not break load()
+        logger.debug("Reflex arc skipped: %s", exc)  # optional ??failure must not break load()
 
 
 def _record_footprint(store, agent_id: str, *, source: str = "direct") -> None:
@@ -630,7 +630,7 @@ def write_compaction(
         "next_action": next_action,
         "source": source,
         "updated_at": now,
-        # Temporal validity window — when was this compaction's content true?
+        # Temporal validity window ??when was this compaction's content true?
         # Inspired by MemPalace's temporal knowledge graph.
         # valid_from: when this snapshot of reality began (session start)
         # valid_until: when it should be considered stale (updated_at + TTL)
@@ -1911,55 +1911,7 @@ def _build_internal_state_observability(
 # ---------------------------------------------------------------------------
 
 
-def commit(
-    trace: SessionTrace,
-    state_path: Optional[Path] = None,
-    traces_path: Optional[Path] = None,
-) -> GovernancePosture:
-    """Commit session results at session end.
-
-    1. Load current governance state
-    2. Append new tension events
-    3. Update soul integral
-    4. Drift baseline
-    5. Reconcile vows
-    6. Write updated state  (Redis → immediate pub/sub push)
-    7. Append session trace
-    8. Rebuild zone registry
-    9. Return the new posture
-    """
-    from tonesoul.backends.file_store import FileStore
-    from tonesoul.store import get_store
-
-    # Backward-compat: explicit paths → FileStore
-    if state_path is not None or traces_path is not None:
-        if traces_path is not None:
-            base_dir = traces_path.parent
-        elif state_path is not None:
-            base_dir = state_path.parent
-        else:
-            base_dir = Path(".")
-        store = FileStore(
-            gov_path=state_path or _DEFAULT_STATE_PATH,
-            traces_path=traces_path or _DEFAULT_TRACES_PATH,
-            zones_path=base_dir / "zone_registry.json",
-            claims_path=base_dir / ".aegis" / "task_claims.json",
-            commit_lock_path=base_dir / ".aegis" / "commit.lock.json",
-            perspectives_path=base_dir / ".aegis" / "perspectives.json",
-            checkpoints_path=base_dir / ".aegis" / "checkpoints.json",
-            compactions_path=base_dir / ".aegis" / "compacted.json",
-            subject_snapshots_path=base_dir / ".aegis" / "subject_snapshots.json",
-        )
-    else:
-        store = get_store()
-
-    lock_owner = f"{trace.agent}:{trace.session_id}"
-    lock_token = store.acquire_commit_lock(lock_owner, ttl_seconds=COMMIT_LOCK_TTL_SECONDS)
-    if lock_token is None:
-        raise CommitConcurrencyError(
-            "Another agent is already committing canonical governance state"
-        )
-
+def _commit_locked_posture(store: Any, trace: SessionTrace) -> GovernancePosture:
     # Load current state from the SAME store we'll write to (no split-brain)
     raw = store.get_state()
     if not raw:
@@ -1968,7 +1920,7 @@ def commit(
         posture = GovernancePosture.from_dict(raw)
         posture.tension_history = decay_tensions(posture.tension_history)
 
-    # ── Aegis Shield: check trace BEFORE mutating governance state ──
+    # Aegis Shield: check trace BEFORE mutating governance state
     trace_dict = trace.to_dict()
     try:
         from tonesoul.aegis_shield import AegisShield
@@ -1977,7 +1929,6 @@ def commit(
         trace_dict, content_check = shield.protect_trace(trace_dict, trace.agent)
         if content_check.severity == "blocked":
             print(f"[Aegis] BLOCKED trace from {trace.agent}: {content_check.violations}")
-            # Record veto WITHOUT merging the poisoned trace into posture
             posture.aegis_vetoes.append(
                 {
                     "type": "memory_poisoning",
@@ -1987,36 +1938,30 @@ def commit(
                 }
             )
             store.set_state(posture.to_dict())
-            store.release_commit_lock(lock_token)
             return posture
         if content_check.violations:
             print(f"[Aegis] WARNING: {content_check.violations}")
         shield.save(store)
     except ImportError:
-        pass  # PyNaCl not installed — skip shield
+        pass  # PyNaCl not installed -> skip shield
 
-    # ── Aegis passed — now safe to merge trace into governance state ──
-
-    # Merge new tension events into history
     for event in trace.tension_events:
         entry = dict(event)
         if "timestamp" not in entry:
             entry["timestamp"] = trace.timestamp
         posture.tension_history.append(entry)
 
-    # ── Crystallization pipeline (best-effort, never blocks commit) ──
     _pipeline_result = None
     try:
         from tonesoul.memory.pipeline import run_session_end_pipeline
 
         _pipeline_result = run_session_end_pipeline(
             trace_dict,
-            posture.session_count + 1,  # +1 because we increment below
+            posture.session_count + 1,
         )
     except Exception:
         pass
 
-    # Update soul integral (with wisdom delta from pipeline if available)
     _wisdom = _pipeline_result.wisdom_delta if _pipeline_result else 0.0
     posture.soul_integral = update_soul_integral(
         posture.soul_integral,
@@ -2024,14 +1969,11 @@ def commit(
         trace.tension_events,
         wisdom_delta=_wisdom,
     )
-
-    # Drift baseline
     posture.baseline_drift = drift_baseline(
         posture.baseline_drift,
         trace.tension_events,
     )
 
-    # Reconcile vows
     existing_ids = {v.get("id") for v in posture.active_vows}
     for ve in trace.vow_events:
         action = ve.get("action", "")
@@ -2048,7 +1990,6 @@ def commit(
         elif action == "retired":
             posture.active_vows = [v for v in posture.active_vows if v.get("id") != vow_id]
 
-    # Merge aegis vetoes
     for veto in trace.aegis_vetoes:
         entry = dict(veto)
         if "timestamp" not in entry:
@@ -2071,15 +2012,12 @@ def commit(
     except Exception:
         posture.risk_posture = {}
 
-    # Update metadata
     posture.session_count += 1
     posture.last_updated = _utc_now()
 
-    # Persist — Redis: atomic set + pub/sub push; FileStore: JSON write
     store.set_state(posture.to_dict())
     store.append_trace(trace_dict)
 
-    # Rebuild zone registry (updates world map)
     try:
         from tonesoul.zone_registry import rebuild_and_save
 
@@ -2094,13 +2032,68 @@ def commit(
     except Exception:
         pass  # Non-critical
 
-    store.release_commit_lock(lock_token)
     return posture
 
 
-# ---------------------------------------------------------------------------
-# Public API: summary() — human-readable snapshot for any model
-# ---------------------------------------------------------------------------
+def commit(
+    trace: SessionTrace,
+    state_path: Optional[Path] = None,
+    traces_path: Optional[Path] = None,
+) -> GovernancePosture:
+    """Commit session results at session end.
+
+    1. Load current governance state
+    2. Append new tension events
+    3. Update soul integral
+    4. Drift baseline
+    5. Reconcile vows
+    6. Write updated state  (Redis -> immediate pub/sub push)
+    7. Append session trace
+    8. Rebuild zone registry
+    9. Return the new posture
+    """
+    from tonesoul.backends.file_store import FileStore
+    from tonesoul.store import get_store
+
+    # Backward-compat: explicit paths -> FileStore
+    if state_path is not None or traces_path is not None:
+        if traces_path is not None:
+            base_dir = traces_path.parent
+        elif state_path is not None:
+            base_dir = state_path.parent
+        else:
+            base_dir = Path(".")
+        store = FileStore(
+            gov_path=state_path or _DEFAULT_STATE_PATH,
+            traces_path=traces_path or _DEFAULT_TRACES_PATH,
+            zones_path=base_dir / "zone_registry.json",
+            claims_path=base_dir / ".aegis" / "task_claims.json",
+            commit_lock_path=base_dir / ".aegis" / "commit.lock.json",
+            perspectives_path=base_dir / ".aegis" / "perspectives.json",
+            checkpoints_path=base_dir / ".aegis" / "checkpoints.json",
+            compactions_path=base_dir / ".aegis" / "compacted.json",
+            subject_snapshots_path=base_dir / ".aegis" / "subject_snapshots.json",
+        )
+    else:
+        store = get_store()
+
+    lock_owner = f"{trace.agent}:{trace.session_id}"
+    lock_token = store.acquire_commit_lock(
+        lock_owner,
+        ttl_seconds=COMMIT_LOCK_TTL_SECONDS,
+    )
+    if lock_token is None:
+        raise CommitConcurrencyError(
+            "Another agent is already committing canonical governance state"
+        )
+
+    try:
+        return _commit_locked_posture(store=store, trace=trace)
+    finally:
+        try:
+            store.release_commit_lock(lock_token)
+        except Exception:
+            logger.exception("Failed to release commit lock for %s", lock_owner)
 
 
 def summary(posture: Optional[GovernancePosture] = None) -> str:

@@ -1,4 +1,5 @@
 import json
+import re
 
 from apps.api.server import app
 
@@ -30,6 +31,46 @@ def test_chat_exception_does_not_leak_internal_message(monkeypatch):
 
     serialized = json.dumps(payload, ensure_ascii=False)
     assert "SECRET_TOKEN_12345" not in serialized
+
+
+def test_validate_exception_does_not_leak_internal_message(monkeypatch):
+    import apps.api.server as server
+
+    def _boom(*args, **kwargs):
+        raise RuntimeError("VALIDATE_SECRET_777")
+
+    monkeypatch.setattr(server.council_runtime, "deliberate", _boom)
+
+    client = _client()
+    response = client.post("/api/validate", json={})
+    assert response.status_code == 500
+    payload = response.get_json()
+    assert payload["error"] == "Failed to compute validation"
+    assert "error_id" in payload
+    assert re.fullmatch(r"[0-9a-f]{12}", payload["error_id"])
+
+    serialized = json.dumps(payload, ensure_ascii=False)
+    assert "VALIDATE_SECRET_777" not in serialized
+
+
+def test_health_exception_does_not_leak_internal_message(monkeypatch):
+    import apps.api.server as server
+
+    def _boom():
+        raise RuntimeError("HEALTH_SECRET_888")
+
+    monkeypatch.setattr(server.supabase_persistence, "status_dict", _boom)
+
+    client = _client()
+    response = client.get("/api/health")
+    assert response.status_code == 500
+    payload = response.get_json()
+    assert payload["error"] == "Health check unavailable"
+    assert "error_id" in payload
+    assert re.fullmatch(r"[0-9a-f]{12}", payload["error_id"])
+
+    serialized = json.dumps(payload, ensure_ascii=False)
+    assert "HEALTH_SECRET_888" not in serialized
 
 
 def test_withdraw_consent_rejects_whitespace_session_id():

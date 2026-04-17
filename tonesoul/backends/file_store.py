@@ -11,6 +11,8 @@ Pub/sub: no-op (world map falls back to file-mtime polling).
 from __future__ import annotations
 
 import json
+import os
+import sys
 import uuid
 from pathlib import Path
 from time import time as _time
@@ -74,15 +76,12 @@ class FileStore:
     # ── Governance state ────────────────────────────────────────────────────
 
     def get_state(self) -> Dict[str, Any]:
-        if not self.gov_path.exists():
-            return {}
-        return json.loads(self.gov_path.read_text(encoding="utf-8"))
+        return self._read_json_file(self.gov_path)
 
     def set_state(self, data: Dict[str, Any]) -> None:
-        self.gov_path.parent.mkdir(parents=True, exist_ok=True)
-        self.gov_path.write_text(
+        self._atomic_write_text(
+            self.gov_path,
             json.dumps(data, indent=2, ensure_ascii=False) + "\n",
-            encoding="utf-8",
         )
 
     # ── Session traces ───────────────────────────────────────────────────────
@@ -91,6 +90,8 @@ class FileStore:
         self.traces_path.parent.mkdir(parents=True, exist_ok=True)
         with self.traces_path.open("a", encoding="utf-8") as f:
             f.write(json.dumps(trace, ensure_ascii=False) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
 
     def get_traces(self, n: int = 100) -> List[Dict[str, Any]]:
         if not self.traces_path.exists():
@@ -109,15 +110,12 @@ class FileStore:
     # ── Zone registry ────────────────────────────────────────────────────────
 
     def get_zones(self) -> Dict[str, Any]:
-        if not self.zones_path.exists():
-            return {}
-        return json.loads(self.zones_path.read_text(encoding="utf-8"))
+        return self._read_json_file(self.zones_path)
 
     def set_zones(self, data: Dict[str, Any]) -> None:
-        self.zones_path.parent.mkdir(parents=True, exist_ok=True)
-        self.zones_path.write_text(
+        self._atomic_write_text(
+            self.zones_path,
             json.dumps(data, indent=2, ensure_ascii=False) + "\n",
-            encoding="utf-8",
         )
 
     # ── Pub/sub (no-op) ──────────────────────────────────────────────────────
@@ -178,10 +176,9 @@ class FileStore:
         return result
 
     def _write_claims(self, claims: Dict[str, Dict[str, Any]]) -> None:
-        self.claims_path.parent.mkdir(parents=True, exist_ok=True)
-        self.claims_path.write_text(
+        self._atomic_write_text(
+            self.claims_path,
             json.dumps(claims, indent=2, ensure_ascii=False) + "\n",
-            encoding="utf-8",
         )
 
     def _purge_expired_entries(self, claims: Dict[str, Dict[str, Any]]) -> None:
@@ -409,7 +406,8 @@ class FileStore:
             return {}
         try:
             raw = json.loads(path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as exc:
+            print(f"[WARN] Ignoring corrupt JSON store file {path}: {exc}", file=sys.stderr)
             return {}
         return raw if isinstance(raw, dict) else {}
 
@@ -437,17 +435,15 @@ class FileStore:
         return result
 
     def _write_registry(self, path: Path, values: Dict[str, Dict[str, Any]]) -> None:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(
+        self._atomic_write_text(
+            path,
             json.dumps(values, indent=2, ensure_ascii=False) + "\n",
-            encoding="utf-8",
         )
 
     def _write_list_registry(self, path: Path, values: List[Dict[str, Any]]) -> None:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(
+        self._atomic_write_text(
+            path,
             json.dumps(values, indent=2, ensure_ascii=False) + "\n",
-            encoding="utf-8",
         )
 
     def _purge_expired_list_entries(self, values: List[Dict[str, Any]]) -> None:
@@ -467,6 +463,22 @@ class FileStore:
         values[:] = kept
 
     # ── Backend info ─────────────────────────────────────────────────────────
+
+    def _atomic_write_text(self, path: Path, content: str) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temp_path = path.with_name(f"{path.name}.{uuid.uuid4().hex}.tmp")
+        try:
+            with temp_path.open("w", encoding="utf-8", newline="\n") as handle:
+                handle.write(content)
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(temp_path, path)
+        finally:
+            if temp_path.exists():
+                try:
+                    temp_path.unlink()
+                except FileNotFoundError:
+                    pass
 
     @property
     def backend_name(self) -> str:

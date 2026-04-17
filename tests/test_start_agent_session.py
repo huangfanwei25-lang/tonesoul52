@@ -460,6 +460,71 @@ def test_start_agent_session_tier0_returns_fast_path_bundle(
     assert "underlying_commands" not in output
 
 
+def test_run_session_start_bundle_slim_returns_compact_shell(monkeypatch, tmp_path: Path) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+
+    _write_state(state_path)
+    _write_traces(traces_path)
+    monkeypatch.setattr("tonesoul.aegis_shield.AegisShield", _FakeShield)
+
+    output = module.run_session_start_bundle(
+        agent_id="slim-shell",
+        state_path=state_path,
+        traces_path=traces_path,
+        no_ack=True,
+        slim=True,
+    )
+
+    payload_bytes = len(json.dumps(output, ensure_ascii=False).encode("utf-8"))
+
+    assert output["bundle"] == "session_start"
+    assert output["tier"] == "slim"
+    assert output["bundle_posture"] == "mcp_entry_shell"
+    assert output["_compact"] is True
+    assert output["readiness"] in {"pass", "needs_clarification", "blocked"}
+    assert output["claim_boundary"]["current_tier"] == "collaborator_beta"
+    assert "council_deliberate" in output["available_tools"]
+    assert "governance_load" in output["available_tools"]
+    assert payload_bytes < 2048
+
+
+def test_start_agent_session_cli_slim_executes_directly(
+    capsys, monkeypatch, tmp_path: Path
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+
+    _write_state(state_path)
+    _write_traces(traces_path)
+    monkeypatch.setattr("tonesoul.aegis_shield.AegisShield", _FakeShield)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "start_agent_session.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "slim-cli",
+            "--slim",
+            "--no-ack",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["tier"] == "slim"
+    assert output["bundle_posture"] == "mcp_entry_shell"
+    assert output["claim_boundary"]["rule"] == "evidence_bounded"
+    assert len(json.dumps(output, ensure_ascii=False).encode("utf-8")) < 2048
+
+
 def test_start_agent_session_tier1_returns_orientation_shell(
     capsys, monkeypatch, tmp_path: Path
 ) -> None:

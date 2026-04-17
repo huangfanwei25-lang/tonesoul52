@@ -126,6 +126,7 @@ def test_write_routes_require_token_when_configured(monkeypatch):
 
     client = _client()
     chat = client.post("/api/chat", json={"message": "hello"})
+    validate = client.post("/api/validate", json={})
     conversation = client.post("/api/conversation", json={})
     consent = client.post("/api/consent", json={})
     withdraw = client.delete("/api/consent/session_demo")
@@ -134,6 +135,7 @@ def test_write_routes_require_token_when_configured(monkeypatch):
     consolidate = client.get("/api/consolidate")
 
     assert chat.status_code == 401
+    assert validate.status_code == 401
     assert conversation.status_code == 401
     assert consent.status_code == 401
     assert withdraw.status_code == 401
@@ -154,6 +156,7 @@ def test_write_routes_accept_valid_bearer_token(monkeypatch):
     client = _client()
     headers = {"Authorization": "Bearer secret-write-token"}
 
+    validate = client.post("/api/validate", json={}, headers=headers)
     conversation = client.post("/api/conversation", json={}, headers=headers)
     consent = client.post(
         "/api/consent",
@@ -163,6 +166,7 @@ def test_write_routes_accept_valid_bearer_token(monkeypatch):
     withdraw = client.delete("/api/consent/session_demo", headers=headers)
     consolidate = client.get("/api/consolidate", headers=headers)
 
+    assert validate.status_code == 200
     assert conversation.status_code == 200
     assert consent.status_code == 200
     assert withdraw.status_code == 200

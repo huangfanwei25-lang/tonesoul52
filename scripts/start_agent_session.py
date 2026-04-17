@@ -430,6 +430,33 @@ def _build_tier1_payload(
     }
 
 
+def _build_slim_payload(*, agent_id: str, readiness: dict) -> dict:
+    from tonesoul.council.compact import compact_governance_summary
+    from tonesoul.mcp_server import _tool_name_set
+
+    compact = compact_governance_summary(
+        {
+            "readiness": {"status": str(readiness.get("status", "unknown")).strip()},
+            "claim_boundary": {"current_tier": "collaborator_beta"},
+            "available_tools": _tool_name_set(include_gateway=True),
+        }
+    )
+    return {
+        "contract_version": "v1",
+        "bundle": "session_start",
+        "tier": "slim",
+        "bundle_posture": "mcp_entry_shell",
+        "agent": agent_id,
+        "_compact": True,
+        "readiness": compact["readiness"],
+        "claim_boundary": {
+            "current_tier": compact["claim_tier"],
+            "rule": compact["claim_rule"],
+        },
+        "available_tools": compact["available_tools"],
+    }
+
+
 def _resolve_sidecar(root: Path, name: str) -> Path:
     canonical = root / ".aegis" / name
     legacy = root / name
@@ -1503,6 +1530,7 @@ def run_session_start_bundle(
     visitor_limit: int = 5,
     no_ack: bool = True,
     tier: int = 2,
+    slim: bool = False,
 ) -> dict:
     """Run the full session-start bundle and return the payload dict.
 
@@ -1551,6 +1579,9 @@ def run_session_start_bundle(
 
     claims = _quiet_call(list_active_claims, store=runtime_store)
     readiness = _build_readiness(agent_id=agent_id, packet=packet, claims=claims)
+    if slim:
+        return _build_slim_payload(agent_id=agent_id, readiness=readiness)
+
     working_style_anchor = (packet.get("project_memory_summary") or {}).get(
         "working_style_anchor"
     ) or {}
@@ -1750,6 +1781,7 @@ def main() -> None:
     parser.add_argument("--trace-limit", type=int, default=5)
     parser.add_argument("--visitor-limit", type=int, default=5)
     parser.add_argument("--tier", type=int, choices=(0, 1, 2), default=2)
+    parser.add_argument("--slim", action="store_true")
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--no-ack", action="store_true")
     args = parser.parse_args()
@@ -1766,6 +1798,7 @@ def main() -> None:
         visitor_limit=args.visitor_limit,
         no_ack=args.no_ack,
         tier=args.tier,
+        slim=args.slim,
     )
 
     text = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"

@@ -40,18 +40,20 @@
 - Phase 745: ~~publish a refreshed current launch-operations surface for collaborator beta~~ **done** (`docs/status/phase724_launch_operations_surface_2026-04-15.md`)
 - Phase 746: ~~reroute collaborator-beta discovery surfaces to the refreshed Phase 724 operations anchor~~ **done** (`docs/README.md`, `docs/INDEX.md`, `scripts/run_collaborator_beta_preflight.py`)
 - Phase 747: ~~refresh launch-line handoff after Phase 724 landed~~ **done** (`docs/status/codex_handoff_2026-04-15.md`)
+- Phase 856: ~~harden backend durability, write-auth parity, and 500-redaction across runtime + API surfaces~~ **done** (`tonesoul/backends/file_store.py`, `tonesoul/runtime_adapter.py`, `api/_shared/{core.py,http_utils.py}`, `api/{chat.py,validate.py,health.py}`, `apps/api/server.py`, `tests/test_runtime_adapter.py`, `tests/test_store.py`, `tests/test_api_phase_a_security.py`, `tests/test_serverless_shared_core.py`, `tests/red_team/test_api_red_team_baseline.py`)
 
 ## Active Program: Agent Workspace And IDE Translation (2026-04-06)
 - Program Goal: translate ToneSoul's tiered runtime surfaces into an operator workspace / IDE.
 - Execution Guardrails:
   - Prefer view-model adapters and render budgets over raw packet dumps.
   - Preserve CLI parity and label discipline.
-- Status: baseline dashboard operator-shell lane landed through Phase 784; freeze this bucket unless a concrete workspace misread, role-parity regression, or operator-shell contradiction reopens it.
+- Status: baseline dashboard operator-shell lane landed through Phase 784; bounded tool-entry contract hardening landed in Phase 855 after an audit-found MCP/runtime gap. Freeze this bucket unless a concrete workspace misread, role-parity regression, or operator-shell contradiction reopens it.
 - Landed follow-through:
   - Phase 769: ~~adapt `apps/dashboard` workspace into the first operator shell~~ **done** (`apps/dashboard/frontend/pages/workspace.py`)
   - Phase 774: ~~realign dashboard status panel to tier model~~ **done** (`apps/dashboard/frontend/components/status_panel.py`)
   - Phase 780: ~~add one bounded operator walkthrough pack~~ **done** (`docs/plans/tonesoul_operator_walkthrough_pack_2026-04-06.md`, `apps/dashboard/frontend/utils/session_start.py`, `apps/dashboard/frontend/pages/workspace.py`)
   - Phase 784: ~~add one bounded retrieval-preview strip~~ **done** (`apps/dashboard/frontend/pages/workspace.py`, `apps/dashboard/frontend/utils/search.py`)
+  - Phase 855: ~~harden v1.2 tool-entry MCP contract against batch-input and malformed commit payload regressions~~ **done** (`tonesoul/mcp_server.py`, `scripts/run_v1_2_tool_entry_smoke.py`, `tests/test_mcp_server.py`, `tests/test_run_v1_2_tool_entry_smoke.py`)
 - Historical supporting phases already landed: 770-773, 781-783.
 - Reopen rule: do not treat this bucket as an active short board again unless the dashboard/operator shell starts misreading authority, retrieval provenance, or tier boundaries.
 
