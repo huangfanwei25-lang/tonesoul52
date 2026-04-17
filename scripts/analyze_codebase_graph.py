@@ -56,9 +56,125 @@ LAYER_MAP: dict[str, str] = {
     "market": "domain",
     "ystm": "domain",
     "scribe": "domain",
+    "yuhun": "semantic",
     "loop": "orchestration",
     "shared": "shared",
     "_legacy": "legacy",
+}
+
+# Root-level module → layer.
+# tonesoul/*.py files sit outside the subpackage taxonomy. Without this map
+# they all collapse to "uncategorized", which hides real architectural shape.
+# Entries here are curated high-confidence classifications; anything not listed
+# stays uncategorized so gaps surface honestly rather than being papered over.
+ROOT_MODULE_LAYER: dict[str, str] = {
+    # governance — gates, preflight, vows, drift, constraints, contracts
+    "adaptive_gate": "governance",
+    "skill_gate": "governance",
+    "skill_apply": "governance",
+    "skill_promoter": "governance",
+    "yss_gates": "governance",
+    "mutation_preflight": "governance",
+    "publish_push_preflight": "governance",
+    "shared_edit_preflight": "governance",
+    "task_board_preflight": "governance",
+    "vow_inventory": "governance",
+    "vow_system": "governance",
+    "constraint_stack": "governance",
+    "tension_engine": "governance",
+    "risk_calculator": "governance",
+    "drift_monitor": "governance",
+    "drift_tracker": "governance",
+    "stale_rule_verifier": "governance",
+    "seed_schema_check": "governance",
+    "intent_verification": "governance",
+    "escalation": "governance",
+    "alert_escalation": "governance",
+    "escape_valve": "governance",
+    "consumer_contract": "governance",
+    "semantic_control": "governance",
+    "receiver_posture": "governance",
+    "council_capability": "governance",
+    "work_classifier": "governance",
+    "grounding_check": "governance",
+    "contract_observer": "governance",
+    # infrastructure — stores, servers, persistence, low-level services
+    "store": "infrastructure",
+    "store_keys": "infrastructure",
+    "soul_persistence": "infrastructure",
+    "supabase_persistence": "infrastructure",
+    "local_llm": "infrastructure",
+    "mcp_server": "infrastructure",
+    "service_manager": "infrastructure",
+    "hook_chain": "infrastructure",
+    "aegis_shield": "infrastructure",
+    "zone_registry": "infrastructure",
+    # pipeline — runtime adapter, unified pipeline, frame routing
+    "runtime_adapter": "pipeline",
+    "runtime_adapter_normalization": "pipeline",
+    "runtime_adapter_routing": "pipeline",
+    "runtime_adapter_subject_refresh": "pipeline",
+    "unified_pipeline": "pipeline",
+    "unified_controller": "pipeline",
+    "yss_pipeline": "pipeline",
+    "yss_unified_adapter": "pipeline",
+    "generation_orch": "pipeline",
+    "frame_router": "pipeline",
+    "action_set": "pipeline",
+    "context_compiler": "pipeline",
+    # memory — hot caches, managers, archival islands, inventory
+    "hot_memory": "memory",
+    "memory_manager": "memory",
+    "time_island": "memory",
+    "inventory": "memory",
+    # evolution — self-improvement, dream, mirror, reflection, persona
+    "self_improvement_trial_wave": "evolution",
+    "dream_engine": "evolution",
+    "dream_observability": "evolution",
+    "mirror": "evolution",
+    "reflection": "evolution",
+    "resonance": "evolution",
+    "resistance": "evolution",
+    "benevolence": "evolution",
+    "mercy_objective": "evolution",
+    "persona_dimension": "evolution",
+    "working_style": "evolution",
+    "subsystem_parity": "evolution",
+    # observability — monitors, trackers, auditors, metrics, status
+    "observer_window": "observability",
+    "jump_monitor": "observability",
+    "heartbeat": "observability",
+    "evidence_collector": "observability",
+    "exception_trace": "observability",
+    "error_event": "observability",
+    "audit_interface": "observability",
+    "openclaw_auditor": "observability",
+    "status_alignment": "observability",
+    "true_verification_summary": "observability",
+    "tsr_metrics": "observability",
+    "surface_versioning": "observability",
+    "issue_codes": "observability",
+    "repo_state_awareness": "observability",
+    "poav": "observability",
+    # orchestration — autonomous cycles, schedules, wakeup loops
+    "autonomous_cycle": "orchestration",
+    "autonomous_schedule": "orchestration",
+    "wakeup_loop": "orchestration",
+    "schedule_profile": "orchestration",
+    # surface — operator-facing entry adapters, diagnostics
+    "diagnose": "surface",
+    "claude_entry_adapter": "surface",
+    # domain — semantic field modellers, predictors, variance
+    "ystm_demo": "domain",
+    "variance_compressor": "domain",
+    "nonlinear_predictor": "domain",
+    "dcs": "domain",
+    # shared — config, schemas, parsing primitives
+    "tonesoul": "shared",
+    "config": "shared",
+    "soul_config": "shared",
+    "schemas": "shared",
+    "safe_parse": "shared",
 }
 
 # Allowed downward dependencies (layer A may import layer B)
@@ -164,7 +280,11 @@ def scan_module(file_path: Path, root_package: str, repo_root: Path) -> ModuleIn
     else:
         subpackage = "(root)"
 
-    layer = LAYER_MAP.get(subpackage, "uncategorized")
+    if subpackage == "(root)":
+        basename = module_name.rsplit(".", 1)[-1]
+        layer = ROOT_MODULE_LAYER.get(basename, "uncategorized")
+    else:
+        layer = LAYER_MAP.get(subpackage, "uncategorized")
 
     try:
         source = file_path.read_text(encoding="utf-8-sig")

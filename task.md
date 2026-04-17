@@ -42,6 +42,13 @@
 - Phase 747: ~~refresh launch-line handoff after Phase 724 landed~~ **done** (`docs/status/codex_handoff_2026-04-15.md`)
 - Phase 856: ~~harden backend durability, write-auth parity, and 500-redaction across runtime + API surfaces~~ **done** (`tonesoul/backends/file_store.py`, `tonesoul/runtime_adapter.py`, `api/_shared/{core.py,http_utils.py}`, `api/{chat.py,validate.py,health.py}`, `apps/api/server.py`, `tests/test_runtime_adapter.py`, `tests/test_store.py`, `tests/test_api_phase_a_security.py`, `tests/test_serverless_shared_core.py`, `tests/red_team/test_api_red_team_baseline.py`)
 - Phase 857: ~~record 2026-04-18 commit-attribution red-light as a process lesson after PR #11 was merged before CI could complete, leaving 55d9e34 and 64c94df without `Agent:`/`Trace-Topic:` trailers on master; decline to reintroduce the enforcement anchor since 93bf6a0 deliberately removed it, and restore master to a green state via one forward commit that carries proper trailers~~ **done** (`task.md`)
+- Phase 858: ~~give the body map honest classification so the analyzer stops collapsing ~92 root modules into a single "uncategorized" bucket~~ **done** (`scripts/analyze_codebase_graph.py`, `tests/test_analyze_codebase_graph.py`, `docs/status/codebase_graph_latest.{json,md}`)
+  - Findings surfaced once the map became honest (each is a real signal, not a classifier bug, and belongs to a later scoping pass, not this patch):
+    - `ystm.schema` is imported by 17 layers outside `domain` — it has already become a shared type primitive; candidate move is `tonesoul/shared/schema.py` or a thin re-export.
+    - `governance` reaches into `evolution` (`council.runtime → benevolence`, `governance.kernel → resistance`) and `pipeline` (`constraint_stack → action_set`); either `ALLOWED_DEPS` widens to legitimize, or the deps invert via an interface.
+    - `observability` imports into `memory`, `governance`, `domain`, `evolution` — defensible (observers observe) but should be encoded in `ALLOWED_DEPS` rather than living as perpetual violations.
+    - `orchestration → perception` (`autonomous_cycle`, `autonomous_schedule`) looks like a legitimate downward dep that `ALLOWED_DEPS` just does not list yet.
+    - `mcp_server` is the only `infrastructure` module that reaches up into `governance` + `pipeline`; that reflects its gateway-surface role and may deserve a `surface`/`gateway` reclassification in a follow-up.
 
 ## Active Program: Agent Workspace And IDE Translation (2026-04-06)
 - Program Goal: translate ToneSoul's tiered runtime surfaces into an operator workspace / IDE.

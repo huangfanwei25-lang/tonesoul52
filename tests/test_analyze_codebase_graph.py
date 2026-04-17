@@ -97,6 +97,59 @@ class TestScanModule:
         assert "mypkg.gate" in info.imports_out
         assert info.lines > 0
 
+    def test_root_module_layer_from_curated_map(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Root-level modules (no subpackage) pick up layer from ROOT_MODULE_LAYER."""
+        pkg = tmp_path / "mp"
+        pkg.mkdir()
+        (pkg / "__init__.py").write_text("", encoding="utf-8")
+        (pkg / "adaptive_gate.py").write_text("def run(): pass\n", encoding="utf-8")
+        (pkg / "runtime_adapter.py").write_text("def run(): pass\n", encoding="utf-8")
+        (pkg / "ystm_demo.py").write_text("def run(): pass\n", encoding="utf-8")
+        (pkg / "novel_feature.py").write_text("def run(): pass\n", encoding="utf-8")
+
+        monkeypatch.setitem(acg.ROOT_MODULE_LAYER, "adaptive_gate", "governance")
+        monkeypatch.setitem(acg.ROOT_MODULE_LAYER, "runtime_adapter", "pipeline")
+        monkeypatch.setitem(acg.ROOT_MODULE_LAYER, "ystm_demo", "domain")
+
+        gate_info = acg.scan_module(pkg / "adaptive_gate.py", "mp", tmp_path)
+        runtime_info = acg.scan_module(pkg / "runtime_adapter.py", "mp", tmp_path)
+        demo_info = acg.scan_module(pkg / "ystm_demo.py", "mp", tmp_path)
+        novel_info = acg.scan_module(pkg / "novel_feature.py", "mp", tmp_path)
+
+        assert gate_info.subpackage == "(root)"
+        assert gate_info.layer == "governance"
+        assert runtime_info.layer == "pipeline"
+        assert demo_info.layer == "domain"
+        assert novel_info.layer == "uncategorized"  # unmapped → honest gap
+
+    def test_real_tonesoul_root_modules_are_classified(self) -> None:
+        """Guard: every shipped tonesoul/*.py root module must live in ROOT_MODULE_LAYER.
+
+        Stops the body map from silently regrowing an 'uncategorized' pile when
+        new root modules land without a layer decision.
+        """
+        repo_root = Path(__file__).resolve().parents[1]
+        tonesoul_root = repo_root / "tonesoul"
+        if not tonesoul_root.is_dir():
+            pytest.skip("tonesoul package not present in this checkout")
+
+        unmapped: list[str] = []
+        for path in tonesoul_root.glob("*.py"):
+            if path.name == "__init__.py":
+                basename = "tonesoul"
+            else:
+                basename = path.stem
+            if basename not in acg.ROOT_MODULE_LAYER:
+                unmapped.append(basename)
+
+        assert not unmapped, (
+            "New root-level tonesoul modules lack a ROOT_MODULE_LAYER entry: "
+            f"{sorted(unmapped)}. Add each to scripts/analyze_codebase_graph.py "
+            "so the body map stays honest."
+        )
+
     def test_init_module_name(self, tiny_repo: Path) -> None:
         info = acg.scan_module(tiny_repo / "mypkg" / "__init__.py", "mypkg", tiny_repo)
         assert info.module_name == "mypkg"
