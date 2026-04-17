@@ -1,0 +1,51 @@
+{
+  "name": "tonesoul-vscode",
+  "displayName": "ToneSoul Tools",
+  "description": "Minimal VS Code skeleton for ToneSoul v1.2 slim-entry and MCP server control.",
+  "version": "0.0.1",
+  "publisher": "tonesoul",
+  "license": "Apache-2.0",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onCommand:tonesoul.startMcpServer",
+    "onCommand:tonesoul.stopMcpServer",
+    "onCommand:tonesoul.showSlimEntry"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "tonesoul.startMcpServer",
+        "title": "ToneSoul: Start MCP Server"
+      },
+      {
+        "command": "tonesoul.stopMcpServer",
+        "title": "ToneSoul: Stop MCP Server"
+      },
+      {
+        "command": "tonesoul.showSlimEntry",
+        "title": "ToneSoul: Show Slim Entry"
+      }
+    ],
+    "configuration": {
+      "title": "ToneSoul",
+      "properties": {
+        "tonesoul.pythonPath": {
+          "type": "string",
+          "default": "python",
+          "description": "Python executable used to launch ToneSoul scripts."
+        },
+        "tonesoul.agentId": {
+          "type": "string",
+          "default": "vscode-shell",
+          "description": "Agent identifier used for ToneSoul session-start calls."
+        }
+      }
+    }
+  }
+}
