@@ -18,6 +18,8 @@ def test_run_v1_2_tool_entry_smoke_returns_compact_status() -> None:
     assert payload["session_start_size"]["slim_lt_2kb"] is True
     assert payload["mcp_stdio_smoke"]["returncode"] == 0
     assert payload["mcp_stdio_smoke"]["initialize_ok"] is True
+    assert payload["mcp_stdio_smoke"]["initialized_notification_sent"] is True
+    assert payload["mcp_stdio_smoke"]["batch_response_count"] >= 1
     assert payload["mcp_stdio_smoke"]["council_deliberate"]["_compact"] is True
     assert payload["mcp_stdio_smoke"]["council_get_status"]["kind"] == "governance_summary"
     assert payload["mcp_stdio_smoke"]["governance_load"]["kind"] == "governance_summary"

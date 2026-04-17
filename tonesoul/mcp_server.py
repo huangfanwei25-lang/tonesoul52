@@ -160,6 +160,49 @@ def _tool_name_set(*, include_gateway: bool = True) -> list[str]:
     return [tool["name"] for tool in _list_tool_definitions(include_gateway=include_gateway)]
 
 
+def _require_string_list(arguments: dict[str, Any], key: str) -> list[str]:
+    value = arguments.get(key)
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise ValueError(f"{key} must be an array of strings")
+
+    items: list[str] = []
+    for idx, item in enumerate(value):
+        if not isinstance(item, str):
+            raise ValueError(f"{key}[{idx}] must be a string")
+        text = item.strip()
+        if text:
+            items.append(text)
+    return items
+
+
+def _require_object_list(arguments: dict[str, Any], key: str) -> list[dict[str, Any]]:
+    value = arguments.get(key)
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise ValueError(f"{key} must be an array of objects")
+
+    items: list[dict[str, Any]] = []
+    for idx, item in enumerate(value):
+        if not isinstance(item, dict):
+            raise ValueError(f"{key}[{idx}] must be an object")
+        items.append(item)
+    return items
+
+
+def _require_duration_minutes(arguments: dict[str, Any]) -> float:
+    raw_value = arguments.get("duration_minutes", 0.0)
+    try:
+        duration = float(raw_value or 0.0)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("duration_minutes must be a number") from exc
+    if duration < 0:
+        raise ValueError("duration_minutes must be >= 0")
+    return duration
+
+
 def _claim_blocked_reasons(claim_text: str) -> list[str]:
     normalized = " ".join(str(claim_text or "").lower().split())
     checks = [
@@ -285,11 +328,11 @@ def _governance_commit(arguments: dict[str, Any]) -> dict[str, Any]:
 
     trace = SessionTrace(
         agent=str(arguments.get("agent", "mcp-gateway")).strip() or "mcp-gateway",
-        topics=list(arguments.get("topics") or []),
-        tension_events=list(arguments.get("tension_events") or []),
-        vow_events=list(arguments.get("vow_events") or []),
-        key_decisions=list(arguments.get("key_decisions") or []),
-        duration_minutes=float(arguments.get("duration_minutes", 0.0) or 0.0),
+        topics=_require_string_list(arguments, "topics"),
+        tension_events=_require_object_list(arguments, "tension_events"),
+        vow_events=_require_object_list(arguments, "vow_events"),
+        key_decisions=_require_string_list(arguments, "key_decisions"),
+        duration_minutes=_require_duration_minutes(arguments),
     )
     posture = _quiet_call(commit, trace)
     risk = posture.risk_posture or {}
@@ -390,6 +433,31 @@ def _jsonrpc_error(request_id: Any, code: int, message: str) -> dict[str, Any]:
     }
 
 
+def _response_payload(
+    message: Any,
+    *,
+    include_gateway: bool = True,
+) -> dict[str, Any] | list[dict[str, Any]] | None:
+    if isinstance(message, list):
+        if not message:
+            return _jsonrpc_error(None, -32600, "invalid request")
+
+        responses: list[dict[str, Any]] = []
+        for item in message:
+            if not isinstance(item, dict):
+                responses.append(_jsonrpc_error(None, -32600, "invalid request"))
+                continue
+            response = handle_request(item, include_gateway=include_gateway)
+            if response is not None:
+                responses.append(response)
+        return responses or None
+
+    if not isinstance(message, dict):
+        return _jsonrpc_error(None, -32600, "invalid request")
+
+    return handle_request(message, include_gateway=include_gateway)
+
+
 def handle_request(
     request: dict[str, Any],
     *,
@@ -427,6 +495,8 @@ def handle_request(
             result = call_tool(name, arguments)
         except KeyError as exc:
             return _jsonrpc_error(request_id, -32601, str(exc))
+        except ValueError as exc:
+            return _jsonrpc_error(request_id, -32602, str(exc))
         except Exception as exc:  # pragma: no cover - defensive transport path
             return _jsonrpc_error(request_id, -32000, f"tool call failed: {exc}")
         return _jsonrpc_result(
@@ -451,14 +521,14 @@ def serve_stdio(
         if not line:
             continue
         try:
-            request = json.loads(line)
+            message = json.loads(line)
         except json.JSONDecodeError:
-            response = _jsonrpc_error(None, -32700, "invalid json")
+            response_payload = _jsonrpc_error(None, -32700, "invalid json")
         else:
-            response = handle_request(request, include_gateway=include_gateway)
-        if response is None:
+            response_payload = _response_payload(message, include_gateway=include_gateway)
+        if response_payload is None:
             continue
-        out_stream.write(json.dumps(response, ensure_ascii=False) + "\n")
+        out_stream.write(json.dumps(response_payload, ensure_ascii=False) + "\n")
         out_stream.flush()
 
 

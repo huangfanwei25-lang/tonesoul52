@@ -296,6 +296,26 @@ def test_commit_lock_file_is_released_after_success(tmp_state: Path, tmp_traces:
     assert not lock_path.exists()
 
 
+def test_commit_lock_file_is_released_after_state_write_failure(
+    tmp_state: Path,
+    tmp_traces: Path,
+    monkeypatch,
+) -> None:
+    from tonesoul.backends.file_store import FileStore
+
+    def _boom(self, data) -> None:
+        raise RuntimeError("boom in set_state")
+
+    monkeypatch.setattr(FileStore, "set_state", _boom)
+
+    trace = SessionTrace(agent="codex", key_decisions=["fail after lock"])
+    with pytest.raises(RuntimeError, match="boom in set_state"):
+        commit(trace, state_path=tmp_state, traces_path=tmp_traces)
+
+    lock_path = tmp_state.parent / ".aegis" / "commit.lock.json"
+    assert not lock_path.exists()
+
+
 def test_r_memory_packet_exposes_runtime_dominance_and_recent_trace(
     tmp_state: Path,
     tmp_traces: Path,

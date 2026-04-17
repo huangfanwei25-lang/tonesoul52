@@ -74,6 +74,7 @@ def _write_markdown(path: Path, payload: dict[str, Any]) -> None:
     lines.append("## MCP Stdio Smoke")
     lines.append("")
     lines.append(f"- Return code: `{mcp.get('returncode', -1)}`")
+    lines.append(f"- Batch responses: `{mcp.get('batch_response_count', 0)}`")
     lines.append(f"- Tools count: `{mcp.get('tools_count', 0)}`")
     lines.append(f"- Tool names: `{', '.join(mcp.get('tool_names') or [])}`")
     lines.append("")
@@ -137,13 +138,33 @@ def _run_session_start_sizes(agent: str) -> dict[str, Any]:
     }
 
 
-def _parse_json_lines(text: str) -> list[dict[str, Any]]:
+def _parse_json_lines(text: str) -> list[Any]:
     return [json.loads(line) for line in text.splitlines() if line.strip()]
 
 
+def _flatten_response_items(messages: list[Any]) -> list[dict[str, Any]]:
+    items: list[dict[str, Any]] = []
+    for message in messages:
+        if isinstance(message, dict):
+            items.append(message)
+        elif isinstance(message, list):
+            items.extend(item for item in message if isinstance(item, dict))
+    return items
+
+
 def _run_mcp_stdio_smoke() -> dict[str, Any]:
-    requests = [
-        {"jsonrpc": "2.0", "id": 1, "method": "initialize"},
+    initialize_request = {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "initialize",
+        "params": {
+            "protocolVersion": "2025-03-26",
+            "capabilities": {"roots": {"listChanged": False}, "sampling": {}},
+            "clientInfo": {"name": "tonesoul-v1-2-smoke", "version": "0.1.0"},
+        },
+    }
+    initialized_notification = {"jsonrpc": "2.0", "method": "notifications/initialized"}
+    batch_requests = [
         {"jsonrpc": "2.0", "id": 2, "method": "tools/list"},
         {
             "jsonrpc": "2.0",
@@ -171,7 +192,13 @@ def _run_mcp_stdio_smoke() -> dict[str, Any]:
             "params": {"name": "governance_load", "arguments": {"agent_id": "mcp-smoke"}},
         },
     ]
-    input_payload = "\n".join(json.dumps(item, ensure_ascii=False) for item in requests) + "\n"
+    input_payload = (
+        "\n".join(
+            json.dumps(item, ensure_ascii=False)
+            for item in [initialize_request, initialized_notification, batch_requests]
+        )
+        + "\n"
+    )
     child_env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
     completed = subprocess.run(
         [sys.executable, "-m", "tonesoul.mcp_server", "--toolset", "gateway"],
@@ -184,9 +211,11 @@ def _run_mcp_stdio_smoke() -> dict[str, Any]:
         env=child_env,
         check=False,
     )
-    responses = _parse_json_lines(completed.stdout or "")
-    by_id = {item.get("id"): item for item in responses if isinstance(item, dict)}
+    messages = _parse_json_lines(completed.stdout or "")
+    response_items = _flatten_response_items(messages)
+    by_id = {item.get("id"): item for item in response_items if isinstance(item, dict)}
     tools = ((by_id.get(2) or {}).get("result") or {}).get("tools") or []
+    batch_response_count = sum(1 for message in messages if isinstance(message, list))
 
     def _structured(idx: int) -> dict[str, Any]:
         result = (by_id.get(idx) or {}).get("result") or {}
@@ -196,10 +225,12 @@ def _run_mcp_stdio_smoke() -> dict[str, Any]:
     return {
         "returncode": completed.returncode,
         "stderr": (completed.stderr or "").strip(),
-        "response_count": len(responses),
+        "response_count": len(response_items),
+        "batch_response_count": batch_response_count,
         "tools_count": len(tools),
         "tool_names": [str(item.get("name", "")).strip() for item in tools],
         "initialize_ok": bool((by_id.get(1) or {}).get("result")),
+        "initialized_notification_sent": True,
         "council_deliberate": _structured(3),
         "council_get_status": _structured(4),
         "governance_load": _structured(5),
@@ -214,6 +245,7 @@ def run_v1_2_tool_entry_smoke(*, agent: str) -> dict[str, Any]:
         if size.get("slim_lt_2kb")
         and mcp.get("returncode") == 0
         and mcp.get("initialize_ok")
+        and mcp.get("batch_response_count", 0) >= 1
         and bool(mcp.get("council_deliberate"))
         and bool(mcp.get("council_get_status"))
         and bool(mcp.get("governance_load"))

@@ -157,6 +157,24 @@ def test_handle_tools_call_unknown_tool_returns_error() -> None:
     assert response["error"]["code"] == -32601
 
 
+def test_handle_tools_call_invalid_params_returns_error() -> None:
+    response = mcp_server.handle_request(
+        {
+            "jsonrpc": "2.0",
+            "id": 5,
+            "method": "tools/call",
+            "params": {
+                "name": "governance_commit",
+                "arguments": {"topics": "abc"},
+            },
+        }
+    )
+
+    assert response is not None
+    assert response["error"]["code"] == -32602
+    assert "topics" in response["error"]["message"]
+
+
 def test_serve_stdio_emits_one_jsonrpc_line(monkeypatch) -> None:
     monkeypatch.setattr(
         mcp_server,
@@ -171,3 +189,34 @@ def test_serve_stdio_emits_one_jsonrpc_line(monkeypatch) -> None:
     lines = [line for line in out_stream.getvalue().splitlines() if line.strip()]
     assert len(lines) == 1
     assert json.loads(lines[0])["id"] == 9
+
+
+def test_serve_stdio_emits_batch_response_for_batch_request(monkeypatch) -> None:
+    monkeypatch.setattr(
+        mcp_server,
+        "handle_request",
+        lambda request, include_gateway=True: (
+            None
+            if request.get("method") == "notifications/initialized"
+            else {"jsonrpc": "2.0", "id": request["id"], "result": {"echo": request["id"]}}
+        ),
+    )
+    in_stream = StringIO(
+        json.dumps(
+            [
+                {"jsonrpc": "2.0", "id": 1, "method": "tools/list"},
+                {"jsonrpc": "2.0", "method": "notifications/initialized"},
+                {"jsonrpc": "2.0", "id": 2, "method": "tools/list"},
+            ]
+        )
+        + "\n"
+    )
+    out_stream = StringIO()
+
+    mcp_server.serve_stdio(in_stream, out_stream)
+
+    lines = [line for line in out_stream.getvalue().splitlines() if line.strip()]
+    assert len(lines) == 1
+    payload = json.loads(lines[0])
+    assert isinstance(payload, list)
+    assert [item["id"] for item in payload] == [1, 2]

@@ -1,9 +1,9 @@
 # ToneSoul V1.2 Tool-First Entry Smoke
 
-> Generated at `2026-04-17T11:54:56Z`.
+> Generated at `2026-04-17T12:54:45Z`.
 
 - Status: `pass`
-- Agent: `v1-2-smoke`
+- Agent: `audit-fix`
 
 ## Workflow Alignment
 
@@ -13,15 +13,16 @@
 
 ## Session-Start Size
 
-- Slim bytes: `453`
-- Tier 0 bytes: `6104`
-- Reduction bytes: `5651`
-- Reduction ratio: `0.9258`
+- Slim bytes: `452`
+- Tier 0 bytes: `6099`
+- Reduction bytes: `5647`
+- Reduction ratio: `0.9259`
 - Meets slim target: `True`
 
 ## MCP Stdio Smoke
 
 - Return code: `0`
+- Batch responses: `1`
 - Tools count: `9`
 - Tool names: `council_deliberate, council_check_claim, council_get_calibration, council_get_status, governance_load, governance_commit, governance_summary, governance_visitors, governance_audit`
 
