@@ -1,6 +1,6 @@
 # ToneSoul Codebase Graph Analysis
 
-Generated: 2026-04-17T18:42:48Z
+Generated: 2026-04-17T19:04:02Z
 Package: `tonesoul`
 
 ## Summary
@@ -13,7 +13,7 @@ Package: `tonesoul`
 | Functions | 2,653 |
 | Import edges | 453 |
 | Circular deps | 0 |
-| Layer violations | 40 |
+| Layer violations | 19 |
 | Orphan modules | 0 |
 | Community drifts | 20 |
 
@@ -24,7 +24,7 @@ Modules with the highest total degree (in + out). High coupling = high change ri
 | # | Module | Layer | In | Out | Total | Lines | Funcs |
 | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | 1 | `unified_pipeline` | pipeline | 0 | 34 | **34** | 3,627 | 78 |
-| 2 | `ystm.schema` | domain | 27 | 0 | **27** | 160 | 5 |
+| 2 | `ystm.schema` | shared | 27 | 0 | **27** | 160 | 5 |
 | 3 | `yss_pipeline` | pipeline | 1 | 25 | **26** | 1,091 | 29 |
 | 4 | `runtime_adapter` | pipeline | 5 | 17 | **22** | 2,538 | 54 |
 | 5 | `council.types` | governance | 21 | 0 | **21** | 159 | 2 |
@@ -51,32 +51,24 @@ Imports that cross layer boundaries in disallowed directions.
 | Source | Source Layer | → | Target | Target Layer |
 | --- | --- | --- | --- | --- |
 | `tonesoul` | shared | → | `unified_controller` | pipeline |
-| `audit_interface` | observability | → | `ystm.schema` | domain |
-| `autonomous_cycle` | orchestration | → | `perception.stimulus` | perception |
-| `autonomous_cycle` | orchestration | → | `perception.web_ingest` | perception |
-| `autonomous_schedule` | orchestration | → | `perception.source_registry` | perception |
 | `constraint_stack` | governance | → | `action_set` | pipeline |
 | `constraint_stack` | governance | → | `mercy_objective` | evolution |
-| `constraint_stack` | governance | → | `ystm.schema` | domain |
 | `council.runtime` | governance | → | `benevolence` | evolution |
-| `evidence_collector` | observability | → | `ystm.schema` | domain |
 | `governance` | governance | → | `benevolence` | evolution |
 | `governance.kernel` | governance | → | `resistance` | evolution |
-| `intent_verification` | governance | → | `ystm.schema` | domain |
 | `mcp_server` | infrastructure | → | `council.compact` | governance |
 | `mcp_server` | infrastructure | → | `council.calibration` | governance |
 | `mcp_server` | infrastructure | → | `council.runtime` | governance |
 | `mcp_server` | infrastructure | → | `runtime_adapter` | pipeline |
 | `memory.boot` | memory | → | `runtime_adapter` | pipeline |
-| `memory_manager` | memory | → | `ystm.schema` | domain |
-| `mercy_objective` | evolution | → | `ystm.schema` | domain |
-| `observer_window` | observability | → | `consumer_contract` | governance |
-| `observer_window` | observability | → | `hot_memory` | memory |
-| `openclaw_auditor` | observability | → | `benevolence` | evolution |
-| `persona_dimension` | evolution | → | `ystm.schema` | domain |
-| `reflection` | evolution | → | `ystm.schema` | domain |
-
-... and 15 more
+| `risk_calculator` | governance | → | `working_style` | evolution |
+| `tension_engine` | governance | → | `nonlinear_predictor` | domain |
+| `tension_engine` | governance | → | `resistance` | evolution |
+| `tension_engine` | governance | → | `variance_compressor` | domain |
+| `unified_pipeline` | pipeline | → | `tonebridge` | surface |
+| `yss_gates` | governance | → | `dcs` | domain |
+| `yss_gates` | governance | → | `frame_router` | pipeline |
+| `yss_gates` | governance | → | `ystm.acceptance` | domain |
 
 ## Subpackage Stats
 

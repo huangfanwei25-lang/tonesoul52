@@ -49,6 +49,8 @@
     - `observability` imports into `memory`, `governance`, `domain`, `evolution` — defensible (observers observe) but should be encoded in `ALLOWED_DEPS` rather than living as perpetual violations.
     - `orchestration → perception` (`autonomous_cycle`, `autonomous_schedule`) looks like a legitimate downward dep that `ALLOWED_DEPS` just does not list yet.
     - `mcp_server` is the only `infrastructure` module that reaches up into `governance` + `pipeline`; that reflects its gateway-surface role and may deserve a `surface`/`gateway` reclassification in a follow-up.
+- Phase 859: ~~teach the body map the intended shape so the analyzer stops flagging architectural truths as violations: promote `ystm.schema` to `shared` via a per-module override (no physical move), and widen `ALLOWED_DEPS` so `orchestration → perception`, `observability → {memory, governance, domain, evolution, semantic, perception}`, and `semantic → {governance, observability}` are legitimized rather than perpetually red~~ **done** (`scripts/analyze_codebase_graph.py`, `tests/test_analyze_codebase_graph.py`, `docs/status/codebase_graph_latest.{json,md}`)
+  - Result: layer violations dropped 40 → 19. The remaining 19 are the genuinely inverted deps that still need an architectural decision (governance reaching into evolution/pipeline/domain, the mcp_server gateway sitting in infrastructure, pipeline→surface on `unified_pipeline → tonebridge`, package root re-exports).
 
 ## Active Program: Agent Workspace And IDE Translation (2026-04-06)
 - Program Goal: translate ToneSoul's tiered runtime surfaces into an operator workspace / IDE.

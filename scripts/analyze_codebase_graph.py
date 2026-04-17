@@ -177,6 +177,17 @@ ROOT_MODULE_LAYER: dict[str, str] = {
     "safe_parse": "shared",
 }
 
+# Per-module layer overrides that trump subpackage classification.
+# Some modules are physically nested in a domain subpackage but are in fact
+# pure type primitives or cross-cutting utilities used everywhere. Listing
+# them here makes the body map honest without forcing a physical relocation.
+MODULE_LAYER_OVERRIDES: dict[str, str] = {
+    # ystm.schema is a pure @dataclass type module imported by governance,
+    # observability, memory, evolution — it has become the shared type
+    # vocabulary, regardless of living inside the ystm subpackage.
+    "tonesoul.ystm.schema": "shared",
+}
+
 # Allowed downward dependencies (layer A may import layer B)
 ALLOWED_DEPS: dict[str, set[str]] = {
     "surface": {
@@ -202,6 +213,7 @@ ALLOWED_DEPS: dict[str, set[str]] = {
         "semantic",
         "observability",
         "evolution",
+        "perception",
     },
     "pipeline": {
         "governance",
@@ -218,9 +230,18 @@ ALLOWED_DEPS: dict[str, set[str]] = {
     "governance": {"memory", "infrastructure", "shared", "observability", "semantic"},
     "memory": {"infrastructure", "shared"},
     "evolution": {"memory", "infrastructure", "shared", "governance", "observability"},
-    "semantic": {"infrastructure", "shared", "memory"},
+    "semantic": {"infrastructure", "shared", "memory", "governance", "observability"},
     "perception": {"infrastructure", "shared", "memory", "semantic"},
-    "observability": {"infrastructure", "shared"},
+    "observability": {
+        "infrastructure",
+        "shared",
+        "memory",
+        "governance",
+        "domain",
+        "evolution",
+        "semantic",
+        "perception",
+    },
     "infrastructure": {"shared"},
     "shared": set(),
     "legacy": {"shared", "infrastructure", "governance", "memory", "pipeline", "domain"},
@@ -280,7 +301,9 @@ def scan_module(file_path: Path, root_package: str, repo_root: Path) -> ModuleIn
     else:
         subpackage = "(root)"
 
-    if subpackage == "(root)":
+    if module_name in MODULE_LAYER_OVERRIDES:
+        layer = MODULE_LAYER_OVERRIDES[module_name]
+    elif subpackage == "(root)":
         basename = module_name.rsplit(".", 1)[-1]
         layer = ROOT_MODULE_LAYER.get(basename, "uncategorized")
     else:

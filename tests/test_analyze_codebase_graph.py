@@ -124,6 +124,32 @@ class TestScanModule:
         assert demo_info.layer == "domain"
         assert novel_info.layer == "uncategorized"  # unmapped → honest gap
 
+    def test_module_layer_override_trumps_subpackage(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Modules in MODULE_LAYER_OVERRIDES use the override even when
+        their subpackage would otherwise force a different layer."""
+        pkg = tmp_path / "op"
+        pkg.mkdir()
+        (pkg / "__init__.py").write_text("", encoding="utf-8")
+        dom = pkg / "domainish"
+        dom.mkdir()
+        (dom / "__init__.py").write_text("", encoding="utf-8")
+        (dom / "types.py").write_text(
+            "from dataclasses import dataclass\n" "@dataclass\n" "class Row:\n" "    x: int\n",
+            encoding="utf-8",
+        )
+
+        monkeypatch.setitem(acg.LAYER_MAP, "domainish", "domain")
+        monkeypatch.setitem(acg.MODULE_LAYER_OVERRIDES, "op.domainish.types", "shared")
+
+        info = acg.scan_module(dom / "types.py", "op", tmp_path)
+        assert info.subpackage == "domainish"
+        assert info.layer == "shared", (
+            "MODULE_LAYER_OVERRIDES must beat LAYER_MAP for modules that are "
+            "physically nested in a subpackage but are in fact cross-cutting."
+        )
+
     def test_real_tonesoul_root_modules_are_classified(self) -> None:
         """Guard: every shipped tonesoul/*.py root module must live in ROOT_MODULE_LAYER.
 
