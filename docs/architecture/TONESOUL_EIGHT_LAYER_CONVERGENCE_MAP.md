@@ -3,7 +3,12 @@
 > Status: canonical architecture companion as of 2026-03-22
 > Audience: future AI agents, maintainers, and architecture reviews
 > Purpose: reconcile ToneSoul's six operational governance layers with the newer retrieval and model-attachment layers without implying a hidden ninth layer.
-> Last Updated: 2026-04-13 (added YUHUN Core Protocol v1.0 surface references)
+> Last Updated: 2026-04-18 (added orthogonality disclaimer pointing at the 13-layer body map)
+
+> **⚠️ This is a request-flow axis, not an import-dependency axis.**
+> The eight layers below describe **stages a single request passes through** (ingress → sensing → deliberation → governance → audit → memory → retrieval → attachment). They are not the same thing as — and do not compete with — the **13-layer body map** at [../status/codebase_graph_latest.md](../status/codebase_graph_latest.md), which describes **allowed import directions between Python subpackages** (surface / orchestration / pipeline / governance / semantic / perception / evolution / memory / domain / observability / infrastructure / shared / legacy), enforced by [../ARCHITECTURE_BOUNDARIES.md](../ARCHITECTURE_BOUNDARIES.md).
+>
+> The two views are **orthogonal**: one request can cross several body-map layers in sequence, and one body-map layer can serve several request-flow stages. Use this document when you need to reason about **where in a request's lifecycle** a concern lives; use the body map when you need to reason about **what a file may import**.
 
 ## Why This Document Exists
 
