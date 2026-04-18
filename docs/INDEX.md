@@ -1,7 +1,7 @@
 ﻿# ToneSoul Documentation Index
 
 > Purpose: top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.
-> Last Updated: 2026-03-30
+> Last Updated: 2026-04-18
 > Status: full registry, not the default first-hop gateway.
 > Use When: `docs/README.md` was not enough, or you need broader inventory coverage instead of guided routing.
 ---
@@ -17,8 +17,18 @@
 | **Whole-System Guide** | [architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) | `deep_map` | when you need one grounded explanation of the whole stack and why the subsystems are separated |
 | **Deep Anatomy** | [narrative/TONESOUL_ANATOMY.md](narrative/TONESOUL_ANATOMY.md) | `deep_map` | before repo-wide refactor or whole-system explanation |
 | **Interpretive Lane** | [notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md](notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md), [narrative/TONESOUL_CODEX_READING.md](narrative/TONESOUL_CODEX_READING.md) | `interpretive` | when the map is clear but the load-bearing meaning still feels diffuse |
+| **Code-Level Lookup** | [status/codebase_graph_latest.md](status/codebase_graph_latest.md) | `generated_truth` | when you need to know what a specific `tonesoul/...` module does, its layer, coupling, and upstream/downstream deps |
 
 Use these in order if you intentionally need the fuller registry. Do not let a deep or interpretive document silently outrank code, tests, or architecture contracts.
+
+### Routing rule for "what does this file do?"
+
+- **Query**: "what does `tonesoul/<x>.py` do / which layer is it / who depends on it?"
+  - **Go to**: [status/codebase_graph_latest.md](status/codebase_graph_latest.md) — auto-generated from the live code by `scripts/analyze_codebase_graph.py`, covers all 254 modules with declared layer + purpose + coupling.
+  - **Do NOT go to**: [CORE_MODULES.md](CORE_MODULES.md) — narrative explanation of ~20 conceptual modules (TSC-01, PN-02, MCP-03…), last hand-updated 2026-03-23. It is interpretive design history, not a file-level index. Treat it as a lens, not a lookup table.
+- **Query**: "what are the legitimate import directions between layers?"
+  - **Go to**: [ARCHITECTURE_BOUNDARIES.md](ARCHITECTURE_BOUNDARIES.md) — reconciled against the body-map's 13-layer taxonomy.
+- **Query**: "what is this repo *about* at the design level?" → `DESIGN.md`, `architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md`.
 
 ---
 
