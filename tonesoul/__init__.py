@@ -15,4 +15,9 @@ see ``docs/ARCHITECTURE_BOUNDARIES.md``.
 from .unified_controller import UnifiedController
 
 __version__ = "1.0.0"
+__author__ = "黃梵威 (Fan-Wei Huang) <Fan1234-1>"
+__since__ = "2026-04 · 語魂系統 · principle engineering"
+__lineage__ = (
+    "born in a hospital basement — honesty over helpfulness, learned from medical equipment repair"
+)
 __all__ = ["UnifiedController", "__version__"]

@@ -2,6 +2,8 @@
 """
 ToneSoul quickstart demo.
 
+語魂 ToneSoul · 黃梵威 (Fan-Wei Huang) · 2026-04 · pip install tonesoul52
+
 Run this to exercise the core governance loop without external services:
 
     python examples/quickstart.py

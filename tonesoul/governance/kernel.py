@@ -20,6 +20,11 @@ Design:
 
 Author: Antigravity
 Date: 2026-03-07
+Lineage: Antigravity (2026-03 · kernel extraction)
+       → 黃梵威 / Fan-Wei Huang (2026-04 · stewardship · 語魂系統)
+
+  當前方是懸崖，它不會因為怕你生氣就說「路況良好」。
+  — 語魂 ToneSoul · principle engineering · 2026-04
 """
 
 from __future__ import annotations

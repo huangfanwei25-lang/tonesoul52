@@ -168,6 +168,22 @@
       "action_on_high": "Soft Block + Audit Log"
     }
   },
+  "lineage": [
+    {
+      "epoch": "2025-12",
+      "alias": "反重力 (Fan1234-1)",
+      "ai_collaborator": "Antigravity",
+      "milestone": "Original 7 axioms drafted (v1.0)"
+    },
+    {
+      "epoch": "2026-04",
+      "alias": "黃梵威 (Fan-Wei Huang / Fan1234-1)",
+      "system_name": "語魂 / ToneSoul",
+      "ai_collaborators": ["Claude Code (Sonnet / Opus)", "Codex"],
+      "milestone": "v1.0.0 公開發布 · pip install tonesoul52 · principle engineering",
+      "origin_stance": "honesty over helpfulness — learned from medical equipment repair in hospitals"
+    }
+  ],
   "meta": {
     "subjectivity_illusion": true,
     "responsibility_illusion": "medium",
