@@ -1,17 +1,27 @@
 {
-  "generated_at": "2026-04-17T19:04:02Z",
+  "generated_at": "2026-04-18T03:38:31Z",
   "source": "scripts/analyze_codebase_graph.py",
   "root_package": "tonesoul",
   "summary": {
     "total_modules": 254,
-    "total_lines": 77526,
+    "total_lines": 77601,
     "total_classes": 496,
     "total_functions": 2653,
     "total_edges": 453,
     "total_cycles": 0,
-    "total_layer_violations": 19,
+    "total_layer_violations": 23,
     "total_orphans": 0,
-    "total_community_drifts": 20
+    "total_community_drifts": 20,
+    "self_declared_layer_count": 15,
+    "self_declared_layer_ratio": 0.0591,
+    "purpose_count": 15,
+    "purpose_ratio": 0.0591
+  },
+  "annotation_coverage": {
+    "self_declared_layer_count": 15,
+    "self_declared_layer_ratio": 0.0591,
+    "purpose_count": 15,
+    "purpose_ratio": 0.0591
   },
   "god_nodes": [
     {
@@ -20,10 +30,12 @@
       "in_degree": 0,
       "out_degree": 34,
       "total_degree": 34,
-      "lines": 3627,
+      "lines": 3630,
       "classes": 2,
       "functions": 78,
-      "layer": "pipeline"
+      "layer": "pipeline",
+      "layer_source": "self_declared",
+      "purpose": "Top-level runtime pipeline that wires perception, council, and output surfaces."
     },
     {
       "module": "tonesoul.ystm.schema",
@@ -34,7 +46,9 @@
       "lines": 160,
       "classes": 14,
       "functions": 5,
-      "layer": "shared"
+      "layer": "shared",
+      "layer_source": "override",
+      "purpose": ""
     },
     {
       "module": "tonesoul.yss_pipeline",
@@ -42,10 +56,12 @@
       "in_degree": 1,
       "out_degree": 25,
       "total_degree": 26,
-      "lines": 1091,
+      "lines": 1096,
       "classes": 5,
       "functions": 29,
-      "layer": "pipeline"
+      "layer": "pipeline",
+      "layer_source": "self_declared",
+      "purpose": "Compose YSS gates, action set, and audit into one semantic-field pipeline pass."
     },
     {
       "module": "tonesoul.runtime_adapter",
@@ -53,10 +69,12 @@
       "in_degree": 5,
       "out_degree": 17,
       "total_degree": 22,
-      "lines": 2538,
+      "lines": 2543,
       "classes": 3,
       "functions": 54,
-      "layer": "pipeline"
+      "layer": "pipeline",
+      "layer_source": "self_declared",
+      "purpose": "Load/commit governance state across session boundaries; the model-agnostic runtime spine."
     },
     {
       "module": "tonesoul.council.types",
@@ -64,10 +82,12 @@
       "in_degree": 21,
       "out_degree": 0,
       "total_degree": 21,
-      "lines": 159,
+      "lines": 166,
       "classes": 7,
       "functions": 2,
-      "layer": "governance"
+      "layer": "shared",
+      "layer_source": "self_declared",
+      "purpose": "Shared type primitives (PerspectiveType, VoteDecision, verdicts) for the council subsystem."
     },
     {
       "module": "tonesoul.council.runtime",
@@ -75,10 +95,12 @@
       "in_degree": 4,
       "out_degree": 14,
       "total_degree": 18,
-      "lines": 771,
+      "lines": 776,
       "classes": 3,
       "functions": 19,
-      "layer": "governance"
+      "layer": "governance",
+      "layer_source": "self_declared",
+      "purpose": "Run the multi-perspective council, return verdict + coherence + minority opinion."
     },
     {
       "module": "tonesoul.memory.soul_db",
@@ -86,10 +108,12 @@
       "in_degree": 16,
       "out_degree": 1,
       "total_degree": 17,
-      "lines": 1175,
+      "lines": 1180,
       "classes": 6,
       "functions": 64,
-      "layer": "memory"
+      "layer": "memory",
+      "layer_source": "self_declared",
+      "purpose": "SQLite-backed memory store with decay, layered retrieval, and source attribution."
     },
     {
       "module": "tonesoul.autonomous_cycle",
@@ -97,10 +121,12 @@
       "in_degree": 1,
       "out_degree": 14,
       "total_degree": 15,
-      "lines": 362,
+      "lines": 367,
       "classes": 3,
       "functions": 12,
-      "layer": "orchestration"
+      "layer": "orchestration",
+      "layer_source": "self_declared",
+      "purpose": "Drive the autonomous wake/sense/dream loop without a human trigger."
     },
     {
       "module": "tonesoul.council.perspective_factory",
@@ -108,10 +134,12 @@
       "in_degree": 3,
       "out_degree": 11,
       "total_degree": 14,
-      "lines": 887,
+      "lines": 890,
       "classes": 6,
       "functions": 32,
-      "layer": "governance"
+      "layer": "governance",
+      "layer_source": "self_declared",
+      "purpose": "Factory for pluggable council perspectives (rules / LLM / tool-verified)."
     },
     {
       "module": "tonesoul.tonebridge",
@@ -122,7 +150,9 @@
       "lines": 119,
       "classes": 0,
       "functions": 0,
-      "layer": "surface"
+      "layer": "surface",
+      "layer_source": "subpackage",
+      "purpose": ""
     },
     {
       "module": "tonesoul.yss_gates",
@@ -130,10 +160,12 @@
       "in_degree": 3,
       "out_degree": 9,
       "total_degree": 12,
-      "lines": 940,
+      "lines": 947,
       "classes": 1,
       "functions": 20,
-      "layer": "governance"
+      "layer": "governance",
+      "layer_source": "self_declared",
+      "purpose": "Compose the YSS gate stack (DCS, POAV, frame router, seed, acceptance) into one policy pass."
     },
     {
       "module": "tonesoul.ystm.demo",
@@ -141,10 +173,12 @@
       "in_degree": 4,
       "out_degree": 8,
       "total_degree": 12,
-      "lines": 400,
+      "lines": 407,
       "classes": 1,
       "functions": 7,
-      "layer": "domain"
+      "layer": "surface",
+      "layer_source": "self_declared",
+      "purpose": "End-to-end YSTM demo: ingest segments, build terrain, render HTML/PNG/SVG surfaces."
     },
     {
       "module": "tonesoul.council.pre_output_council",
@@ -152,10 +186,12 @@
       "in_degree": 2,
       "out_degree": 9,
       "total_degree": 11,
-      "lines": 149,
+      "lines": 154,
       "classes": 1,
       "functions": 4,
-      "layer": "governance"
+      "layer": "governance",
+      "layer_source": "self_declared",
+      "purpose": "Convene the pre-output council: run perspectives, compute coherence, emit verdict and transcript."
     },
     {
       "module": "tonesoul.governance.kernel",
@@ -163,10 +199,12 @@
       "in_degree": 4,
       "out_degree": 7,
       "total_degree": 11,
-      "lines": 603,
+      "lines": 608,
       "classes": 1,
       "functions": 20,
-      "layer": "governance"
+      "layer": "governance",
+      "layer_source": "self_declared",
+      "purpose": "Governance kernel: decides how the pipeline behaves (routing, council convening, friction)."
     },
     {
       "module": "tonesoul.council.base",
@@ -174,10 +212,12 @@
       "in_degree": 9,
       "out_degree": 1,
       "total_degree": 10,
-      "lines": 20,
+      "lines": 25,
       "classes": 1,
       "functions": 2,
-      "layer": "governance"
+      "layer": "shared",
+      "layer_source": "self_declared",
+      "purpose": "Abstract IPerspective contract implemented by every council perspective."
     },
     {
       "module": "tonesoul.dream_engine",
@@ -185,10 +225,12 @@
       "in_degree": 2,
       "out_degree": 8,
       "total_degree": 10,
-      "lines": 996,
+      "lines": 1001,
       "classes": 4,
       "functions": 33,
-      "layer": "evolution"
+      "layer": "evolution",
+      "layer_source": "self_declared",
+      "purpose": "Offline dream cycle: crystallize memory and update subjectivity layers between waking sessions."
     },
     {
       "module": "tonesoul.memory",
@@ -199,7 +241,9 @@
       "lines": 69,
       "classes": 0,
       "functions": 0,
-      "layer": "memory"
+      "layer": "memory",
+      "layer_source": "subpackage",
+      "purpose": ""
     },
     {
       "module": "tonesoul.schemas",
@@ -207,10 +251,12 @@
       "in_degree": 9,
       "out_degree": 0,
       "total_degree": 9,
-      "lines": 797,
+      "lines": 800,
       "classes": 30,
       "functions": 39,
-      "layer": "shared"
+      "layer": "shared",
+      "layer_source": "self_declared",
+      "purpose": "Pydantic data contracts shared across council, LLM, and governance layers."
     },
     {
       "module": "tonesoul.ystm.acceptance",
@@ -221,7 +267,9 @@
       "lines": 146,
       "classes": 0,
       "functions": 7,
-      "layer": "domain"
+      "layer": "domain",
+      "layer_source": "subpackage",
+      "purpose": ""
     },
     {
       "module": "tonesoul.council",
@@ -232,7 +280,9 @@
       "lines": 53,
       "classes": 0,
       "functions": 0,
-      "layer": "governance"
+      "layer": "governance",
+      "layer_source": "subpackage",
+      "purpose": ""
     }
   ],
   "cycles": [],
@@ -350,13 +400,37 @@
       "source_layer": "governance",
       "target": "tonesoul.ystm.acceptance",
       "target_layer": "domain"
+    },
+    {
+      "source": "tonesoul.yss_pipeline",
+      "source_layer": "pipeline",
+      "target": "tonesoul.ystm.demo",
+      "target_layer": "surface"
+    },
+    {
+      "source": "tonesoul.ystm",
+      "source_layer": "domain",
+      "target": "tonesoul.ystm.demo",
+      "target_layer": "surface"
+    },
+    {
+      "source": "tonesoul.ystm.acceptance",
+      "source_layer": "domain",
+      "target": "tonesoul.ystm.demo",
+      "target_layer": "surface"
+    },
+    {
+      "source": "tonesoul.ystm_demo",
+      "source_layer": "domain",
+      "target": "tonesoul.ystm.demo",
+      "target_layer": "surface"
     }
   ],
   "orphans": [],
   "subpackage_stats": {
     "(root)": {
       "files": 97,
-      "lines": 39276,
+      "lines": 39309,
       "classes": 192,
       "functions": 1180
     },
@@ -380,7 +454,7 @@
     },
     "council": {
       "files": 30,
-      "lines": 7111,
+      "lines": 7136,
       "classes": 46,
       "functions": 261
     },
@@ -410,7 +484,7 @@
     },
     "governance": {
       "files": 5,
-      "lines": 1586,
+      "lines": 1591,
       "classes": 12,
       "functions": 42
     },
@@ -440,7 +514,7 @@
     },
     "memory": {
       "files": 25,
-      "lines": 8110,
+      "lines": 8115,
       "classes": 39,
       "functions": 327
     },
@@ -494,7 +568,7 @@
     },
     "ystm": {
       "files": 13,
-      "lines": 2166,
+      "lines": 2173,
       "classes": 21,
       "functions": 60
     },

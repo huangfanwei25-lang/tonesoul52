@@ -13,6 +13,11 @@ Design principles:
 
 from __future__ import annotations
 
+__ts_layer__ = "pipeline"
+__ts_purpose__ = (
+    "Load/commit governance state across session boundaries; the model-agnostic runtime spine."
+)
+
 import json
 import logging
 import math

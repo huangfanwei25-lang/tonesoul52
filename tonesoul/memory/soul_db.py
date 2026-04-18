@@ -1,3 +1,5 @@
+"""SoulDB: persistent memory store with decay, layers, and provenance sources."""
+
 from __future__ import annotations
 
 import heapq
@@ -14,6 +16,9 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Protocol
 
 from .decay import DECAY_CONSTANT, FORGET_THRESHOLD, calculate_decay
+
+__ts_layer__ = "memory"
+__ts_purpose__ = "SQLite-backed memory store with decay, layered retrieval, and source attribution."
 
 
 class MemorySource(Enum):

@@ -17,6 +17,9 @@ from typing import Any, Dict, List, Optional, TypedDict
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+__ts_layer__ = "shared"
+__ts_purpose__ = "Pydantic data contracts shared across council, LLM, and governance layers."
+
 # ---------------------------------------------------------------------------
 # Enums
 # ---------------------------------------------------------------------------

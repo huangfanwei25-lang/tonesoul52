@@ -24,6 +24,11 @@ Date: 2026-03-07
 
 from __future__ import annotations
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Governance kernel: decides how the pipeline behaves (routing, council convening, friction)."
+)
+
 import os
 import re
 from datetime import datetime, timezone

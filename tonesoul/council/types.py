@@ -1,3 +1,5 @@
+"""Council types: shared dataclasses/enums for perspectives, votes, and verdicts."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -5,6 +7,11 @@ from enum import Enum
 from typing import TYPE_CHECKING, List, Optional, Union
 
 from memory.genesis import Genesis
+
+__ts_layer__ = "shared"
+__ts_purpose__ = (
+    "Shared type primitives (PerspectiveType, VoteDecision, verdicts) for the council subsystem."
+)
 
 if TYPE_CHECKING:
     from .persona_audit import AuditResult

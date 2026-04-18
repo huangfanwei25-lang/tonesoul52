@@ -1,4 +1,9 @@
+"""Autonomous cycle: schedule-driven loop that wakes perception, dream, and evolution."""
+
 from __future__ import annotations
+
+__ts_layer__ = "orchestration"
+__ts_purpose__ = "Drive the autonomous wake/sense/dream loop without a human trigger."
 
 import json
 from dataclasses import dataclass, field

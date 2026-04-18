@@ -1,3 +1,5 @@
+"""Pre-output council: convene perspectives before a draft reaches the user."""
+
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Union
@@ -15,6 +17,9 @@ from .summary_generator import (
 )
 from .types import CouncilVerdict, PerspectiveType
 from .verdict import generate_verdict
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Convene the pre-output council: run perspectives, compute coherence, emit verdict and transcript."
 
 
 class PreOutputCouncil:

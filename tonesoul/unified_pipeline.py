@@ -5,6 +5,9 @@ Combines ToneBridge psychological analysis with Council deliberation.
 
 from __future__ import annotations
 
+__ts_layer__ = "pipeline"
+__ts_purpose__ = "Top-level runtime pipeline that wires perception, council, and output surfaces."
+
 import inspect
 import os
 import re

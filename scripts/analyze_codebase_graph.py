@@ -259,6 +259,10 @@ class ModuleInfo:
     module_name: str  # e.g. "tonesoul.governance.kernel"
     subpackage: str  # e.g. "governance" or "(root)"
     layer: str  # e.g. "governance"
+    purpose: str = ""  # one-line description from __ts_purpose__
+    layer_source: str = (
+        "fallback"  # "self_declared" | "override" | "root_map" | "subpackage" | "fallback"
+    )
     lines: int = 0
     classes: int = 0
     functions: int = 0
@@ -287,6 +291,48 @@ class LayerViolation:
 # ---------------------------------------------------------------------------
 # AST scanning
 # ---------------------------------------------------------------------------
+# Module-level self-declaration constants. A module can declare its own layer
+# and purpose at the top of its file:
+#
+#     __ts_layer__ = "governance"
+#     __ts_purpose__ = "One-line description of what this module does."
+#
+# The analyzer reads these via AST and takes them as the source of truth —
+# no central dict edit required. Fallback to the legacy dict maps keeps the
+# body map working during the annotation migration.
+SELF_DECL_LAYER_NAME = "__ts_layer__"
+SELF_DECL_PURPOSE_NAME = "__ts_purpose__"
+
+
+def _extract_self_declarations(tree: ast.Module) -> tuple[str, str]:
+    """Return (declared_layer, declared_purpose) from top-level constant assigns."""
+    declared_layer = ""
+    declared_purpose = ""
+    for node in tree.body:
+        if not isinstance(node, ast.Assign):
+            continue
+        if len(node.targets) != 1 or not isinstance(node.targets[0], ast.Name):
+            continue
+        target_name = node.targets[0].id
+        if not isinstance(node.value, ast.Constant) or not isinstance(node.value.value, str):
+            continue
+        if target_name == SELF_DECL_LAYER_NAME:
+            declared_layer = node.value.value
+        elif target_name == SELF_DECL_PURPOSE_NAME:
+            declared_purpose = node.value.value
+    return declared_layer, declared_purpose
+
+
+def _classify_fallback(module_name: str, subpackage: str) -> tuple[str, str]:
+    """Return (layer, source_tag) from the legacy fallback tables."""
+    if module_name in MODULE_LAYER_OVERRIDES:
+        return MODULE_LAYER_OVERRIDES[module_name], "override"
+    if subpackage == "(root)":
+        basename = module_name.rsplit(".", 1)[-1]
+        return ROOT_MODULE_LAYER.get(basename, "uncategorized"), "root_map"
+    return LAYER_MAP.get(subpackage, "uncategorized"), "subpackage"
+
+
 def scan_module(file_path: Path, root_package: str, repo_root: Path) -> ModuleInfo:
     """Parse a single .py file and extract structural information."""
     repo_path = str(file_path.relative_to(repo_root)).replace("\\", "/")
@@ -301,13 +347,7 @@ def scan_module(file_path: Path, root_package: str, repo_root: Path) -> ModuleIn
     else:
         subpackage = "(root)"
 
-    if module_name in MODULE_LAYER_OVERRIDES:
-        layer = MODULE_LAYER_OVERRIDES[module_name]
-    elif subpackage == "(root)":
-        basename = module_name.rsplit(".", 1)[-1]
-        layer = ROOT_MODULE_LAYER.get(basename, "uncategorized")
-    else:
-        layer = LAYER_MAP.get(subpackage, "uncategorized")
+    layer, layer_source = _classify_fallback(module_name, subpackage)
 
     try:
         source = file_path.read_text(encoding="utf-8-sig")
@@ -343,6 +383,11 @@ def scan_module(file_path: Path, root_package: str, repo_root: Path) -> ModuleIn
             for child in ast.walk(node):
                 if hasattr(child, "lineno"):
                     type_checking_lines.add(child.lineno)
+
+    declared_layer, declared_purpose = _extract_self_declarations(tree)
+    if declared_layer:
+        layer = declared_layer
+        layer_source = "self_declared"
 
     class_count = 0
     func_count = 0
@@ -392,6 +437,8 @@ def scan_module(file_path: Path, root_package: str, repo_root: Path) -> ModuleIn
         module_name=module_name,
         subpackage=subpackage,
         layer=layer,
+        purpose=declared_purpose,
+        layer_source=layer_source,
         lines=line_count,
         classes=class_count,
         functions=func_count,
@@ -725,11 +772,23 @@ def build_report(
                 "classes": modules[name].classes,
                 "functions": modules[name].functions,
                 "layer": modules[name].layer,
+                "layer_source": modules[name].layer_source,
+                "purpose": modules[name].purpose,
             }
             for name in modules
         ],
         key=lambda x: (-x["total_degree"], x["module"]),
     )[:20]
+
+    # Self-declaration coverage: share of modules that declared their own layer.
+    self_declared = sum(1 for m in modules.values() if m.layer_source == "self_declared")
+    with_purpose = sum(1 for m in modules.values() if m.purpose)
+    annotation_coverage = {
+        "self_declared_layer_count": self_declared,
+        "self_declared_layer_ratio": (round(self_declared / len(modules), 4) if modules else 0.0),
+        "purpose_count": with_purpose,
+        "purpose_ratio": round(with_purpose / len(modules), 4) if modules else 0.0,
+    }
 
     # Subpackage stats
     pkg_stats: dict[str, dict[str, int]] = defaultdict(
@@ -766,7 +825,12 @@ def build_report(
             "total_layer_violations": len(violations),
             "total_orphans": len(orphans),
             "total_community_drifts": len(drifted),
+            "self_declared_layer_count": self_declared,
+            "self_declared_layer_ratio": annotation_coverage["self_declared_layer_ratio"],
+            "purpose_count": with_purpose,
+            "purpose_ratio": annotation_coverage["purpose_ratio"],
         },
+        "annotation_coverage": annotation_coverage,
         "god_nodes": god_nodes,
         "cycles": [{"cycle": c.cycle, "length": c.length} for c in cycles[:30]],  # cap at 30
         "layer_violations": [
@@ -808,6 +872,16 @@ def render_markdown(report: dict[str, Any]) -> str:
     lines.append(f"| Layer violations | {s['total_layer_violations']} |")
     lines.append(f"| Orphan modules | {s['total_orphans']} |")
     lines.append(f"| Community drifts | {s['total_community_drifts']} |")
+    lines.append(
+        f"| Self-declared layer | "
+        f"{s.get('self_declared_layer_count', 0)} / {s['total_modules']} "
+        f"({(s.get('self_declared_layer_ratio', 0.0) * 100):.1f}%) |"
+    )
+    lines.append(
+        f"| Purpose declared | "
+        f"{s.get('purpose_count', 0)} / {s['total_modules']} "
+        f"({(s.get('purpose_ratio', 0.0) * 100):.1f}%) |"
+    )
     lines.append("")
 
     # God nodes
@@ -817,14 +891,15 @@ def render_markdown(report: dict[str, Any]) -> str:
         "Modules with the highest total degree (in + out). " "High coupling = high change risk."
     )
     lines.append("")
-    lines.append("| # | Module | Layer | In | Out | Total | Lines | Funcs |")
-    lines.append("| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: |")
+    lines.append("| # | Module | Layer | Src | In | Out | Total | Purpose |")
+    lines.append("| ---: | --- | --- | --- | ---: | ---: | ---: | --- |")
     for i, g in enumerate(report["god_nodes"], 1):
         name = g["module"].removeprefix(f"{report['root_package']}.")
+        purpose = g.get("purpose", "") or "—"
+        src = g.get("layer_source", "fallback")
         lines.append(
-            f"| {i} | `{name}` | {g['layer']} | "
-            f"{g['in_degree']} | {g['out_degree']} | **{g['total_degree']}** | "
-            f"{g['lines']:,} | {g['functions']} |"
+            f"| {i} | `{name}` | {g['layer']} | {src} | "
+            f"{g['in_degree']} | {g['out_degree']} | **{g['total_degree']}** | {purpose} |"
         )
     lines.append("")
 

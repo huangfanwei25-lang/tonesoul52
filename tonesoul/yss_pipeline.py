@@ -1,3 +1,8 @@
+"""YSS semantic-field pipeline: route YSTM frames through gates, action set, and audit."""
+
+__ts_layer__ = "pipeline"
+__ts_purpose__ = "Compose YSS gates, action set, and audit into one semantic-field pipeline pass."
+
 import json
 import os
 import uuid

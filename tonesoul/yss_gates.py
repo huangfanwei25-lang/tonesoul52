@@ -1,3 +1,5 @@
+"""YSS gate stack: DCS, POAV, frame routing, seed checks, and escalation."""
+
 import json
 import os
 from dataclasses import dataclass
@@ -14,6 +16,11 @@ from .seed_schema_check import check_seed_schema
 from .tech_trace.validate import validate_normalize_payload
 from .ystm.acceptance import run_acceptance
 from .ystm.schema import stable_hash, utc_now
+
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Compose the YSS gate stack (DCS, POAV, frame router, seed, acceptance) into one policy pass."
+)
 
 
 @dataclass

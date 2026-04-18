@@ -1,3 +1,5 @@
+"""YSTM demo surface: end-to-end terrain/field visualization pipeline."""
+
 import json
 import os
 from dataclasses import dataclass, field
@@ -16,6 +18,11 @@ from .terrain import (
     compute_plane_positions,
     kde_grid,
     marching_squares,
+)
+
+__ts_layer__ = "surface"
+__ts_purpose__ = (
+    "End-to-end YSTM demo: ingest segments, build terrain, render HTML/PNG/SVG surfaces."
 )
 
 DEFAULT_SEGMENTS = [

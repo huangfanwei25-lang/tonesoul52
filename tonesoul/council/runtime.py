@@ -1,4 +1,9 @@
+"""Council runtime: orchestrates multi-perspective deliberation on a draft output."""
+
 from __future__ import annotations
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Run the multi-perspective council, return verdict + coherence + minority opinion."
 
 import logging
 import os

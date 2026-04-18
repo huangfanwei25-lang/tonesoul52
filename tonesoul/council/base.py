@@ -1,9 +1,14 @@
+"""Council base: abstract perspective interface."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import Optional, Union
 
 from .types import PerspectiveType, PerspectiveVote
+
+__ts_layer__ = "shared"
+__ts_purpose__ = "Abstract IPerspective contract implemented by every council perspective."
 
 
 class IPerspective(ABC):

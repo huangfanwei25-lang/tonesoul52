@@ -150,6 +150,51 @@ class TestScanModule:
             "physically nested in a subpackage but are in fact cross-cutting."
         )
 
+    def test_self_declaration_trumps_everything(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Module-level __ts_layer__ / __ts_purpose__ override every fallback source.
+
+        The self-declared layer must beat MODULE_LAYER_OVERRIDES, LAYER_MAP, and
+        ROOT_MODULE_LAYER. layer_source must be 'self_declared' and purpose must
+        surface in the scan.
+        """
+        pkg = tmp_path / "sd"
+        pkg.mkdir()
+        (pkg / "__init__.py").write_text("", encoding="utf-8")
+
+        sub = pkg / "forced_domain"
+        sub.mkdir()
+        (sub / "__init__.py").write_text("", encoding="utf-8")
+        (sub / "claimer.py").write_text(
+            '__ts_layer__ = "governance"\n'
+            '__ts_purpose__ = "Claims governance layer despite domain subpackage."\n'
+            "def run(): pass\n",
+            encoding="utf-8",
+        )
+
+        monkeypatch.setitem(acg.LAYER_MAP, "forced_domain", "domain")
+        monkeypatch.setitem(acg.MODULE_LAYER_OVERRIDES, "sd.forced_domain.claimer", "shared")
+
+        info = acg.scan_module(sub / "claimer.py", "sd", tmp_path)
+        assert info.layer == "governance"
+        assert info.layer_source == "self_declared"
+        assert "governance layer" in info.purpose
+
+    def test_missing_self_declaration_falls_back(self, tmp_path: Path) -> None:
+        """Modules without __ts_layer__ must fall through to the existing chain."""
+        pkg = tmp_path / "nd"
+        pkg.mkdir()
+        (pkg / "__init__.py").write_text("", encoding="utf-8")
+        sub = pkg / "council"
+        sub.mkdir()
+        (sub / "__init__.py").write_text("", encoding="utf-8")
+        (sub / "plain.py").write_text("def noop(): pass\n", encoding="utf-8")
+
+        info = acg.scan_module(sub / "plain.py", "nd", tmp_path)
+        assert info.layer_source != "self_declared"
+        assert info.purpose == ""
+
     def test_real_tonesoul_root_modules_are_classified(self) -> None:
         """Guard: every shipped tonesoul/*.py root module must live in ROOT_MODULE_LAYER.
 

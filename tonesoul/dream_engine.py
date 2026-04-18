@@ -1,3 +1,5 @@
+"""Dream engine: offline crystallization of memory into subjectivity layers."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -14,6 +16,9 @@ from tonesoul.memory.subjectivity_reporting import list_subjectivity_records
 from tonesoul.memory.write_gateway import MemoryWriteGateway, MemoryWriteRejectedError
 from tonesoul.schemas import SubjectivityLayer
 from tonesoul.stale_rule_verifier import StaleRuleVerificationTaskBatch
+
+__ts_layer__ = "evolution"
+__ts_purpose__ = "Offline dream cycle: crystallize memory and update subjectivity layers between waking sessions."
 
 
 class LLMRouterLike(Protocol):
