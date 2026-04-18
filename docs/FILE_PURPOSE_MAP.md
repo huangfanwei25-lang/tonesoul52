@@ -3,6 +3,11 @@
 > Purpose: define naming and purpose conventions for scripts, tests, docs, and report surfaces across the repository.
 > Last Updated: 2026-03-23
 
+> **⚠️ Name mismatch — read this first.**
+> Despite the name, this document describes **naming conventions** (prefix rules like `verify_*`, `run_*`, date format for reports), not per-file purposes.
+> - **For per-file purpose lookup** (what does a specific `tonesoul/<x>.py` module actually do?) → [status/codebase_graph_latest.md](status/codebase_graph_latest.md), which carries `__ts_purpose__` strings declared at source plus layer / coupling / dependency edges for all 254 modules.
+> - **Use this document when**: you are naming a new script, test, or report and need to know which prefix / date format to use.
+
 ## 目的
 
 統一命名語意，讓「檔名 = 用途」可被快速理解，降低跨代理協作成本。
