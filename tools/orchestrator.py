@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
@@ -267,9 +267,8 @@ class Orchestrator:
         bug_escalation = error is not None or self._is_error_result(result)
         final_audit_request = self._has_final_audit_intent(input_text)
         should_switch = (
-            (health_switch or bug_escalation or final_audit_request)
-            and not confirmation_required
-        )
+            health_switch or bug_escalation or final_audit_request
+        ) and not confirmation_required
         switch_reason = ""
         if final_audit_request:
             switch_reason = "Final audit requested."
@@ -321,10 +320,18 @@ class Orchestrator:
         summary = (
             f"Handoff triggered. {switch_reason}"
             if should_switch
-            else ("Awaiting explicit user confirmation." if confirmation_required else "Continue on current model.")
+            else (
+                "Awaiting explicit user confirmation."
+                if confirmation_required
+                else "Continue on current model."
+            )
         )
         decision = DecisionSnapshot(
-            verdict="confirmation_required" if confirmation_required else ("handoff" if should_switch else "continue"),
+            verdict=(
+                "confirmation_required"
+                if confirmation_required
+                else ("handoff" if should_switch else "continue")
+            ),
             summary=summary,
             structured=decision_payload,
         )

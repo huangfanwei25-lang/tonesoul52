@@ -1,4 +1,4 @@
-﻿"""ToneSoul Runtime Adapter ??the bridge that makes governance state survive across sessions and models.
+"""ToneSoul Runtime Adapter ??the bridge that makes governance state survive across sessions and models.
 
 Implements RFC-015 Self-Dogfooding Runtime Adapter:
 - load(): session start ??read governance_state.json, decay old tensions, return posture

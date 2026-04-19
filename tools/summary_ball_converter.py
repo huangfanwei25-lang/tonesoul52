@@ -1,4 +1,4 @@
-﻿import json
+import json
 import os
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -184,7 +184,10 @@ def process_journal(
             "tension": round(tension, 2),
             "resonance": round(avg_coherence, 2),  # Simple proxy for resonance for now
             "volume": stats["count"],
-            "last_updated": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+            "last_updated": datetime.now(timezone.utc)
+            .replace(microsecond=0)
+            .isoformat()
+            .replace("+00:00", "Z"),
             "metadata": {
                 "verdict_distribution": {
                     v: stats["verdicts"].count(v) for v in set(stats["verdicts"])

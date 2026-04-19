@@ -1,4 +1,4 @@
-﻿"""
+"""
 Value Accumulator - Third Axiom Implementation
 
 Tracks correction patterns over time to form emergent values.

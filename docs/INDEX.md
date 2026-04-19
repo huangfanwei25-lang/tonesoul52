@@ -1,4 +1,4 @@
-﻿# ToneSoul Documentation Index
+# ToneSoul Documentation Index
 
 > Purpose: top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.
 > Last Updated: 2026-04-18

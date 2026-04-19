@@ -1,4 +1,4 @@
-﻿# AI 技能學習系統規格
+# AI 技能學習系統規格
 # Skill Learning System Specification
 # v0.2 2025-12-28
 

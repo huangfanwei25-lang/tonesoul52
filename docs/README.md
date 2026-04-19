@@ -1,4 +1,4 @@
-﻿# ToneSoul Documentation Index
+# ToneSoul Documentation Index
 
 > Purpose: documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.
 > Last Updated: 2026-04-10

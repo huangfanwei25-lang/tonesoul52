@@ -1,4 +1,4 @@
-﻿"""
+"""
 Ingest AI-to-AI handoff files into SoulDB.
 
 Usage:

@@ -1,4 +1,4 @@
-﻿# 誠實機制設計草案（v0.1）
+# 誠實機制設計草案（v0.1）
 
 > Purpose: draft the structure, goals, and calculation logic for ToneSoul's honesty and uncertainty disclosure mechanism.
 > Last Updated: 2026-03-23

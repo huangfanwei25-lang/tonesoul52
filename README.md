@@ -1,4 +1,4 @@
-﻿# ToneSoul / 語魂
+# ToneSoul / 語魂
 
 > AI that does not just answer. It catches semantic drift, remembers what matters, and audits itself.
 > If you want AI that won't make things up, start here.

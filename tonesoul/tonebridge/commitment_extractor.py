@@ -1,4 +1,4 @@
-﻿"""
+"""
 Commitment Extractor - Enhanced NLP Module
 
 Uses jieba for Chinese word segmentation to extract

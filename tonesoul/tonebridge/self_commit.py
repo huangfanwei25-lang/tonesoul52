@@ -1,4 +1,4 @@
-﻿"""
+"""
 Self-Commit System - Third Axiom Implementation
 
 Core concept: AI outputs are irreversible events that constrain future outputs.

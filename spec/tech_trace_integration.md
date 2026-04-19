@@ -1,4 +1,4 @@
-﻿# Tech-Trace Spec
+# Tech-Trace Spec
 # 外部蒐集架構整合規格
 # v0.1 2025-12-27
 
