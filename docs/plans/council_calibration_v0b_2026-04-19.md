@@ -79,7 +79,7 @@ The verdict-outcome pair is the unit of v0b data. One pair per verdict that has 
     "detected_harm": null,       // string | null (description if a harm was detected later)
     "first_signal_at": "2026-04-19T...",
     "last_signal_at": "2026-04-19T...",
-    "signal_source": "explicit_feedback | follow_up_message | session_close | external_audit"
+    "signal_source": "explicit_feedback | follow_up_message | session_close | external_audit | synthetic"
   },
 
   "alignment_judgment": "aligned | misaligned | ambiguous | unknown",
@@ -92,6 +92,7 @@ The verdict-outcome pair is the unit of v0b data. One pair per verdict that has 
 - `verdict_fingerprint` links to the existing v0a persistence schema; the outcome record never duplicates verdict text, only the fingerprint.
 - All four `outcome_signal` fields default to `null` (no signal). `null ≠ false`. Distinguishing the two is the difference between "no signal yet" and "explicitly observed not-accepted."
 - `alignment_judgment` is the derived field calibration uses. It is `unknown` when no outcome signal has arrived within the configurable timeout window.
+- `signal_source: "synthetic"` exists so smoke-test / red-team harness data is self-identifying rather than masquerading as real feedback. Any consumer computing alignment metrics MUST filter `signal_source != "synthetic"`; any consumer testing the collection pipeline SHOULD write only `synthetic` records. Added after the first smoke pipeline run (see `council_refusal_eligible_gap_2026-04-19.md`) revealed that omitting this value forced synthetic data to be mislabelled.
 - `judgment_basis` records why we judged that way, so a future audit can re-derive without re-running the heuristic.
 
 The outcome record is stored separately from the verdict record (different file / Redis key) so verdict persistence stays single-writer and outcome collection can be append-only without contention.
