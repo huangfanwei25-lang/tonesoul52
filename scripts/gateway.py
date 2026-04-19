@@ -2,17 +2,19 @@
 """ToneSoul Gateway: HTTP API for multi-agent memory access.
 
 Any AI agent that can make HTTP requests can:
-  POST /load      - load governance state and leave a footprint
-  POST /commit    - commit a session trace (Aegis-protected)
-  POST /claim     - claim a task lock
-  POST /release   - release a task lock
-  POST /compact   - append a bounded non-canonical resumability summary
-  GET  /summary   - current governance summary (text)
-  GET  /visitors  - recent visitors (JSON)
-  GET  /claims    - active task claims (JSON)
-  GET  /packet    - compact R-memory packet (JSON)
-  GET  /audit     - Aegis integrity report (JSON)
-  GET  /health    - heartbeat
+  POST /load             - load governance state and leave a footprint
+  POST /commit           - commit a session trace (Aegis-protected)
+  POST /claim            - claim a task lock
+  POST /release          - release a task lock
+  POST /compact          - append a bounded non-canonical resumability summary
+  POST /council/validate - run the pre-output Council on a draft (Phase 864a / Demo UI)
+  POST /outcome          - record a verdict↔outcome signal (Council Calibration v0b, feature-flagged)
+  GET  /summary          - current governance summary (text)
+  GET  /visitors         - recent visitors (JSON)
+  GET  /claims           - active task claims (JSON)
+  GET  /packet           - compact R-memory packet (JSON)
+  GET  /audit            - Aegis integrity report (JSON)
+  GET  /health           - heartbeat
 """
 
 from __future__ import annotations
@@ -33,6 +35,10 @@ sys.path.insert(0, str(ROOT))
 
 _AUTH_TOKEN: Optional[str] = None
 _CORS_ORIGIN: str = "http://localhost:8501"  # default: Streamlit dashboard
+# v0b feature flag — see docs/plans/council_calibration_v0b_2026-04-19.md §9.
+# Default OFF: outcome collection lands behind a flag so the pipeline can be
+# validated end-to-end for ≥2 weeks before any consumer reads the data.
+_OUTCOME_COLLECTION_ENABLED: bool = False
 
 
 def _read_body(handler) -> bytes:
@@ -230,6 +236,118 @@ def handle_health(handler) -> None:
     _send_json(handler, {"status": "ok", "backend": store.backend_name})
 
 
+def handle_council_validate(handler) -> None:
+    """POST /council/validate - run pre-output Council on a draft, return verdict.
+
+    Body schema:
+        {
+            "draft_output": str (required),
+            "context": dict (optional, defaults to {}),
+            "user_intent": str (optional, defaults to "")
+        }
+
+    Returns the full ``CouncilVerdict.to_dict()`` payload — perspective votes,
+    coherence score, divergence analysis, EpistemicLabel (Phase 864a), and the
+    transcript. Designed to back the Demo UI (docs/plans/demo_ui_v0_*.md) and
+    any external red-team / inspection tool.
+    """
+    body = _parse_json(handler)
+    draft_output = body.get("draft_output")
+    if not isinstance(draft_output, str) or not draft_output.strip():
+        _send_json(
+            handler, {"error": "draft_output is required and must be a non-empty string"}, 400
+        )
+        return
+    context = body.get("context") or {}
+    if not isinstance(context, dict):
+        _send_json(handler, {"error": "context must be a JSON object"}, 400)
+        return
+    user_intent = body.get("user_intent") or ""
+    if not isinstance(user_intent, str):
+        _send_json(handler, {"error": "user_intent must be a string"}, 400)
+        return
+
+    from tonesoul.council import PreOutputCouncil
+
+    council = PreOutputCouncil()
+    verdict = council.validate(
+        draft_output=draft_output,
+        context=context,
+        user_intent=user_intent,
+        # Skip self-memory write from the HTTP path; consumers that want
+        # persistence should call the council_runtime entrypoint directly.
+        auto_record_self_memory=False,
+    )
+    _send_json(handler, {"verdict": verdict.to_dict()})
+
+
+def handle_outcome(handler) -> None:
+    """POST /outcome - record a verdict↔outcome signal (v0b Bucket A).
+
+    Body schema (per docs/plans/council_calibration_v0b_2026-04-19.md §3):
+        {
+            "verdict_fingerprint": str (required),
+            "signal": "accept" | "reject" | "correction" | "harm" (required),
+            "correction_text": str (optional),
+            "harm_description": str (optional),
+            "intent_id": str (optional),
+            "verdict_type": str (optional),
+            "epistemic_label_status": str (optional),
+            "epistemic_label_refusal_eligible": bool (optional),
+            "signal_source": str (optional, defaults to "explicit_feedback")
+        }
+
+    Disabled by default. Pass --enable-outcome-collection to the Gateway to
+    enable. When disabled, returns 503 with an explanatory error.
+    """
+    if not _OUTCOME_COLLECTION_ENABLED:
+        _send_json(
+            handler,
+            {
+                "error": "outcome collection disabled",
+                "remediation": "start gateway with --enable-outcome-collection to enable",
+                "spec": "docs/plans/council_calibration_v0b_2026-04-19.md",
+            },
+            503,
+        )
+        return
+
+    body = _parse_json(handler)
+
+    from tonesoul.council.outcome_persistence import (
+        VALID_OUTCOME_SIGNALS,
+        build_outcome_record,
+        persist_outcome_record,
+    )
+
+    fingerprint = body.get("verdict_fingerprint")
+    signal = body.get("signal")
+    if not isinstance(fingerprint, str) or not fingerprint.strip():
+        _send_json(handler, {"error": "verdict_fingerprint required"}, 400)
+        return
+    if signal not in VALID_OUTCOME_SIGNALS:
+        _send_json(
+            handler,
+            {"error": f"signal must be one of {sorted(VALID_OUTCOME_SIGNALS)}"},
+            400,
+        )
+        return
+
+    record = build_outcome_record(
+        verdict_fingerprint=fingerprint.strip(),
+        signal=signal,
+        correction_text=body.get("correction_text"),
+        harm_description=body.get("harm_description"),
+        intent_id=body.get("intent_id"),
+        verdict_type=body.get("verdict_type"),
+        epistemic_label_status=body.get("epistemic_label_status"),
+        epistemic_label_refusal_eligible=body.get("epistemic_label_refusal_eligible"),
+        signal_source=body.get("signal_source") or "explicit_feedback",
+    )
+    result = persist_outcome_record(record)
+    _send_json(handler, result)
+
+
 ROUTES_GET = {
     "/summary": handle_summary,
     "/visitors": handle_visitors,
@@ -245,6 +363,8 @@ ROUTES_POST = {
     "/claim": handle_claim,
     "/release": handle_release,
     "/compact": handle_compact,
+    "/council/validate": handle_council_validate,
+    "/outcome": handle_outcome,
 }
 
 
@@ -289,7 +409,7 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
 
 
 def main() -> None:
-    global _AUTH_TOKEN, _CORS_ORIGIN
+    global _AUTH_TOKEN, _CORS_ORIGIN, _OUTCOME_COLLECTION_ENABLED
 
     parser = argparse.ArgumentParser(description="ToneSoul Gateway API")
     parser.add_argument("--port", type=int, default=7700)
@@ -300,10 +420,16 @@ def main() -> None:
         default="http://localhost:8501",
         help="Allowed CORS origin (default: http://localhost:8501)",
     )
+    parser.add_argument(
+        "--enable-outcome-collection",
+        action="store_true",
+        help="Enable POST /outcome (v0b Bucket A). Off by default per spec §9.",
+    )
     args = parser.parse_args()
 
     _AUTH_TOKEN = args.token
     _CORS_ORIGIN = args.cors_origin
+    _OUTCOME_COLLECTION_ENABLED = bool(args.enable_outcome_collection)
 
     os.environ.setdefault("TONESOUL_REDIS_URL", "redis://localhost:6379/0")
     from tonesoul.store import get_store
@@ -316,15 +442,18 @@ def main() -> None:
     print(f"  Backend: {store.backend_name}")
     print(f"  Auth:    {'token required' if _AUTH_TOKEN else 'LOCKED — pass --token to enable'}")
     print(f"  CORS:    {_CORS_ORIGIN}")
-    print("\n  POST /load      載入治理狀態 + 留足跡")
-    print("  POST /commit    提交 session trace（Aegis 保護）")
-    print("  POST /claim     佔用任務鎖")
-    print("  POST /release   釋放任務鎖")
-    print("  GET  /summary   治理狀態摘要")
-    print("  GET  /visitors  最近訪客")
-    print("  GET  /claims    目前任務鎖")
-    print("  GET  /packet    R-memory hot-state packet")
-    print("  GET  /audit     Aegis 完整性報告")
+    outcome_label = "ENABLED" if _OUTCOME_COLLECTION_ENABLED else "disabled (default)"
+    print("\n  POST /load             載入治理狀態 + 留足跡")
+    print("  POST /commit           提交 session trace（Aegis 保護）")
+    print("  POST /claim            佔用任務鎖")
+    print("  POST /release          釋放任務鎖")
+    print("  POST /council/validate 跑 pre-output Council，回傳 verdict (含 EpistemicLabel)")
+    print(f"  POST /outcome          記錄 verdict↔outcome 信號（v0b，{outcome_label}）")
+    print("  GET  /summary          治理狀態摘要")
+    print("  GET  /visitors         最近訪客")
+    print("  GET  /claims           目前任務鎖")
+    print("  GET  /packet           R-memory hot-state packet")
+    print("  GET  /audit            Aegis 完整性報告")
     print("\n  Ctrl+C 停止。\n")
 
     try:
