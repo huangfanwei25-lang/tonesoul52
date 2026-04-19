@@ -69,16 +69,24 @@ null field that gets assumed to be correct later.
 
 from __future__ import annotations
 
+import copy
+import hashlib
 import json
 import os
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 VALID_OUTCOME_SIGNALS = frozenset({"accept", "reject", "correction", "harm"})
 VALID_SIGNAL_SOURCES = frozenset(
-    {"explicit_feedback", "follow_up_message", "session_close", "external_audit"}
+    {
+        "explicit_feedback",
+        "follow_up_message",
+        "session_close",
+        "external_audit",
+        "synthetic",
+    }
 )
 VALID_ALIGNMENT_JUDGMENTS = frozenset({"aligned", "misaligned", "ambiguous", "unknown"})
 VALID_JUDGMENT_BASES = frozenset(
@@ -87,6 +95,19 @@ VALID_JUDGMENT_BASES = frozenset(
 
 _OUTCOME_FILE_SURFACE = ".aegis/council_outcomes.jsonl"
 _SCHEMA_VERSION = "v0b-bucket-a-1.0.0"
+
+# Fields that are non-deterministic across identical Council runs and must
+# be stripped before fingerprinting. Empirically (2026-04-19) the only
+# instability is transcript.timestamp — but we scrub a broader set so a
+# later addition of a second timestamp doesn't silently break the
+# verdict↔outcome JOIN that Bucket B depends on.
+_FINGERPRINT_IGNORE_PATHS: frozenset[str] = frozenset(
+    {
+        "transcript.timestamp",
+        "transcript.generated_at",
+        "recorded_at",
+    }
+)
 
 
 def _utc_now_iso() -> str:
@@ -153,6 +174,46 @@ class OutcomeRecord:
 
     def to_dict(self) -> dict:
         return asdict(self)
+
+
+def _strip_ignored_paths(obj: Any, path: str = "") -> Any:
+    """Return a deep copy of ``obj`` with ``_FINGERPRINT_IGNORE_PATHS`` removed.
+
+    Walks dicts only; list/leaf values pass through. Keeps the implementation
+    narrow — Council verdicts are dict-shaped at every level of interest.
+    """
+    if isinstance(obj, dict):
+        result = {}
+        for key, value in obj.items():
+            full_path = f"{path}.{key}" if path else key
+            if full_path in _FINGERPRINT_IGNORE_PATHS:
+                continue
+            result[key] = _strip_ignored_paths(value, full_path)
+        return result
+    if isinstance(obj, list):
+        return [_strip_ignored_paths(v, path) for v in obj]
+    return obj
+
+
+def compute_verdict_fingerprint(verdict_payload: dict, *, digest_length: int = 16) -> str:
+    """Stable sha256 fingerprint of a CouncilVerdict dict.
+
+    Strips fields listed in ``_FINGERPRINT_IGNORE_PATHS`` (notably
+    ``transcript.timestamp``) before hashing so two Council.validate()
+    runs on the same draft produce the same fingerprint — the precondition
+    for Bucket B's verdict↔outcome JOIN.
+
+    Returns ``"sha256:<hex prefix>"``. Default 16-hex prefix balances
+    collision resistance against jsonl line length; callers that need
+    full precision can pass ``digest_length=64``.
+
+    The fingerprint is stable across process restarts because
+    ``json.dumps(sort_keys=True)`` is canonical on ordered-dict content.
+    """
+    scrubbed = _strip_ignored_paths(copy.deepcopy(verdict_payload))
+    canonical = json.dumps(scrubbed, sort_keys=True, ensure_ascii=False)
+    digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+    return f"sha256:{digest[:digest_length]}"
 
 
 def derive_alignment_judgment(signal: str) -> tuple[str, str]:

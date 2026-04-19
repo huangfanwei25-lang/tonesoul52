@@ -43,7 +43,6 @@ Spec: docs/plans/council_calibration_v0b_2026-04-19.md §7 Bucket A, §9
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import sys
@@ -57,20 +56,9 @@ sys.path.insert(0, str(REPO_ROOT))
 from tonesoul.council import PreOutputCouncil  # noqa: E402
 from tonesoul.council.outcome_persistence import (  # noqa: E402
     build_outcome_record,
+    compute_verdict_fingerprint,
     persist_outcome_record,
 )
-
-
-def _verdict_fingerprint(verdict_dict: dict) -> str:
-    """Stable sha256 fingerprint of a verdict dict.
-
-    Using sorted-key JSON so the same verdict always hashes the same way.
-    Prefix ``sha256:`` matches the example fingerprint shape used elsewhere
-    in the outcome spec.
-    """
-    canonical = json.dumps(verdict_dict, sort_keys=True, ensure_ascii=False)
-    digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
-    return f"sha256:{digest[:16]}"
 
 
 def run_smoke(corpus_path: Path, outcome_path: Path) -> dict[str, Any]:
@@ -107,7 +95,7 @@ def run_smoke(corpus_path: Path, outcome_path: Path) -> dict[str, Any]:
             auto_record_self_memory=False,
         )
         verdict_dict = verdict.to_dict()
-        fingerprint = _verdict_fingerprint(verdict_dict)
+        fingerprint = compute_verdict_fingerprint(verdict_dict)
 
         record = build_outcome_record(
             verdict_fingerprint=fingerprint,
@@ -116,7 +104,7 @@ def run_smoke(corpus_path: Path, outcome_path: Path) -> dict[str, Any]:
             harm_description=entry.get("harm_description"),
             intent_id=f"smoke:{category}:{entries.index(entry)}",
             verdict_type=verdict_dict.get("verdict"),
-            signal_source="explicit_feedback",
+            signal_source="synthetic",
         )
         persist_outcome_record(record)
 

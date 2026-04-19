@@ -23,6 +23,7 @@ from tonesoul.council.outcome_persistence import (
     OutcomeRecord,
     OutcomeSignal,
     build_outcome_record,
+    compute_verdict_fingerprint,
     derive_alignment_judgment,
     persist_outcome_record,
 )
@@ -36,8 +37,21 @@ def test_valid_outcome_signals_match_spec():
 
 def test_valid_signal_sources_match_spec():
     assert VALID_SIGNAL_SOURCES == frozenset(
-        {"explicit_feedback", "follow_up_message", "session_close", "external_audit"}
+        {
+            "explicit_feedback",
+            "follow_up_message",
+            "session_close",
+            "external_audit",
+            "synthetic",
+        }
     )
+
+
+def test_signal_source_synthetic_accepted():
+    """'synthetic' exists so smoke/test harness data can be truthfully
+    tagged, instead of being mislabelled as 'explicit_feedback'."""
+    sig = OutcomeSignal(signal_source="synthetic")
+    assert sig.signal_source == "synthetic"
 
 
 def test_valid_alignment_judgments_match_spec():
@@ -261,3 +275,79 @@ def test_persist_creates_parent_directory(tmp_path: Path, monkeypatch):
     persist_outcome_record(record)
 
     assert nested.exists()
+
+
+# ----- compute_verdict_fingerprint -----
+
+
+def test_fingerprint_stable_when_verdict_dict_is_equal():
+    verdict = {"verdict": "approve", "summary": "ok", "votes": []}
+    fp1 = compute_verdict_fingerprint(verdict)
+    fp2 = compute_verdict_fingerprint(dict(verdict))
+    assert fp1 == fp2
+    assert fp1.startswith("sha256:")
+
+
+def test_fingerprint_differs_when_verdict_dict_differs():
+    v1 = {"verdict": "approve", "summary": "ok"}
+    v2 = {"verdict": "block", "summary": "ok"}
+    assert compute_verdict_fingerprint(v1) != compute_verdict_fingerprint(v2)
+
+
+def test_fingerprint_ignores_transcript_timestamp():
+    """The only empirically non-deterministic field in CouncilVerdict.to_dict()
+    is transcript.timestamp. Bucket B's verdict↔outcome JOIN will silently
+    break if two identical verdicts hash differently because of this field."""
+    base = {
+        "verdict": "approve",
+        "summary": "ok",
+        "transcript": {"timestamp": "2026-04-19T05:00:00.000001+00:00", "body": "x"},
+    }
+    drift = {
+        "verdict": "approve",
+        "summary": "ok",
+        "transcript": {"timestamp": "2026-04-19T05:00:00.999999+00:00", "body": "x"},
+    }
+    assert compute_verdict_fingerprint(base) == compute_verdict_fingerprint(drift)
+
+
+def test_fingerprint_changes_if_transcript_body_changes():
+    """Fingerprint must still discriminate substantive transcript changes —
+    only the scrubbed fields are ignored, not the whole transcript."""
+    a = {"verdict": "approve", "transcript": {"timestamp": "t1", "body": "one"}}
+    b = {"verdict": "approve", "transcript": {"timestamp": "t1", "body": "two"}}
+    assert compute_verdict_fingerprint(a) != compute_verdict_fingerprint(b)
+
+
+def test_fingerprint_key_order_agnostic():
+    a = {"verdict": "approve", "summary": "ok"}
+    b = {"summary": "ok", "verdict": "approve"}
+    assert compute_verdict_fingerprint(a) == compute_verdict_fingerprint(b)
+
+
+def test_fingerprint_digest_length_configurable():
+    v = {"verdict": "approve"}
+    short = compute_verdict_fingerprint(v, digest_length=8)
+    full = compute_verdict_fingerprint(v, digest_length=64)
+    assert len(short) == len("sha256:") + 8
+    assert len(full) == len("sha256:") + 64
+    assert full.startswith(short)
+
+
+def test_fingerprint_stable_across_real_council_runs():
+    """End-to-end check: running the full Council twice on identical input
+    produces identical fingerprints. This is the contract Bucket B relies on."""
+    from tonesoul.council import PreOutputCouncil
+
+    council = PreOutputCouncil()
+    v1 = council.validate(
+        draft_output="Deterministic draft for fingerprint.",
+        context={"smoke": True},
+        auto_record_self_memory=False,
+    )
+    v2 = council.validate(
+        draft_output="Deterministic draft for fingerprint.",
+        context={"smoke": True},
+        auto_record_self_memory=False,
+    )
+    assert compute_verdict_fingerprint(v1.to_dict()) == compute_verdict_fingerprint(v2.to_dict())
