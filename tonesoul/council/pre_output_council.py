@@ -8,6 +8,7 @@ from tonesoul.soul_config import SOUL
 
 from .base import IPerspective
 from .coherence import compute_coherence
+from .epistemic_labeler import EpistemicLabeler
 from .self_journal import record_self_memory
 from .summary_generator import (
     build_divergence_analysis,
@@ -44,6 +45,8 @@ class PreOutputCouncil:
         )
         self.coherence_threshold = coherence_threshold
         self.block_threshold = block_threshold
+        # Phase 864a Layer 1: deterministic, side-effect-free; safe to share.
+        self._epistemic_labeler = EpistemicLabeler()
 
     def validate(
         self,
@@ -87,6 +90,14 @@ class PreOutputCouncil:
             coherence=coherence,
             verdict=verdict,
             divergence=divergence,
+        )
+        # Phase 864a Layer 1: attach epistemic metadata to every verdict.
+        # Runs unconditionally — null labels would force every consumer
+        # (verifier, audit, future calibration) to handle absence cases.
+        verdict.epistemic_label = self._epistemic_labeler.label(
+            draft_output=draft_output,
+            context=context,
+            user_intent=user_intent,
         )
         # Selective self-memory: auto-record for meaningful decisions
         from .types import VerdictType
