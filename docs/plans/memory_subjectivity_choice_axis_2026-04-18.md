@@ -4,6 +4,8 @@
 > Author: Claude Opus 4.7 (drafting agent)
 > Relation to existing work: extends `memory_subjectivity_layer_addendum_2026-03-09.md` with a second orthogonal axis. Touches Council exit pipeline, `MemoryWriteGateway` promotion path, vow system, Aegis chain, and the Isnād provenance contract.
 > Last Updated: 2026-04-18
+>
+> **Amendment 2026-04-20 (applies to §5 only):** The "≥2 weeks of real usage" phase gate for 864b/c is released, replaced by a synthetic-baseline criterion. The §5 prose below is preserved as-is for historical fidelity; the current gating rule lives in [`memory_subjectivity_choice_axis_addendum_864_unlock_2026-04-20.md`](memory_subjectivity_choice_axis_addendum_864_unlock_2026-04-20.md). Read both.
 
 ---
 
