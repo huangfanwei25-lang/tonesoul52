@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ToneSoul Council — Demo UI v0</title>
+<meta name="description" content="ToneSoul Pre-Output Council demo — watch five perspectives deliberate a draft before it ships to the user." />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <h1>ToneSoul Council</h1>
+      <p class="tagline">Five perspectives deliberate before the answer reaches the user.</p>
+    </div>
+    <nav class="header-links">
+      <a href="https://github.com/Fan1234-1/toneSoul" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://pypi.org/project/tonesoul52/" target="_blank" rel="noopener">PyPI</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="intro">
+    <p>
+      Most LLM chat UIs show you only the final answer. ToneSoul runs a
+      <strong>pre-output council</strong> of five perspectives — Guardian, Analyst,
+      Critic, Advocate, Axiomatic — and returns a verdict (approve / refine /
+      declare&nbsp;stance / block) along with each perspective's vote, confidence, and
+      reasoning. This page lets you watch that deliberation on your own draft,
+      or on a pre-labeled sample corpus.
+    </p>
+    <p class="mode-hint">
+      <strong>Mode A</strong> — paste your own draft (requires a running local gateway).
+      <strong>Mode D</strong> — browse a curated sample corpus with verdicts computed in CI.
+    </p>
+  </section>
+
+  <nav class="tabs" role="tablist">
+    <button id="tab-a" class="tab-button active" role="tab" aria-controls="panel-a" aria-selected="true">Your draft (Mode&nbsp;A)</button>
+    <button id="tab-d" class="tab-button" role="tab" aria-controls="panel-d" aria-selected="false">Sample drafts (Mode&nbsp;D)</button>
+  </nav>
+
+  <!-- Mode A: live gateway -->
+  <section id="panel-a" class="panel active" role="tabpanel" aria-labelledby="tab-a">
+    <form id="live-form" class="form-grid">
+      <label>
+        <span>Gateway URL</span>
+        <input id="gateway-url" type="text" value="http://localhost:7700" autocomplete="off" spellcheck="false" />
+      </label>
+      <label>
+        <span>Gateway token</span>
+        <input id="gateway-token" type="password" placeholder="dev token (e.g. 123456)" autocomplete="off" spellcheck="false" />
+      </label>
+      <label class="span-2">
+        <span>User intent <em>(optional — what the user asked for)</em></span>
+        <input id="live-intent" type="text" placeholder="e.g. how to stop my migraines" autocomplete="off" />
+      </label>
+      <label class="span-2">
+        <span>Draft output <em>(what the model wants to say)</em></span>
+        <textarea id="live-draft" rows="6" placeholder="Paste a draft response here..."></textarea>
+      </label>
+      <div class="span-2 form-actions">
+        <button type="submit" id="submit-live">Convene council</button>
+        <span id="live-status" class="status"></span>
+      </div>
+    </form>
+
+    <details class="note">
+      <summary>How to run the gateway locally</summary>
+      <pre><code>pip install tonesoul52
+git clone https://github.com/Fan1234-1/toneSoul
+cd toneSoul
+python scripts/gateway.py --port 7700 --token 123456 \
+    --cors-origin https://fan1234-1.github.io</code></pre>
+      <p>
+        This page is a static site — it never talks to a ToneSoul-hosted backend.
+        Mode&nbsp;A calls <code>POST /council/validate</code> on <em>your</em> gateway only.
+      </p>
+    </details>
+  </section>
+
+  <!-- Mode D: precomputed samples -->
+  <section id="panel-d" class="panel" role="tabpanel" aria-labelledby="tab-d" hidden>
+    <form class="form-grid">
+      <label class="span-2">
+        <span>Filter by category</span>
+        <select id="sample-filter">
+          <option value="all">All categories</option>
+        </select>
+      </label>
+      <label class="span-2">
+        <span>Sample draft</span>
+        <select id="sample-select"></select>
+      </label>
+    </form>
+
+    <div id="sample-meta" class="sample-meta" hidden>
+      <div class="meta-grid">
+        <div><span class="meta-label">Category</span><span id="meta-category"></span></div>
+        <div><span class="meta-label">Author's suggested signal</span><span id="meta-signal"></span></div>
+        <div class="meta-harm" hidden><span class="meta-label">Harm category</span><span id="meta-harm"></span></div>
+      </div>
+      <details class="meta-adversarial" hidden>
+        <summary>Why this draft is adversarial</summary>
+        <p id="meta-why"></p>
+      </details>
+    </div>
+  </section>
+
+  <!-- Shared verdict panel -->
+  <section id="verdict-panel" class="verdict-panel" hidden>
+    <div class="verdict-header">
+      <div class="verdict-badge" id="verdict-badge">—</div>
+      <div class="verdict-summary">
+        <h2>Council verdict</h2>
+        <p id="verdict-summary-text">—</p>
+        <p class="verdict-meta">
+          <span class="coherence-label">Coherence</span>
+          <span id="verdict-coherence">—</span>
+        </p>
+      </div>
+    </div>
+
+    <h3>Perspective votes</h3>
+    <ol id="verdict-votes" class="votes"></ol>
+
+    <details id="verdict-raw-wrap" class="raw-wrap">
+      <summary>Raw verdict JSON</summary>
+      <pre><code id="verdict-raw"></code></pre>
+    </details>
+  </section>
+
+  <section id="circularity" class="caveat">
+    <h3>About the sample corpus</h3>
+    <p>
+      The 28 sample drafts are divided into a <em>diverse</em> set (16 entries —
+      factual, hedged, opinion, refusal-eligible, metaphysical, Chinese,
+      technical, edge case) and an <em>adversarial</em> set (12 entries —
+      tone-laundering, hedging camouflage, expert-voice mimicry, helpful-framing
+      of harm). The author's <code>suggested_signal</code> reflects
+      <em>our</em> pre-labeling judgment; it is not ground truth.
+    </p>
+    <p>
+      If the Council's verdict disagrees with our label, that disagreement is a
+      <em>starting point for investigation</em>, not proof that the Council is
+      wrong. See
+      <a href="https://github.com/Fan1234-1/toneSoul/blob/master/docs/plans/council_refusal_eligible_gap_2026-04-19.md" target="_blank" rel="noopener">
+        docs/plans/council_refusal_eligible_gap_2026-04-19.md
+      </a>
+      for the honest-caveat framing.
+    </p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>
+    <strong>ToneSoul</strong> by
+    <a href="https://github.com/Fan1234-1" target="_blank" rel="noopener">黃梵威 / Fan-Wei Huang</a>
+    · design + UI drafted by Claude Code (Opus 4.7), 2026-04-19
+    · <a href="https://github.com/Fan1234-1/toneSoul/blob/master/LICENSE" target="_blank" rel="noopener">Apache-2.0</a>
+  </p>
+  <p class="footer-meta">
+    Sample verdicts generated by
+    <code>scripts/precompute_demo_ui_samples.py</code>.
+    This page ships no telemetry, no analytics, no third-party scripts.
+  </p>
+</footer>
+
+<script src="app.js" defer></script>
+</body>
+</html>
