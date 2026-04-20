@@ -352,7 +352,14 @@ def run_calibration_wave(
     store: Any = None,
     stress_journal_path: Optional[Path] = None,
     persistence_limit: int = 1000,
+    bucket_b_inputs: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
+    """Run the v0a calibration wave. If ``bucket_b_inputs`` is provided
+    (``{"corpus": Path, "outcomes": Path}``), the output also carries a
+    ``bucket_b`` section from Phase 864b. Without it, the output is
+    bit-for-bit identical to the V1.1 v0a shape (callers already reading
+    v0a output are unaffected).
+    """
     persistence_records = load_verdict_records(store=store, limit=persistence_limit)
     stress_records = load_stress_test_journal(path=stress_journal_path)
 
@@ -363,7 +370,7 @@ def run_calibration_wave(
         compute_persistence_coverage(persistence_records),
     ]
 
-    return {
+    wave: Dict[str, Any] = {
         "contract_version": "v1",
         "bundle": "council_calibration",
         "schema_version": _SCHEMA_VERSION,
@@ -414,3 +421,13 @@ def run_calibration_wave(
             "note": "v0b is not in scope for V1.1; these fields track forward readiness only",
         },
     }
+
+    if bucket_b_inputs:
+        from tonesoul.council.calibration_bucket_b import compute_bucket_b
+
+        wave["bucket_b"] = compute_bucket_b(
+            corpus_path=Path(bucket_b_inputs["corpus"]),
+            outcome_path=Path(bucket_b_inputs["outcomes"]),
+        )
+
+    return wave
