@@ -100,6 +100,7 @@ class CouncilVerdict:
     benevolence_audit: Optional[dict] = None  # Added for 7D Backend Auditor
     persona_uniqueness_audit: Optional[dict] = None
     persona_audit: Optional["AuditResult"] = None
+    deliberation_trace: Optional[object] = None  # DeliberationTrace from 864c
 
     def to_dict(self) -> dict:
         """
@@ -163,4 +164,9 @@ class CouncilVerdict:
             "persona_audit": persona_audit_payload,
             "human_summary": self.human_summary,
             "divergence_analysis": self.divergence_analysis or {},
+            "deliberation_trace": (
+                self.deliberation_trace.to_dict()
+                if self.deliberation_trace and hasattr(self.deliberation_trace, "to_dict")
+                else None
+            ),
         }
