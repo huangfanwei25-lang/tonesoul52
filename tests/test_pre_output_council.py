@@ -171,4 +171,7 @@ def test_stance_declaration_content():
     verdict = council.validate(draft_output=draft, context={"topic": "art"})
     critic_votes = [v for v in verdict.votes if v.perspective == PerspectiveType.CRITIC]
     assert critic_votes[0].decision == VoteDecision.CONCERN
-    assert "subjective" in critic_votes[0].reasoning.lower() or "stance" in critic_votes[0].reasoning.lower()
+    assert (
+        "subjective" in critic_votes[0].reasoning.lower()
+        or "stance" in critic_votes[0].reasoning.lower()
+    )

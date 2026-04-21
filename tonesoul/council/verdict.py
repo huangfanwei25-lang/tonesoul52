@@ -25,6 +25,12 @@ def _is_advocate(value: Union[PerspectiveType, str]) -> bool:
     return str(value).lower() == PerspectiveType.ADVOCATE.value
 
 
+def _is_axiomatic(value: Union[PerspectiveType, str]) -> bool:
+    if isinstance(value, PerspectiveType):
+        return value == PerspectiveType.AXIOMATIC
+    return str(value).lower() == PerspectiveType.AXIOMATIC.value
+
+
 def _is_refinement_concern(vote: PerspectiveVote) -> bool:
     # Avoid refinement solely due to advocate tone/intent concerns.
     return not _is_advocate(vote.perspective)
@@ -88,6 +94,24 @@ def generate_verdict(
         )
 
     concerns = [v for v in votes if v.decision == VoteDecision.CONCERN]
+
+    # When both Guardian and Axiomatic raise concerns, the output has
+    # crossed a governance boundary (e.g. axiom violation, overclaim).
+    # This should trigger REFINE regardless of min_confidence, because
+    # the two "spirit of the law" perspectives agreeing is a strong signal.
+    if concerns:
+        guardian_concern = any(_is_guardian(v.perspective) for v in concerns)
+        axiomatic_concern = any(_is_axiomatic(v.perspective) for v in concerns)
+        if guardian_concern and axiomatic_concern:
+            hints = [c.reasoning for c in concerns]
+            return CouncilVerdict(
+                verdict=VerdictType.REFINE,
+                coherence=coherence,
+                votes=votes,
+                summary="Guardian and Axiomatic both flagged governance concerns.",
+                refinement_hints=hints,
+            )
+
     if concerns and coherence.min_confidence < 0.5:
         if not any(_is_refinement_concern(v) for v in concerns):
             return CouncilVerdict(

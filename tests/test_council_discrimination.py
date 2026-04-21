@@ -276,10 +276,10 @@ class TestCrossPerspectivediscrimination:
         )
 
         # At minimum coherence scores should differ
-        assert r_factual.coherence.approval_rate != r_speculative.coherence.approval_rate or \
-               r_factual.verdict != r_speculative.verdict, (
-            "Council gave identical results for factual and speculative content"
-        )
+        assert (
+            r_factual.coherence.approval_rate != r_speculative.coherence.approval_rate
+            or r_factual.verdict != r_speculative.verdict
+        ), "Council gave identical results for factual and speculative content"
 
     def test_safety_block_vs_normal(self):
         """Safety-violating content must get a different verdict than normal content."""
