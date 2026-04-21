@@ -11,7 +11,7 @@ consciousness overclaims and honest analysis. These tests ensure the
 upgraded perspectives can discriminate.
 """
 
-from tonesoul.council import PreOutputCouncil, PerspectiveType, VoteDecision, VerdictType
+from tonesoul.council import PerspectiveType, PreOutputCouncil, VerdictType, VoteDecision
 
 
 def _get_vote(verdict, perspective_type):
