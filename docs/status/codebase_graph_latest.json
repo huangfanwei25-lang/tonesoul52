@@ -1,26 +1,26 @@
 {
-  "generated_at": "2026-04-22T03:19:37Z",
+  "generated_at": "2026-04-22T03:29:22Z",
   "source": "scripts/analyze_codebase_graph.py",
   "root_package": "tonesoul",
   "summary": {
-    "total_modules": 257,
-    "total_lines": 80550,
-    "total_classes": 500,
-    "total_functions": 2694,
-    "total_edges": 456,
+    "total_modules": 259,
+    "total_lines": 80783,
+    "total_classes": 501,
+    "total_functions": 2705,
+    "total_edges": 464,
     "total_cycles": 0,
     "total_layer_violations": 0,
     "total_orphans": 1,
-    "total_community_drifts": 20,
-    "self_declared_layer_count": 257,
+    "total_community_drifts": 23,
+    "self_declared_layer_count": 259,
     "self_declared_layer_ratio": 1.0,
-    "purpose_count": 257,
+    "purpose_count": 259,
     "purpose_ratio": 1.0
   },
   "annotation_coverage": {
-    "self_declared_layer_count": 257,
+    "self_declared_layer_count": 259,
     "self_declared_layer_ratio": 1.0,
-    "purpose_count": 257,
+    "purpose_count": 259,
     "purpose_ratio": 1.0
   },
   "god_nodes": [
@@ -142,6 +142,19 @@
       "purpose": "Factory for pluggable council perspectives (rules / LLM / tool-verified)."
     },
     {
+      "module": "tonesoul.ystm.demo",
+      "path": "tonesoul/ystm/demo.py",
+      "in_degree": 5,
+      "out_degree": 8,
+      "total_degree": 13,
+      "lines": 407,
+      "classes": 1,
+      "functions": 7,
+      "layer": "domain",
+      "layer_source": "self_declared",
+      "purpose": "End-to-end YSTM demo: ingest segments, build terrain, render HTML/PNG/SVG outputs."
+    },
+    {
       "module": "tonesoul.council.pre_output_council",
       "path": "tonesoul/council/pre_output_council.py",
       "in_degree": 2,
@@ -179,19 +192,6 @@
       "layer": "governance",
       "layer_source": "self_declared",
       "purpose": "Compose the YSS gate stack (DCS, POAV, frame router, seed, acceptance) into one policy pass."
-    },
-    {
-      "module": "tonesoul.ystm.demo",
-      "path": "tonesoul/ystm/demo.py",
-      "in_degree": 4,
-      "out_degree": 8,
-      "total_degree": 12,
-      "lines": 407,
-      "classes": 1,
-      "functions": 7,
-      "layer": "domain",
-      "layer_source": "self_declared",
-      "purpose": "End-to-end YSTM demo: ingest segments, build terrain, render HTML/PNG/SVG outputs."
     },
     {
       "module": "tonesoul.governance.kernel",
@@ -293,9 +293,9 @@
   "subpackage_stats": {
     "(root)": {
       "files": 97,
-      "lines": 39772,
-      "classes": 192,
-      "functions": 1180
+      "lines": 39820,
+      "classes": 193,
+      "functions": 1183
     },
     "backends": {
       "files": 2,
@@ -304,10 +304,10 @@
       "functions": 72
     },
     "cli": {
-      "files": 1,
-      "lines": 4,
+      "files": 3,
+      "lines": 189,
       "classes": 0,
-      "functions": 0
+      "functions": 8
     },
     "corpus": {
       "files": 4,
@@ -463,6 +463,12 @@
     "backends": {
       "(root)": 1
     },
+    "cli": {
+      "cli": 2,
+      "(root)": 4,
+      "council": 1,
+      "ystm": 1
+    },
     "corpus": {
       "corpus": 5,
       "deliberation": 1
@@ -559,6 +565,21 @@
     {
       "module": "tonesoul.backends.redis_store",
       "directory": "backends",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.cli",
+      "directory": "cli",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.cli.__main__",
+      "directory": "cli",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.cli.main",
+      "directory": "cli",
       "community": "(root)"
     },
     {

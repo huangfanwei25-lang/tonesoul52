@@ -1,23 +1,23 @@
 # ToneSoul Codebase Graph Analysis
 
-Generated: 2026-04-22T03:19:37Z
+Generated: 2026-04-22T03:29:22Z
 Package: `tonesoul`
 
 ## Summary
 
 | Metric | Value |
 | --- | ---: |
-| Modules | 257 |
-| Lines | 80,550 |
-| Classes | 500 |
-| Functions | 2,694 |
-| Import edges | 456 |
+| Modules | 259 |
+| Lines | 80,783 |
+| Classes | 501 |
+| Functions | 2,705 |
+| Import edges | 464 |
 | Circular deps | 0 |
 | Layer violations | 0 |
 | Orphan modules | 1 |
-| Community drifts | 20 |
-| Self-declared layer | 257 / 257 (100.0%) |
-| Purpose declared | 257 / 257 (100.0%) |
+| Community drifts | 23 |
+| Self-declared layer | 259 / 259 (100.0%) |
+| Purpose declared | 259 / 259 (100.0%) |
 
 ## God Nodes (Top 20 by coupling)
 
@@ -34,10 +34,10 @@ Modules with the highest total degree (in + out). High coupling = high change ri
 | 7 | `memory.soul_db` | memory | self_declared | 16 | 1 | **17** | SQLite-backed memory store with decay, layered retrieval, and source attribution. |
 | 8 | `autonomous_cycle` | orchestration | self_declared | 1 | 14 | **15** | Drive the autonomous wake/sense/dream loop without a human trigger. |
 | 9 | `council.perspective_factory` | governance | self_declared | 3 | 11 | **14** | Factory for pluggable council perspectives (rules / LLM / tool-verified). |
-| 10 | `council.pre_output_council` | governance | self_declared | 2 | 10 | **12** | Convene the pre-output council: run perspectives, compute coherence, emit verdict and transcript. |
-| 11 | `tonebridge` | domain | self_declared | 1 | 11 | **12** | 5-stage psychological + semantic analysis engine: tone, trajectory, commitment, entropy, self-commit. |
-| 12 | `yss_gates` | governance | self_declared | 3 | 9 | **12** | Compose the YSS gate stack (DCS, POAV, frame router, seed, acceptance) into one policy pass. |
-| 13 | `ystm.demo` | domain | self_declared | 4 | 8 | **12** | End-to-end YSTM demo: ingest segments, build terrain, render HTML/PNG/SVG outputs. |
+| 10 | `ystm.demo` | domain | self_declared | 5 | 8 | **13** | End-to-end YSTM demo: ingest segments, build terrain, render HTML/PNG/SVG outputs. |
+| 11 | `council.pre_output_council` | governance | self_declared | 2 | 10 | **12** | Convene the pre-output council: run perspectives, compute coherence, emit verdict and transcript. |
+| 12 | `tonebridge` | domain | self_declared | 1 | 11 | **12** | 5-stage psychological + semantic analysis engine: tone, trajectory, commitment, entropy, self-commit. |
+| 13 | `yss_gates` | governance | self_declared | 3 | 9 | **12** | Compose the YSS gate stack (DCS, POAV, frame router, seed, acceptance) into one policy pass. |
 | 14 | `governance.kernel` | governance | self_declared | 4 | 7 | **11** | Governance kernel: decides how the pipeline behaves (routing, council convening, friction). |
 | 15 | `council.base` | shared | self_declared | 9 | 1 | **10** | Abstract IPerspective contract implemented by every council perspective. |
 | 16 | `dream_engine` | evolution | self_declared | 2 | 8 | **10** | Offline dream cycle: crystallize memory and update subjectivity layers between waking sessions. |
@@ -56,9 +56,9 @@ Nobody imports these. Potential dead code or standalone entry points.
 
 | Subpackage | Layer | Files | Lines | Classes | Functions |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `(root)` | — | 97 | 39,772 | 192 | 1180 |
+| `(root)` | — | 97 | 39,820 | 193 | 1183 |
 | `backends` | infrastructure | 2 | 909 | 2 | 72 |
-| `cli` | surface | 1 | 4 | 0 | 0 |
+| `cli` | surface | 3 | 189 | 0 | 8 |
 | `corpus` | evolution | 4 | 877 | 8 | 37 |
 | `council` | governance | 33 | 9,043 | 50 | 302 |
 | `deliberation` | governance | 7 | 1,923 | 18 | 86 |
@@ -92,6 +92,7 @@ Nobody imports these. Potential dead code or standalone entry points.
 | `(root)` | `council` | 8 |
 | `council` | `(root)` | 8 |
 | `governance` | `(root)` | 8 |
+| `cli` | `(root)` | 4 |
 | `memory` | `(root)` | 4 |
 | `(root)` | `llm` | 3 |
 | `(root)` | `perception` | 3 |
@@ -110,7 +111,6 @@ Nobody imports these. Potential dead code or standalone entry points.
 | `(root)` | `gates` | 1 |
 | `(root)` | `tonebridge` | 1 |
 | `backends` | `(root)` | 1 |
-| `corpus` | `deliberation` | 1 |
 
 ## Community Drifts
 
@@ -120,6 +120,9 @@ Modules whose import pattern suggests they belong to a different subpackage than
 | --- | --- | --- |
 | `backends.file_store` | backends | (root) |
 | `backends.redis_store` | backends | (root) |
+| `cli` | cli | (root) |
+| `cli.__main__` | cli | (root) |
+| `cli.main` | cli | (root) |
 | `council.calibration` | council | (root) |
 | `escape_valve` | (root) | council |
 | `gates` | gates | (root) |
@@ -135,6 +138,3 @@ Modules whose import pattern suggests they belong to a different subpackage than
 | `perception.web_ingest` | perception | (root) |
 | `pipeline` | pipeline | (root) |
 | `safe_parse` | (root) | council |
-| `tech_trace.validate` | tech_trace | (root) |
-| `ystm.schema` | ystm | (root) |
-| `ystm_demo` | (root) | ystm |

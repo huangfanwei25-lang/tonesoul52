@@ -1,4 +1,11 @@
-__ts_layer__ = "surface"
-__ts_purpose__ = "CLI entry surface: command-line operator interface for ToneSoul."
+"""ToneSoul CLI package — unified operator command surface.
 
-"""Legacy CLI package placeholder."""
+Entry point: ``python -m tonesoul.cli <command>``
+"""
+
+__ts_layer__ = "surface"
+__ts_purpose__ = "CLI entry surface: unified operator command interface for ToneSoul."
+
+from .main import main
+
+__all__ = ["main"]
