@@ -22,7 +22,7 @@
 - Phase 725: ~~public-claim honesty gate~~ **done** (`claim_boundary` in session-start tier 0+2)
 - Phase 726: ~~collaborator-beta go/no-go review~~ **done** (`docs/status/phase726_go_nogo_2026-04-08.md`, refreshed by `docs/status/phase726_go_nogo_2026-04-15.md`)
 - Phase 729: ~~design center~~ **done** (`DESIGN.md`, 293 lines)
-- Phase 730: add one 3-day execution program so the next agent can continue without reopening settled wording
+- Phase 730: ~~add one 3-day execution program so the next agent can continue without reopening settled wording~~ **done** (`docs/plans/tonesoul_3day_execution_program_2026-04-22.md`)
 - Phase 731: ~~compress entry-surface ownership and first-hop routing~~ **done** (`README.md`, `docs/foundation/README.md`, `docs/README.md`, `docs/INDEX.md`, `docs/AI_QUICKSTART.md`, `AI_ONBOARDING.md`)
 - Phase 732: ~~sync Chinese public entry and retire dead historical-spec links from active entry contracts~~ **done** (`README.zh-TW.md`, entry contracts, historical-spec maps`)
 - Phase 733: ~~publish repo-aligned continuation work plan v2~~ **done** (`docs/plans/tonesoul_work_plan_v2_2026-04-14.md`)
