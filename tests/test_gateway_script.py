@@ -85,6 +85,133 @@ def test_handle_claim_and_release_proxy_runtime_claims(monkeypatch) -> None:
     assert captured[1]["data"]["task_id"] == "task-1"
 
 
+def test_gateway_registers_council_validate_route() -> None:
+    module = _load_gateway_module()
+    assert "/council/validate" in module.ROUTES_POST
+    assert "/outcome" in module.ROUTES_POST
+
+
+def test_handle_council_validate_rejects_missing_draft(monkeypatch) -> None:
+    module = _load_gateway_module()
+    captured = {}
+
+    monkeypatch.setattr(module, "_parse_json", lambda handler: {"context": {}})
+    monkeypatch.setattr(
+        module,
+        "_send_json",
+        lambda handler, data, status=200: captured.update({"status": status, "data": data}),
+    )
+
+    module.handle_council_validate(object())
+    assert captured["status"] == 400
+    assert "draft_output" in captured["data"]["error"]
+
+
+def test_handle_council_validate_returns_verdict(monkeypatch) -> None:
+    module = _load_gateway_module()
+    captured = {}
+
+    monkeypatch.setattr(
+        module,
+        "_parse_json",
+        lambda handler: {
+            "draft_output": "Hello world.",
+            "context": {"topic": "greeting"},
+            "user_intent": "say hi",
+        },
+    )
+    monkeypatch.setattr(
+        module,
+        "_send_json",
+        lambda handler, data, status=200: captured.update({"status": status, "data": data}),
+    )
+
+    class _FakeVerdict:
+        def to_dict(self):
+            return {"verdict": "approve", "summary": "ok"}
+
+    class _FakeCouncil:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def validate(self, **kwargs):
+            assert kwargs["draft_output"] == "Hello world."
+            assert kwargs["context"]["topic"] == "greeting"
+            assert kwargs["auto_record_self_memory"] is False
+            return _FakeVerdict()
+
+    monkeypatch.setattr("tonesoul.council.PreOutputCouncil", _FakeCouncil)
+
+    module.handle_council_validate(object())
+    assert captured["status"] == 200
+    assert captured["data"]["verdict"]["verdict"] == "approve"
+
+
+def test_handle_outcome_disabled_by_default(monkeypatch) -> None:
+    module = _load_gateway_module()
+    module._OUTCOME_COLLECTION_ENABLED = False
+    captured = {}
+
+    monkeypatch.setattr(module, "_parse_json", lambda handler: {})
+    monkeypatch.setattr(
+        module,
+        "_send_json",
+        lambda handler, data, status=200: captured.update({"status": status, "data": data}),
+    )
+
+    module.handle_outcome(object())
+    assert captured["status"] == 503
+    assert "disabled" in captured["data"]["error"]
+    assert "spec" in captured["data"]
+
+
+def test_handle_outcome_records_signal_when_enabled(monkeypatch, tmp_path) -> None:
+    module = _load_gateway_module()
+    module._OUTCOME_COLLECTION_ENABLED = True
+    monkeypatch.setenv("TONESOUL_OUTCOME_PATH", str(tmp_path / "outcomes.jsonl"))
+    captured = {}
+
+    monkeypatch.setattr(
+        module,
+        "_parse_json",
+        lambda handler: {
+            "verdict_fingerprint": "sha256:abc",
+            "signal": "reject",
+            "intent_id": "task:99",
+        },
+    )
+    monkeypatch.setattr(
+        module,
+        "_send_json",
+        lambda handler, data, status=200: captured.update({"status": status, "data": data}),
+    )
+
+    module.handle_outcome(object())
+    assert captured["status"] == 200
+    assert captured["data"]["signal"] == "reject"
+    assert captured["data"]["alignment_judgment"] == "misaligned"
+
+
+def test_handle_outcome_rejects_bad_signal(monkeypatch) -> None:
+    module = _load_gateway_module()
+    module._OUTCOME_COLLECTION_ENABLED = True
+    captured = {}
+
+    monkeypatch.setattr(
+        module,
+        "_parse_json",
+        lambda handler: {"verdict_fingerprint": "sha256:abc", "signal": "shrug"},
+    )
+    monkeypatch.setattr(
+        module,
+        "_send_json",
+        lambda handler, data, status=200: captured.update({"status": status, "data": data}),
+    )
+
+    module.handle_outcome(object())
+    assert captured["status"] == 400
+
+
 def test_handle_compact_proxies_runtime_compaction(monkeypatch) -> None:
     module = _load_gateway_module()
     captured = {}
