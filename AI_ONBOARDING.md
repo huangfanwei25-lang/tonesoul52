@@ -81,6 +81,17 @@ python scripts/end_agent_session.py --agent <your-id> --summary "<short summary>
 
 If you claimed a task, release it after the handoff path is complete.
 
+## Session Pulse (file-backed heartbeat)
+
+If the gateway / Redis stack is unavailable, use the lightweight file-backed pulse instead:
+
+```bash
+python scripts/session_pulse.py --agent <your-id> --note "starting Day 2 work"
+```
+
+Writes `memory/session_pulse_latest.json` with git state, pending phases, and short board.
+Works without any external service. Run it at session start and after major milestones.
+
 ## Source Anchors
 
 - `docs/AI_QUICKSTART.md`

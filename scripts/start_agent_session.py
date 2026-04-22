@@ -126,6 +126,43 @@ def _build_surface_versioning() -> dict:
     return build_surface_versioning_readout()
 
 
+def _build_open_branch_summary() -> dict:
+    """Return a short summary of remote branches not yet merged into master.
+
+    Uses git only — no external API. New agents can use this to know which
+    in-flight branches exist without reading the full git log.
+    """
+    import subprocess
+
+    def _git(*args: str) -> str:
+        r = subprocess.run(
+            ["git", "-C", str(_REPO_ROOT), *args],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
+        return r.stdout.strip()
+
+    raw = _git("branch", "-r", "--no-merged", "origin/master")
+    branches = [b.strip() for b in raw.splitlines() if b.strip()]
+    skip = {"origin/HEAD", "origin/master", "origin/main"}
+    branches = [b for b in branches if b not in skip]
+
+    summaries = []
+    for branch in branches[:8]:  # cap at 8 to keep output bounded
+        last = _git("log", "-1", "--format=%h %s", branch)
+        summaries.append({"branch": branch, "last_commit": last})
+
+    return {
+        "unmerged_branch_count": len(branches),
+        "branches": summaries,
+        "receiver_note": (
+            "These branches are not yet merged into master. "
+            "Check with the task board before touching them."
+        ),
+    }
+
+
 def _build_consumer_contract(
     *,
     readiness: dict,
@@ -346,6 +383,7 @@ def _build_tier0_payload(
         "canonical_center": _build_tier0_canonical_center(canonical_center),
         "mutation_preflight": _build_tier0_mutation_preflight(mutation_preflight),
         "consumer_contract": _build_tier0_consumer_contract(consumer_contract),
+        "open_branch_summary": _build_open_branch_summary(),
         "claim_boundary": {
             "current_tier": "collaborator_beta",
             "receiver_note": "Do not claim production readiness, AI consciousness, or council-as-truth.",
