@@ -100,7 +100,7 @@ pip install tonesoul52[dev]
 pytest tests/ -v
 ```
 
-Latest result: **4481 passed** (Python 3.11+, Ubuntu)
+Latest result: **4567 passed** (Python 3.11+, Ubuntu)
 
 ## Why It Feels Different
 
