@@ -10,7 +10,6 @@ match at test time. They do not depend on the checked-in
 
 from __future__ import annotations
 
-import json
 import os
 import sys
 from pathlib import Path
@@ -18,16 +17,15 @@ from pathlib import Path
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(REPO_ROOT))
+sys.path.insert(0, str(REPO_ROOT))  # noqa: E402
 
-from tonesoul.council.calibration import run_calibration_wave
-from tonesoul.council.calibration_bucket_b import (
+from tonesoul.council.calibration import run_calibration_wave  # noqa: E402
+from tonesoul.council.calibration_bucket_b import (  # noqa: E402
     bucket_b_equal,
     build_calibration_table,
     compute_bucket_b,
     derive_alignment_judgment_v0b,
     derive_baseline_regime,
-    join_verdicts_with_outcomes,
     load_outcomes,
 )
 
