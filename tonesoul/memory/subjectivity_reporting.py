@@ -7,6 +7,11 @@ from tonesoul.schemas import SubjectivityLayer, SubjectivityPromotionStatus
 
 from .soul_db import MemoryRecord, MemorySource, SoulDB
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Subjectivity reporting: surface subjective-vs-objective classification ratios."
+)
+
 _KNOWN_SUBJECTIVITY_LAYERS = (
     SubjectivityLayer.EVENT.value,
     SubjectivityLayer.MEANING.value,

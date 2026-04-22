@@ -25,6 +25,11 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Governance reflex: fast-path rule matching for low-latency constraint enforcement."
+)
+
 logger = logging.getLogger(__name__)
 
 

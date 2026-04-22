@@ -9,6 +9,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Context distiller: compress session context into durable evolution training signals."
+)
+
 _CACHE_PATH = Path("data") / "evolution_latest.json"
 
 

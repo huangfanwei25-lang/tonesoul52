@@ -14,6 +14,11 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Entropy engine: self-observe AI semantic entropy and trigger stability alerts."
+)
+
 
 class EntropyLevel(Enum):
     """Entropy state classification."""

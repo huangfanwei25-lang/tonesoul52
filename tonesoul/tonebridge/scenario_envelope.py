@@ -17,6 +17,11 @@ import re
 from dataclasses import dataclass
 from typing import Dict, List
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Scenario envelope: build bounded scenario contexts for safe exploration."
+)
+
 _MAX_SUMMARY_CHARS = 220
 
 

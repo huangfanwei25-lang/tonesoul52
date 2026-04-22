@@ -6,6 +6,11 @@ from typing import Any, Mapping, Optional
 
 from .types import SovereigntyBoundary, TensionPacket
 
+__ts_layer__ = "surface"
+__ts_purpose__ = (
+    "Inter-soul sovereignty: declare and enforce each agent's autonomous decision boundary."
+)
+
 _DEFAULT_FIELD_MAP = {
     "3": frozenset({"zone"}),
     "6": frozenset({"lambda_state"}),

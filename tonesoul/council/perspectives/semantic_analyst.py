@@ -8,6 +8,11 @@ from ..base import IPerspective
 from ..perspectives.analyst import AnalystPerspective
 from ..types import PerspectiveVote, VoteDecision
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Semantic analyst perspective: assess tonal and semantic quality of proposed output."
+)
+
 
 class SemanticAnalystPerspective(IPerspective):
     """

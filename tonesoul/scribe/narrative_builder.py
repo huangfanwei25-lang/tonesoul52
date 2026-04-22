@@ -7,6 +7,11 @@ can stay reflective without overstating what was actually observed.
 from dataclasses import dataclass
 from typing import List, Optional
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Narrative builder: compose human-readable governance stories from structured data."
+)
+
 
 @dataclass
 class ScribeTensionRecord:

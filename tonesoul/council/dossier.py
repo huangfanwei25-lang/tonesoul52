@@ -4,6 +4,11 @@ from typing import Any, Iterable
 
 from .types import CouncilVerdict, PerspectiveType, PerspectiveVote, VoteDecision
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Council dossier: compile per-input evidence packages for deliberation context."
+)
+
 DOSSIER_VERSION = "v1"
 _DISSENT_DECISIONS = {"concern", "object"}
 

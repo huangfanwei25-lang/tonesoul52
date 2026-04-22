@@ -14,6 +14,11 @@ from typing import Any, Dict, Optional
 
 from .config import LoopConfig, LoopResult
 
+__ts_layer__ = "orchestration"
+__ts_purpose__ = (
+    "Loop events: typed event definitions for autonomous loop lifecycle transitions."
+)
+
 
 @dataclass
 class LoopEvent:

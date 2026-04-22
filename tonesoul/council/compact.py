@@ -4,6 +4,11 @@ from typing import Any, Dict, Iterable, List
 
 from .types import CouncilVerdict
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Council compact: produce compressed summaries of council deliberation records."
+)
+
 _VERDICT_TOKEN_FIELDS = {
     "summary",
     "stance_declaration",

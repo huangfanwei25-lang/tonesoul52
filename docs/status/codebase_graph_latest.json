@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-04-22T03:14:29Z",
+  "generated_at": "2026-04-22T03:19:37Z",
   "source": "scripts/analyze_codebase_graph.py",
   "root_package": "tonesoul",
   "summary": {
     "total_modules": 257,
-    "total_lines": 79825,
+    "total_lines": 80550,
     "total_classes": 500,
     "total_functions": 2694,
     "total_edges": 456,
@@ -12,16 +12,16 @@
     "total_layer_violations": 0,
     "total_orphans": 1,
     "total_community_drifts": 20,
-    "self_declared_layer_count": 112,
-    "self_declared_layer_ratio": 0.4358,
-    "purpose_count": 112,
-    "purpose_ratio": 0.4358
+    "self_declared_layer_count": 257,
+    "self_declared_layer_ratio": 1.0,
+    "purpose_count": 257,
+    "purpose_ratio": 1.0
   },
   "annotation_coverage": {
-    "self_declared_layer_count": 112,
-    "self_declared_layer_ratio": 0.4358,
-    "purpose_count": 112,
-    "purpose_ratio": 0.4358
+    "self_declared_layer_count": 257,
+    "self_declared_layer_ratio": 1.0,
+    "purpose_count": 257,
+    "purpose_ratio": 1.0
   },
   "god_nodes": [
     {
@@ -293,13 +293,13 @@
   "subpackage_stats": {
     "(root)": {
       "files": 97,
-      "lines": 39677,
+      "lines": 39772,
       "classes": 192,
       "functions": 1180
     },
     "backends": {
       "files": 2,
-      "lines": 899,
+      "lines": 909,
       "classes": 2,
       "functions": 72
     },
@@ -311,85 +311,85 @@
     },
     "corpus": {
       "files": 4,
-      "lines": 862,
+      "lines": 877,
       "classes": 8,
       "functions": 37
     },
     "council": {
       "files": 33,
-      "lines": 8908,
+      "lines": 9043,
       "classes": 50,
       "functions": 302
     },
     "deliberation": {
       "files": 7,
-      "lines": 1893,
+      "lines": 1923,
       "classes": 18,
       "functions": 86
     },
     "evolution": {
       "files": 4,
-      "lines": 1131,
+      "lines": 1146,
       "classes": 5,
       "functions": 46
     },
     "gates": {
       "files": 2,
-      "lines": 403,
+      "lines": 408,
       "classes": 6,
       "functions": 13
     },
     "gateway": {
       "files": 3,
-      "lines": 192,
+      "lines": 202,
       "classes": 4,
       "functions": 16
     },
     "governance": {
       "files": 5,
-      "lines": 1599,
+      "lines": 1614,
       "classes": 12,
       "functions": 42
     },
     "inter_soul": {
       "files": 5,
-      "lines": 475,
+      "lines": 495,
       "classes": 9,
       "functions": 40
     },
     "llm": {
       "files": 5,
-      "lines": 1378,
+      "lines": 1398,
       "classes": 7,
       "functions": 73
     },
     "loop": {
       "files": 4,
-      "lines": 625,
+      "lines": 640,
       "classes": 16,
       "functions": 23
     },
     "market": {
       "files": 4,
-      "lines": 1327,
+      "lines": 1342,
       "classes": 16,
       "functions": 35
     },
     "memory": {
       "files": 25,
-      "lines": 8121,
+      "lines": 8231,
       "classes": 39,
       "functions": 327
     },
     "observability": {
       "files": 5,
-      "lines": 767,
+      "lines": 787,
       "classes": 7,
       "functions": 35
     },
     "perception": {
       "files": 4,
-      "lines": 1021,
+      "lines": 1036,
       "classes": 5,
       "functions": 30
     },
@@ -401,43 +401,43 @@
     },
     "scribe": {
       "files": 4,
-      "lines": 1804,
+      "lines": 1819,
       "classes": 7,
       "functions": 61
     },
     "semantic": {
       "files": 3,
-      "lines": 187,
+      "lines": 197,
       "classes": 3,
       "functions": 18
     },
     "shared": {
       "files": 3,
-      "lines": 252,
+      "lines": 262,
       "classes": 6,
       "functions": 7
     },
     "tech_trace": {
       "files": 4,
-      "lines": 581,
+      "lines": 596,
       "classes": 0,
       "functions": 29
     },
     "tonebridge": {
       "files": 12,
-      "lines": 3508,
+      "lines": 3563,
       "classes": 39,
       "functions": 130
     },
     "ystm": {
       "files": 13,
-      "lines": 2184,
+      "lines": 2229,
       "classes": 21,
       "functions": 60
     },
     "yuhun": {
       "files": 7,
-      "lines": 2013,
+      "lines": 2043,
       "classes": 28,
       "functions": 32
     }

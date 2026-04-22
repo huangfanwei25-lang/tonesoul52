@@ -21,6 +21,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Token meter: count and budget token usage across inference calls."
+)
+
 # ---------------------------------------------------------------------------
 # Cost estimation (per 1M tokens, approximate)
 # ---------------------------------------------------------------------------

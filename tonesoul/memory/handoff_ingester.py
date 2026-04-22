@@ -8,6 +8,11 @@ from typing import Dict, Optional
 from .soul_db import MemorySource, SoulDB
 from .write_gateway import MemoryWriteGateway
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Handoff ingester: load inter-session handoff notes into active memory context."
+)
+
 
 def _parse_iso(value: Optional[str]) -> Optional[datetime]:
     text = str(value or "").strip()

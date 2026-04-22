@@ -16,6 +16,11 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Alert escalation: route unresolved governance alerts to the appropriate handler."
+)
+
 
 class AlertLevel(str, Enum):
     """Three-tier alert classification per spec."""

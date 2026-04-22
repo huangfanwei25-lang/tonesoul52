@@ -8,6 +8,11 @@ from typing import Any, Optional, Sequence
 
 from tonesoul.memory.subjectivity_handoff import build_handoff_surface
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Dream observability: surface latent state signals during low-activity cycles."
+)
+
 JSON_FILENAME = "dream_observability_latest.json"
 HTML_FILENAME = "dream_observability_latest.html"
 

@@ -18,6 +18,11 @@ from pathlib import Path
 from time import time as _time
 from typing import Any, Dict, Iterator, List
 
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = (
+    "File-backed key-value store: durable persistence without external services."
+)
+
 _ROOT = Path(__file__).resolve().parent.parent.parent  # repo root
 
 _DEFAULT_GOV = _ROOT / "governance_state.json"

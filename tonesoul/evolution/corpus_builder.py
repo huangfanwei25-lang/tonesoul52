@@ -9,6 +9,11 @@ from typing import Any
 
 from .corpus_schema import CorpusEntry
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Corpus builder: assemble training corpora from approved session transcripts."
+)
+
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")

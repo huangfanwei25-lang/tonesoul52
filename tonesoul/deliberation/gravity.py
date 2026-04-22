@@ -27,6 +27,11 @@ from .types import (
     ViewPoint,
 )
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Deliberation gravity: weight perspective influence by confidence and track record."
+)
+
 
 class SemanticGravity:
     """

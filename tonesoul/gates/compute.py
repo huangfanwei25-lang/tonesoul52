@@ -22,6 +22,11 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Gate compute: evaluate YSS gate logic and emit pass/fail with justification."
+)
+
 
 class RoutingPath(Enum):
     PASS_LOCAL = "route_local_llm"

@@ -12,6 +12,11 @@ from .types import (
     VoteDecision,
 )
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Verdict engine: compute final council decision from aggregated perspective votes."
+)
+
 
 def _is_guardian(value: Union[PerspectiveType, str]) -> bool:
     if isinstance(value, PerspectiveType):

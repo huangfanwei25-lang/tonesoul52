@@ -18,6 +18,11 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Market data ingest: pull and normalize external domain signals into the world model."
+)
+
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------

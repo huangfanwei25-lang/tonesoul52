@@ -4,6 +4,11 @@ from dataclasses import dataclass
 
 from .types import NegotiationOutcome, SovereigntyBoundary, TensionPacket
 
+__ts_layer__ = "surface"
+__ts_purpose__ = (
+    "Inter-soul negotiation: resolve value conflicts between collaborating agents."
+)
+
 
 def _resolve_field(packet: TensionPacket, field_path: str):
     if field_path.startswith("signals."):

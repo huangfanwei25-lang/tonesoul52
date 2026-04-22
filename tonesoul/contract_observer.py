@@ -14,6 +14,11 @@ from datetime import datetime
 from enum import Enum
 from typing import Callable, Dict, List, Optional, Tuple
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Contract observer: watch consumer contracts for violations and drift."
+)
+
 
 class ContractSeverity(Enum):
     """契約嚴重程度"""

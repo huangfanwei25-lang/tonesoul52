@@ -8,6 +8,11 @@ from .soul_db import MemorySource, SoulDB
 from .subjectivity_handoff import build_handoff_surface, normalize_status_lines, primary_status_line
 from .subjectivity_reporting import list_subjectivity_records
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Subjectivity triage: classify incoming memory entries as objective, subjective, or contested."
+)
+
 _FRICTION_LOW_MAX = 0.30
 _FRICTION_MEDIUM_MAX = 0.50
 

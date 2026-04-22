@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any
 
-__ts_layer__ = "observability"
+__ts_layer__ = "shared"
 __ts_purpose__ = (
     "Canonical issue code registry for structured error reporting."
 )

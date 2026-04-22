@@ -20,6 +20,11 @@ from typing import Dict, List, Optional
 
 from .rupture_detector import SemanticRupture
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Value accumulator: accumulate emergent values from correction and commitment events."
+)
+
 
 @dataclass
 class CorrectionEvent:

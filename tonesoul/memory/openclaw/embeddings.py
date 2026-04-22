@@ -5,6 +5,11 @@ from typing import Protocol
 
 import numpy as np
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "OpenClaw embeddings: generate and cache vector embeddings for memory retrieval."
+)
+
 
 class BaseEmbedding(Protocol):
     """Embedding interface for OpenClaw memory backends."""

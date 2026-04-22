@@ -26,6 +26,11 @@ Usage:
 import asyncio
 from typing import Generic, List, TypeVar
 
+__ts_layer__ = "shared"
+__ts_purpose__ = (
+    "Async queue: shared non-blocking queue for cross-subsystem event passing."
+)
+
 T = TypeVar("T")
 
 

@@ -2,6 +2,11 @@ from __future__ import annotations
 
 from typing import Dict, List
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Subjectivity admissibility: decide whether a subjective claim may enter long-term memory."
+)
+
 
 def _normalize_text(value: object) -> str:
     return str(value or "").strip()

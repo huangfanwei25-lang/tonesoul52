@@ -1,6 +1,6 @@
 # ToneSoul Codebase Graph Analysis
 
-Generated: 2026-04-22T03:14:29Z
+Generated: 2026-04-22T03:19:37Z
 Package: `tonesoul`
 
 ## Summary
@@ -8,7 +8,7 @@ Package: `tonesoul`
 | Metric | Value |
 | --- | ---: |
 | Modules | 257 |
-| Lines | 79,825 |
+| Lines | 80,550 |
 | Classes | 500 |
 | Functions | 2,694 |
 | Import edges | 456 |
@@ -16,8 +16,8 @@ Package: `tonesoul`
 | Layer violations | 0 |
 | Orphan modules | 1 |
 | Community drifts | 20 |
-| Self-declared layer | 112 / 257 (43.6%) |
-| Purpose declared | 112 / 257 (43.6%) |
+| Self-declared layer | 257 / 257 (100.0%) |
+| Purpose declared | 257 / 257 (100.0%) |
 
 ## God Nodes (Top 20 by coupling)
 
@@ -56,31 +56,31 @@ Nobody imports these. Potential dead code or standalone entry points.
 
 | Subpackage | Layer | Files | Lines | Classes | Functions |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `(root)` | — | 97 | 39,677 | 192 | 1180 |
-| `backends` | infrastructure | 2 | 899 | 2 | 72 |
+| `(root)` | — | 97 | 39,772 | 192 | 1180 |
+| `backends` | infrastructure | 2 | 909 | 2 | 72 |
 | `cli` | surface | 1 | 4 | 0 | 0 |
-| `corpus` | evolution | 4 | 862 | 8 | 37 |
-| `council` | governance | 33 | 8,908 | 50 | 302 |
-| `deliberation` | governance | 7 | 1,893 | 18 | 86 |
-| `evolution` | evolution | 4 | 1,131 | 5 | 46 |
-| `gates` | governance | 2 | 403 | 6 | 13 |
-| `gateway` | infrastructure | 3 | 192 | 4 | 16 |
-| `governance` | governance | 5 | 1,599 | 12 | 42 |
-| `inter_soul` | surface | 5 | 475 | 9 | 40 |
-| `llm` | infrastructure | 5 | 1,378 | 7 | 73 |
-| `loop` | orchestration | 4 | 625 | 16 | 23 |
-| `market` | domain | 4 | 1,327 | 16 | 35 |
-| `memory` | memory | 25 | 8,121 | 39 | 327 |
-| `observability` | observability | 5 | 767 | 7 | 35 |
-| `perception` | perception | 4 | 1,021 | 5 | 30 |
+| `corpus` | evolution | 4 | 877 | 8 | 37 |
+| `council` | governance | 33 | 9,043 | 50 | 302 |
+| `deliberation` | governance | 7 | 1,923 | 18 | 86 |
+| `evolution` | evolution | 4 | 1,146 | 5 | 46 |
+| `gates` | governance | 2 | 408 | 6 | 13 |
+| `gateway` | infrastructure | 3 | 202 | 4 | 16 |
+| `governance` | governance | 5 | 1,614 | 12 | 42 |
+| `inter_soul` | surface | 5 | 495 | 9 | 40 |
+| `llm` | infrastructure | 5 | 1,398 | 7 | 73 |
+| `loop` | orchestration | 4 | 640 | 16 | 23 |
+| `market` | domain | 4 | 1,342 | 16 | 35 |
+| `memory` | memory | 25 | 8,231 | 39 | 327 |
+| `observability` | observability | 5 | 787 | 7 | 35 |
+| `perception` | perception | 4 | 1,036 | 5 | 30 |
 | `pipeline` | pipeline | 1 | 14 | 0 | 0 |
-| `scribe` | domain | 4 | 1,804 | 7 | 61 |
-| `semantic` | semantic | 3 | 187 | 3 | 18 |
-| `shared` | shared | 3 | 252 | 6 | 7 |
-| `tech_trace` | observability | 4 | 581 | 0 | 29 |
-| `tonebridge` | domain | 12 | 3,508 | 39 | 130 |
-| `ystm` | domain | 13 | 2,184 | 21 | 60 |
-| `yuhun` | semantic | 7 | 2,013 | 28 | 32 |
+| `scribe` | domain | 4 | 1,819 | 7 | 61 |
+| `semantic` | semantic | 3 | 197 | 3 | 18 |
+| `shared` | shared | 3 | 262 | 6 | 7 |
+| `tech_trace` | observability | 4 | 596 | 0 | 29 |
+| `tonebridge` | domain | 12 | 3,563 | 39 | 130 |
+| `ystm` | domain | 13 | 2,229 | 21 | 60 |
+| `yuhun` | semantic | 7 | 2,043 | 28 | 32 |
 
 ## Cross-Package Coupling (top edges)
 

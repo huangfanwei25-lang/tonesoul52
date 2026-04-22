@@ -6,6 +6,11 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List, Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Adaptive gate: adjust governance thresholds dynamically based on session context."
+)
+
 
 class GateAction(Enum):
     """Gate action levels."""

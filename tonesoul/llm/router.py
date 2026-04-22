@@ -22,6 +22,11 @@ import time
 from enum import Enum
 from typing import Any, Dict, Optional
 
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = (
+    "LLM router: select and dispatch to the appropriate model backend for a request."
+)
+
 
 class ThinkingTier(str, Enum):
     """Reasoning tier for initial and revision generation."""

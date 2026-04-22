@@ -21,6 +21,11 @@ from tonesoul.memory.crystallizer import MemoryCrystallizer
 from tonesoul.memory.handoff_ingester import HandoffIngester
 from tonesoul.memory.soul_db import JsonlSoulDB
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Memory boot: initialize memory subsystem on session start."
+)
+
 
 @dataclass(frozen=True)
 class BootSummary:

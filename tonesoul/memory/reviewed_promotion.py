@@ -14,6 +14,11 @@ from tonesoul.schemas import (
 from .soul_db import MemorySource, SoulDB
 from .write_gateway import MemoryWriteGateway
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Reviewed promotion: elevate human-verified memory items to trusted-fact status."
+)
+
 _REPLAYABLE_REVIEW_STATUSES = {
     SubjectivityPromotionStatus.REVIEWED,
     SubjectivityPromotionStatus.HUMAN_REVIEWED,

@@ -11,6 +11,11 @@ from ..memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
 from .summary_generator import resolve_language
 from .types import CouncilVerdict
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Council self-journal: record AI reflections on deliberation quality."
+)
+
 VERDICT_LABELS = {
     "approve": ("approved", "\u901a\u904e"),
     "refine": ("needs refinement", "\u9700\u8981\u6539\u9032"),

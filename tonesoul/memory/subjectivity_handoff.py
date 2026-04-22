@@ -2,6 +2,11 @@ from __future__ import annotations
 
 from typing import Iterable, Mapping
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Subjectivity handoff: pass subjective claims between sessions with provenance tags."
+)
+
 
 def normalize_status_lines(lines: object) -> list[str]:
     if not isinstance(lines, Iterable) or isinstance(lines, (str, bytes, dict)):

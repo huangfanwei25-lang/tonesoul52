@@ -9,6 +9,11 @@ from tonesoul.store import KEY_COUNCIL_VERDICTS, get_store
 
 from .types import CouncilVerdict, PerspectiveType
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Council persistence: serialise and restore full council session state."
+)
+
 _SCHEMA_VERSION = "1.0.0"
 _DEFAULT_RETENTION_LIMIT = 1000
 _DEFAULT_TTL_SECONDS = 7776000

@@ -6,6 +6,11 @@ import yaml
 
 from .ystm.schema import utc_now
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Skill gate: governance check before any skill is accepted into the active stack."
+)
+
 
 def _workspace_root() -> str:
     return os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))

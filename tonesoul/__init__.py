@@ -12,6 +12,11 @@ For import / layer boundary rules (what each of the 13 layers may depend on),
 see ``docs/ARCHITECTURE_BOUNDARIES.md``.
 """
 
+__ts_layer__ = "shared"
+__ts_purpose__ = (
+    "ToneSoul root package: namespace container and version metadata for the tonesoul distribution."
+)
+
 __version__ = "1.0.0"
 __author__ = "黃梵威 (Fan-Wei Huang) <Fan1234-1>"
 __since__ = "2026-04 · 語魂系統 · principle engineering"

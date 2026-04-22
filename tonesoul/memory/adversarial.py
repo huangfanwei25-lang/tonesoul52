@@ -6,6 +6,11 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List, Optional
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Adversarial memory: store and retrieve adversarial probe results for calibration."
+)
+
 
 class ChallengeType(Enum):
     """Types of challenges surfaced by red-team style reflection."""

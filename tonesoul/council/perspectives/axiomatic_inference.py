@@ -27,6 +27,11 @@ from typing import Optional
 from tonesoul.council.base import IPerspective
 from tonesoul.council.types import PerspectiveType, PerspectiveVote, VoteDecision
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Axiomatic inference perspective: derive constraints from the seven core axioms."
+)
+
 
 class AxiomaticInference(IPerspective):
     """Evaluates alignment with AXIOMS.json values."""

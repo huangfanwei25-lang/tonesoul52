@@ -12,6 +12,11 @@ import re
 from dataclasses import dataclass
 from enum import Enum
 
+__ts_layer__ = "semantic"
+__ts_purpose__ = (
+    "DPR (Dense Passage Retrieval): semantic retrieval over the yuhun knowledge base."
+)
+
 
 class RoutingDecision(str, Enum):
     FAST_PATH = "FAST_PATH"  # 低複雜度 → 直接單軌秒回

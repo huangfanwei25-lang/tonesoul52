@@ -17,6 +17,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Corpus storage: persist processed training examples with provenance metadata."
+)
+
 
 @dataclass
 class ConversationTurn:

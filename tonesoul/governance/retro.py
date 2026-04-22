@@ -29,6 +29,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Governance retro: retrospective review of past decisions for drift and correction."
+)
+
 logger = logging.getLogger(__name__)
 
 

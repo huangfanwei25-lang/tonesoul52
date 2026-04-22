@@ -6,6 +6,11 @@ import re
 from pathlib import Path
 from typing import Any, Dict, List, Sequence
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Skill parser: extract structured skill proposals from council output text."
+)
+
 _DEFAULT_REGISTRY_PATH = "skills/registry.json"
 _DEFAULT_MAX_MATCHES = 2
 _DEFAULT_L3_CHAR_LIMIT = 800

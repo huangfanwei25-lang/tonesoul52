@@ -6,6 +6,11 @@ from typing import Any, Mapping
 
 from memory.genesis import Genesis, resolve_responsibility_tier
 
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = (
+    "Gateway session: manage authenticated session lifecycle for gateway clients."
+)
+
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")

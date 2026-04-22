@@ -4,6 +4,11 @@ from typing import Dict, List, Optional
 
 from .types import CoherenceScore, PerspectiveVote, VoteDecision
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Council coherence: detect and resolve contradictions between perspective votes."
+)
+
 
 def compute_coherence(
     votes: List[PerspectiveVote], weights: Optional[Dict[str, float]] = None

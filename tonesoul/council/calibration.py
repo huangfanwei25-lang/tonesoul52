@@ -19,6 +19,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Council calibration: tune perspective weights from outcome feedback."
+)
+
 _SCHEMA_VERSION = "v0a"
 _STRESS_JOURNAL_DEFAULT = Path("memory/stress_test_journal.jsonl")
 

@@ -14,6 +14,11 @@ from datetime import datetime
 from enum import Enum
 from typing import List, Optional
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Self-commit system: third-axiom semantic self-responsibility enforcement."
+)
+
 
 class AssertionType(Enum):
     """

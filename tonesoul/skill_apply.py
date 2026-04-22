@@ -4,6 +4,11 @@ from typing import Dict, List, Optional, Tuple
 
 from .ystm.schema import utc_now
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Skill apply: apply a validated skill proposal to the active session."
+)
+
 
 def _workspace_root() -> str:
     return os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))

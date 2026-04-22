@@ -8,6 +8,11 @@ import yaml
 
 from .ystm.schema import stable_hash, utc_now
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Skill promoter: elevate validated skills from trial to stable state."
+)
+
 
 def _workspace_root() -> str:
     return os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))

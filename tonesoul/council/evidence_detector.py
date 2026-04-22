@@ -24,6 +24,11 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List, Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Evidence detector: identify supporting or contradicting evidence in session context."
+)
+
 
 class ClaimType(Enum):
     """Type of claim detected in text."""

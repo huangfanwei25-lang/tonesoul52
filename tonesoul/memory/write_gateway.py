@@ -11,6 +11,11 @@ if TYPE_CHECKING:
 
 from .soul_db import MemoryLayer, MemoryRecord, MemorySource, SoulDB, SqliteSoulDB
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Memory write gateway: authorize and log all writes to the long-term memory store."
+)
+
 ENVIRONMENT_STIMULUS_TYPE = "environment_stimulus"
 ENVIRONMENT_STIMULUS_SOURCE = MemorySource.CUSTOM
 ENVIRONMENT_STIMULUS_LAYER = MemoryLayer.WORKING.value

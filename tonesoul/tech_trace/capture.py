@@ -5,6 +5,11 @@ import os
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Tech trace capture: record low-level technical execution events."
+)
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")

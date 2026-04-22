@@ -17,6 +17,11 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, Optional
 
+__ts_layer__ = "shared"
+__ts_purpose__ = (
+    "Work classifier: categorize incoming requests by type and pipeline route."
+)
+
 
 class WorkCategory(Enum):
     """Five work modes with increasing constraint strictness."""

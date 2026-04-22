@@ -17,6 +17,11 @@ from typing import Any, Dict, List, Optional
 from .consent import ConsentManager, ConsentType, UserConsent
 from .storage import CorpusStorage
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Corpus pipeline: process raw text into structured evolution training examples."
+)
+
 
 @dataclass
 class PipelineResponse:

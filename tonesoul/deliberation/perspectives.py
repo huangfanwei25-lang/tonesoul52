@@ -12,6 +12,11 @@ from typing import Dict, List
 
 from .types import DeliberationContext, PerspectiveType, ViewPoint
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Deliberation perspectives: register and select active perspectives for a round."
+)
+
 
 class BasePerspective(ABC):
     """Base class for all perspectives."""

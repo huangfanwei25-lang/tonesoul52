@@ -2,6 +2,11 @@ import logging
 
 import requests
 
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = (
+    "Local LLM interface: route inference requests to locally-hosted model backends."
+)
+
 logger = logging.getLogger(__name__)
 
 

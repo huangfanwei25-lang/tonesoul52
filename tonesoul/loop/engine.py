@@ -39,6 +39,11 @@ from .events import (
     PromiseDetectedEvent,
 )
 
+__ts_layer__ = "orchestration"
+__ts_purpose__ = (
+    "Loop engine: run the main autonomous loop cycle with governance checkpoints."
+)
+
 # Type for iteration handler
 IterationHandler = Callable[[int, str], AsyncIterator[str]]
 

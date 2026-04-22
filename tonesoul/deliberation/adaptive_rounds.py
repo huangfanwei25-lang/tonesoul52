@@ -6,6 +6,11 @@ from typing import Iterable
 
 from .types import Tension
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Adaptive rounds: dynamically adjust deliberation round count based on consensus distance."
+)
+
 TENSION_LOW = 0.3
 TENSION_HIGH = 0.7
 MAX_DEBATE_ROUNDS = 3

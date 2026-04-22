@@ -7,6 +7,11 @@ Based on 語魂論文 ToneBridge architecture.
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "ToneBridge type definitions: tone analysis, resonance, and collapse-risk schemas."
+)
+
 
 @dataclass
 class ToneAnalysis:

@@ -19,6 +19,11 @@ import logging
 import sys
 from typing import Any, Dict
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Council CLI: command-line interface for running and inspecting council sessions."
+)
+
 # Suppress all logging to stderr so stdout stays clean JSON
 logging.basicConfig(level=logging.WARNING, stream=sys.stderr)
 

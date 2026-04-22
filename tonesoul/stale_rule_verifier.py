@@ -13,6 +13,11 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Stale rule verifier: detect governance rules that have outlived their evidence base."
+)
+
 
 def _utcnow_iso() -> str:
     """Return current UTC time in ISO format."""
