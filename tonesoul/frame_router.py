@@ -5,6 +5,11 @@ from typing import Dict, List, Optional, Tuple
 
 import yaml
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Frame router: scores and selects response frames based on context, roles, and council summary."
+)
+
 from .council.runtime import build_council_summary
 from .ystm.schema import stable_hash, utc_now
 

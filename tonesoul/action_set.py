@@ -1,5 +1,8 @@
 from typing import Dict
 
+__ts_layer__ = "domain"
+__ts_purpose__ = "Action-set resolver: maps governance context to permitted action categories."
+
 ACTION_POLICY = {
     "normal": ["verify", "cite", "inquire"],
     "cautious": ["verify", "inquire"],

@@ -51,7 +51,7 @@ LAYER_MAP: dict[str, str] = {
     "observability": "observability",
     "tech_trace": "observability",
     "cli": "surface",
-    "tonebridge": "surface",
+    "tonebridge": "domain",
     "inter_soul": "surface",
     "market": "domain",
     "ystm": "domain",
@@ -104,12 +104,11 @@ ROOT_MODULE_LAYER: dict[str, str] = {
     "soul_persistence": "infrastructure",
     "supabase_persistence": "infrastructure",
     "local_llm": "infrastructure",
-    "mcp_server": "infrastructure",
     "service_manager": "infrastructure",
     "hook_chain": "infrastructure",
     "aegis_shield": "infrastructure",
     "zone_registry": "infrastructure",
-    # pipeline — runtime adapter, unified pipeline, frame routing
+    # pipeline — runtime adapter, unified pipeline
     "runtime_adapter": "pipeline",
     "runtime_adapter_normalization": "pipeline",
     "runtime_adapter_routing": "pipeline",
@@ -119,9 +118,12 @@ ROOT_MODULE_LAYER: dict[str, str] = {
     "yss_pipeline": "pipeline",
     "yss_unified_adapter": "pipeline",
     "generation_orch": "pipeline",
-    "frame_router": "pipeline",
-    "action_set": "pipeline",
     "context_compiler": "pipeline",
+    # surface — gateway surfaces exposed to external callers
+    "mcp_server": "surface",
+    # domain — semantic field modellers, frame routing, action resolution
+    "frame_router": "domain",
+    "action_set": "domain",
     # memory — hot caches, managers, archival islands, inventory
     "hot_memory": "memory",
     "memory_manager": "memory",
@@ -227,8 +229,16 @@ ALLOWED_DEPS: dict[str, set[str]] = {
         "domain",
     },
     "domain": {"governance", "memory", "infrastructure", "shared", "semantic", "observability"},
-    "governance": {"memory", "infrastructure", "shared", "observability", "semantic"},
-    "memory": {"infrastructure", "shared"},
+    "governance": {
+        "memory",
+        "infrastructure",
+        "shared",
+        "observability",
+        "semantic",
+        "evolution",
+        "domain",
+    },
+    "memory": {"infrastructure", "shared", "pipeline"},
     "evolution": {"memory", "infrastructure", "shared", "governance", "observability"},
     "semantic": {"infrastructure", "shared", "memory", "governance", "observability"},
     "perception": {"infrastructure", "shared", "memory", "semantic"},
@@ -861,8 +871,8 @@ def render_markdown(report: dict[str, Any]) -> str:
     lines.append("")
     lines.append("## Summary")
     lines.append("")
-    lines.append(f"| Metric | Value |")
-    lines.append(f"| --- | ---: |")
+    lines.append("| Metric | Value |")
+    lines.append("| --- | ---: |")
     lines.append(f"| Modules | {s['total_modules']} |")
     lines.append(f"| Lines | {s['total_lines']:,} |")
     lines.append(f"| Classes | {s['total_classes']} |")
@@ -1082,7 +1092,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  Cycles: {s['total_cycles']}")
     print(f"  Layer violations: {s['total_layer_violations']}")
     print(f"  Orphans: {s['total_orphans']}")
-    print(f"\nReports written to:")
+    print("\nReports written to:")
     print(f"  {json_path.relative_to(repo_root)}")
     print(f"  {md_path.relative_to(repo_root)}")
 

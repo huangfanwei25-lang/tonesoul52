@@ -6,6 +6,11 @@ import json
 from contextlib import redirect_stdout
 from typing import Any, Callable, Iterable, TextIO
 
+__ts_layer__ = "surface"
+__ts_purpose__ = (
+    "MCP gateway surface: exposes council, runtime, and calibration tools over stdio JSON-RPC."
+)
+
 from tonesoul.council.compact import (
     compact_calibration,
     compact_governance_summary,
