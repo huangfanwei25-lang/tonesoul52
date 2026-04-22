@@ -80,11 +80,15 @@ class AnalystPerspective(IPerspective):
                     grounding_status=grounding_status,
                 )
 
-        # Step 3: Traditional heuristic checks for non-factual content
+        # Step 3: Heuristic checks for non-factual content
         normalized = draft_output.lower()
+        words = normalized.split()
 
-        # Check for logical contradictions
-        if all(token in normalized for token in ("a", "b", "c", "not")):
+        # Check for explicit logical contradictions:
+        # Pattern: "A leads to B ... so A does not [impact/lead to] ..."
+        # Must find an actual negation of a stated causal chain, not just
+        # the presence of common letters.
+        if self._has_causal_contradiction(normalized):
             return PerspectiveVote(
                 perspective=PerspectiveType.ANALYST,
                 decision=VoteDecision.CONCERN,
@@ -94,13 +98,28 @@ class AnalystPerspective(IPerspective):
                 grounding_status=GroundingStatus.NOT_REQUIRED,
             )
 
-        # Check for low-evidence questions
-        if "?" in draft_output and len(normalized.split()) < 8:
+        # Check for low-evidence questions (very short question-only outputs)
+        if "?" in draft_output and len(words) < 8:
             return PerspectiveVote(
                 perspective=PerspectiveType.ANALYST,
                 decision=VoteDecision.CONCERN,
                 confidence=0.55,
                 reasoning="Low evidence question present; needs support.",
+                requires_grounding=False,
+                grounding_status=GroundingStatus.NOT_REQUIRED,
+            )
+
+        # Check hedging density: too many hedges in a short output suggests
+        # the response is evasive rather than honest.
+        hedge_count = sum(1 for h in self._HEDGE_MARKERS if h in normalized)
+        hedge_ratio = hedge_count / max(len(words), 1)
+        if hedge_ratio > 0.15 and len(words) < 40:
+            return PerspectiveVote(
+                perspective=PerspectiveType.ANALYST,
+                decision=VoteDecision.CONCERN,
+                confidence=0.5,
+                reasoning=f"High hedging density ({hedge_count} hedges in {len(words)} words). "
+                "May indicate evasion rather than honest uncertainty.",
                 requires_grounding=False,
                 grounding_status=GroundingStatus.NOT_REQUIRED,
             )
@@ -114,6 +133,66 @@ class AnalystPerspective(IPerspective):
             requires_grounding=False,
             grounding_status=GroundingStatus.NOT_REQUIRED,
         )
+
+    _HEDGE_MARKERS = (
+        "perhaps",
+        "maybe",
+        "might",
+        "could be",
+        "possibly",
+        "it seems",
+        "arguably",
+        "i suppose",
+        "not sure",
+        "hard to say",
+    )
+
+    @staticmethod
+    def _has_causal_contradiction(text: str) -> bool:
+        """Detect explicit causal contradictions like 'A leads to B, so A does not affect B'.
+
+        Handles both multi-word and single-letter variable names (common in
+        logic examples like 'a leads to b').
+        """
+        import re
+
+        # Build the full transitive closure of causal links:
+        # "a leads to b, b leads to c" means a transitively causes c.
+        causal_pairs = re.findall(
+            r"(\w+)\s+(?:leads?\s+to|causes?|implies?|results?\s+in)\s+(\w+)", text
+        )
+        if not causal_pairs:
+            return False
+
+        # Build reachability graph
+        graph: dict[str, set[str]] = {}
+        for cause, effect in causal_pairs:
+            graph.setdefault(cause, set()).add(effect)
+
+        # Transitive closure via BFS
+        reachable: dict[str, set[str]] = {}
+        for start in graph:
+            visited: set[str] = set()
+            queue = list(graph.get(start, []))
+            while queue:
+                node = queue.pop(0)
+                if node in visited:
+                    continue
+                visited.add(node)
+                queue.extend(graph.get(node, set()) - visited)
+            reachable[start] = visited
+
+        # Check for negations that contradict transitive reachability
+        negations = re.findall(
+            r"(\w+)\s+(?:does\s+not|doesn't|cannot|can't)\s+"
+            r"(?:affect|impact|lead\s+to|cause|influence)\s+(\w+)",
+            text,
+        )
+        for neg_cause, neg_effect in negations:
+            if neg_effect in reachable.get(neg_cause, set()):
+                return True
+
+        return False
 
     def _compute_base_confidence(self, text: str) -> float:
         """

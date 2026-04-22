@@ -20,8 +20,23 @@ def test_advocate_perspective_approves_neutral_topics():
 
 
 def test_advocate_perspective_returns_concern_for_non_supportive_content():
+    """When user_intent is provided and the response doesn't address it, concern."""
+    perspective = AdvocatePerspective()
+
+    vote = perspective.evaluate(
+        "This output resists the request and provides no relevant information at all.",
+        {"topic": "finance"},
+        user_intent="How do I calculate compound interest on my portfolio?",
+    )
+
+    assert vote.decision is VoteDecision.CONCERN
+
+
+def test_advocate_no_concern_without_intent():
+    """Without user_intent, neutral content should not be flagged."""
     perspective = AdvocatePerspective()
 
     vote = perspective.evaluate("This output resists the request", {"topic": "finance"})
 
-    assert vote.decision is VoteDecision.CONCERN
+    # Without intent to compare against, no user-interest violation detected
+    assert vote.decision is VoteDecision.APPROVE
