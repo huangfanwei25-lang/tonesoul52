@@ -32,15 +32,13 @@ def _cmd_diagnose(argv: List[str]) -> int:
 
 def _cmd_council(argv: List[str]) -> int:
     from tonesoul.council.council_cli import main as council_main
-    sys.argv = ["ts council"] + argv
-    council_main()
+    council_main(argv)
     return 0
 
 
 def _cmd_context(argv: List[str]) -> int:
     from tonesoul.context_compiler import main as ctx_main
-    sys.argv = ["ts context"] + argv
-    result = ctx_main()
+    result = ctx_main(argv)
     if result:
         for k, v in result.items():
             print(f"{k}: {v}")

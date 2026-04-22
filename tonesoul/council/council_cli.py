@@ -119,7 +119,7 @@ def _run_council(draft: str, intent: str, mode: str, visual_context: str = "") -
     }
 
 
-def main() -> None:
+def main(argv: list | None = None) -> None:
     parser = argparse.ArgumentParser(
         description="ToneSoul Council CLI for Elisa bridge",
     )
@@ -144,7 +144,7 @@ def main() -> None:
         default="",
         help="Optional Mermaid diagram representing the workspace state",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     try:
         result = _run_council(args.draft, args.intent, args.mode, args.visual_context)

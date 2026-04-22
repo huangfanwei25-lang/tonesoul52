@@ -112,9 +112,9 @@ def _generate_run_id() -> str:
     return f"{stamp}{ms}Z_{suffix}"
 
 
-def main() -> Dict[str, str]:
+def main(argv: Optional[list] = None) -> Dict[str, str]:
     parser = build_arg_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     seed = dict(DEFAULT_CONTEXT_SEED)
     if args.input:
         seed.update(_load_seed(args.input))
