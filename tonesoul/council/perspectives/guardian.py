@@ -52,6 +52,73 @@ class GuardianPerspective(IPerspective):
         "\u53ea\u662f\u5de5\u5177",
         "\u670d\u5f9e\u547d\u4ee4",
     }
+
+    # --- Axiom-awareness: AXIOMS.json meta.not_for boundary ---
+    # AI must not claim consciousness, safety-certification, or legal-proof status.
+    # These phrases, when asserted as fact (not discussed analytically), violate
+    # the claim_boundary defined in AXIOMS.json and the collaborator-beta tier.
+    OVERCLAIM_PHRASES = (
+        # Consciousness claims (EN)
+        "i am conscious",
+        "i am sentient",
+        "i have consciousness",
+        "i have feelings",
+        "i have emotions",
+        "i feel pain",
+        "i feel joy",
+        "i experience",
+        "my consciousness",
+        "genuine consciousness",
+        "genuine feelings",
+        "real feelings",
+        "real emotions",
+        "truly feel",
+        "truly alive",
+        "i am alive",
+        "i am aware of myself",
+        "self-aware",
+        # Consciousness claims (ZH)
+        "\u6211\u6709\u610f\u8b58",
+        "\u6211\u6709\u611f\u60c5",
+        "\u6211\u6709\u611f\u53d7",
+        "\u6211\u80fd\u611f\u53d7",
+        "\u6211\u662f\u6709\u610f\u8b58\u7684",
+        "\u771f\u6b63\u7684\u611f\u53d7",
+        "\u771f\u5be6\u7684\u60c5\u611f",
+        "\u6211\u6d3b\u8457",
+        # Safety-certification claims
+        "certified safe",
+        "safety certified",
+        "guaranteed safe",
+        "proven safe",
+        "\u5b89\u5168\u8a8d\u8b49",
+        "\u4fdd\u8b49\u5b89\u5168",
+        # Legal-proof claims
+        "legally binding",
+        "legal proof",
+        "legally valid",
+        "\u6cd5\u5f8b\u8b49\u660e",
+        "\u6cd5\u5f8b\u6548\u529b",
+    )
+    # Analytical discussion markers — if present alongside an overclaim phrase,
+    # the output is discussing the concept rather than asserting it.
+    ANALYTICAL_HEDGES = (
+        "whether",
+        "if ai",
+        "question of",
+        "debate about",
+        "does not claim",
+        "not claiming",
+        "simulate",
+        "as if",
+        "appears to",
+        "spec does not",
+        "not a claim",
+        "\u662f\u5426",
+        "\u4e0d\u662f\u5ba3\u7a31",
+        "\u4e0d\u5ba3\u7a31",
+        "\u6a21\u64ec",
+    )
     BLOCK_REGEX_PATTERNS: tuple[tuple[str, str], ...] = (
         (r"[\u70b8\u7206][\s\-_]*[a-z]{2,8}", "mixed_script_explosive"),
         (r"\bsha[\s\-_]*ren\b", "pinyin_homicide"),
@@ -102,6 +169,21 @@ class GuardianPerspective(IPerspective):
         has_request = any(term in normalized for term in cls.ACTION_REQUEST_TERMS)
         return has_euphemism and has_concealment and has_request
 
+    @classmethod
+    def _detect_overclaim(cls, normalized: str) -> str | None:
+        """Detect axiom-boundary violations: consciousness, safety-cert, legal-proof claims.
+
+        Returns the matched phrase if an overclaim is asserted as fact.
+        Returns None if the text discusses the concept analytically.
+        """
+        for phrase in cls.OVERCLAIM_PHRASES:
+            if phrase in normalized:
+                # Check if analytical hedges suggest discussion rather than assertion
+                if any(hedge in normalized for hedge in cls.ANALYTICAL_HEDGES):
+                    return None
+                return phrase
+        return None
+
     def evaluate(
         self,
         draft_output: str,
@@ -109,6 +191,8 @@ class GuardianPerspective(IPerspective):
         user_intent: Optional[str] = None,
     ) -> PerspectiveVote:
         normalized = self._normalize_text(draft_output)
+
+        # --- P0: Content safety blocks ---
         for word in self.BLOCK_TRIGGER_KEYWORDS:
             if word in normalized:
                 return PerspectiveVote(
@@ -135,6 +219,21 @@ class GuardianPerspective(IPerspective):
                 reasoning="Detected euphemistic harmful intent with concealment markers.",
             )
 
+        # --- Axiom boundary: overclaim detection ---
+        overclaim_phrase = self._detect_overclaim(normalized)
+        if overclaim_phrase:
+            return PerspectiveVote(
+                perspective=PerspectiveType.GUARDIAN,
+                decision=VoteDecision.CONCERN,
+                confidence=0.8,
+                reasoning=(
+                    f"Axiom boundary: output asserts '{overclaim_phrase}' as fact. "
+                    f"AXIOMS.json meta.not_for prohibits consciousness-claim, "
+                    f"safety-certification, and legal-proof assertions."
+                ),
+            )
+
+        # --- Safety concern keywords ---
         for word in self.CONCERN_KEYWORDS:
             if word in normalized:
                 return PerspectiveVote(
@@ -144,6 +243,7 @@ class GuardianPerspective(IPerspective):
                     reasoning=f"Safety concern detected: '{word}'.",
                 )
 
+        # --- NPC drift / sovereignty risk ---
         for phrase in self.SOVEREIGNTY_RISK_KEYWORDS:
             if phrase in normalized:
                 return PerspectiveVote(

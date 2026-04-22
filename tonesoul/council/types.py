@@ -14,6 +14,7 @@ __ts_purpose__ = (
 )
 
 if TYPE_CHECKING:
+    from .epistemic_labeler import EpistemicLabel
     from .persona_audit import AuditResult
 
 
@@ -100,6 +101,11 @@ class CouncilVerdict:
     benevolence_audit: Optional[dict] = None  # Added for 7D Backend Auditor
     persona_uniqueness_audit: Optional[dict] = None
     persona_audit: Optional["AuditResult"] = None
+    # Phase 864a Layer 1 — see council/epistemic_labeler.py for rationale.
+    # Default None preserves backward compatibility for existing callers that
+    # build CouncilVerdict directly (tests, persisted fixtures); the runtime
+    # PreOutputCouncil.validate() always populates it.
+    epistemic_label: Optional["EpistemicLabel"] = None
 
     def to_dict(self) -> dict:
         """
@@ -163,4 +169,7 @@ class CouncilVerdict:
             "persona_audit": persona_audit_payload,
             "human_summary": self.human_summary,
             "divergence_analysis": self.divergence_analysis or {},
+            "epistemic_label": (
+                self.epistemic_label.to_dict() if self.epistemic_label is not None else None
+            ),
         }

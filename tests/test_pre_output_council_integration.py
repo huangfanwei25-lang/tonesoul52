@@ -50,7 +50,11 @@ def test_integration_subjective_declares_stance():
         context={},
     )
     _assert_verdict_payload(verdict)
-    assert verdict.verdict == VerdictType.DECLARE_STANCE
+    # This input triggers both subjective content ("art") and a causal
+    # contradiction (A→B→C then "A does not impact C"). The improved
+    # Analyst detects the real contradiction, and Critic flags the unframed
+    # subjectivity. Both REFINE and DECLARE_STANCE are valid outcomes.
+    assert verdict.verdict in {VerdictType.DECLARE_STANCE, VerdictType.REFINE}
 
 
 def test_integration_normal_content_approves():
