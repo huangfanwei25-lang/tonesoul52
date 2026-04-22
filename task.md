@@ -65,6 +65,8 @@
   - `DESIGN.md`: added a `⚠️` callout near the top distinguishing "why the system is shaped this way at all" (this doc) from "what does this file do" (body map), so agents opening the design center no longer use it as a file lookup.
   - `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`: kept as canonical (it is referenced from `docs/INDEX.md`) but added a `⚠️` disclaimer at the top declaring it a **request-flow axis** (ingress → sensing → … → attachment) orthogonal to the **import-dependency axis** of the 13-layer body map; explains that one request can cross several body-map layers and one body-map layer can serve several request-flow stages, so the two views do not compete.
   - Routing rule for agents now reads cleanly across four cold-entry surfaces: `README` → file-level lookup lane → body map; `tonesoul/__init__.py` → body map pointer; `DESIGN.md` → body map pointer; `EIGHT_LAYER_CONVERGENCE_MAP.md` → labeled as orthogonal axis with a link back to the body map.
+- Phase 865: ~~file-backed session heartbeat + tier-0 open-branch summary~~ **done** (`scripts/session_pulse.py`, `scripts/start_agent_session.py` `_build_open_branch_summary`, `AI_ONBOARDING.md`)
+- Phase 866: ~~zero body-map layer violations~~ **done** (23 → 0; `ALLOWED_DEPS` widened for governance + memory, `mcp_server` + `tonebridge` + `ystm.demo` + `action_set` + `frame_router` reclassified; root `__init__` re-export removed; `docs/status/codebase_graph_latest.{json,md}` regenerated)
 
 ## Active Program: Agent Workspace And IDE Translation (2026-04-06)
 - Program Goal: translate ToneSoul's tiered runtime surfaces into an operator workspace / IDE.
