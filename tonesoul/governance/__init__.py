@@ -1,3 +1,6 @@
+__ts_layer__ = "governance"
+__ts_purpose__ = "Governance package: vow system, kernel, constraint stack, and policy exports."
+
 # tonesoul/governance — Core governance modules
 # benevolence, escape_valve, vow_system, kernel
 

@@ -1,3 +1,6 @@
+__ts_layer__ = "surface"
+__ts_purpose__ = "Inter-soul surface: cross-agent communication and soul linking utilities."
+
 """
 Inter-Soul Tension Protocol.
 

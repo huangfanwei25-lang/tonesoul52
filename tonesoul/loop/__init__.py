@@ -1,3 +1,6 @@
+__ts_layer__ = "orchestration"
+__ts_purpose__ = "Loop orchestration: wakeup cycles, autonomous schedule, and loop state exports."
+
 """
 ToneSoul Loop Module
 

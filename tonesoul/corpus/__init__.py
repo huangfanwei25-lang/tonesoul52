@@ -1,3 +1,6 @@
+__ts_layer__ = "evolution"
+__ts_purpose__ = "Corpus utilities: training and evaluation data management for self-improvement."
+
 """
 ToneSoul Corpus Collection Module
 

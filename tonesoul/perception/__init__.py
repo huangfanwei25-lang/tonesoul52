@@ -1,3 +1,6 @@
+__ts_layer__ = "perception"
+__ts_purpose__ = "Perception package: input sensing, environment reading, and context inference."
+
 """
 ToneSoul Perception Module — environmental input for AI subjectivity.
 

@@ -1,3 +1,6 @@
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = "LLM infrastructure: local LLM integration and prompt pipeline adapters."
+
 """
 ToneSoul LLM Module
 Provides access to various LLM backends.

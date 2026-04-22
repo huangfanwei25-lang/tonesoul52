@@ -1,3 +1,6 @@
+__ts_layer__ = "pipeline"
+__ts_purpose__ = "Pipeline package: unified processing adapters and stage-routing exports."
+
 # tonesoul/pipeline — Pipeline orchestration modules
 # yss_pipeline, yss_gates, tsr_metrics
 

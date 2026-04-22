@@ -1,3 +1,6 @@
+__ts_layer__ = "observability"
+__ts_purpose__ = "Observability package: monitoring, audit, metrics, and status readout exports."
+
 """ToneSoul Observability Infrastructure.
 
 Provides structured logging, token metering, action auditing,
