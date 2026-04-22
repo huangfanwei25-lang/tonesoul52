@@ -6,6 +6,11 @@ from typing import TYPE_CHECKING, Dict, Optional
 
 from .ystm.schema import utc_now
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Structured self-reflection cycle for AI value alignment."
+)
+
 if TYPE_CHECKING:
     from .vow_system import VowEnforcementResult
 

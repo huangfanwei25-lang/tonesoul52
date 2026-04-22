@@ -9,6 +9,11 @@ import yaml
 
 from .ystm.schema import stable_hash, utc_now
 
+__ts_layer__ = "pipeline"
+__ts_purpose__ = (
+    "Compile session context into a structured input for downstream gates."
+)
+
 DEFAULT_CONTEXT_SEED = {
     "task": "Build a minimal, auditable YSTM demo.",
     "objective": "Produce traceable outputs with clear audit hooks.",

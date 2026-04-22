@@ -15,6 +15,11 @@ from typing import TYPE_CHECKING, Dict, List, Optional
 
 from tonesoul.soul_config import SOUL
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Immutable vow registry: load, commit, and enforce AI behavioral constraints."
+)
+
 if TYPE_CHECKING:
     from tonesoul.vow_inventory import VowInventory
 

@@ -23,6 +23,11 @@ from .nonlinear_predictor import PredictionResult
 from .semantic_control import LambdaState, SemanticZone
 from .work_classifier import ConstraintProfile, WorkCategory, get_profile
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Compress output variance to maintain semantic consistency."
+)
+
 # ── γ contribution tables ────────────────────────────────────────
 
 _GAMMA_TREND = {

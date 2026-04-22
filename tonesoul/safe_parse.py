@@ -23,6 +23,11 @@ from typing import Any, Dict, Optional, Type, TypeVar
 
 from pydantic import BaseModel, ValidationError
 
+__ts_layer__ = "shared"
+__ts_purpose__ = (
+    "Safe parsing utilities: JSON, YAML, and structured-text extraction."
+)
+
 T = TypeVar("T", bound=BaseModel)
 
 

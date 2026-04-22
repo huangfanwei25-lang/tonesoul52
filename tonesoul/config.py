@@ -2,6 +2,11 @@ import os
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
+__ts_layer__ = "shared"
+__ts_purpose__ = (
+    "Global configuration constants and environment-variable bindings."
+)
+
 
 @dataclass(frozen=True)
 class EntryPoint:

@@ -8,6 +8,11 @@ import yaml
 
 from .ystm.schema import utc_now
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Tone-Semantic-Resonance metric computation and aggregation."
+)
+
 DEFAULT_LEXICON = {
     "positive": {
         "advance",

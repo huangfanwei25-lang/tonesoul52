@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import Mapping
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Validate alignment between reported status and actual state."
+)
+
 
 def _coerce_text(value: object) -> str:
     return str(value or "").strip()

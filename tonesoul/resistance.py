@@ -24,6 +24,11 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List, Optional
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Model healthy resistance as a signal for value-aligned pushback."
+)
+
 # ── Exceptions ───────────────────────────────────────────────────
 
 

@@ -17,6 +17,11 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Dict, List, Optional
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Detect unexpected semantic jumps between turns."
+)
+
 
 class LockdownStatus(str, Enum):
     NORMAL = "normal"

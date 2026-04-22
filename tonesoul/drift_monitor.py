@@ -19,6 +19,11 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List, Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Monitor semantic drift between successive AI outputs."
+)
+
 
 class DriftAlert(Enum):
     NONE = "none"

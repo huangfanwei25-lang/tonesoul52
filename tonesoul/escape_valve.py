@@ -11,6 +11,11 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Controlled release mechanism for governance deadlocks."
+)
+
 
 class EscapeReason(str, Enum):
     """Reasons for triggering the Escape Valve."""

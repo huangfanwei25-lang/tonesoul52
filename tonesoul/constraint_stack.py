@@ -8,6 +8,11 @@ from .action_set import resolve_action_set
 from .mercy_objective import resolve_mercy_objective
 from .ystm.schema import stable_hash, utc_now
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Stack of active constraints governing AI output generation."
+)
+
 
 def _load_context(path: str) -> Dict[str, object]:
     with open(path, "r", encoding="utf-8") as handle:

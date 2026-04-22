@@ -6,6 +6,11 @@ Extracted from store.py to break the circular dependency:
 This module is a leaf — it imports nothing from tonesoul.
 """
 
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = (
+    "Canonical key definitions for the governance state store."
+)
+
 # ── Governance ──────────────────────────────────────────────────────────
 KEY_GOVERNANCE = "ts:governance"  # JSON string
 KEY_ZONES = "ts:zones"  # JSON string

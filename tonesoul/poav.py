@@ -1,6 +1,11 @@
 import re
 from typing import Dict, List
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Proof-of-Alignment Verification: evidence chain for AI decisions."
+)
+
 DEFAULT_MAX_TOKENS = 800
 DEFAULT_MAX_AVG_SENTENCE = 40
 DEFAULT_EVIDENCE_TARGET = 8.0

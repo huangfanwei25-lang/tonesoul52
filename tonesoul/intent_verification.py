@@ -5,6 +5,11 @@ from typing import Dict, List, Optional
 
 from .ystm.schema import utc_now
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Verify stated intent against behavioral signals and history."
+)
+
 
 @dataclass
 class Intent:

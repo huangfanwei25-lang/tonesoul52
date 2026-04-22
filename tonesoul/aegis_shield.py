@@ -37,6 +37,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = (
+    "Aegis hash-chain shield: tamper-evident audit trail."
+)
+
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------

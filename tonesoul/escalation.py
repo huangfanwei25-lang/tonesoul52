@@ -5,6 +5,11 @@ from typing import Dict, List, Optional
 from .error_event import ErrorEvent, ErrorLedger
 from .issue_codes import IssueCode, issue
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Escalation paths for unresolved governance tensions."
+)
+
 
 def decision_mode_from_context(context: Dict[str, object]) -> str:
     time_island = context.get("time_island") if isinstance(context, dict) else {}

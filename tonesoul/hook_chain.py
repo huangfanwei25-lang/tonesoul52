@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = (
+    "Ordered hook chain for pre/post pipeline event handling."
+)
+
 
 def _normalize_recommended_stage(target: str) -> str:
     normalized = str(target or "").strip()

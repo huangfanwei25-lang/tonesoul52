@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Contract surface for downstream consumers of governance decisions."
+)
+
 _DEFAULT_SOURCE_PRECEDENCE_SUMMARY = (
     "canonical_anchors > live_coordination_truth > derived_orientation_shells > "
     "bounded_handoff > working_identity_and_replay"

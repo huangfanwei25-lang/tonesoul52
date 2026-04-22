@@ -17,6 +17,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import List
 
+__ts_layer__ = "shared"
+__ts_purpose__ = (
+    "Soul-specific configuration: identity, axioms, and commitment seeds."
+)
+
 # ---------------------------------------------------------------------------
 # Core Values — weights for governance scoring
 # Derived from: Axiom E0 (Choice Before Identity), Axiom 4 (Non-Zero Tension)

@@ -4,6 +4,11 @@ from typing import Dict, List
 
 from .config import KNOWN_ENTRYPOINTS, WORKSPACE_ROOT, list_workspace_dirs, resolve_readme
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Track and enumerate available memory artifacts and their freshness."
+)
+
 
 def build_inventory() -> List[Dict[str, object]]:
     results: List[Dict[str, object]] = []

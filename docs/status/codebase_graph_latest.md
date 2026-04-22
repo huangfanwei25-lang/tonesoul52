@@ -1,6 +1,6 @@
 # ToneSoul Codebase Graph Analysis
 
-Generated: 2026-04-22T03:07:02Z
+Generated: 2026-04-22T03:14:29Z
 Package: `tonesoul`
 
 ## Summary
@@ -8,7 +8,7 @@ Package: `tonesoul`
 | Metric | Value |
 | --- | ---: |
 | Modules | 257 |
-| Lines | 79,485 |
+| Lines | 79,825 |
 | Classes | 500 |
 | Functions | 2,694 |
 | Import edges | 456 |
@@ -16,8 +16,8 @@ Package: `tonesoul`
 | Layer violations | 0 |
 | Orphan modules | 1 |
 | Community drifts | 20 |
-| Self-declared layer | 44 / 257 (17.1%) |
-| Purpose declared | 44 / 257 (17.1%) |
+| Self-declared layer | 112 / 257 (43.6%) |
+| Purpose declared | 112 / 257 (43.6%) |
 
 ## God Nodes (Top 20 by coupling)
 
@@ -56,7 +56,7 @@ Nobody imports these. Potential dead code or standalone entry points.
 
 | Subpackage | Layer | Files | Lines | Classes | Functions |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `(root)` | — | 97 | 39,337 | 192 | 1180 |
+| `(root)` | — | 97 | 39,677 | 192 | 1180 |
 | `backends` | infrastructure | 2 | 899 | 2 | 72 |
 | `cli` | surface | 1 | 4 | 0 | 0 |
 | `corpus` | evolution | 4 | 862 | 8 | 37 |

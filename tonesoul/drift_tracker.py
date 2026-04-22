@@ -13,6 +13,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Track drift history and trigger alerts when threshold is exceeded."
+)
+
 
 @dataclass
 class DriftResult:

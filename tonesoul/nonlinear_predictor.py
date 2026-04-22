@@ -16,6 +16,11 @@ import math
 from dataclasses import dataclass
 from typing import List, Optional
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Non-linear predictor for semantic trajectory forecasting."
+)
+
 
 @dataclass
 class PredictionResult:

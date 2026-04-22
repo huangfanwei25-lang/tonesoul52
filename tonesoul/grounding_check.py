@@ -23,6 +23,11 @@ import re
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Validate that AI assertions are grounded in evidence."
+)
+
 # ---------------------------------------------------------------------------
 # High-risk keyword patterns
 # ---------------------------------------------------------------------------

@@ -33,6 +33,11 @@ from tonesoul.hot_memory import (
 from tonesoul.repo_state_awareness import build_repo_state_awareness
 from tonesoul.surface_versioning import build_surface_versioning_readout
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Observer window: surface stable, contested, and stale signals."
+)
+
 # ---------------------------------------------------------------------------
 # Thresholds (tuned conservatively; only raise after repeated validation)
 # ---------------------------------------------------------------------------

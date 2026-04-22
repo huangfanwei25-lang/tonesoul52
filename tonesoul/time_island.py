@@ -14,6 +14,11 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Dict, List, Optional
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Isolated time-indexed memory compartment for temporal context."
+)
+
 
 def _utc_now() -> datetime:
     return datetime.now(timezone.utc)

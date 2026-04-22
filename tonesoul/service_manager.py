@@ -14,6 +14,11 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional
 
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = (
+    "Lifecycle manager for background services and connections."
+)
+
 
 class ServiceCode(Enum):
     """服務代碼（參考 Darlin W001-W010）"""

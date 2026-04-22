@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Pre-flight checks before any mutation to governance state."
+)
+
 
 def _point(
     name: str,

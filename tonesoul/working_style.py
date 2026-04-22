@@ -3,6 +3,11 @@ from __future__ import annotations
 import re
 from typing import Any, Dict, Iterable, List
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Capture and evolve the AI's working style preferences."
+)
+
 _STYLE_TOKEN_RE = re.compile(r"[a-z0-9_]+")
 _STYLE_STOPWORDS = {
     "about",

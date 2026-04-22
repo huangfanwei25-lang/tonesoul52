@@ -2,6 +2,11 @@ from typing import Dict, Optional
 
 from .ystm.schema import utc_now
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Mercy objective: soften adversarial responses where appropriate."
+)
+
 BASE_WEIGHTS = {
     "benefit": 0.3,
     "harm": -0.35,

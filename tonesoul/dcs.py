@@ -6,6 +6,11 @@ import yaml
 from .issue_codes import IssueCode, issue
 from .ystm.schema import utc_now
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Dynamic Context Shaping: adjust context depth to situation."
+)
+
 TSR_DELTA_THRESHOLD = 0.4
 
 

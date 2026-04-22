@@ -18,6 +18,11 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Resonance scoring between AI output and user emotional register."
+)
+
 
 class ResonanceType(str, Enum):
     FLOW = "flow"

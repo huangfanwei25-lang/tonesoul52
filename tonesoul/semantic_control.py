@@ -15,6 +15,11 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Semantic-level gating: block or flag outputs that violate governance axioms."
+)
+
 
 class SemanticZone(Enum):
     """語義區域"""

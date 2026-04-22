@@ -5,6 +5,11 @@ from typing import Dict, List, Optional
 
 from .ystm.schema import stable_hash, utc_now
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Structured interface for querying and replaying audit records."
+)
+
 
 def _load_frame_role_meta(frame_plan_path: Optional[str]) -> Dict[str, object]:
     if not frame_plan_path or not os.path.exists(frame_plan_path):

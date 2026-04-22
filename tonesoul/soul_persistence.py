@@ -15,6 +15,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = (
+    "Persist and restore AI soul state across session boundaries."
+)
+
 _DEFAULT_PATH = Path("memory/autonomous/soul_psi.json")
 
 

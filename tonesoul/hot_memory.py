@@ -5,6 +5,11 @@ from __future__ import annotations
 import re
 from typing import Any
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Fast-path in-session memory for high-frequency context retrieval."
+)
+
 _SHORT_BOARD_HEADERS = [
     "- Current short board:",
     "**Current short board:**",

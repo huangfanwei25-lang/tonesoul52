@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
+__ts_layer__ = "surface"
+__ts_purpose__ = (
+    "Entry adapter for Claude Code CLI surface integration."
+)
+
 
 def _build_priority_correction(
     *,

@@ -5,6 +5,11 @@ from typing import Any, Callable, Dict, List, Optional
 
 from tonesoul.runtime_adapter_normalization import clean_string_list
 
+__ts_layer__ = "pipeline"
+__ts_purpose__ = (
+    "Route runtime adapter calls to the appropriate backend."
+)
+
 
 def slug_from_summary(summary: str, *, fallback: str, prefix: str = "") -> str:
     raw = str(summary or "").strip().lower()

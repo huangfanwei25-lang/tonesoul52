@@ -7,6 +7,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+__ts_layer__ = "pipeline"
+__ts_purpose__ = (
+    "Unified adapter bridging YSS gates and the runtime pipeline."
+)
+
 
 def _iso_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")

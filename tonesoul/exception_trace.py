@@ -5,6 +5,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Capture and structure exception traces for audit and analysis."
+)
+
 
 @dataclass
 class SuppressedError:

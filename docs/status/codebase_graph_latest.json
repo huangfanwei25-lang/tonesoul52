@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-04-22T03:07:02Z",
+  "generated_at": "2026-04-22T03:14:29Z",
   "source": "scripts/analyze_codebase_graph.py",
   "root_package": "tonesoul",
   "summary": {
     "total_modules": 257,
-    "total_lines": 79485,
+    "total_lines": 79825,
     "total_classes": 500,
     "total_functions": 2694,
     "total_edges": 456,
@@ -12,16 +12,16 @@
     "total_layer_violations": 0,
     "total_orphans": 1,
     "total_community_drifts": 20,
-    "self_declared_layer_count": 44,
-    "self_declared_layer_ratio": 0.1712,
-    "purpose_count": 44,
-    "purpose_ratio": 0.1712
+    "self_declared_layer_count": 112,
+    "self_declared_layer_ratio": 0.4358,
+    "purpose_count": 112,
+    "purpose_ratio": 0.4358
   },
   "annotation_coverage": {
-    "self_declared_layer_count": 44,
-    "self_declared_layer_ratio": 0.1712,
-    "purpose_count": 44,
-    "purpose_ratio": 0.1712
+    "self_declared_layer_count": 112,
+    "self_declared_layer_ratio": 0.4358,
+    "purpose_count": 112,
+    "purpose_ratio": 0.4358
   },
   "god_nodes": [
     {
@@ -293,7 +293,7 @@
   "subpackage_stats": {
     "(root)": {
       "files": 97,
-      "lines": 39337,
+      "lines": 39677,
       "classes": 192,
       "functions": 1180
     },

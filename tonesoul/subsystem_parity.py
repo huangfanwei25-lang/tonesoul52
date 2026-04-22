@@ -4,6 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Assert that subsystem capabilities are balanced and non-regressing."
+)
+
 
 def _family(
     name: str,

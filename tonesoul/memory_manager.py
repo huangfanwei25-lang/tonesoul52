@@ -8,6 +8,11 @@ import yaml
 
 from .ystm.schema import stable_hash, utc_now
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Orchestrate short-term and long-term memory read/write operations."
+)
+
 
 @dataclass
 class RunPointers:

@@ -11,6 +11,11 @@ from memory.genesis import Genesis
 from tonesoul.gateway import GatewayClient, GatewaySession
 from tonesoul.openclaw_auditor import OpenClawAuditor, OpenClawAuditReport
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Periodic heartbeat probe to validate AI session continuity."
+)
+
 CouncilCheck = Callable[[Mapping[str, Any]], Any]
 SleepFunc = Callable[[float], Awaitable[None]]
 
