@@ -2,7 +2,61 @@ import json
 import sys
 from pathlib import Path
 
+import pytest
+
 from tonesoul.tech_trace import capture as capture_mod
+from tonesoul.tech_trace.capture import _prune_none, stable_hash, utc_now
+
+
+# ── utc_now ───────────────────────────────────────────────────────────────────
+
+class TestUtcNow:
+    def test_returns_string(self):
+        assert isinstance(utc_now(), str)
+
+    def test_ends_with_z(self):
+        assert utc_now().endswith("Z")
+
+
+# ── stable_hash ───────────────────────────────────────────────────────────────
+
+class TestStableHash:
+    def test_returns_12_chars(self):
+        assert len(stable_hash("hello")) == 12
+
+    def test_same_input_same_hash(self):
+        assert stable_hash("test") == stable_hash("test")
+
+    def test_different_inputs_different(self):
+        assert stable_hash("abc") != stable_hash("def")
+
+    def test_empty_string(self):
+        result = stable_hash("")
+        assert len(result) == 12
+
+
+# ── _prune_none ───────────────────────────────────────────────────────────────
+
+class TestPruneNone:
+    def test_removes_none_dict_values(self):
+        result = _prune_none({"a": 1, "b": None})
+        assert result == {"a": 1}
+        assert "b" not in result
+
+    def test_nested_dict(self):
+        result = _prune_none({"a": {"b": None, "c": 1}})
+        assert result == {"a": {"c": 1}}
+
+    def test_removes_none_from_list(self):
+        result = _prune_none([1, None, 2])
+        assert result == [1, 2]
+
+    def test_scalar_passthrough(self):
+        assert _prune_none(42) == 42
+        assert _prune_none("hello") == "hello"
+
+    def test_empty_dict(self):
+        assert _prune_none({}) == {}
 
 
 def test_normalize_tags_and_load_text(tmp_path):

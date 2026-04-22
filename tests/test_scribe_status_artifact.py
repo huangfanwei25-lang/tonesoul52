@@ -3,12 +3,83 @@ from pathlib import Path
 
 from tonesoul.scribe.scribe_engine import ScribeDraftResult
 from tonesoul.scribe.status_artifact import (
+    _dedupe_routes,
+    _route_label,
+    _route_priority,
     build_scribe_status_payload,
     scribe_problem_route,
     scribe_queue_shape,
     scribe_state_document_posture,
     write_scribe_status_artifact,
 )
+
+
+# ── _route_label ──────────────────────────────────────────────────────────────
+
+class TestRouteLabel:
+    def test_combines_family_code_and_family(self):
+        route = {"family_code": "F1", "family": "grounding"}
+        assert _route_label(route) == "F1_grounding"
+
+    def test_missing_keys_use_empty(self):
+        assert _route_label({}) == "_"
+
+
+# ── _route_priority ───────────────────────────────────────────────────────────
+
+class TestRoutePriority:
+    def test_known_invariant_returns_low_number(self):
+        route = {"broken_invariant": "observed_anchor_closure"}
+        assert _route_priority(route) == 10
+
+    def test_unknown_invariant_returns_999(self):
+        route = {"broken_invariant": "unknown_invariant"}
+        assert _route_priority(route) == 999
+
+    def test_missing_key_returns_999(self):
+        assert _route_priority({}) == 999
+
+
+# ── _dedupe_routes ────────────────────────────────────────────────────────────
+
+class TestDedupeRoutes:
+    def _r(self, code, invariant, repair):
+        return {"family_code": code, "broken_invariant": invariant, "first_repair_surface": repair}
+
+    def test_no_duplicates_unchanged(self):
+        routes = [self._r("F1", "inv_a", "rep_a"), self._r("F2", "inv_b", "rep_b")]
+        assert _dedupe_routes(routes) == routes
+
+    def test_duplicate_removed(self):
+        r = self._r("F1", "inv_a", "rep_a")
+        result = _dedupe_routes([r, r])
+        assert len(result) == 1
+
+    def test_empty_list(self):
+        assert _dedupe_routes([]) == []
+
+
+# ── scribe_state_document_posture ─────────────────────────────────────────────
+
+class TestScribeStateDocumentPosture:
+    def _make_counts(self, tensions=0, collisions=0, crystals=0):
+        return _make_result(observed_counts={"tensions": tensions, "collisions": collisions, "crystals": crystals})
+
+    def test_pressure_without_counterweight(self):
+        result = self._make_counts(tensions=1)
+        assert scribe_state_document_posture(result) == "pressure_without_counterweight"
+
+    def test_contested_pressure(self):
+        result = self._make_counts(tensions=1, collisions=1)
+        assert scribe_state_document_posture(result) == "contested_pressure"
+
+    def test_anchor_only(self):
+        result = self._make_counts()
+        assert scribe_state_document_posture(result) == "anchor_only"
+
+    def test_contradiction_visible(self):
+        result = self._make_counts(collisions=1)
+        assert scribe_state_document_posture(result) == "contradiction_visible"
 
 
 def _make_result(**overrides: object) -> ScribeDraftResult:
