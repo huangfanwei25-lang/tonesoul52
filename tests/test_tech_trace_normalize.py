@@ -151,3 +151,66 @@ def test_main_writes_normalized_payload_from_capture(tmp_path, monkeypatch):
     assert saved["source"]["type"] == "unknown"
     assert saved["source"]["uri"] == "https://example.com/source"
     assert saved["tags"] == ["alpha"]
+
+
+def test_collapse_whitespace_normalizes_internal_spaces() -> None:
+    assert normalize_mod._collapse_whitespace("a  b\t\nc") == "a b c"
+    assert normalize_mod._collapse_whitespace("  leading") == "leading"
+    assert normalize_mod._collapse_whitespace("trailing  ") == "trailing"
+
+
+def test_summary_from_text_exact_limit_not_truncated() -> None:
+    text = "abcde"
+    assert normalize_mod._summary_from_text(text, 5) == "abcde"
+
+
+def test_extract_claims_empty_text_and_zero_limit() -> None:
+    assert normalize_mod._extract_claims("", limit=5, min_chars=10) == []
+    assert normalize_mod._extract_claims("short", limit=0, min_chars=3) == []
+
+
+def test_normalize_claims_returns_none_for_none_and_empty() -> None:
+    assert normalize_mod._normalize_claims(None) is None
+    assert normalize_mod._normalize_claims([]) is None
+
+
+def test_normalize_links_returns_none_for_none_and_empty() -> None:
+    assert normalize_mod._normalize_links(None) is None
+    assert normalize_mod._normalize_links([]) is None
+
+
+def test_normalize_attributions_returns_none_for_none_and_empty() -> None:
+    assert normalize_mod._normalize_attributions(None) is None
+
+
+def test_normalize_record_no_auto_claims_with_notes(monkeypatch) -> None:
+    monkeypatch.setattr(normalize_mod, "utc_now", lambda: "2026-03-20T00:00:00Z")
+    monkeypatch.setattr(normalize_mod, "stable_hash", lambda value: "hash")
+
+    payload = normalize_mod.normalize_record(
+        raw_text="A clean text input.",
+        capture_id=None,
+        source={"type": "note"},
+        source_grade=None,
+        summary="Custom summary",
+        notes="some notes",
+        tags=None,
+        max_length=None,
+        claims=None,
+        links=None,
+        attributions=None,
+        auto_claims=False,
+    )
+
+    assert payload["summary"] == "Custom summary"
+    assert payload["notes"] == "some notes"
+    assert "claims" not in payload
+    assert "capture_id" not in payload
+
+
+def test_build_arg_parser_returns_arg_parser() -> None:
+    import argparse
+    parser = normalize_mod.build_arg_parser()
+    assert isinstance(parser, argparse.ArgumentParser)
+    args = parser.parse_args(["--text", "hello"])
+    assert args.text == "hello"
