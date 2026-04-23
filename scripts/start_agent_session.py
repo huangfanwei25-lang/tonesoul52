@@ -167,6 +167,56 @@ def _build_code_health_posture() -> dict:
         }
 
 
+def _build_session_pulse_status() -> dict:
+    """Return a bounded freshness signal for the last session_pulse.py run.
+
+    Reads memory/session_pulse_latest.json if present and computes age in minutes.
+    freshness label: fresh (<30 min), stale (>=30 min), absent (file missing).
+    This is a packaging signal only — it does not imply the pulse is running continuously.
+    """
+    from datetime import datetime, timezone
+
+    pulse_path = _REPO_ROOT / "memory" / "session_pulse_latest.json"
+    try:
+        with pulse_path.open(encoding="utf-8") as fh:
+            data = json.load(fh)
+        ts_str = str(data.get("timestamp") or "").strip()
+        if not ts_str:
+            raise ValueError("no timestamp")
+        ts = datetime.fromisoformat(ts_str)
+        now = datetime.now(timezone.utc)
+        if ts.tzinfo is None:
+            ts = ts.replace(tzinfo=timezone.utc)
+        age_minutes = max(0, int((now - ts).total_seconds() / 60))
+        freshness = "fresh" if age_minutes < 30 else "stale"
+        return {
+            "present": True,
+            "freshness": freshness,
+            "age_minutes": age_minutes,
+            "last_agent": str(data.get("agent") or "").strip(),
+            "last_branch": str((data.get("git") or {}).get("branch") or "").strip(),
+            "timestamp": ts_str,
+            "receiver_note": (
+                "Pulse freshness is a packaging signal only. "
+                "Stale means session_pulse.py has not run in the last 30 minutes; "
+                "it does not imply session continuity was broken."
+            ),
+        }
+    except Exception:
+        return {
+            "present": False,
+            "freshness": "absent",
+            "age_minutes": -1,
+            "last_agent": "",
+            "last_branch": "",
+            "timestamp": "",
+            "receiver_note": (
+                "memory/session_pulse_latest.json not readable; "
+                "run scripts/session_pulse.py to generate."
+            ),
+        }
+
+
 def _build_open_branch_summary() -> dict:
     """Return a short summary of remote branches not yet merged into master.
 
@@ -426,6 +476,7 @@ def _build_tier0_payload(
         "consumer_contract": _build_tier0_consumer_contract(consumer_contract),
         "open_branch_summary": _build_open_branch_summary(),
         "code_health_posture": _build_code_health_posture(),
+        "session_pulse_status": _build_session_pulse_status(),
         "claim_boundary": {
             "current_tier": "collaborator_beta",
             "receiver_note": "Do not claim production readiness, AI consciousness, or council-as-truth.",

@@ -111,8 +111,8 @@
   - Keep `R-memory`, `compiled knowledge`, `experiment lineage`, and `canonical governance truth` visibly separate.
 - Foundation: evaluator harness, experiment registry, mutation-space contract, analyzer gate, promotion-ready result surface, dashboard cue, shell boundary guard
 - Trial Execution Pattern: `admit candidate -> run trial -> classify result -> register in lineage`
-- Progress: **19 trials promoted, 1 parked** (as of 2026-04-23, per `docs/status/self_improvement_trial_wave_latest.json`)
-- Latest promoted trial: `code_health_posture_packaging_v1` — tier-0 session-start now surfaces layer-annotation coverage (259/259, 0 violations) as a first-hop packaging signal via `code_health_posture` field; `_build_code_health_posture()` reads from `docs/status/codebase_graph_latest.json` with a safe fallback; 5 new tests added.
+- Progress: **20 trials promoted, 1 parked** (as of 2026-04-23, per `docs/status/self_improvement_trial_wave_latest.json`)
+- Latest promoted trial: `session_pulse_freshness_v1` — tier-0 session-start now surfaces `session_pulse_status` field with freshness label (fresh/stale/absent), age_minutes, last_agent, last_branch from `memory/session_pulse_latest.json`; `_build_session_pulse_status()` with safe fallback; 5 new tests added (TestSessionPulseStatus).
 - Current posture: hold at status surface; admit a new candidate only when a genuine operator/runtime packaging gap appears that does not reopen governance, identity, or transport mythology.
 - Next: admit one next bounded candidate only if it improves operator/runtime packaging without reopening governance, identity, or transport mythology. Each trial still follows `admit -> run -> classify -> register`; no need to list each one as a separate phase.
 
