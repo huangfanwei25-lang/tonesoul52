@@ -80,12 +80,30 @@ class MockEventAdapter(EventAdapter):
 def _default_bridge_dir(game_save_folder: str = "") -> Path:
     """Resolve the best writable directory for bridge files.
 
-    Priority (Windows):
-      1. %LOCALAPPDATA%/<game_save_folder>  — matches where GM saves ini/data files
+    Accepts either:
+      - A bare subfolder name (e.g. "UnderTheIsland")
+        → expands to %LOCALAPPDATA%\\<name> on Windows
+      - A full absolute path (e.g. "C:\\Users\\user\\AppData\\Local\\UnderTheIsland")
+        → used as-is on any OS
+
+    Priority when bare name given (Windows only):
+      1. %LOCALAPPDATA%/<game_save_folder>  — confirmed writable path for this GM build
       2. %TEMP%                             — universal fallback
-    On non-Windows, always uses %TEMP%.
+    On non-Windows with a bare name, always falls back to %TEMP%.
     """
-    if game_save_folder and os.name == "nt":
+    if not game_save_folder:
+        return Path(tempfile.gettempdir())
+
+    p = Path(game_save_folder)
+    if p.is_absolute():
+        try:
+            p.mkdir(parents=True, exist_ok=True)
+            return p
+        except OSError:
+            return Path(tempfile.gettempdir())
+
+    # bare folder name — expand via %LOCALAPPDATA% on Windows
+    if os.name == "nt":
         local_appdata = os.environ.get("LOCALAPPDATA", "")
         if local_appdata:
             candidate = Path(local_appdata) / game_save_folder

@@ -231,8 +231,14 @@ def main() -> None:
         help="http: HTTP server only  |  file: file-bridge only  |  both: run both"
     )
     parser.add_argument("--game-save-folder", default=None,
-                        help="Game's LocalAppData subfolder name (e.g. 'UnderTheIsland'). "
-                             "Sets default bridge file dir to %%LOCALAPPDATA%%\\<folder>.")
+                        help=(
+                            "Bridge file directory. Two forms accepted:\n"
+                            "  bare name:   'UnderTheIsland'  "
+                            "→ expands to %%LOCALAPPDATA%%\\UnderTheIsland (Windows)\n"
+                            "  full path:   'C:\\Users\\user\\AppData\\Local\\UnderTheIsland'  "
+                            "→ used as-is on any OS\n"
+                            "Falls back to %%TEMP%% if unset or expansion fails."
+                        ))
     parser.add_argument("--event-file", default=None, help="Full override for event file path")
     parser.add_argument("--reply-file", default=None, help="Full override for reply file path")
     args = parser.parse_args()
