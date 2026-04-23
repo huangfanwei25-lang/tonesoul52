@@ -1,0 +1,14 @@
+# Local character IP — never commit
+character_pack.local.json
+soul_store.local.json
+
+# Game binary and decompile output
+*.win
+*.yy
+*.yyp
+utmt_output/
+decompiled/
+
+# Route B artifacts
+patch_manifest.json
+patched_build/

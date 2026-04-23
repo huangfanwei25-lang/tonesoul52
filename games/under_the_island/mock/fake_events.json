@@ -1,0 +1,23 @@
+[
+  {
+    "event": "puzzle_solved",
+    "player_choice": "helped_npc",
+    "scene": "underground_chamber",
+    "_note": "Replace with real event names from game recon (kept local)"
+  },
+  {
+    "event": "npc_dialogue_start",
+    "player_choice": "asked_about_past",
+    "scene": "campfire"
+  },
+  {
+    "event": "item_given",
+    "player_choice": "gave_food",
+    "scene": "market"
+  },
+  {
+    "event": "enemy_encounter",
+    "player_choice": "protected_npc",
+    "scene": "forest_path"
+  }
+]

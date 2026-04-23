@@ -1,56 +1,79 @@
-# 碧嶼之下 × 妮婭 AI 整合
+# Game AI Character Bridge
 
-> 讓妮婭從遊戲 NPC 變成有記憶、有價值觀、會隨互動改變的 AI 角色。
+Generic framework for adding a persistent-memory AI character to an existing game.
 
----
-
-## 兩條路線
-
-| | Route A（覆蓋層） | Route B（GML 注入） |
-|---|---|---|
-| 遊戲修改 | ❌ 不動 | ✅ 注入 data.win |
-| 整合深度 | 中（需要手動記錄事件） | 高（自動觸發） |
-| 法律風險 | 無 | 灰色地帶（個人使用） |
-| 倉庫存放 | ✅ 完整 | ✅ 腳本 + manifest（不含遊戲檔） |
+**Route A** — external overlay, no game modification (public, in this repo)  
+**Route B** — GML injection into game binary (private, local only)
 
 ---
 
-## Route A 快速啟動
+## repo boundary rules
+
+| stays in repo | stays local only |
+|---|---|
+| bridge server framework | game binary (data.win) |
+| persona template / schema | decompile output |
+| event adapter interface | actual hook points |
+| mock event source | character-specific persona pack |
+| redacted recon notes | patched build |
+
+---
+
+## directory layout
+
+```
+games/under_the_island/
+  bridge/
+    server.py               Route A HTTP server (port 7701)
+    persona_template.py     Generic character persona scaffold
+    soul_schema.json        Soul store schema
+    event_adapter.py        Abstract event source interface
+    character_pack.local.json   ← your local persona (git-ignored)
+    soul_store.local.json       ← your local save state (git-ignored)
+  mock/
+    fake_events.json        Dev events for testing without the game
+  recon/
+    structure_report_redacted.md   Engine recon (no IP content)
+    patch_manifest.template.md     Route B manifest schema
+  overlay/                  (future) Electron/web overlay shell
+```
+
+---
+
+## quick start (Route A)
 
 ```bash
-# 1. 安裝依賴
+# 1. install
 pip install anthropic
 
-# 2. 設定 API key
+# 2. create your local persona pack (git-ignored)
+cp games/under_the_island/bridge/persona_template.py \
+   games/under_the_island/bridge/character_pack.local.json
+# edit character_pack.local.json with your character's name/personality
+
+# 3. set API key
 export ANTHROPIC_API_KEY=your_key
 
-# 3. 啟動妮婭橋接伺服器
-python games/under_the_island/overlay/server.py --token mytoken
+# 4. start bridge
+python games/under_the_island/bridge/server.py \
+  --token mytoken --game-id your_game --character your_character
 
-# 4. 開始玩遊戲，手動記錄事件
-curl -X POST http://localhost:7701/save_event \
+# 5. send a test event
+curl -X POST http://localhost:7701/event \
   -H "Authorization: Bearer mytoken" \
   -H "Content-Type: application/json" \
-  -d '{"event": "齒輪謎題解開", "player_choice": "幫助妮婭", "nia_reaction": ""}'
+  -d '{"event": "puzzle_solved", "player_choice": "helped_npc", "scene": "chamber"}'
 
-# 5. 直接問妮婭
-curl "http://localhost:7701/nia?msg=我們接下來去哪？" \
+# 6. ask the character
+curl "http://localhost:7701/ask?msg=你好" \
   -H "Authorization: Bearer mytoken"
 ```
 
 ---
 
-## Route B 狀態
+## Route B status
 
-見 `patches/patch_manifest.json`。等 Codex 完成 data.win 偵察後更新。
+See `recon/patch_manifest.template.md` for the manifest schema.  
+Actual injection points are documented locally (not committed).
 
-注入腳本：`patches/nia_bridge.gml`
-
----
-
-## 妮婭的靈魂
-
-`shared/nia_soul.py` — 個性、價值觀基線、記憶格式  
-`shared/soul_db.json` — 持久記憶（隨冒險累積）
-
-Route A 和 Route B 共用同一份靈魂。
+Async pattern required — see template for GML snippet.
