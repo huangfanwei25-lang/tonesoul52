@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
-"""AI Character Bridge Server — generic overlay, Route A.
+"""AI Character Bridge Server — generic overlay, Route A + Route B file bridge.
 
 Loads character persona from character_pack.local.json (git-ignored).
 Game-specific IP stays local; this file is framework only.
 
-Start:
-    python games/under_the_island/bridge/server.py --token YOUR_TOKEN
+Modes:
+  HTTP mode (default):
+    python bridge/server.py --token TOKEN
+    GML calls http_request → POST /event  (requires HTTP ext in game build)
 
-Endpoints:
-    POST /event          Receive a game event (Route B GML / Route A manual)
+  File bridge mode (fallback when http_request not available in build):
+    python bridge/server.py --mode file
+    GML writes temp file → bridge polls, calls AI, writes reply file → GML polls reply
+
+HTTP endpoints:
+    POST /event          Game event (Route B GML / Route A manual)
     GET  /ask?msg=...    Ask the character directly
     GET  /state          Current soul store state
     POST /save_event     Manually record a story event (Route A)
@@ -20,6 +26,8 @@ import argparse
 import json
 import os
 import sys
+import threading
+import time
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
@@ -28,6 +36,7 @@ from urllib.parse import parse_qs, urlparse
 _BRIDGE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(_BRIDGE_DIR.parent.parent.parent))
 
+from games.under_the_island.bridge.event_adapter import FileBridgeAdapter
 from games.under_the_island.bridge.persona_template import (
     DEFAULT_VALUE_AXES,
     build_system_prompt,
@@ -193,6 +202,22 @@ class _Handler(BaseHTTPRequestHandler):
             self._json({"error": "not found"}, 404)
 
 
+def _run_file_bridge(adapter: FileBridgeAdapter, poll_interval: float = 0.25) -> None:
+    """Background thread: poll event file, call AI, write reply file."""
+    print(f"File bridge active — watching {adapter.event_file}")
+    while True:
+        for ev in adapter.poll():
+            prompt = f"場景：{ev.scene}\n事件：{ev.event}\n玩家：{ev.player_choice}\n你會怎麼回應？"
+            messages, system = _build_context(_SOUL_DB, prompt)
+            reply = _call_claude(system, messages)
+            _record_event(_SOUL_DB, ev.event, ev.player_choice, reply)
+            _save_soul_db(_SOUL_DB)
+            trust = _SOUL_DB.get("current_values", {}).get("trust", 0.4)
+            adapter.write_reply(reply, trust)
+            print(f"  [{ev.event}] → {reply[:60]}…")
+        time.sleep(poll_interval)
+
+
 def main() -> None:
     global _TOKEN, _SOUL_DB, _PACK
 
@@ -201,6 +226,12 @@ def main() -> None:
     parser.add_argument("--token", default=os.environ.get("BRIDGE_TOKEN", ""))
     parser.add_argument("--game-id", default="unknown_game")
     parser.add_argument("--character", default="character")
+    parser.add_argument(
+        "--mode", choices=["http", "file", "both"], default="http",
+        help="http: HTTP server only  |  file: file-bridge only  |  both: run both"
+    )
+    parser.add_argument("--event-file", default=None, help="Override event temp file path")
+    parser.add_argument("--reply-file", default=None, help="Override reply temp file path")
     args = parser.parse_args()
 
     _TOKEN = args.token
@@ -208,21 +239,48 @@ def main() -> None:
     _SOUL_DB = _load_soul_db(args.game_id, args.character)
 
     char_name = _PACK.get("character_name", args.character)
-    print(f"Bridge server: http://localhost:{args.port}")
-    print(f"Character: {char_name}  |  Token: {'set' if _TOKEN else 'open'}")
-    print(f"Trust: {_SOUL_DB.get('current_values', {}).get('trust', 0.4):.2f}")
+    print(f"Character: {char_name}  |  Trust: {_SOUL_DB.get('current_values', {}).get('trust', 0.4):.2f}")
+    print(f"Mode: {args.mode}")
     print("---")
-    print("GET  /ask?msg=hello     → ask character")
-    print("GET  /state             → soul store")
-    print("POST /event             → game event (Route B)")
-    print("POST /save_event        → manual event (Route A)")
 
-    server = HTTPServer(("localhost", args.port), _Handler)
-    try:
-        server.serve_forever()
-    except KeyboardInterrupt:
-        print("\nServer stopped.")
-        _save_soul_db(_SOUL_DB)
+    if args.mode in ("file", "both"):
+        from pathlib import Path as _P
+        ev_path = _P(args.event_file) if args.event_file else None
+        rp_path = _P(args.reply_file) if args.reply_file else None
+        adapter = FileBridgeAdapter(
+            event_file=ev_path or FileBridgeAdapter.__init__.__defaults__[0],  # default
+            reply_file=rp_path or FileBridgeAdapter.__init__.__defaults__[1],
+        )
+        # Reconstruct with explicit paths if given
+        if ev_path or rp_path:
+            from games.under_the_island.bridge.event_adapter import _DEFAULT_EVENT_FILE, _DEFAULT_REPLY_FILE
+            adapter = FileBridgeAdapter(
+                event_file=ev_path or _DEFAULT_EVENT_FILE,
+                reply_file=rp_path or _DEFAULT_REPLY_FILE,
+            )
+        t = threading.Thread(target=_run_file_bridge, args=(adapter,), daemon=True)
+        t.start()
+
+    if args.mode in ("http", "both"):
+        print(f"HTTP server: http://localhost:{args.port}")
+        print("GET  /ask?msg=hello     → ask character")
+        print("GET  /state             → soul store")
+        print("POST /event             → game event")
+        print("POST /save_event        → manual event")
+        server = HTTPServer(("localhost", args.port), _Handler)
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            print("\nServer stopped.")
+    elif args.mode == "file":
+        print("File bridge running. Ctrl+C to stop.")
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            print("\nStopped.")
+
+    _save_soul_db(_SOUL_DB)
 
 
 if __name__ == "__main__":
