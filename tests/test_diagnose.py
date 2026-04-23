@@ -1,7 +1,109 @@
 from __future__ import annotations
 
-from tonesoul.diagnose import compact_diagnostic, full_diagnostic
+import sys
+from io import BytesIO, StringIO
+
+import pytest
+
+from tonesoul.diagnose import (
+    _clip,
+    _emit_text,
+    _latest_council_dossier_summary,
+    compact_diagnostic,
+    full_diagnostic,
+)
 from tonesoul.runtime_adapter import GovernancePosture
+
+
+# ── _clip ─────────────────────────────────────────────────────────────────────
+
+class TestClip:
+    def test_short_text_unchanged(self):
+        assert _clip("hello world") == "hello world"
+
+    def test_long_text_truncated(self):
+        long = "x " * 50  # 100 chars
+        result = _clip(long, limit=20)
+        assert len(result) <= 20
+        assert result.endswith("...")
+
+    def test_collapses_whitespace(self):
+        assert _clip("a  b\t\nc") == "a b c"
+
+    def test_exact_limit_not_truncated(self):
+        text = "a" * 72
+        assert _clip(text) == text
+        assert "..." not in _clip(text)
+
+
+# ── _emit_text ────────────────────────────────────────────────────────────────
+
+class TestEmitText:
+    def test_writes_utf8_to_buffer(self, monkeypatch):
+        buf = BytesIO()
+        fake_stdout = type("FakeStdout", (), {"buffer": buf, "encoding": "utf-8"})()
+        monkeypatch.setattr(sys, "stdout", fake_stdout)
+        _emit_text("hello")
+        assert buf.getvalue() == b"hello\n"
+
+    def test_falls_back_when_no_buffer(self, monkeypatch):
+        captured = StringIO()
+        fake_stdout = type("FakeStdout", (), {"encoding": "utf-8", "write": captured.write, "flush": lambda self: None})()
+        monkeypatch.setattr(sys, "stdout", fake_stdout)
+        _emit_text("hello fallback")
+        assert "hello fallback" in captured.getvalue()
+
+    def test_appends_newline_if_missing(self, monkeypatch):
+        buf = BytesIO()
+        fake_stdout = type("FakeStdout", (), {"buffer": buf, "encoding": "utf-8"})()
+        monkeypatch.setattr(sys, "stdout", fake_stdout)
+        _emit_text("no newline")
+        assert buf.getvalue().endswith(b"\n")
+
+    def test_does_not_double_newline(self, monkeypatch):
+        buf = BytesIO()
+        fake_stdout = type("FakeStdout", (), {"buffer": buf, "encoding": "utf-8"})()
+        monkeypatch.setattr(sys, "stdout", fake_stdout)
+        _emit_text("has newline\n")
+        assert buf.getvalue() == b"has newline\n"
+
+
+# ── _latest_council_dossier_summary ──────────────────────────────────────────
+
+class TestLatestCouncilDossierSummary:
+    def test_returns_empty_dict_for_empty_packet(self):
+        assert _latest_council_dossier_summary({}) == {}
+
+    def test_returns_dossier_from_trace(self):
+        packet = {
+            "recent_traces": [
+                {"council_dossier_summary": {"confidence_posture": "stable"}}
+            ]
+        }
+        result = _latest_council_dossier_summary(packet)
+        assert result["confidence_posture"] == "stable"
+
+    def test_returns_dossier_from_compaction_when_no_trace_has_one(self):
+        packet = {
+            "recent_traces": [{}],
+            "recent_compactions": [
+                {"council_dossier": {"confidence_posture": "from_compaction"}}
+            ],
+        }
+        result = _latest_council_dossier_summary(packet)
+        assert result["confidence_posture"] == "from_compaction"
+
+    def test_returns_empty_when_no_dossiers_available(self):
+        packet = {"recent_traces": [{"some_key": "val"}], "recent_compactions": []}
+        assert _latest_council_dossier_summary(packet) == {}
+
+
+# ── compact_diagnostic error path ─────────────────────────────────────────────
+
+def test_compact_diagnostic_returns_error_string_when_store_unavailable(monkeypatch):
+    monkeypatch.setattr("tonesoul.store.get_store", lambda: (_ for _ in ()).throw(RuntimeError("no store")))
+    result = compact_diagnostic(agent_id="test")
+    assert result.startswith("[ToneSoul] Diagnostic error:")
 
 
 class _FakeRedis:
