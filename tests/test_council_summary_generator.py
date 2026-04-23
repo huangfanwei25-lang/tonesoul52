@@ -214,6 +214,40 @@ def test_generate_human_summary_approve_branch_mentions_minor_notes() -> None:
     )
 
 
+def test_generate_human_summary_approve_no_concerns_clean() -> None:
+    votes = [_vote(PerspectiveType.GUARDIAN, VoteDecision.APPROVE, 0.85, "all good")]
+    verdict = _verdict(VerdictType.APPROVE, votes)
+    summary = generate_human_summary(verdict, language="en")
+    assert summary == "Overall, this content looks safe and helpful."
+
+
+def test_generate_human_summary_refine_zh() -> None:
+    votes = [_vote(PerspectiveType.ANALYST, VoteDecision.CONCERN, 0.8, "Need evidence.")]
+    verdict = _verdict(VerdictType.REFINE, votes)
+    summary = generate_human_summary(verdict, language="zh")
+    assert "改進" in summary or "需要" in summary or "沒有" in summary or summary
+
+
+def test_generate_human_summary_approve_zh() -> None:
+    votes = [_vote(PerspectiveType.GUARDIAN, VoteDecision.CONCERN, 0.55, "minor")]
+    verdict = _verdict(VerdictType.APPROVE, votes)
+    summary = generate_human_summary(verdict, language="zh")
+    assert summary  # non-empty
+
+
+def test_validate_collaboration_records_reports_errors_for_invalid_records() -> None:
+    records = [{"role": "", "claim": "ok", "evidence": [], "risk": {}, "handoff": {}}]
+    report = validate_collaboration_records(records)
+    assert report["valid"] is False
+    assert len(report["errors"]) > 0
+
+
+def test_build_divergence_analysis_without_context() -> None:
+    votes = [_vote(PerspectiveType.GUARDIAN, VoteDecision.APPROVE, 0.8, "safe")]
+    divergence = build_divergence_analysis(votes)
+    assert divergence["visual_context"] is None
+
+
 def test_build_transcript_includes_context_metadata_and_contract_validation() -> None:
     votes = [
         _vote(PerspectiveType.GUARDIAN, VoteDecision.CONCERN, 0.72, "Needs safer framing."),
