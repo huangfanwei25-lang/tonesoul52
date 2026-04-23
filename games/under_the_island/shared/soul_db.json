@@ -1,0 +1,15 @@
+{
+  "schema_version": "v1",
+  "character": "nia",
+  "game": "under_the_island",
+  "sessions": [],
+  "current_values": {
+    "honesty": 0.85,
+    "protectiveness": 0.80,
+    "curiosity": 0.90,
+    "trust": 0.40,
+    "caution": 0.60
+  },
+  "key_events": [],
+  "notes": ""
+}

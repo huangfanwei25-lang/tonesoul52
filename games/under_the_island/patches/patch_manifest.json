@@ -1,0 +1,9 @@
+{
+  "schema_version": "v1",
+  "game": "under_the_island",
+  "engine": "GameMaker Studio 2",
+  "bridge_url": "http://localhost:7701",
+  "status": "pending_recon",
+  "patches": [],
+  "notes": "等 Codex 完成 data.win 偵察後填入注入點"
+}
