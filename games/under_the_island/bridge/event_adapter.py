@@ -147,7 +147,8 @@ class FileBridgeAdapter(EventAdapter):
             return
         self._last_mtime = mtime
         try:
-            raw = json.loads(self.event_file.read_text(encoding="utf-8"))
+            # utf-8-sig strips UTF-8 BOM if present (written by PowerShell Set-Content -Encoding utf8)
+            raw = json.loads(self.event_file.read_text(encoding="utf-8-sig"))
         except Exception:
             return
         yield GameEvent(
