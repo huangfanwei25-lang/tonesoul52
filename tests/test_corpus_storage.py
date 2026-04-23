@@ -4,7 +4,108 @@ from datetime import datetime
 
 import pytest
 
-from tonesoul.corpus.storage import Conversation, CorpusStorage
+from tonesoul.corpus.storage import Conversation, ConversationTurn, CorpusStorage
+
+
+# ── ConversationTurn.to_dict ──────────────────────────────────────────────────
+
+class TestConversationTurnToDict:
+    def test_includes_required_fields(self):
+        turn = ConversationTurn(
+            timestamp=datetime(2026, 4, 1, 12, 0, 0),
+            user_input="hello",
+            ai_response="world",
+        )
+        d = turn.to_dict()
+        assert d["user_input"] == "hello"
+        assert d["ai_response"] == "world"
+        assert "2026-04-01" in d["timestamp"]
+        assert d["deliberation"] is None
+        assert d["feedback"] is None
+
+    def test_deliberation_and_feedback_included(self):
+        turn = ConversationTurn(
+            timestamp=datetime(2026, 4, 1),
+            user_input="q",
+            ai_response="a",
+            deliberation={"verdict": "approve"},
+            feedback="positive",
+        )
+        d = turn.to_dict()
+        assert d["deliberation"] == {"verdict": "approve"}
+        assert d["feedback"] == "positive"
+
+
+# ── Conversation.add_turn / to_dict / to_jsonl_line ──────────────────────────
+
+class TestConversation:
+    def _conv(self):
+        return Conversation(
+            id="conv-1",
+            session_id="sess-1",
+            consent_version="1.0",
+            started_at=datetime(2026, 4, 1, 10, 0, 0),
+        )
+
+    def test_add_turn_appends(self):
+        conv = self._conv()
+        conv.add_turn("hello", "hi there")
+        assert len(conv.turns) == 1
+        assert conv.turns[0].user_input == "hello"
+
+    def test_to_dict_fields(self):
+        conv = self._conv()
+        d = conv.to_dict()
+        assert d["id"] == "conv-1"
+        assert d["session_id"] == "sess-1"
+        assert d["ended_at"] is None
+        assert d["metadata"]["model"] == "formosa1"
+        assert d["metadata"]["tonesoul_version"] == "2.0"
+
+    def test_to_dict_with_ended_at(self):
+        conv = self._conv()
+        conv.ended_at = datetime(2026, 4, 1, 11, 0, 0)
+        assert "2026-04-01" in conv.to_dict()["ended_at"]
+
+    def test_to_jsonl_line_is_parseable_json(self):
+        conv = self._conv()
+        conv.add_turn("q", "a")
+        line = conv.to_jsonl_line()
+        parsed = json.loads(line)
+        assert parsed["id"] == "conv-1"
+        assert len(parsed["turns"]) == 1
+
+
+# ── CorpusStorage.get_corpus_stats ────────────────────────────────────────────
+
+def test_get_corpus_stats_returns_counts(tmp_path) -> None:
+    storage = _make_storage(tmp_path)
+    conv = storage.create_conversation("session-stats")
+    storage.add_turn(conv.id, "u", "a")
+
+    stats = storage.get_corpus_stats()
+
+    assert stats["total_conversations"] >= 1
+    assert stats["total_turns"] >= 1
+    assert "unique_sessions" in stats
+
+
+# ── CorpusStorage.get_session_conversations ───────────────────────────────────
+
+def test_get_session_conversations_returns_ids_for_session(tmp_path) -> None:
+    storage = _make_storage(tmp_path)
+    c1 = storage.create_conversation("sess-a")
+    c2 = storage.create_conversation("sess-a")
+    storage.create_conversation("sess-b")
+
+    ids = storage.get_session_conversations("sess-a")
+
+    assert set(ids) == {c1.id, c2.id}
+
+
+def test_get_session_conversations_empty_for_missing(tmp_path) -> None:
+    storage = _make_storage(tmp_path)
+    assert storage.get_session_conversations("no_such_session") == []
 
 
 def _make_storage(tmp_path) -> CorpusStorage:
