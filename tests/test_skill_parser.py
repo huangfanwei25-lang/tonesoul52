@@ -3,7 +3,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from tonesoul.council.skill_parser import SkillContractParser
+from tonesoul.council.skill_parser import (
+    SkillContractParser,
+    _as_string_list,
+    _normalize_text,
+    _split_frontmatter,
+)
 
 
 def _write_skill(path: Path, *, skill_id: str, body: str) -> None:
@@ -121,3 +126,52 @@ def test_skill_parser_resolve_for_request_applies_l1_to_l3_flow(tmp_path: Path) 
         execution_profile="interactive",
     )
     assert blocked == []
+
+
+# ── private helpers ───────────────────────────────────────────────────────────
+
+def test_as_string_list_filters_non_strings_and_strips_blanks() -> None:
+    assert _as_string_list(["  a  ", "b", "", 42, None]) == ["a", "b"]
+    assert _as_string_list([]) == []
+    assert _as_string_list("not-a-list") == []
+
+
+def test_normalize_text_lowercases_and_strips_non_alphanumeric() -> None:
+    assert _normalize_text("Local LLM!") == "local llm"
+    assert _normalize_text("Hello-World") == "hello world"
+    assert _normalize_text("  ") == ""
+
+
+def test_split_frontmatter_parses_yaml_header() -> None:
+    text = "---\nname: test\nversion: 1\n---\nBody content here."
+    fm, body = _split_frontmatter(text)
+    assert fm["name"] == "test"
+    assert fm["version"] == 1
+    assert body == "Body content here."
+
+
+def test_split_frontmatter_no_header_returns_empty_dict() -> None:
+    text = "No frontmatter here."
+    fm, body = _split_frontmatter(text)
+    assert fm == {}
+    assert body == "No frontmatter here."
+
+
+def test_split_frontmatter_malformed_separator_returns_empty_dict() -> None:
+    text = "---\nonly one separator"
+    fm, body = _split_frontmatter(text)
+    assert fm == {}
+
+
+def test_skill_parser_returns_empty_for_no_matching_trigger(tmp_path: Path) -> None:
+    skill_path = tmp_path / ".agent" / "skills" / "local_llm" / "SKILL.md"
+    _write_skill(skill_path, skill_id="local_llm", body="Body.")
+    from scripts.verify_skill_registry import _normalize_sha256
+    registry_path = _write_registry(
+        tmp_path,
+        skill_path=".agent/skills/local_llm/SKILL.md",
+        sha256=_normalize_sha256(skill_path),
+    )
+    parser = SkillContractParser(repo_root=tmp_path, registry_path=registry_path)
+    matches = parser.resolve_for_request(query="something completely unrelated", execution_profile="engineering")
+    assert matches == []
