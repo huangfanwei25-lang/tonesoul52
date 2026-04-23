@@ -7,7 +7,13 @@ from pathlib import Path
 from tonesoul.dream_engine import DreamCollision, DreamCycleResult
 from tonesoul.memory.soul_db import MemorySource, SqliteSoulDB
 from tonesoul.scribe.scribe_engine import ScribeDraftResult
-from tonesoul.wakeup_loop import AutonomousWakeupLoop
+from tonesoul.wakeup_loop import (
+    AutonomousWakeupLoop,
+    WakeupCycleResult,
+    WakeupRuntimeState,
+    WakeupScribeState,
+    _coerce_float,
+)
 
 
 class DummyEngine:
@@ -658,3 +664,147 @@ def test_run_resumes_consecutive_failures_from_persisted_state(tmp_path: Path) -
     assert second_results[0].summary["session_resumed"] is True
     assert sleep_calls == [10.0, 3600.0]
     assert persisted_state["consecutive_failures"] == 1
+
+
+# ── Module-level helpers ──────────────────────────────────────────────────────
+
+def test_coerce_float_converts_numeric() -> None:
+    assert _coerce_float(1) == 1.0
+    assert _coerce_float("3.14") == 3.14
+
+
+def test_coerce_float_returns_none_for_invalid() -> None:
+    assert _coerce_float("bad") is None
+    assert _coerce_float(None) is None
+
+
+# ── WakeupRuntimeState ────────────────────────────────────────────────────────
+
+def test_wakeup_runtime_state_to_dict_round_trip() -> None:
+    state = WakeupRuntimeState(
+        session_id="wakeup_abc",
+        next_cycle=3,
+        consecutive_failures=1,
+        last_status="ok",
+        updated_at="2026-01-01T00:00:00Z",
+    )
+    d = state.to_dict()
+    assert d["session_id"] == "wakeup_abc"
+    assert d["next_cycle"] == 3
+    assert d["consecutive_failures"] == 1
+    assert d["last_status"] == "ok"
+
+
+def test_wakeup_runtime_state_from_dict_defaults() -> None:
+    state = WakeupRuntimeState.from_dict({})
+    assert state.next_cycle >= 1
+    assert state.consecutive_failures == 0
+    assert state.last_status == "idle"
+
+
+def test_wakeup_runtime_state_from_dict_preserves_values() -> None:
+    state = WakeupRuntimeState.from_dict({
+        "session_id": "wakeup_xyz",
+        "next_cycle": 5,
+        "consecutive_failures": 2,
+        "last_status": "ok",
+    })
+    assert state.session_id == "wakeup_xyz"
+    assert state.next_cycle == 5
+    assert state.consecutive_failures == 2
+
+
+# ── WakeupScribeState ─────────────────────────────────────────────────────────
+
+def test_wakeup_scribe_state_to_dict_and_from_dict() -> None:
+    original = WakeupScribeState(
+        last_signature="abc123",
+        last_cycle=4,
+        last_result_status="generated",
+        last_generated_at="2026-01-01T00:00:00Z",
+    )
+    d = original.to_dict()
+    restored = WakeupScribeState.from_dict(d)
+    assert restored.last_signature == "abc123"
+    assert restored.last_cycle == 4
+    assert restored.last_result_status == "generated"
+
+
+# ── WakeupCycleResult ─────────────────────────────────────────────────────────
+
+def test_wakeup_cycle_result_to_dict() -> None:
+    result = WakeupCycleResult(
+        cycle=1,
+        status="ok",
+        started_at="2026-01-01T00:00:00Z",
+        finished_at="2026-01-01T00:01:00Z",
+        duration_ms=100,
+        interval_seconds=3.0,
+        dream_result={"collisions": []},
+        summary={"collision_count": 0},
+    )
+    d = result.to_dict()
+    assert d["cycle"] == 1
+    assert d["status"] == "ok"
+    assert d["duration_ms"] == 100
+
+
+# ── AutonomousWakeupLoop static helpers ───────────────────────────────────────
+
+def _make_cycle_result(summary: dict) -> WakeupCycleResult:
+    return WakeupCycleResult(
+        cycle=1,
+        status="ok",
+        started_at="2026-01-01T00:00:00Z",
+        finished_at="2026-01-01T00:01:00Z",
+        duration_ms=100,
+        interval_seconds=0.0,
+        dream_result={},
+        summary=summary,
+    )
+
+
+def test_should_trigger_scribe_true_when_collision_count_nonzero() -> None:
+    result = _make_cycle_result({"collision_count": 1})
+    assert AutonomousWakeupLoop._should_trigger_scribe(result) is True
+
+
+def test_should_trigger_scribe_false_when_all_zero() -> None:
+    result = _make_cycle_result({"collision_count": 0})
+    assert AutonomousWakeupLoop._should_trigger_scribe(result) is False
+
+
+def test_scribe_title_hint_unresolved_tension() -> None:
+    result = _make_cycle_result({"consolidation_unresolved_tension_count": 2})
+    assert AutonomousWakeupLoop._scribe_title_hint(result) == "The Weight of Unresolved Tensions"
+
+
+def test_scribe_title_hint_collisions() -> None:
+    result = _make_cycle_result({"collision_count": 3})
+    assert AutonomousWakeupLoop._scribe_title_hint(result) == "After the Wake-Up Collisions"
+
+
+def test_scribe_title_hint_default() -> None:
+    result = _make_cycle_result({})
+    assert AutonomousWakeupLoop._scribe_title_hint(result) == "Wake-Up State Document"
+
+
+def test_build_scribe_signal_signature_is_deterministic() -> None:
+    result = _make_cycle_result({"collision_count": 2, "council_count": 1})
+    sig1 = AutonomousWakeupLoop._build_scribe_signal_signature(result)
+    sig2 = AutonomousWakeupLoop._build_scribe_signal_signature(result)
+    assert sig1 == sig2
+    assert len(sig1) == 64  # sha256 hex
+
+
+def test_build_scribe_signal_signature_differs_with_different_summary() -> None:
+    r1 = _make_cycle_result({"collision_count": 1})
+    r2 = _make_cycle_result({"collision_count": 2})
+    assert AutonomousWakeupLoop._build_scribe_signal_signature(r1) != \
+           AutonomousWakeupLoop._build_scribe_signal_signature(r2)
+
+
+def test_summarize_empty_dream_result() -> None:
+    summary = AutonomousWakeupLoop._summarize({})
+    assert summary["collision_count"] == 0
+    assert summary["council_count"] == 0
