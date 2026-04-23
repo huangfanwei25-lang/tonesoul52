@@ -9,13 +9,11 @@ The canonical persistence path follows the private-runtime boundary:
 
 from __future__ import annotations
 
-
 import json
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
-
 
 __ts_layer__ = "infrastructure"
 __ts_purpose__ = "Soul persistence: JSONL-backed persistence for soul journal and governance traces."

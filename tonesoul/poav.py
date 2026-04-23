@@ -1,7 +1,6 @@
 import re
 from typing import Dict, List
 
-
 __ts_layer__ = "observability"
 __ts_purpose__ = "POAV: posture-over-agent-vocabulary score — measures claim-language alignment."
 

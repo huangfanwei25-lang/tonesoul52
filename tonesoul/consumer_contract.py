@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-
 from typing import Any
-
 
 __ts_layer__ = "governance"
 __ts_purpose__ = "Consumer contract: the memory contract surface — what agents may and may not claim."

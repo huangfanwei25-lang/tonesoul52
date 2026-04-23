@@ -240,7 +240,8 @@ class Heartbeat:
     _DEFAULT_PATH = ".aegis/heartbeat.jsonl"
 
     def __init__(self, path: Optional[str] = None) -> None:
-        import os, pathlib
+        import os
+        import pathlib
         self._path = pathlib.Path(path or self._DEFAULT_PATH)
         os.makedirs(str(self._path.parent), exist_ok=True)
 

@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-
 from typing import Any
-
 
 __ts_layer__ = "governance"
 __ts_purpose__ = "Task-board preflight: validates promotion of outside ideas into task.md."

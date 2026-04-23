@@ -6,7 +6,6 @@ from .client import (
 )
 from .session import GatewaySession
 
-
 __ts_layer__ = "infrastructure"
 __ts_purpose__ = "Gateway package: HTTP gateway server for multi-agent coordination access."
 

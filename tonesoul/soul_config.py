@@ -14,10 +14,8 @@ Each section references the Axiom(s) it derives from.
 
 from __future__ import annotations
 
-
 from dataclasses import dataclass, field
 from typing import List
-
 
 __ts_layer__ = "shared"
 __ts_purpose__ = "Soul config: ToneSoul-specific runtime configuration — agent identity and session parameters."

@@ -47,6 +47,7 @@ def _cmd_context(argv: List[str]) -> int:
 
 def _cmd_heartbeat(argv: List[str]) -> int:
     import json
+
     from tonesoul.heartbeat import Heartbeat
 
     parser = argparse.ArgumentParser(prog="ts heartbeat")
@@ -67,6 +68,7 @@ def _cmd_heartbeat(argv: List[str]) -> int:
 
 def _cmd_ystm(argv: List[str]) -> int:
     import json
+
     from tonesoul.ystm.demo import DEFAULT_SEGMENTS, write_demo_outputs
 
     parser = argparse.ArgumentParser(prog="ts ystm")

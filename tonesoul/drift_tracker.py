@@ -10,7 +10,6 @@ existing ``DEFAULT_HOME_VECTOR`` convention in ``unified_core.py``.
 
 from __future__ import annotations
 
-
 from dataclasses import dataclass
 from typing import Dict, Optional
 

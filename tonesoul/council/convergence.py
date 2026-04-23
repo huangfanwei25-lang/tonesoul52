@@ -22,9 +22,8 @@ Maximum deliberation rounds must be enforced by the caller to avoid loops.
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass, field
-from typing import List, Optional, Union
+from typing import List, Union
 
 from .types import PerspectiveType, PerspectiveVote, VoteDecision
 

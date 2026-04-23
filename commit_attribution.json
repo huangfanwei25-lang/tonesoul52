@@ -1,272 +1,36 @@
 {
   "event_name": "local",
   "mode": "local_incremental",
-  "range_spec": "6ce31059774349775004b633ac846c874dcc0f02..HEAD",
+  "range_spec": "9e3a87d998807efda52fd872a481b6819491fbe5..HEAD",
   "base_ref": "origin/master",
   "checked_revisions": [
-    "d94c2345f6c3fa55663af3dc63aab842b184d1f8",
-    "02b17d4168912c126a73d132f1a5f36481039ef4",
-    "92e8684534ea5ff2d8074590e6149242ef55b5e4",
-    "3dc1c7ba605d75818c9644f87f4cae06db429586",
-    "3aa5fe4bd060d8e23b57b624dd6213bfe3b32b37",
-    "2b353573fa685cd7d47124fdad79919588b6bbf0",
-    "79de5e8f71e32f318cf37b2a066d9e04172d3905",
-    "27e9050c7db9d90ebbd03c038aa957998ceb7186",
-    "db1c30c2ad79a0e198561995c65d35165e179d76",
-    "aad32834fd6c008689df2b6ac356c94af454fdb2",
-    "ba8e3e28a7bb9dc3eb74dc2ad812938530009bc0",
-    "e1910446c1bb0bef41d5f272935b95a7afc8c80c",
-    "dd877710a44b0fce8f4fa952bb9f3269bd4d9910",
-    "787457ef9839a4a59e04536deeabc36dff08e844"
+    "HEAD"
   ],
   "enforcement_anchor": null,
   "anchor_override_used": false,
-  "checked_count": 14,
-  "missing_count": 0,
-  "missing": [],
-  "ok": true,
+  "checked_count": 1,
+  "missing_count": 1,
+  "missing": [
+    {
+      "rev": "HEAD",
+      "summary": "feat: test expansion, annotation coverage, self-improvement trials 1-19",
+      "error": ""
+    }
+  ],
+  "ok": false,
   "results": [
     {
-      "ok": true,
-      "summary": "feat(council): land Phase 864a Layer 1 — EpistemicLabeler gate",
-      "agent": "Claude Opus 4.7",
-      "topic": "phase-864a-epistemic-labeler",
-      "has_agent": true,
-      "has_topic": true,
-      "changed_files": [
-        "tests/test_epistemic_labeler.py",
-        "tonesoul/council/epistemic_labeler.py",
-        "tonesoul/council/pre_output_council.py",
-        "tonesoul/council/types.py"
-      ],
-      "docs_only": false,
-      "exempted": false,
-      "exemption_reason": null,
-      "rev": "d94c2345f6c3fa55663af3dc63aab842b184d1f8",
-      "exit_code": 0
-    },
-    {
-      "ok": true,
-      "summary": "feat(gateway+council): add POST /council/validate + v0b Bucket A outcome collection",
-      "agent": "Claude Opus 4.7",
-      "topic": "gateway-council-validate-and-v0b-bucket-a",
-      "has_agent": true,
-      "has_topic": true,
-      "changed_files": [
-        "scripts/gateway.py",
-        "tests/test_gateway_script.py",
-        "tests/test_outcome_persistence.py",
-        "tonesoul/council/outcome_persistence.py"
-      ],
-      "docs_only": false,
-      "exempted": false,
-      "exemption_reason": null,
-      "rev": "02b17d4168912c126a73d132f1a5f36481039ef4",
-      "exit_code": 0
-    },
-    {
-      "ok": true,
-      "summary": "chore(v0b): add outcome-collection smoke harness + refusal-eligible finding",
-      "agent": "Claude Opus 4.7",
-      "topic": "gateway-council-validate-and-v0b-bucket-a",
-      "has_agent": true,
-      "has_topic": true,
-      "changed_files": [
-        "docs/plans/council_refusal_eligible_gap_2026-04-19.md",
-        "scripts/run_outcome_smoke.py",
-        "tests/fixtures/outcome_smoke/corpus_2026-04-19.jsonl"
-      ],
-      "docs_only": false,
-      "exempted": false,
-      "exemption_reason": null,
-      "rev": "92e8684534ea5ff2d8074590e6149242ef55b5e4",
-      "exit_code": 0
-    },
-    {
-      "ok": true,
-      "summary": "fix(v0b): address self-review gaps — fingerprint stability + synthetic source + adversarial corpus",
-      "agent": "Claude Opus 4.7",
-      "topic": "gateway-council-validate-and-v0b-bucket-a",
-      "has_agent": true,
-      "has_topic": true,
-      "changed_files": [
-        "docs/plans/council_refusal_eligible_gap_2026-04-19.md",
-        "scripts/run_outcome_smoke.py",
-        "tests/fixtures/outcome_smoke/adversarial_corpus_2026-04-19.jsonl",
-        "tests/test_outcome_persistence.py",
-        "tonesoul/council/outcome_persistence.py"
-      ],
-      "docs_only": false,
-      "exempted": false,
-      "exemption_reason": null,
-      "rev": "3dc1c7ba605d75818c9644f87f4cae06db429586",
-      "exit_code": 0
-    },
-    {
-      "ok": true,
-      "summary": "feat(864b): land Layer 2 v0b Bucket B — verdict↔outcome JOIN + calibration table",
-      "agent": "Claude Opus 4.7",
-      "topic": "phase-864b-layer2-bucket-b",
-      "has_agent": true,
-      "has_topic": true,
-      "changed_files": [
-        "docs/plans/phase_864b_layer2_bucket_b_2026-04-20.md",
-        "tests/test_calibration_bucket_b.py",
-        "tonesoul/council/calibration.py",
-        "tonesoul/council/calibration_bucket_b.py"
-      ],
-      "docs_only": false,
-      "exempted": false,
-      "exemption_reason": null,
-      "rev": "3aa5fe4bd060d8e23b57b624dd6213bfe3b32b37",
-      "exit_code": 0
-    },
-    {
-      "ok": true,
-      "summary": "feat(council): upgrade perspective quality — axiom-awareness, causal reasoning, intent alignment",
-      "agent": "Claude Opus 4.6",
-      "topic": "council-perspective-quality-phase-865",
-      "has_agent": true,
-      "has_topic": true,
-      "changed_files": [
-        "tests/test_council_discrimination.py",
-        "tests/test_perspective_advocate.py",
-        "tests/test_pre_output_council.py",
-        "tests/test_pre_output_council_integration.py",
-        "tonesoul/council/perspectives/advocate.py",
-        "tonesoul/council/perspectives/analyst.py",
-        "tonesoul/council/perspectives/critic.py",
-        "tonesoul/council/perspectives/guardian.py"
-      ],
-      "docs_only": false,
-      "exempted": false,
-      "exemption_reason": null,
-      "rev": "2b353573fa685cd7d47124fdad79919588b6bbf0",
-      "exit_code": 0
-    },
-    {
-      "ok": true,
-      "summary": "fix(tests): update test_transcript.py for improved Critic framing detection",
-      "agent": "Claude Opus 4.6",
-      "topic": "council-perspective-quality-phase-865",
-      "has_agent": true,
-      "has_topic": true,
-      "changed_files": [
-        "tests/test_transcript.py"
-      ],
-      "docs_only": false,
-      "exempted": false,
-      "exemption_reason": null,
-      "rev": "79de5e8f71e32f318cf37b2a066d9e04172d3905",
-      "exit_code": 0
-    },
-    {
-      "ok": true,
-      "summary": "feat(council): axiomatic perspective rewrite + dual-concern verdict rule",
-      "agent": "claude-opus-4-6",
-      "topic": "council-perspective-quality",
-      "has_agent": true,
-      "has_topic": true,
-      "changed_files": [
-        "tests/test_council_discrimination.py",
-        "tests/test_pre_output_council.py",
-        "tonesoul/council/perspectives/axiomatic_inference.py",
-        "tonesoul/council/verdict.py"
-      ],
-      "docs_only": false,
-      "exempted": false,
-      "exemption_reason": null,
-      "rev": "27e9050c7db9d90ebbd03c038aa957998ceb7186",
-      "exit_code": 0
-    },
-    {
-      "ok": true,
-      "summary": "fix(lint): sort imports in test_council_discrimination.py",
-      "agent": "claude-opus-4-6",
-      "topic": "council-perspective-quality",
-      "has_agent": true,
-      "has_topic": true,
-      "changed_files": [
-        "tests/test_council_discrimination.py"
-      ],
-      "docs_only": false,
-      "exempted": false,
-      "exemption_reason": null,
-      "rev": "db1c30c2ad79a0e198561995c65d35165e179d76",
-      "exit_code": 0
-    },
-    {
-      "ok": true,
-      "summary": "merge(PR#28): council perspective quality upgrade — axiom-awareness, causal reasoning, intent alignment",
-      "agent": "claude-sonnet-4-6",
-      "topic": "merge-PR28-council-perspective-quality",
-      "has_agent": true,
-      "has_topic": true,
+      "ok": false,
+      "summary": "feat: test expansion, annotation coverage, self-improvement trials 1-19",
+      "agent": null,
+      "topic": null,
+      "has_agent": false,
+      "has_topic": false,
       "changed_files": [],
       "docs_only": false,
       "exempted": false,
       "exemption_reason": null,
-      "rev": "aad32834fd6c008689df2b6ac356c94af454fdb2",
-      "exit_code": 0
-    },
-    {
-      "ok": true,
-      "summary": "merge(PR#19): Phase 864a EpistemicLabeler gate — deterministic epistemic status on every verdict",
-      "agent": "claude-sonnet-4-6",
-      "topic": "merge-PR19-epistemic-labeler",
-      "has_agent": true,
-      "has_topic": true,
-      "changed_files": [],
-      "docs_only": false,
-      "exempted": false,
-      "exemption_reason": null,
-      "rev": "ba8e3e28a7bb9dc3eb74dc2ad812938530009bc0",
-      "exit_code": 0
-    },
-    {
-      "ok": true,
-      "summary": "merge(PR#22): gateway POST /council/validate + v0b Bucket A outcome collection",
-      "agent": "claude-sonnet-4-6",
-      "topic": "merge-PR22-gateway-council-validate",
-      "has_agent": true,
-      "has_topic": true,
-      "changed_files": [],
-      "docs_only": false,
-      "exempted": false,
-      "exemption_reason": null,
-      "rev": "e1910446c1bb0bef41d5f272935b95a7afc8c80c",
-      "exit_code": 0
-    },
-    {
-      "ok": true,
-      "summary": "merge(PR#26): Phase 864b Layer 2 Bucket B — verdict/outcome JOIN + calibration table",
-      "agent": "claude-sonnet-4-6",
-      "topic": "merge-PR26-864b-bucket-b",
-      "has_agent": true,
-      "has_topic": true,
-      "changed_files": [],
-      "docs_only": false,
-      "exempted": false,
-      "exemption_reason": null,
-      "rev": "dd877710a44b0fce8f4fa952bb9f3269bd4d9910",
-      "exit_code": 0
-    },
-    {
-      "ok": true,
-      "summary": "feat(Phase 730): 3-day execution program + PR integration",
-      "agent": "claude-sonnet-4-6",
-      "topic": "Phase-730-3day-execution-program",
-      "has_agent": true,
-      "has_topic": true,
-      "changed_files": [
-        "docs/plans/tonesoul_3day_execution_program_2026-04-22.md",
-        "task.md",
-        "tonesoul/council/calibration_bucket_b.py"
-      ],
-      "docs_only": false,
-      "exempted": false,
-      "exemption_reason": null,
-      "rev": "787457ef9839a4a59e04536deeabc36dff08e844",
+      "rev": "HEAD",
       "exit_code": 0
     }
   ],

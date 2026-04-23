@@ -6,7 +6,6 @@ This module prevents infinite rejections when multiple audit layers
 
 from __future__ import annotations
 
-
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum

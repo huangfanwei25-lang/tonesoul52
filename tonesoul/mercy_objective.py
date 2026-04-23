@@ -2,7 +2,6 @@ from typing import Dict, Optional
 
 from .ystm.schema import utc_now
 
-
 __ts_layer__ = "evolution"
 __ts_purpose__ = "Mercy objective: resolves mercy-weighted objectives against governance constraints."
 

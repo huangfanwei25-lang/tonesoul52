@@ -8,7 +8,6 @@ import yaml
 
 from .ystm.schema import utc_now
 
-
 __ts_layer__ = "observability"
 __ts_purpose__ = "TSR metrics: trust-safety-reliability metrics computed over governance records."
 

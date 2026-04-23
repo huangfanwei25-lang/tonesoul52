@@ -64,8 +64,6 @@ from .ystm.ingest import load_segments, normalize_segments
 from .ystm.representation import EmbeddingConfig
 from .ystm.terrain import TerrainConfig
 
-
-
 __ts_layer__ = "pipeline"
 __ts_purpose__ = "Compose YSS gates, action set, and audit into one semantic-field pipeline pass."
 

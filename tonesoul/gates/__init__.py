@@ -2,7 +2,6 @@
 
 from .compute import ComputeGate, RateLimiter
 
-
 __ts_layer__ = "governance"
 __ts_purpose__ = "Gates package: governance gate checks — adaptive, skill, and YSS gate exports."
 
