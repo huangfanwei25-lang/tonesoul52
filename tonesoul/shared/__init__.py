@@ -1,6 +1,3 @@
-__ts_layer__ = "shared"
-__ts_purpose__ = "Shared package: cross-cutting type primitives and pure utility exports."
-
 """
 ToneSoul Shared Module
 
@@ -45,3 +42,6 @@ __all__ = [
     # Utilities
     "AsyncQueue",
 ]
+
+__ts_layer__ = "shared"
+__ts_purpose__ = "Shared package: cross-cutting type primitives and pure utility exports."

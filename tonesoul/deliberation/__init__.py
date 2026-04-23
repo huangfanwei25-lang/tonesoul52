@@ -1,8 +1,3 @@
-__ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Deliberation package: adaptive round calculation and tension-severity aggregation."
-)
-
 """
 ToneSoul 2.0 Internal Deliberation Module
 
@@ -89,3 +84,6 @@ __all__ = [
     "create_deliberation_engine",
     "deliberate",
 ]
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Deliberation package: adaptive round calculation and tension-severity aggregation."
