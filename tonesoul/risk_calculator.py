@@ -6,7 +6,6 @@ surfaces. It does not implement law/ theory metrics or hidden governance rules.
 
 from __future__ import annotations
 
-
 import subprocess
 from collections import Counter
 from dataclasses import dataclass
@@ -14,10 +13,6 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List
 
 from tonesoul.working_style import (
-
-__ts_layer__ = "governance"
-__ts_purpose__ = "Risk calculator: maps context features to governance risk bands for deliberation routing."
-
     build_working_style_import_limits,
     build_working_style_observability,
 )

@@ -26,6 +26,9 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Union
 
+__ts_layer__ = "governance"
+__ts_purpose__ = "Factory for pluggable council perspectives (rules / LLM / tool-verified)."
+
 try:
     import requests as _requests_mod
 except ImportError:  # pragma: no cover
@@ -365,10 +368,6 @@ class LLMPerspective(IPerspective):
     @classmethod
     def _build_gemini_client(cls, model: str):
         from ..llm.gemini_client import GeminiClient
-
-
-__ts_layer__ = "governance"
-__ts_purpose__ = "Factory for pluggable council perspectives (rules / LLM / tool-verified)."
 
         return GeminiClient(model=model)
 

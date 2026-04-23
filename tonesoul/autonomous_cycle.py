@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+__ts_layer__ = "orchestration"
+__ts_purpose__ = "Drive the autonomous wake/sense/dream loop without a human trigger."
+
 import json
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -187,10 +190,6 @@ class AutonomousDreamCycleRunner:
             from tonesoul.governance.reflex import GovernanceSnapshot, ReflexEvaluator
             from tonesoul.governance.reflex_config import load_reflex_config
             from tonesoul.runtime_adapter import load as load_posture
-
-
-__ts_layer__ = "orchestration"
-__ts_purpose__ = "Drive the autonomous wake/sense/dream loop without a human trigger."
 
             config = load_reflex_config()
             if not config.enabled:

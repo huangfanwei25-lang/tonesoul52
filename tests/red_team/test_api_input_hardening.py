@@ -1,3 +1,5 @@
+import pytest
+pytest.importorskip("flask")
 import json
 import re
 

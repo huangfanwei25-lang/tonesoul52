@@ -4,6 +4,9 @@ ToneBridge Module
 Third Axiom: Self-Commit System for semantic responsibility.
 """
 
+__ts_layer__ = "domain"
+__ts_purpose__ = "5-stage psychological + semantic analysis engine: tone, trajectory, commitment, entropy, self-commit."
+
 from .analyzer import ToneBridgeAnalyzer
 
 # Enhanced Commitment Extraction (NLP)
@@ -66,10 +69,6 @@ from .types import (
     ToneBridgeResult,
 )
 from .value_accumulator import (
-
-__ts_layer__ = "domain"
-__ts_purpose__ = "5-stage psychological + semantic analysis engine: tone, trajectory, commitment, entropy, self-commit."
-
     CorrectionEvent,
     EmergentValue,
     ValueAccumulator,

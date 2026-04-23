@@ -273,10 +273,6 @@ class PersonaDimension:
         """降低張力：移除多餘驚嘆號，緩和用詞"""
         import re
 
-
-__ts_layer__ = "evolution"
-__ts_purpose__ = "Persona dimension: tracks multi-axis persona state (Muse/Logos/Aegis) across deliberation."
-
         # 將多個驚嘆號變成一個
         text = re.sub(r"[!！]{2,}", "。", text)
         # 移除 WARNING 等高張力詞

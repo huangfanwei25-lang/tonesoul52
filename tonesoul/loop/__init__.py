@@ -1,3 +1,6 @@
+__ts_layer__ = "orchestration"
+__ts_purpose__ = "Loop orchestration: wakeup cycles, autonomous schedule, and loop state exports."
+
 """
 ToneSoul Loop Module
 
@@ -19,10 +22,6 @@ Usage:
 from .config import LoopConfig, LoopResult, LoopState, default_loop_config
 from .engine import LoopEngine
 from .events import (
-
-__ts_layer__ = "orchestration"
-__ts_purpose__ = "Loop orchestration: wakeup cycles, autonomous schedule, and loop state exports."
-
     AIResponseEvent,
     ErrorEvent,
     IterationCompleteEvent,

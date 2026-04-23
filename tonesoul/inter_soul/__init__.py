@@ -1,3 +1,6 @@
+__ts_layer__ = "surface"
+__ts_purpose__ = "Inter-soul surface: cross-agent communication and soul linking utilities."
+
 """
 Inter-Soul Tension Protocol.
 
@@ -10,10 +13,6 @@ from .bridge import InterSoulBridge, LocalInterSoulBridge
 from .negotiation import NegotiationResult, TensionNegotiator
 from .sovereignty import SovereigntyGuard
 from .types import (
-
-__ts_layer__ = "surface"
-__ts_purpose__ = "Inter-soul surface: cross-agent communication and soul linking utilities."
-
     NegotiationOutcome,
     RuptureNotice,
     SovereigntyBoundary,

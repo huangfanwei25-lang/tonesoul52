@@ -1,4 +1,6 @@
 from __future__ import annotations
+import pytest
+pytest.importorskip("flask")
 
 from types import SimpleNamespace
 

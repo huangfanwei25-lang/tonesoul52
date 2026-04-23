@@ -225,7 +225,7 @@ def test_generate_human_summary_refine_zh() -> None:
     votes = [_vote(PerspectiveType.ANALYST, VoteDecision.CONCERN, 0.8, "Need evidence.")]
     verdict = _verdict(VerdictType.REFINE, votes)
     summary = generate_human_summary(verdict, language="zh")
-    assert "改進" in summary or "需要" in summary or "沒有" in summary or summary
+    assert "改進" in summary
 
 
 def test_generate_human_summary_approve_zh() -> None:

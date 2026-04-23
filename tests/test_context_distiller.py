@@ -367,8 +367,9 @@ def test_extract_conflict_resolutions_resolved(tmp_path: Path) -> None:
     ]
     distiller = ContextDistiller(object(), cache_path=tmp_path / "c.json")
     patterns = distiller.extract_conflict_resolutions(conversations)
-    descriptions = " ".join(p.description for p in patterns)
-    assert "resolved" in descriptions.lower() or len(patterns) >= 1
+    assert len(patterns) == 1
+    assert patterns[0].pattern_type == "conflict_resolution"
+    assert "tension" in patterns[0].description.lower() or "recover" in patterns[0].description.lower()
 
 
 def test_extract_conflict_resolutions_empty(tmp_path: Path) -> None:

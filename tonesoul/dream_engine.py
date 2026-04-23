@@ -17,6 +17,10 @@ from tonesoul.memory.write_gateway import MemoryWriteGateway, MemoryWriteRejecte
 from tonesoul.schemas import SubjectivityLayer
 from tonesoul.stale_rule_verifier import StaleRuleVerificationTaskBatch
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = "Offline dream cycle: crystallize memory and update subjectivity layers between waking sessions."
+
+
 class LLMRouterLike(Protocol):
     active_backend: Optional[str]
     last_metrics: Any
@@ -865,10 +869,6 @@ class DreamEngine:
             metrics = getattr(self.router, "last_metrics", None)
 
         from tonesoul.schemas import LLMObservabilityTrace
-
-
-__ts_layer__ = "evolution"
-__ts_purpose__ = "Offline dream cycle: crystallize memory and update subjectivity layers between waking sessions."
 
         return LLMObservabilityTrace.build_payload(
             backend=llm_backend,

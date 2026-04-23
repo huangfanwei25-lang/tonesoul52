@@ -7,10 +7,6 @@ __ts_purpose__ = (
 )
 
 
-
-__ts_layer__ = "observability"
-__ts_purpose__ = "Issue codes: canonical error/warning code registry with structured issue() builder."
-
 class IssueCode(str, Enum):
     MISSING_CONTEXT_FIELD = "missing_context_field:{field}"
     MISSING_ASSUMPTIONS = "missing_assumptions"

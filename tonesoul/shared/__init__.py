@@ -1,3 +1,6 @@
+__ts_layer__ = "shared"
+__ts_purpose__ = "Shared package: cross-cutting type primitives and pure utility exports."
+
 """
 ToneSoul Shared Module
 
@@ -6,10 +9,6 @@ Contains shared utilities used across ToneSoul components.
 
 from .async_queue import AsyncQueue
 from .errors import (
-
-__ts_layer__ = "shared"
-__ts_purpose__ = "Shared package: cross-cutting type primitives and pure utility exports."
-
     ERR_ALREADY_RUNNING,
     ERR_EMPTY_OUTPUT,
     ERR_INVALID_INPUT,

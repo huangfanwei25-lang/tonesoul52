@@ -13,6 +13,11 @@ Design principles:
 
 from __future__ import annotations
 
+__ts_layer__ = "pipeline"
+__ts_purpose__ = (
+    "Load/commit governance state across session boundaries; the model-agnostic runtime spine."
+)
+
 import json
 import logging
 import math
@@ -2203,12 +2208,6 @@ def r_memory_packet(
     subject_snapshots = list_subject_snapshots(store=store, n=max(3, min(trace_limit, 5)))
     routing_events = list_routing_events(store=store, n=max(5, trace_limit))
     from tonesoul.risk_calculator import build_project_memory_summary, compute_runtime_risk
-
-
-__ts_layer__ = "pipeline"
-__ts_purpose__ = (
-    "Load/commit governance state across session boundaries; the model-agnostic runtime spine."
-)
 
     def _trim_tension(event: Dict[str, Any]) -> Dict[str, Any]:
         item = {
