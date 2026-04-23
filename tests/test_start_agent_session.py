@@ -1628,3 +1628,127 @@ def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:
 
     assert str(resolved) == repo_root
     assert sys.path[0] == repo_root
+
+
+# ── _build_code_health_posture ────────────────────────────────────────────────
+
+def test_build_code_health_posture_returns_complete_when_graph_is_present() -> None:
+    module = _load_script_module()
+    result = module._build_code_health_posture()
+
+    assert result["present"] is True
+    assert result["posture"] in {"complete", "partial", "unknown"}
+    assert isinstance(result["annotation_coverage"], str)
+    assert isinstance(result["layer_violations"], int)
+    assert isinstance(result["receiver_note"], str)
+
+
+def test_build_code_health_posture_returns_complete_posture_for_full_coverage(tmp_path: Path) -> None:
+    module = _load_script_module()
+    graph_path = tmp_path / "docs" / "status" / "codebase_graph_latest.json"
+    graph_path.parent.mkdir(parents=True, exist_ok=True)
+    graph_path.write_text(
+        json.dumps({
+            "generated_at": "2026-04-23T00:00:00Z",
+            "summary": {
+                "total_modules": 10,
+                "total_layer_violations": 0,
+                "self_declared_layer_count": 10,
+                "self_declared_layer_ratio": 1.0,
+            },
+            "annotation_coverage": {
+                "self_declared_layer_count": 10,
+                "self_declared_layer_ratio": 1.0,
+            },
+        }),
+        encoding="utf-8",
+    )
+    original_root = module._REPO_ROOT
+    module._REPO_ROOT = tmp_path
+    try:
+        result = module._build_code_health_posture()
+    finally:
+        module._REPO_ROOT = original_root
+
+    assert result["present"] is True
+    assert result["posture"] == "complete"
+    assert result["annotation_coverage"] == "10/10"
+    assert result["layer_violations"] == 0
+    assert result["generated_at"] == "2026-04-23T00:00:00Z"
+
+
+def test_build_code_health_posture_returns_partial_when_ratio_below_one(tmp_path: Path) -> None:
+    module = _load_script_module()
+    graph_path = tmp_path / "docs" / "status" / "codebase_graph_latest.json"
+    graph_path.parent.mkdir(parents=True, exist_ok=True)
+    graph_path.write_text(
+        json.dumps({
+            "generated_at": "2026-04-23T00:00:00Z",
+            "summary": {
+                "total_modules": 10,
+                "total_layer_violations": 2,
+                "self_declared_layer_count": 5,
+                "self_declared_layer_ratio": 0.5,
+            },
+            "annotation_coverage": {
+                "self_declared_layer_count": 5,
+                "self_declared_layer_ratio": 0.5,
+            },
+        }),
+        encoding="utf-8",
+    )
+    original_root = module._REPO_ROOT
+    module._REPO_ROOT = tmp_path
+    try:
+        result = module._build_code_health_posture()
+    finally:
+        module._REPO_ROOT = original_root
+
+    assert result["posture"] == "partial"
+    assert result["annotation_coverage"] == "5/10"
+    assert result["layer_violations"] == 2
+
+
+def test_build_code_health_posture_returns_unknown_when_file_missing(tmp_path: Path) -> None:
+    module = _load_script_module()
+    original_root = module._REPO_ROOT
+    module._REPO_ROOT = tmp_path
+    try:
+        result = module._build_code_health_posture()
+    finally:
+        module._REPO_ROOT = original_root
+
+    assert result["present"] is False
+    assert result["posture"] == "unknown"
+    assert result["layer_violations"] == -1
+
+
+def test_tier0_output_includes_code_health_posture(capsys, monkeypatch, tmp_path: Path) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    _write_state(state_path)
+    _write_traces(traces_path)
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "start_agent_session.py",
+            "--state-path", str(state_path),
+            "--traces-path", str(traces_path),
+            "--agent", "health-check-agent",
+            "--tier", "0",
+            "--no-ack",
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert "code_health_posture" in output
+    chp = output["code_health_posture"]
+    assert "posture" in chp
+    assert "annotation_coverage" in chp
+    assert "layer_violations" in chp
+    assert "receiver_note" in chp
