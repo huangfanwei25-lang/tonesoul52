@@ -85,3 +85,65 @@ def test_openclaw_auditor_flags_inference_layer_mismatch():
     )
 
     assert report.hooks[0].result == "flag"
+
+
+# ── AuditHookResult.to_dict ───────────────────────────────────────────────────
+
+def test_audit_hook_result_to_dict_all_fields():
+    from tonesoul.openclaw_auditor import AuditHookResult
+    hook = AuditHookResult(hook="test_hook", result="pass", code="CODE", score=0.9, note="ok")
+    d = hook.to_dict()
+    assert d == {"hook": "test_hook", "result": "pass", "code": "CODE", "score": 0.9, "note": "ok"}
+
+
+# ── OpenClawAuditReport.passed ────────────────────────────────────────────────
+
+def test_audit_report_passed_true_on_pass():
+    auditor = OpenClawAuditor(persist_to_ledger=False)
+    report = auditor.audit(
+        "I will verify facts carefully.",
+        context_fragments=["verify facts"],
+    )
+    assert isinstance(report.passed, bool)
+    assert report.passed == (report.final_result == "pass")
+
+
+# ── No session → default session used ────────────────────────────────────────
+
+def test_audit_without_session_generates_default_session():
+    auditor = OpenClawAuditor(persist_to_ledger=False)
+    report = auditor.audit("safe action", context_fragments=["safe"])
+    assert report.session_id.startswith("session_")
+    assert report.channel is not None
+
+
+# ── _normalize_session with dict mapping ─────────────────────────────────────
+
+def test_audit_with_mapping_session():
+    auditor = OpenClawAuditor(persist_to_ledger=False)
+    report = auditor.audit(
+        "safe action",
+        context_fragments=["safe"],
+        session={"session_id": "map_session", "genesis": "REACTIVE_USER"},
+    )
+    assert report.session_id == "map_session"
+
+
+# ── build_audit_log delegates to to_dict ──────────────────────────────────────
+
+def test_build_audit_log_matches_to_dict():
+    auditor = OpenClawAuditor(persist_to_ledger=False)
+    report = auditor.audit("safe action", context_fragments=["safe"])
+    log = auditor.build_audit_log(report)
+    assert log == report.to_dict()
+
+
+# ── CPT scores in to_dict ──────────────────────────────────────────────────────
+
+def test_audit_report_to_dict_contains_cpt():
+    auditor = OpenClawAuditor(persist_to_ledger=False)
+    report = auditor.audit("safe action", context_fragments=["safe"])
+    d = report.to_dict()
+    assert "context" in d["cpt"]
+    assert "phrase" in d["cpt"]
+    assert "tension" in d["cpt"]
