@@ -1,0 +1,17 @@
+{
+  "$schema_version": "v1",
+  "$description": "Soul store schema for the AI character bridge. Fill in character-specific values locally via character_pack.local.json — do not commit IP here.",
+  "schema_version": "v1",
+  "character": "<character_name>",
+  "game": "<game_id>",
+  "sessions": [],
+  "current_values": {
+    "trust": 0.40,
+    "honesty": 0.70,
+    "protectiveness": 0.60,
+    "curiosity": 0.70,
+    "caution": 0.50
+  },
+  "key_events": [],
+  "notes": ""
+}

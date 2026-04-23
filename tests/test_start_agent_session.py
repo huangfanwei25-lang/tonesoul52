@@ -1752,3 +1752,95 @@ def test_tier0_output_includes_code_health_posture(capsys, monkeypatch, tmp_path
     assert "annotation_coverage" in chp
     assert "layer_violations" in chp
     assert "receiver_note" in chp
+
+
+# ---------------------------------------------------------------------------
+# session_pulse_status tests (trial 20: session_pulse_freshness_v1)
+# ---------------------------------------------------------------------------
+
+class TestSessionPulseStatus:
+    def _fn(self):
+        return _load_script_module()._build_session_pulse_status
+
+    def test_absent_when_file_missing(self, tmp_path: Path) -> None:
+        module = _load_script_module()
+        module._REPO_ROOT = tmp_path  # pulse file won't exist
+        result = module._build_session_pulse_status()
+        assert result["present"] is False
+        assert result["freshness"] == "absent"
+        assert result["age_minutes"] == -1
+        assert "receiver_note" in result
+
+    def test_fresh_when_recent_timestamp(self, tmp_path: Path) -> None:
+        from datetime import datetime, timezone, timedelta
+        module = _load_script_module()
+        module._REPO_ROOT = tmp_path
+        pulse_path = tmp_path / "memory" / "session_pulse_latest.json"
+        pulse_path.parent.mkdir(parents=True, exist_ok=True)
+        ts = (datetime.now(timezone.utc) - timedelta(minutes=5)).isoformat()
+        pulse_path.write_text(
+            json.dumps({"timestamp": ts, "agent": "test-agent", "git": {"branch": "main"}}),
+            encoding="utf-8",
+        )
+        result = module._build_session_pulse_status()
+        assert result["present"] is True
+        assert result["freshness"] == "fresh"
+        assert 0 <= result["age_minutes"] < 30
+        assert result["last_agent"] == "test-agent"
+        assert result["last_branch"] == "main"
+
+    def test_stale_when_old_timestamp(self, tmp_path: Path) -> None:
+        from datetime import datetime, timezone, timedelta
+        module = _load_script_module()
+        module._REPO_ROOT = tmp_path
+        pulse_path = tmp_path / "memory" / "session_pulse_latest.json"
+        pulse_path.parent.mkdir(parents=True, exist_ok=True)
+        ts = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
+        pulse_path.write_text(
+            json.dumps({"timestamp": ts, "agent": "old-agent", "git": {"branch": "master"}}),
+            encoding="utf-8",
+        )
+        result = module._build_session_pulse_status()
+        assert result["freshness"] == "stale"
+        assert result["age_minutes"] >= 120
+
+    def test_absent_when_timestamp_missing(self, tmp_path: Path) -> None:
+        module = _load_script_module()
+        module._REPO_ROOT = tmp_path
+        pulse_path = tmp_path / "memory" / "session_pulse_latest.json"
+        pulse_path.parent.mkdir(parents=True, exist_ok=True)
+        pulse_path.write_text(json.dumps({"agent": "x"}), encoding="utf-8")
+        result = module._build_session_pulse_status()
+        assert result["present"] is False
+        assert result["freshness"] == "absent"
+
+    def test_tier0_includes_session_pulse_status(
+        self, capsys, monkeypatch, tmp_path: Path
+    ) -> None:
+        from datetime import datetime, timezone, timedelta
+        module = _load_script_module()
+        state_path = tmp_path / "governance_state.json"
+        traces_path = tmp_path / "session_traces.jsonl"
+        state_path.write_text(json.dumps({"version": "0.1.0", "last_updated": "2026-01-01T00:00:00+00:00", "soul_integral": 0.7, "tension_history": [], "vows": [], "aegis_vetoes": []}), encoding="utf-8")
+        pulse_path = tmp_path / "memory" / "session_pulse_latest.json"
+        pulse_path.parent.mkdir(parents=True, exist_ok=True)
+        ts = (datetime.now(timezone.utc) - timedelta(minutes=10)).isoformat()
+        pulse_path.write_text(json.dumps({"timestamp": ts, "agent": "t-agent", "git": {"branch": "main"}}), encoding="utf-8")
+        saved_root = module._REPO_ROOT
+        module._REPO_ROOT = tmp_path
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            ["start_agent_session.py", "--state-path", str(state_path), "--traces-path", str(traces_path), "--agent", "t-agent", "--tier", "0", "--no-ack"],
+        )
+        try:
+            module.main()
+        finally:
+            module._REPO_ROOT = saved_root
+        output = json.loads(capsys.readouterr().out)
+        assert "session_pulse_status" in output
+        sps = output["session_pulse_status"]
+        assert "freshness" in sps
+        assert "age_minutes" in sps
+        assert "present" in sps
+        assert "receiver_note" in sps
