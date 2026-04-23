@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from tonesoul.supabase_persistence import SupabasePersistence
+from tonesoul.supabase_persistence import (
+    SupabasePersistence,
+    _sanitize_limit,
+    _trim_text,
+)
 
 
 class _FakeResponse:
@@ -406,3 +410,117 @@ def test_record_evolution_result_writes_payload_to_evolution_results():
     assert insert_call["json"]["conversation_id"] == "uuid-1"
     assert insert_call["json"]["result_type"] == "chat_semantic_state"
     assert insert_call["json"]["payload"]["semantic_graph_summary"] == {"nodes": 2}
+
+
+# ── _trim_text ────────────────────────────────────────────────────────────────
+
+def test_trim_text_short_returns_unchanged() -> None:
+    assert _trim_text("hello") == "hello"
+
+
+def test_trim_text_long_truncates_to_limit() -> None:
+    result = _trim_text("x" * 2000, limit=100)
+    assert len(result) == 100
+
+
+def test_trim_text_none_returns_empty() -> None:
+    assert _trim_text(None) == ""
+
+
+# ── _sanitize_limit ───────────────────────────────────────────────────────────
+
+def test_sanitize_limit_returns_default_for_zero() -> None:
+    assert _sanitize_limit(0) == 20
+    assert _sanitize_limit(-5) == 20
+
+
+def test_sanitize_limit_clamps_to_maximum() -> None:
+    result = _sanitize_limit(9999)
+    assert result <= 1000  # MAX_PAGE_LIMIT
+
+
+def test_sanitize_limit_returns_value_in_range() -> None:
+    assert _sanitize_limit(10) == 10
+
+
+def test_sanitize_limit_returns_default_for_invalid() -> None:
+    assert _sanitize_limit("bad") == 20  # type: ignore[arg-type]
+
+
+# ── SupabasePersistence._as_float ─────────────────────────────────────────────
+
+def test_as_float_converts_numeric() -> None:
+    assert SupabasePersistence._as_float(1) == 1.0
+    assert SupabasePersistence._as_float("3.14") == 3.14
+
+
+def test_as_float_returns_none_for_none_and_invalid() -> None:
+    assert SupabasePersistence._as_float(None) is None
+    assert SupabasePersistence._as_float("not_a_float") is None
+
+
+# ── disabled-path shortcuts ───────────────────────────────────────────────────
+
+def test_record_consent_returns_false_when_disabled() -> None:
+    store = SupabasePersistence(url="", key="")
+    assert store.record_consent("session_1", "opt_in") is False
+
+
+def test_record_chat_audit_returns_false_when_disabled() -> None:
+    store = SupabasePersistence(url="", key="")
+    assert store.record_chat_audit(conversation_id="c1", verdict=None) is False
+
+
+def test_record_session_report_returns_false_when_disabled() -> None:
+    store = SupabasePersistence(url="", key="")
+    assert store.record_session_report(conversation_id=None, report={}) is False
+
+
+def test_withdraw_consent_returns_zeros_when_disabled() -> None:
+    store = SupabasePersistence(url="", key="")
+    result = store.withdraw_consent("s1")
+    assert result == {"tracked_conversations": 0, "deleted_conversations": 0}
+
+
+def test_get_conversation_returns_none_when_disabled() -> None:
+    store = SupabasePersistence(url="", key="")
+    assert store.get_conversation("unknown_id") is None
+
+
+# ── record_consent happy path ─────────────────────────────────────────────────
+
+def test_record_consent_writes_to_memory() -> None:
+    fake_session = _FakeSession(
+        responses=[_FakeResponse(payload=None)]
+    )
+    store = SupabasePersistence(url="https://example.supabase.co", key="k", session=fake_session)
+
+    ok = store.record_consent("session_1", "opt_in")
+
+    assert ok is True
+    call = fake_session.calls[-1]
+    assert call["url"].endswith("/rest/v1/soul_memories")
+    assert call["json"]["source"] == "consent_event"
+
+
+# ── record_chat_audit happy path ──────────────────────────────────────────────
+
+def test_record_chat_audit_writes_audit_log() -> None:
+    fake_session = _FakeSession(
+        responses=[
+            _FakeResponse(payload=[{"id": "uuid-1", "title": "conv_x"}]),  # resolve
+            _FakeResponse(payload=None),  # insert audit log
+        ]
+    )
+    store = SupabasePersistence(url="https://example.supabase.co", key="k", session=fake_session)
+
+    ok = store.record_chat_audit(
+        conversation_id="conv_x",
+        verdict={"verdict": "approve", "summary": "all good", "poav_score": 0.9},
+    )
+
+    assert ok is True
+    audit_call = fake_session.calls[-1]
+    assert audit_call["url"].endswith("/rest/v1/audit_logs")
+    assert audit_call["json"]["gate_decision"] == "approve"
+    assert audit_call["json"]["rationale"] == "all good"
