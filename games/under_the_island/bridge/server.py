@@ -230,8 +230,11 @@ def main() -> None:
         "--mode", choices=["http", "file", "both"], default="http",
         help="http: HTTP server only  |  file: file-bridge only  |  both: run both"
     )
-    parser.add_argument("--event-file", default=None, help="Override event temp file path")
-    parser.add_argument("--reply-file", default=None, help="Override reply temp file path")
+    parser.add_argument("--game-save-folder", default=None,
+                        help="Game's LocalAppData subfolder name (e.g. 'UnderTheIsland'). "
+                             "Sets default bridge file dir to %%LOCALAPPDATA%%\\<folder>.")
+    parser.add_argument("--event-file", default=None, help="Full override for event file path")
+    parser.add_argument("--reply-file", default=None, help="Full override for reply file path")
     args = parser.parse_args()
 
     _TOKEN = args.token
@@ -244,20 +247,15 @@ def main() -> None:
     print("---")
 
     if args.mode in ("file", "both"):
-        from pathlib import Path as _P
-        ev_path = _P(args.event_file) if args.event_file else None
-        rp_path = _P(args.reply_file) if args.reply_file else None
-        adapter = FileBridgeAdapter(
-            event_file=ev_path or FileBridgeAdapter.__init__.__defaults__[0],  # default
-            reply_file=rp_path or FileBridgeAdapter.__init__.__defaults__[1],
-        )
-        # Reconstruct with explicit paths if given
-        if ev_path or rp_path:
-            from games.under_the_island.bridge.event_adapter import _DEFAULT_EVENT_FILE, _DEFAULT_REPLY_FILE
-            adapter = FileBridgeAdapter(
-                event_file=ev_path or _DEFAULT_EVENT_FILE,
-                reply_file=rp_path or _DEFAULT_REPLY_FILE,
-            )
+        from games.under_the_island.bridge.event_adapter import _default_bridge_dir
+        if args.event_file:
+            ev_path = Path(args.event_file)
+            rp_path = Path(args.reply_file) if args.reply_file else ev_path.parent / "bridge_reply.json"
+        else:
+            bridge_dir = _default_bridge_dir(args.game_save_folder or "")
+            ev_path = bridge_dir / "bridge_event.json"
+            rp_path = bridge_dir / "bridge_reply.json"
+        adapter = FileBridgeAdapter(event_file=ev_path, reply_file=rp_path)
         t = threading.Thread(target=_run_file_bridge, args=(adapter,), daemon=True)
         t.start()
 

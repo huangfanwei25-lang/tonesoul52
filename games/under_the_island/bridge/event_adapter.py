@@ -77,8 +77,31 @@ class MockEventAdapter(EventAdapter):
 # Override via constructor or --event-file / --reply-file CLI flags.
 # ---------------------------------------------------------------------------
 
-_DEFAULT_EVENT_FILE = Path(tempfile.gettempdir()) / "bridge_event.json"
-_DEFAULT_REPLY_FILE = Path(tempfile.gettempdir()) / "bridge_reply.json"
+def _default_bridge_dir(game_save_folder: str = "") -> Path:
+    """Resolve the best writable directory for bridge files.
+
+    Priority (Windows):
+      1. %LOCALAPPDATA%/<game_save_folder>  — matches where GM saves ini/data files
+      2. %TEMP%                             — universal fallback
+    On non-Windows, always uses %TEMP%.
+    """
+    if game_save_folder and os.name == "nt":
+        local_appdata = os.environ.get("LOCALAPPDATA", "")
+        if local_appdata:
+            candidate = Path(local_appdata) / game_save_folder
+            try:
+                candidate.mkdir(parents=True, exist_ok=True)
+                return candidate
+            except OSError:
+                pass
+    return Path(tempfile.gettempdir())
+
+
+# Public-repo default: %TEMP% (cross-platform).
+# Override at runtime via --game-save-folder or --event-file / --reply-file.
+_DEFAULT_BRIDGE_DIR = _default_bridge_dir()
+_DEFAULT_EVENT_FILE = _DEFAULT_BRIDGE_DIR / "bridge_event.json"
+_DEFAULT_REPLY_FILE = _DEFAULT_BRIDGE_DIR / "bridge_reply.json"
 
 
 class FileBridgeAdapter(EventAdapter):
