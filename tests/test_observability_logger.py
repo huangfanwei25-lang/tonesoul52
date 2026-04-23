@@ -99,3 +99,91 @@ def test_configure_structlog_is_idempotent(tmp_path, reset_logger_state):
 
     assert first_handler_count == 2
     assert second_handler_count == 2
+
+
+# ── _default_log_dir ──────────────────────────────────────────────────────────
+
+def test_default_log_dir_ends_with_logs():
+    path = logger_mod._default_log_dir()
+    assert path.name == "logs"
+    assert path.is_absolute()
+
+
+# ── _ensure_log_dir ───────────────────────────────────────────────────────────
+
+def test_ensure_log_dir_creates_directory(tmp_path, reset_logger_state):
+    target = tmp_path / "newdir"
+    logger_mod._LOG_DIR = target
+    result = logger_mod._ensure_log_dir()
+    assert result.exists()
+    assert result.is_dir()
+
+
+def test_ensure_log_dir_sets_global_when_none(tmp_path, reset_logger_state):
+    logger_mod._LOG_DIR = None
+    # Override _default_log_dir to avoid writing into repo
+    original = logger_mod._default_log_dir
+    logger_mod._default_log_dir = lambda: tmp_path / "override"
+    try:
+        result = logger_mod._ensure_log_dir()
+        assert result == tmp_path / "override"
+    finally:
+        logger_mod._default_log_dir = original
+        logger_mod._LOG_DIR = None
+
+
+# ── _FallbackBoundLogger levels ───────────────────────────────────────────────
+
+def _make_capture_logger(name: str):
+    captured = []
+
+    class _Cap(logging.Handler):
+        def emit(self, record):
+            captured.append(json.loads(record.getMessage()))
+
+    base = logging.getLogger(name)
+    base.handlers = []
+    base.propagate = False
+    base.setLevel(logging.DEBUG)
+    base.addHandler(_Cap())
+    return logger_mod._FallbackBoundLogger(base), captured
+
+
+def test_fallback_debug_emits_correct_level():
+    log, captured = _make_capture_logger("tonesoul.test.debug")
+    log.debug("debug_event", x=1)
+    assert captured[0]["level"] == "debug"
+    assert captured[0]["x"] == 1
+
+
+def test_fallback_info_emits_correct_level():
+    log, captured = _make_capture_logger("tonesoul.test.info")
+    log.info("info_event")
+    assert captured[0]["level"] == "info"
+
+
+def test_fallback_error_emits_correct_level():
+    log, captured = _make_capture_logger("tonesoul.test.error")
+    log.error("error_event", code=500)
+    assert captured[0]["level"] == "error"
+    assert captured[0]["code"] == 500
+
+
+def test_fallback_critical_emits_correct_level():
+    log, captured = _make_capture_logger("tonesoul.test.critical")
+    log.critical("crit_event")
+    assert captured[0]["level"] == "critical"
+
+
+def test_fallback_bind_does_not_mutate_original():
+    log, _ = _make_capture_logger("tonesoul.test.bind")
+    bound = log.bind(session="s1")
+    assert "session" not in log._bindings
+    assert bound._bindings["session"] == "s1"
+
+
+# ── _JsonlFileHandler.close ───────────────────────────────────────────────────
+
+def test_jsonl_handler_close_handles_no_file(tmp_path):
+    handler = logger_mod._JsonlFileHandler(tmp_path)
+    handler.close()  # should not raise when _file is None
