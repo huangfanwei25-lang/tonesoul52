@@ -14,6 +14,11 @@ import sys
 from dataclasses import dataclass
 from typing import List, Tuple
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Commitment extractor: parse explicit and implicit commitments from user text."
+)
+
 try:
     import jieba
     import jieba.posseg as pseg

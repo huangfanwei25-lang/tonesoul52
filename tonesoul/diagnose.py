@@ -17,6 +17,11 @@ from typing import Any
 from tonesoul.receiver_posture import build_receiver_parity_readout
 from tonesoul.working_style import build_working_style_playbook
 
+__ts_layer__ = "surface"
+__ts_purpose__ = (
+    "Runtime diagnostic entry point: health, drift, and vow checks."
+)
+
 
 def _utc_now_trimmed() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")

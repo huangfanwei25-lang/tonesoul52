@@ -13,6 +13,11 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional, Tuple
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Council capability registry: declare and query what the council can deliberate on."
+)
+
 
 class CouncilRole(Enum):
     """Council 角色"""

@@ -16,6 +16,11 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Semantic graph: link memory entries by conceptual proximity and causal relationship."
+)
+
 
 class NodeType(Enum):
     """Types of semantic nodes."""

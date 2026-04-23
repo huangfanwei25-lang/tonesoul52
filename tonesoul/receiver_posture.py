@@ -2,8 +2,18 @@
 
 from __future__ import annotations
 
+
 from typing import Any
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Govern how the AI receives and frames incoming requests."
+)
+
+
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Receiver posture: builds parity readout for how agents should receive governance signals."
 
 def _lane_classification(evidence_readout_posture: dict[str, Any], lane_name: str) -> str:
     for lane in list(evidence_readout_posture.get("lanes") or []):

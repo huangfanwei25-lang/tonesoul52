@@ -19,9 +19,14 @@ Date: 2026-04-08
 
 from __future__ import annotations
 
+
 import re
 from dataclasses import dataclass
 from typing import Dict, List, Optional
+
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Grounding check: validates that agent claims are grounded in available evidence layers."
 
 # ---------------------------------------------------------------------------
 # High-risk keyword patterns

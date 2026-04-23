@@ -126,6 +126,84 @@ def _build_surface_versioning() -> dict:
     return build_surface_versioning_readout()
 
 
+def _build_code_health_posture() -> dict:
+    """Return a bounded packaging signal for layer-annotation coverage and violation count.
+
+    Reads docs/status/codebase_graph_latest.json if present; falls back to unknown
+    posture so callers always get a stable shape.
+    """
+    graph_path = _REPO_ROOT / "docs" / "status" / "codebase_graph_latest.json"
+    try:
+        with graph_path.open(encoding="utf-8") as fh:
+            data = json.load(fh)
+        summary = data.get("summary") or {}
+        ac = data.get("annotation_coverage") or {}
+        annotated = int(ac.get("self_declared_layer_count") or summary.get("self_declared_layer_count") or 0)
+        total = int(summary.get("total_modules") or 0)
+        violations = int(summary.get("total_layer_violations") or 0)
+        ratio = float(ac.get("self_declared_layer_ratio") or summary.get("self_declared_layer_ratio") or 0.0)
+        generated_at = str(data.get("generated_at") or "").strip()
+        coverage_label = f"{annotated}/{total}" if total else "unknown"
+        posture = "complete" if ratio >= 1.0 and violations == 0 else ("partial" if ratio > 0.0 else "unknown")
+        return {
+            "present": True,
+            "posture": posture,
+            "annotation_coverage": coverage_label,
+            "layer_violations": violations,
+            "generated_at": generated_at,
+            "receiver_note": (
+                "Code health is a packaging signal only. "
+                "It does not authorize governance changes or broaden layer permissions."
+            ),
+        }
+    except Exception:
+        return {
+            "present": False,
+            "posture": "unknown",
+            "annotation_coverage": "unknown",
+            "layer_violations": -1,
+            "generated_at": "",
+            "receiver_note": "codebase_graph_latest.json not readable; run analyze_codebase_graph.py to refresh.",
+        }
+
+
+def _build_open_branch_summary() -> dict:
+    """Return a short summary of remote branches not yet merged into master.
+
+    Uses git only — no external API. New agents can use this to know which
+    in-flight branches exist without reading the full git log.
+    """
+    import subprocess
+
+    def _git(*args: str) -> str:
+        r = subprocess.run(
+            ["git", "-C", str(_REPO_ROOT), *args],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
+        return r.stdout.strip()
+
+    raw = _git("branch", "-r", "--no-merged", "origin/master")
+    branches = [b.strip() for b in raw.splitlines() if b.strip()]
+    skip = {"origin/HEAD", "origin/master", "origin/main"}
+    branches = [b for b in branches if b not in skip]
+
+    summaries = []
+    for branch in branches[:8]:  # cap at 8 to keep output bounded
+        last = _git("log", "-1", "--format=%h %s", branch)
+        summaries.append({"branch": branch, "last_commit": last})
+
+    return {
+        "unmerged_branch_count": len(branches),
+        "branches": summaries,
+        "receiver_note": (
+            "These branches are not yet merged into master. "
+            "Check with the task board before touching them."
+        ),
+    }
+
+
 def _build_consumer_contract(
     *,
     readiness: dict,
@@ -346,6 +424,8 @@ def _build_tier0_payload(
         "canonical_center": _build_tier0_canonical_center(canonical_center),
         "mutation_preflight": _build_tier0_mutation_preflight(mutation_preflight),
         "consumer_contract": _build_tier0_consumer_contract(consumer_contract),
+        "open_branch_summary": _build_open_branch_summary(),
+        "code_health_posture": _build_code_health_posture(),
         "claim_boundary": {
             "current_tier": "collaborator_beta",
             "receiver_note": "Do not claim production readiness, AI consciousness, or council-as-truth.",

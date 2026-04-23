@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from tonesoul.inter_soul.negotiation import NegotiationResult, TensionNegotiator
+from tonesoul.inter_soul.negotiation import (
+    NegotiationResult,
+    TensionNegotiator,
+    _resolve_field,
+)
 from tonesoul.inter_soul.types import NegotiationOutcome, SovereigntyBoundary, TensionPacket
 
 
@@ -82,3 +86,85 @@ def test_negotiation_result_to_dict_exports_public_contract() -> None:
         "divergence_score": 0.4568,
         "explanation": "Visible divergence is preserved.",
     }
+
+
+# ── _resolve_field ────────────────────────────────────────────────────────────
+
+def test_resolve_field_reads_top_level_attribute() -> None:
+    packet = _packet(total=0.5, zone="safe")
+    assert _resolve_field(packet, "zone") == "safe"
+    assert _resolve_field(packet, "total") == 0.5
+
+
+def test_resolve_field_reads_signals_subkey() -> None:
+    packet = _packet(total=0.5, semantic_delta=0.77)
+    assert _resolve_field(packet, "signals.semantic_delta") == 0.77
+
+
+def test_resolve_field_returns_none_for_missing_attribute() -> None:
+    packet = _packet(total=0.5)
+    assert _resolve_field(packet, "nonexistent_field") is None
+
+
+def test_resolve_field_returns_none_for_missing_signal_key() -> None:
+    packet = _packet(total=0.5)
+    assert _resolve_field(packet, "signals.nonexistent_signal") is None
+
+
+# ── _compute_divergence_score and _compute_signal_gap ─────────────────────────
+
+def test_compute_divergence_score_identical_packets_returns_zero() -> None:
+    packet = _packet(total=0.5, zone="safe", lambda_state="coherent", semantic_delta=0.3)
+    score = TensionNegotiator._compute_divergence_score(packet, packet)
+    assert score == 0.0
+
+
+def test_compute_divergence_score_different_zone_adds_penalty() -> None:
+    p1 = _packet(total=0.5, zone="safe", lambda_state="coherent")
+    p2 = _packet(total=0.5, zone="risk", lambda_state="coherent")
+    score = TensionNegotiator._compute_divergence_score(p1, p2)
+    # zone_gap=0.25, contribution = 0.10 * 0.25 = 0.025
+    assert score > 0.0
+
+
+def test_compute_signal_gap_empty_signals_returns_zero() -> None:
+    p1 = TensionPacket(soul_id="s", timestamp="t", total=0.5, zone="z",
+                       lambda_state="l", signals={})
+    p2 = TensionPacket(soul_id="s", timestamp="t", total=0.5, zone="z",
+                       lambda_state="l", signals={})
+    assert TensionNegotiator._compute_signal_gap(p1, p2) == 0.0
+
+
+def test_compute_signal_gap_missing_key_in_one_packet_uses_zero() -> None:
+    p1 = TensionPacket(soul_id="s", timestamp="t", total=0.5, zone="z",
+                       lambda_state="l", signals={"x": 0.8})
+    p2 = TensionPacket(soul_id="s", timestamp="t", total=0.5, zone="z",
+                       lambda_state="l", signals={})
+    gap = TensionNegotiator._compute_signal_gap(p1, p2)
+    assert gap == 0.8  # (0.8 - 0.0) / 1
+
+
+# ── sovereign override on lambda_state ───────────────────────────────────────
+
+def test_negotiator_sovereign_override_on_lambda_state_difference() -> None:
+    negotiator = TensionNegotiator(
+        SovereigntyBoundary(frozenset({"lambda_state"}), frozenset())
+    )
+    result = negotiator.negotiate(
+        _packet(total=0.5, lambda_state="coherent"),
+        _packet(total=0.5, lambda_state="fragmented"),
+    )
+    assert result.outcome is NegotiationOutcome.SOVEREIGN_OVERRIDE
+    assert "lambda_state" in result.explanation
+
+
+def test_negotiator_no_override_when_boundary_fields_match() -> None:
+    negotiator = TensionNegotiator(
+        SovereigntyBoundary(frozenset({"zone", "lambda_state"}), frozenset())
+    )
+    result = negotiator.negotiate(
+        _packet(total=0.5, zone="safe", lambda_state="coherent"),
+        _packet(total=0.5, zone="safe", lambda_state="coherent"),
+    )
+    # Same boundary fields, so no sovereign override — outcome depends on divergence
+    assert result.outcome is not NegotiationOutcome.SOVEREIGN_OVERRIDE

@@ -21,6 +21,7 @@ Design Rules:
 
 from __future__ import annotations
 
+
 from datetime import datetime, timezone
 from typing import Any
 
@@ -32,6 +33,10 @@ from tonesoul.hot_memory import (
 )
 from tonesoul.repo_state_awareness import build_repo_state_awareness
 from tonesoul.surface_versioning import build_surface_versioning_readout
+
+
+__ts_layer__ = "observability"
+__ts_purpose__ = "Observer window: renders the stable/contested/stale zone summary for agent orientation."
 
 # ---------------------------------------------------------------------------
 # Thresholds (tuned conservatively; only raise after repeated validation)

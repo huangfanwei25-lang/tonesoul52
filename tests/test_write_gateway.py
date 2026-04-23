@@ -7,7 +7,15 @@ from pathlib import Path
 import pytest
 
 from tonesoul.memory.soul_db import MemorySource, SqliteSoulDB
-from tonesoul.memory.write_gateway import MemoryWriteGateway, MemoryWriteRejectedError
+from tonesoul.memory.write_gateway import (
+    MemoryWriteGateway,
+    MemoryWriteRejectedError,
+    MemoryWriteResult,
+    _has_evidence,
+    _has_provenance,
+    _has_strong_promotion_gate,
+    _intentional_forgetting_gate,
+)
 
 
 def test_write_payload_rejects_missing_provenance(tmp_path: Path) -> None:
@@ -193,3 +201,164 @@ def test_write_payload_rejects_vow_review_gate_without_review_basis(tmp_path: Pa
         )
 
     assert excinfo.value.reasons == ["subjectivity_requires_review"]
+
+
+# ── _has_evidence ─────────────────────────────────────────────────────────────
+
+def test_has_evidence_from_evidence_ids() -> None:
+    assert _has_evidence({"evidence_ids": ["id_1"]}) is True
+    assert _has_evidence({"evidence_ids": ["  "]}) is False
+    assert _has_evidence({"evidence_ids": []}) is False
+
+
+def test_has_evidence_from_evidence_list() -> None:
+    assert _has_evidence({"evidence": ["artifact"]}) is True
+    assert _has_evidence({"evidence": []}) is False
+
+
+def test_has_evidence_from_transcript_contract_records() -> None:
+    payload = {
+        "transcript": {
+            "multi_agent_contract": {
+                "records": [{"evidence": ["trace://one"]}]
+            }
+        }
+    }
+    assert _has_evidence(payload) is True
+
+
+def test_has_evidence_returns_false_for_empty_payload() -> None:
+    assert _has_evidence({}) is False
+
+
+# ── _has_provenance ───────────────────────────────────────────────────────────
+
+def test_has_provenance_from_intent_id() -> None:
+    assert _has_provenance({"intent_id": "abc"}) is True
+    assert _has_provenance({"intent_id": "  "}) is False
+
+
+def test_has_provenance_from_genesis_dict() -> None:
+    assert _has_provenance({"genesis": {"source": "test"}}) is True
+    assert _has_provenance({"genesis": {}}) is False
+
+
+def test_has_provenance_from_transcript() -> None:
+    payload = {"transcript": {"intent_id": "tx-1"}}
+    assert _has_provenance(payload) is True
+
+
+def test_has_provenance_returns_false_for_empty() -> None:
+    assert _has_provenance({}) is False
+
+
+# ── _intentional_forgetting_gate ──────────────────────────────────────────────
+
+def test_forgetting_gate_bypasses_handoff_types() -> None:
+    for t in ("handoff", "crystal", "audit", "governance_retro"):
+        keep, reasons = _intentional_forgetting_gate({"type": t, "content": ""})
+        assert keep is True
+        assert reasons == []
+
+
+def test_forgetting_gate_rejects_short_content() -> None:
+    keep, reasons = _intentional_forgetting_gate({"content": "hi"})
+    assert keep is False
+    assert "content_too_short" in reasons
+
+
+def test_forgetting_gate_rejects_ephemeral_tag() -> None:
+    keep, reasons = _intentional_forgetting_gate({
+        "content": "sufficient content to pass length check",
+        "tags": ["ephemeral"],
+    })
+    assert keep is False
+    assert "ephemeral_tag" in reasons
+
+
+def test_forgetting_gate_rejects_passive_noise() -> None:
+    keep, reasons = _intentional_forgetting_gate({
+        "content": "sufficient content to pass length check",
+        "observation_mode": "passive_noise",
+    })
+    assert keep is False
+    assert "passive_noise" in reasons
+
+
+def test_forgetting_gate_passes_normal_content() -> None:
+    keep, reasons = _intentional_forgetting_gate({"content": "sufficient content here"})
+    assert keep is True
+    assert reasons == []
+
+
+# ── _has_strong_promotion_gate ────────────────────────────────────────────────
+
+def test_strong_promotion_gate_string_reviewed() -> None:
+    assert _has_strong_promotion_gate({"promotion_gate": "approved"}) is True
+    assert _has_strong_promotion_gate({"promotion_gate": "pending"}) is False
+
+
+def test_strong_promotion_gate_dict_with_status_and_basis() -> None:
+    gate = {"status": "reviewed", "review_basis": "consolidation confirmed"}
+    assert _has_strong_promotion_gate({"promotion_gate": gate}) is True
+
+
+def test_strong_promotion_gate_dict_without_basis_fails() -> None:
+    gate = {"status": "reviewed"}
+    assert _has_strong_promotion_gate({"promotion_gate": gate}) is False
+
+
+def test_strong_promotion_gate_reviewed_by_list() -> None:
+    gate = {"reviewed_by": ["alice", "bob"], "review_basis": "manual check"}
+    assert _has_strong_promotion_gate({"promotion_gate": gate}) is True
+
+
+# ── MemoryWriteRejectedError ──────────────────────────────────────────────────
+
+def test_memory_write_rejected_error_formats_message() -> None:
+    exc = MemoryWriteRejectedError(["missing_evidence", "missing_provenance"])
+    assert exc.reasons == ["missing_evidence", "missing_provenance"]
+    assert "missing_evidence" in str(exc)
+
+
+def test_memory_write_rejected_error_empty_reasons() -> None:
+    exc = MemoryWriteRejectedError([])
+    assert exc.reasons == []
+    assert str(exc) == "memory write rejected"
+
+
+# ── MemoryWriteResult ─────────────────────────────────────────────────────────
+
+def test_memory_write_result_defaults() -> None:
+    result = MemoryWriteResult()
+    assert result.written == 0
+    assert result.skipped == 0
+    assert result.rejected == 0
+    assert result.record_ids == []
+    assert result.reject_reasons == []
+
+
+# ── MemoryWriteGateway._merge_tags ───────────────────────────────────────────
+
+def test_merge_tags_deduplicates_and_always_includes_defaults(tmp_path: Path) -> None:
+    gw = MemoryWriteGateway(SqliteSoulDB(db_path=tmp_path / "soul.db"))
+    tags = gw._merge_tags(["alpha", "environment", "alpha"], observation_mode="feed")
+    assert "environment" in tags
+    assert "perception" in tags
+    assert "observation:feed" in tags
+    assert tags.count("alpha") == 1
+
+
+def test_merge_tags_empty_input_adds_defaults(tmp_path: Path) -> None:
+    gw = MemoryWriteGateway(SqliteSoulDB(db_path=tmp_path / "soul.db"))
+    tags = gw._merge_tags(None)
+    assert "environment" in tags
+    assert "perception" in tags
+
+
+# ── MemoryWriteGateway.write_payload type guard ───────────────────────────────
+
+def test_write_payload_raises_type_error_for_non_dict(tmp_path: Path) -> None:
+    gw = MemoryWriteGateway(SqliteSoulDB(db_path=tmp_path / "soul.db"))
+    with pytest.raises(TypeError):
+        gw.write_payload(MemorySource.CUSTOM, "not a dict")  # type: ignore[arg-type]

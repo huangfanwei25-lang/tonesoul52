@@ -17,6 +17,11 @@ from .schema import (
     utc_now,
 )
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "YSTM governance: update node what/where with decoupled change records."
+)
+
 
 def _append_update(node: Node, update_id: str) -> Node:
     updates = list(node.audit.updates) + [update_id]

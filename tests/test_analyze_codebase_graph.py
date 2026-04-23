@@ -539,3 +539,57 @@ class TestCLI:
             ]
         )
         assert ret == 1
+
+
+# ---------------------------------------------------------------------------
+# Integration guard: live tonesoul codebase must stay at 100% annotation
+# ---------------------------------------------------------------------------
+class TestLiveCodebaseAnnotationGuard:
+    """Regression guards that run against the real tonesoul package.
+
+    These fire if a new module is added without a __ts_layer__ declaration,
+    or if a reclassification creates a new layer violation.
+    """
+
+    def _live_report(self) -> dict:
+        """Scan tonesoul/ and return the graph report."""
+        modules = acg.scan_all_modules("tonesoul", REPO_ROOT)
+        edges = acg.build_edges(modules)
+        degree = acg.compute_degree(modules, edges)
+        cycles = acg.find_cycles(edges)
+        violations = acg.find_layer_violations(modules, edges)
+        orphans = acg.find_orphans(modules, degree)
+        coupling = acg.compute_subpackage_coupling(modules, edges)
+        communities = acg.detect_communities(modules, edges)
+        return acg.build_report(
+            modules, edges, degree, cycles, violations, orphans, coupling, communities, "tonesoul"
+        )
+
+    def test_zero_layer_violations(self) -> None:
+        """No module may import from a layer above it (ALLOWED_DEPS enforcement)."""
+        report = self._live_report()
+        violations = report.get("layer_violations", [])
+        assert violations == [], (
+            f"Layer violations found: {violations}\n"
+            "Fix by adjusting __ts_layer__ declarations or ALLOWED_DEPS."
+        )
+
+    def test_zero_cycles(self) -> None:
+        """Import cycles between tonesoul modules must remain absent."""
+        report = self._live_report()
+        cycles = report.get("cycles", [])
+        assert cycles == [], f"Import cycles detected: {cycles}"
+
+    def test_annotation_coverage_is_complete(self) -> None:
+        """Every tonesoul module must carry __ts_layer__ + __ts_purpose__."""
+        report = self._live_report()
+        cov = report.get("annotation_coverage", {})
+        total = report["summary"]["total_modules"]
+        declared = cov.get("self_declared_layer_count", 0)
+        unannotated = total - declared
+
+        assert unannotated == 0, (
+            f"{unannotated} module(s) missing __ts_layer__ self-declaration. "
+            "Add __ts_layer__ = '<layer>' and __ts_purpose__ = '...' to each module "
+            "AFTER all import statements."
+        )

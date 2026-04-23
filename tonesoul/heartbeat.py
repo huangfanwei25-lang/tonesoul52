@@ -11,6 +11,11 @@ from memory.genesis import Genesis
 from tonesoul.gateway import GatewayClient, GatewaySession
 from tonesoul.openclaw_auditor import OpenClawAuditor, OpenClawAuditReport
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Periodic heartbeat probe to validate AI session continuity."
+)
+
 CouncilCheck = Callable[[Mapping[str, Any]], Any]
 SleepFunc = Callable[[float], Awaitable[None]]
 
@@ -221,4 +226,52 @@ class ResponsibilityHeartbeat:
         }
 
 
-__all__ = ["HeartbeatResult", "ResponsibilityHeartbeat"]
+class Heartbeat:
+    """Lightweight file-backed heartbeat — works without Redis or gateway.
+
+    Writes a pulse record to a local JSONL file on each call to `pulse()` and
+    reads it back in `status()` so the result survives session restart.
+    """
+
+    import json as _json
+    import os as _os
+    import pathlib as _pathlib
+
+    _DEFAULT_PATH = ".aegis/heartbeat.jsonl"
+
+    def __init__(self, path: Optional[str] = None) -> None:
+        import os, pathlib
+        self._path = pathlib.Path(path or self._DEFAULT_PATH)
+        os.makedirs(str(self._path.parent), exist_ok=True)
+
+    def pulse(self, agent: str = "unknown", note: str = "") -> dict[str, Any]:
+        import json
+        record: dict[str, Any] = {
+            "ts": _utc_now(),
+            "agent": agent,
+            "note": note,
+            "id": str(uuid4()),
+        }
+        with open(self._path, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record) + "\n")
+        return record
+
+    def status(self) -> dict[str, Any]:
+        import json
+        if not self._path.exists():
+            return {"alive": False, "last_pulse": None, "pulse_count": 0}
+        records: list[dict[str, Any]] = []
+        try:
+            for line in self._path.read_text(encoding="utf-8").splitlines():
+                line = line.strip()
+                if line:
+                    records.append(json.loads(line))
+        except Exception:
+            return {"alive": False, "last_pulse": None, "pulse_count": 0, "error": "read_failed"}
+        if not records:
+            return {"alive": False, "last_pulse": None, "pulse_count": 0}
+        last = records[-1]
+        return {"alive": True, "last_pulse": last["ts"], "pulse_count": len(records), "last_agent": last.get("agent")}
+
+
+__all__ = ["HeartbeatResult", "ResponsibilityHeartbeat", "Heartbeat"]

@@ -13,6 +13,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Reflex config: define and load reflex rule sets and their trigger conditions."
+)
+
 logger = logging.getLogger(__name__)
 
 _DEFAULT_CONFIG_NAME = "reflex_config.json"

@@ -10,6 +10,11 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Dict, List, Optional
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Session reporter: produce structured summaries of tonebridge session state."
+)
+
 
 @dataclass
 class TurningPoint:

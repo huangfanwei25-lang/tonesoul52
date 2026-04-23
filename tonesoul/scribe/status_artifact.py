@@ -7,6 +7,11 @@ from typing import Any
 from tonesoul.memory.subjectivity_handoff import build_handoff_surface
 from tonesoul.scribe.scribe_engine import ScribeDraftResult
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Status artifact: produce versioned status documents from session state."
+)
+
 DEFAULT_STATUS_OUT = Path("docs/status/scribe_status_latest.json")
 _REPRESENTATION_ROUTE_MARKERS = ("log entry", "date front matter")
 _ROLE_BOUNDARY_ROUTE_MARKERS = ("the user",)

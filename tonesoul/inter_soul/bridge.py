@@ -5,6 +5,11 @@ from typing import Optional, Protocol, runtime_checkable
 
 from .types import NegotiationOutcome, RuptureNotice, SovereigntyBoundary, TensionPacket
 
+__ts_layer__ = "surface"
+__ts_purpose__ = (
+    "Inter-soul bridge: establish a shared communication channel between two AI agents."
+)
+
 
 def _clone_packet(packet: TensionPacket) -> TensionPacket:
     return TensionPacket.from_dict(packet.to_dict())

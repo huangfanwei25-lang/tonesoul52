@@ -1,11 +1,68 @@
 from __future__ import annotations
 
+import pytest
+
 from tonesoul.inter_soul.types import (
     NegotiationOutcome,
     RuptureNotice,
     SovereigntyBoundary,
     TensionPacket,
+    _clamp_unit,
+    _normalize_signals,
+    _utcnow_iso,
 )
+
+
+# ── _utcnow_iso ───────────────────────────────────────────────────────────────
+
+class TestUtcnowIso:
+    def test_returns_string(self):
+        assert isinstance(_utcnow_iso(), str)
+
+    def test_ends_with_z(self):
+        assert _utcnow_iso().endswith("Z")
+
+
+# ── _clamp_unit ───────────────────────────────────────────────────────────────
+
+class TestClampUnit:
+    def test_normal_value(self):
+        assert _clamp_unit(0.5) == pytest.approx(0.5)
+
+    def test_clamps_above_one(self):
+        assert _clamp_unit(1.5) == pytest.approx(1.0)
+
+    def test_clamps_below_zero(self):
+        assert _clamp_unit(-0.5) == pytest.approx(0.0)
+
+    def test_none_returns_zero(self):
+        assert _clamp_unit(None) == pytest.approx(0.0)
+
+    def test_string_numeric(self):
+        assert _clamp_unit("0.7") == pytest.approx(0.7)
+
+
+# ── _normalize_signals ────────────────────────────────────────────────────────
+
+class TestNormalizeSignals:
+    def test_numeric_values_kept(self):
+        result = _normalize_signals({"tension": 0.5, "drift": 0.3})
+        assert result["tension"] == pytest.approx(0.5)
+
+    def test_non_numeric_filtered(self):
+        result = _normalize_signals({"a": "bad", "b": 0.4})
+        assert "a" not in result
+        assert result["b"] == pytest.approx(0.4)
+
+    def test_none_returns_empty(self):
+        assert _normalize_signals(None) == {}
+
+    def test_non_mapping_returns_empty(self):
+        assert _normalize_signals([1, 2]) == {}
+
+    def test_bool_converted(self):
+        result = _normalize_signals({"active": True})
+        assert result["active"] == pytest.approx(1.0)
 
 
 def _packet() -> TensionPacket:

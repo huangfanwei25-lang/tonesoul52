@@ -3,6 +3,11 @@ from __future__ import annotations
 from collections import Counter
 from typing import Dict, Iterable, Optional
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Memory stats: report counts, sizes, and freshness distributions for memory stores."
+)
+
 
 def _extract_verdict(entry: dict) -> Optional[str]:
     if not isinstance(entry, dict):

@@ -23,6 +23,11 @@ from tonesoul.scribe.narrative_builder import (
     ScribeTensionRecord,
 )
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Scribe engine: orchestrate the narrative and artifact generation pipeline."
+)
+
 logger = logging.getLogger(__name__)
 
 _SCRIBE_ALLOWED_FALLBACK_FAMILY_TOKENS = (

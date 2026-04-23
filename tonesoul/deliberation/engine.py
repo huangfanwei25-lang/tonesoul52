@@ -30,6 +30,11 @@ from .types import (
     ViewPoint,
 )
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Deliberation engine: orchestrate multi-round perspective exchanges toward a verdict."
+)
+
 
 class InternalDeliberation:
     """

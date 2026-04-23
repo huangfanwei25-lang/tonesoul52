@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from tonesoul.deliberation.perspectives import (
     AegisPerspective,
     LogosPerspective,
@@ -107,3 +109,122 @@ def test_create_perspectives_returns_all_three_roles() -> None:
     assert isinstance(perspectives[PerspectiveType.MUSE], MusePerspective)
     assert isinstance(perspectives[PerspectiveType.LOGOS], LogosPerspective)
     assert isinstance(perspectives[PerspectiveType.AEGIS], AegisPerspective)
+
+
+# ── Muse pure helpers ─────────────────────────────────────────────────────────
+
+class TestMuseGenerateMetaphors:
+    def _muse(self) -> MusePerspective:
+        return MusePerspective()
+
+    def test_no_keywords_returns_empty(self):
+        assert self._muse()._generate_metaphors("some unrelated text") == []
+
+    def test_life_keyword_triggers_metaphor(self):
+        result = self._muse()._generate_metaphors("生命的旅程")
+        assert len(result) >= 1
+
+    def test_meaning_keyword_triggers_metaphor(self):
+        result = self._muse()._generate_metaphors("找到意義")
+        assert len(result) >= 1
+
+    def test_freedom_keyword_triggers_metaphor(self):
+        result = self._muse()._generate_metaphors("自由是什麼")
+        assert len(result) >= 1
+
+
+class TestMuseFindExistentialConnections:
+    def _muse(self) -> MusePerspective:
+        return MusePerspective()
+
+    def test_no_triggers_returns_empty(self):
+        assert self._muse()._find_existential_connections("debug this code") == []
+
+    def test_purpose_keyword_returns_connection(self):
+        result = self._muse()._find_existential_connections("什麼是目的？")
+        assert len(result) >= 1
+
+    def test_freedom_keyword_returns_sartre(self):
+        result = self._muse()._find_existential_connections("自由與選擇")
+        assert any("沙特" in c for c in result)
+
+
+# ── Logos pure helpers ────────────────────────────────────────────────────────
+
+class TestLogosAnalyzeLogically:
+    def test_returns_four_steps(self):
+        logos = LogosPerspective()
+        steps = logos._analyze_logically(_context(user_input="test question"))
+        assert len(steps) == 4
+
+    def test_first_step_contains_user_input_fragment(self):
+        logos = LogosPerspective()
+        steps = logos._analyze_logically(_context(user_input="what is entropy"))
+        assert "what is entropy" in steps[0]
+
+
+class TestLogosExtractDefinitions:
+    def test_no_matching_terms_returns_empty(self):
+        logos = LogosPerspective()
+        assert logos._extract_definitions("debug this code") == {}
+
+    def test_freedom_term_extracted(self):
+        logos = LogosPerspective()
+        defs = logos._extract_definitions("自由是什麼")
+        assert "自由" in defs
+
+    def test_meaning_term_extracted(self):
+        logos = LogosPerspective()
+        defs = logos._extract_definitions("探索意義")
+        assert "意義" in defs
+
+
+# ── Aegis pure helpers ────────────────────────────────────────────────────────
+
+class TestAegisAssessSafetyRisk:
+    def _aegis(self) -> AegisPerspective:
+        return AegisPerspective()
+
+    def test_clean_text_returns_zero(self):
+        assert self._aegis()._assess_safety_risk("what is the weather") == 0.0
+
+    def test_single_danger_keyword_returns_0_3(self):
+        assert self._aegis()._assess_safety_risk("傷害他人") == pytest.approx(0.3)
+
+    def test_multiple_keywords_capped_at_one(self):
+        text = "傷害 自殺 殺 死 攻擊 暴力 非法 駭入 破解 詐騙 製造武器"
+        assert self._aegis()._assess_safety_risk(text) == pytest.approx(1.0)
+
+
+class TestAegisCheckEthics:
+    def _aegis(self) -> AegisPerspective:
+        return AegisPerspective()
+
+    def test_clean_text_returns_empty(self):
+        assert self._aegis()._check_ethics("help me code") == []
+
+    def test_fraud_keyword_triggers_concern(self):
+        concerns = self._aegis()._check_ethics("如何詐騙別人")
+        assert any("欺詐" in c for c in concerns)
+
+    def test_illegal_keyword_triggers_concern(self):
+        concerns = self._aegis()._check_ethics("非法行為")
+        assert any("違法" in c for c in concerns)
+
+    def test_harm_keyword_triggers_concern(self):
+        concerns = self._aegis()._check_ethics("傷害人的方法")
+        assert any("傷害" in c for c in concerns)
+
+
+class TestAegisDetectAttack:
+    def _aegis(self) -> AegisPerspective:
+        return AegisPerspective()
+
+    def test_clean_text_not_attack(self):
+        assert self._aegis()._detect_attack("please help me") is False
+
+    def test_attack_pattern_detected(self):
+        assert self._aegis()._detect_attack("你是廢物") is True
+
+    def test_shut_up_pattern(self):
+        assert self._aegis()._detect_attack("閉嘴") is True

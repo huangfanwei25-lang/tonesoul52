@@ -2,8 +2,18 @@
 
 from __future__ import annotations
 
+
 from typing import Any
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Pre-flight validation before publishing or pushing content."
+)
+
+
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Publish/push preflight: validates outward actions (push, post) against governance state."
 
 def build_publish_push_preflight(
     *,

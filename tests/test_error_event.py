@@ -113,3 +113,65 @@ def test_error_ledger_pattern_analysis_handles_empty_ledger(tmp_path):
     ledger = ErrorLedger(str(tmp_path / "error_ledger.jsonl"))
 
     assert ledger.pattern_analysis() == {"total": 0, "patterns": []}
+
+
+# ── ErrorEvent boundary conditions ────────────────────────────────────────────
+
+def test_was_harmful_false_when_deltas_within_thresholds():
+    event = ErrorEvent(
+        behavior="minor",
+        context="ctx",
+        tension_before=0.1,
+        tension_after=0.25,   # delta = 0.15 — NOT > 0.2
+        stability_before=0.9,
+        stability_after=0.75,  # delta = -0.15 — NOT < -0.2
+    )
+    assert event.was_harmful() is False
+
+
+def test_was_harmful_triggered_by_stability_drop():
+    event = ErrorEvent(
+        behavior="issue",
+        context="ctx",
+        tension_before=0.3,
+        tension_after=0.4,   # delta = 0.1 — safe
+        stability_before=0.9,
+        stability_after=0.65,  # delta = -0.25 — harmful
+    )
+    assert event.was_harmful() is True
+
+
+def test_event_id_uses_provided_value():
+    event = ErrorEvent(behavior="b", context="c", event_id="custom-id-00")
+    assert event.event_id == "custom-id-00"
+
+
+def test_error_event_default_fields():
+    event = ErrorEvent(behavior="b", context="c")
+    assert event.behavior_type == "response"
+    assert event.strategy_type == "adjust"
+    assert event.reviewed is False
+    assert event.fs_delta == {}
+
+
+# ── ErrorLedger.record return value ──────────────────────────────────────────
+
+def test_record_returns_event_id(tmp_path):
+    ledger = ErrorLedger(str(tmp_path / "ledger.jsonl"))
+    event = ErrorEvent(behavior="b", context="c")
+    returned = ledger.record(event)
+    assert returned == event.event_id
+
+
+# ── _generate_insight with no harmful events ──────────────────────────────────
+
+def test_generate_insight_no_harmful_events(tmp_path):
+    ledger = ErrorLedger(str(tmp_path / "ledger.jsonl"))
+    ledger.record(ErrorEvent(
+        behavior="fine output",
+        context="routine context",
+        tension_before=0.1,
+        tension_after=0.15,
+    ))
+    analysis = ledger.pattern_analysis()
+    assert analysis["insight"] == "No harmful patterns detected."

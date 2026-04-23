@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import replace
 
 from tonesoul.ystm.diff import (
+    SemanticDiff,
     compute_batch_diff,
     compute_node_diff,
     create_rollback_request,
@@ -76,3 +77,54 @@ def test_create_rollback_request_defaults_to_pending_status() -> None:
     assert rollback.target_patch_id == "patch-7"
     assert rollback.requested_by == "operator"
     assert rollback.status == "pending"
+
+
+def test_create_rollback_request_has_unique_id_and_timestamp() -> None:
+    r1 = create_rollback_request("patch-1", "operator", "reason-a")
+    r2 = create_rollback_request("patch-2", "operator", "reason-b")
+
+    assert r1.id.startswith("rollback_")
+    assert r2.id.startswith("rollback_")
+    assert r1.id != r2.id
+    assert r1.timestamp != "" and r2.timestamp != ""
+    assert r1.rationale == "reason-a"
+    assert r2.rationale == "reason-b"
+
+
+def test_summarize_diff_empty_changes() -> None:
+    diff = SemanticDiff(
+        id="diff-empty",
+        created_at="2026-01-01T00:00:00Z",
+        source_patch_id=None,
+        changes=[],
+        trace_level="standard",
+    )
+    summary = summarize_diff(diff)
+
+    assert summary["diff_id"] == "diff-empty"
+    assert summary["total_changes"] == 0
+    assert summary["by_type"] == {}
+    assert summary["by_grade"] == {}
+    assert summary["affected_nodes"] == []
+    assert summary["source_patch_id"] is None
+    assert summary["trace_level"] == "standard"
+
+
+def test_compute_node_diff_none_both_returns_none() -> None:
+    assert compute_node_diff(None, None) is None
+
+
+def test_compute_batch_diff_empty_maps_produce_empty_diff() -> None:
+    diff = compute_batch_diff({}, {})
+    assert diff.changes == []
+    summary = summarize_diff(diff)
+    assert summary["total_changes"] == 0
+
+
+def test_compute_batch_diff_identical_nodes_produce_no_changes() -> None:
+    node_a, node_b = _nodes()
+    diff = compute_batch_diff(
+        {"a": node_a, "b": node_b},
+        {"a": node_a, "b": node_b},
+    )
+    assert diff.changes == []

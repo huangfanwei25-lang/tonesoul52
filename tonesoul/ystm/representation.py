@@ -22,6 +22,11 @@ from .schema import (
     utc_now,
 )
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "YSTM representation: build typed Node objects from normalized segments and configs."
+)
+
 
 @dataclass(frozen=True)
 class EmbeddingConfig:

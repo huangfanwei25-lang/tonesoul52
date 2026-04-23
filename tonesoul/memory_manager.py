@@ -8,6 +8,15 @@ import yaml
 
 from .ystm.schema import stable_hash, utc_now
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Orchestrate short-term and long-term memory read/write operations."
+)
+
+
+
+__ts_layer__ = "memory"
+__ts_purpose__ = "Memory manager: coordinates workspace consolidation, archival, and YSTM report lifecycle."
 
 @dataclass
 class RunPointers:

@@ -8,6 +8,11 @@ from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Memory crystallizer: solidify volatile session learnings into stable memory entries."
+)
+
 # ---------------------------------------------------------------------------
 # ETCL Seed Stage (T0-T6) — see law/docs/v1.2/vol-2.md §2
 # ---------------------------------------------------------------------------

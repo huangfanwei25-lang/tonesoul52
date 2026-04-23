@@ -15,6 +15,7 @@ The compressor outputs a ratio in [0.35, 1.0].
 
 from __future__ import annotations
 
+
 import math
 from dataclasses import dataclass
 from typing import Optional
@@ -22,6 +23,10 @@ from typing import Optional
 from .nonlinear_predictor import PredictionResult
 from .semantic_control import LambdaState, SemanticZone
 from .work_classifier import ConstraintProfile, WorkCategory, get_profile
+
+
+__ts_layer__ = "domain"
+__ts_purpose__ = "Variance compressor: dynamically clips output variance for governance stability."
 
 # ── γ contribution tables ────────────────────────────────────────
 

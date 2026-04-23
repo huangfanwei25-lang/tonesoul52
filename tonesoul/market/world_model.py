@@ -14,6 +14,11 @@ from typing import Dict, List, Optional
 from tonesoul.llm.ollama_client import create_ollama_client
 from tonesoul.market.analyzer import QuarterlySnapshot
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "World model: maintain a structured representation of the current domain state."
+)
+
 logger = logging.getLogger(__name__)
 
 STANCE_BULLISH = "bullish"

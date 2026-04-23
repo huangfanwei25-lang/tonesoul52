@@ -3,6 +3,11 @@ from typing import Dict, Sequence
 
 from .schema import AuditLog, UpdateGate, UpdateRecord, utc_now
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "YSTM audit log: build and serialize governance update records for the terrain pipeline."
+)
+
 
 def _slug(text: str) -> str:
     slug = re.sub(r"[^a-zA-Z0-9]+", "_", text).strip("_").lower()

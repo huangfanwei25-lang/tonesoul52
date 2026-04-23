@@ -3,7 +3,249 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from tonesoul.dream_observability import build_dashboard, render_html
+import pytest
+
+from tonesoul.dream_observability import (
+    _compact_timestamp,
+    _count_convergence_events,
+    _entry_payload,
+    _iso_now,
+    _metric_trend,
+    _path_get,
+    _round_or_none,
+    _summarize_metric,
+    _to_float,
+    _to_int,
+    _truncate_points,
+    build_dashboard,
+    render_html,
+)
+
+
+# ── _iso_now ──────────────────────────────────────────────────────────────────
+
+class TestIsoNow:
+    def test_returns_string(self):
+        assert isinstance(_iso_now(), str)
+
+    def test_ends_with_z(self):
+        assert _iso_now().endswith("Z")
+
+
+# ── _to_float ─────────────────────────────────────────────────────────────────
+
+class TestToFloat:
+    def test_int_converted(self):
+        assert _to_float(3) == pytest.approx(3.0)
+
+    def test_float_passthrough(self):
+        assert _to_float(0.5) == pytest.approx(0.5)
+
+    def test_string_float(self):
+        assert _to_float("1.5") == pytest.approx(1.5)
+
+    def test_none_returns_none(self):
+        assert _to_float(None) is None
+
+    def test_invalid_returns_none(self):
+        assert _to_float("bad") is None
+
+
+# ── _to_int ───────────────────────────────────────────────────────────────────
+
+class TestToInt:
+    def test_int_passthrough(self):
+        assert _to_int(5) == 5
+
+    def test_string_int(self):
+        assert _to_int("7") == 7
+
+    def test_float_truncated(self):
+        assert _to_int(3.9) == 3
+
+    def test_none_returns_none(self):
+        assert _to_int(None) is None
+
+    def test_empty_string_returns_none(self):
+        assert _to_int("") is None
+
+    def test_invalid_returns_none(self):
+        assert _to_int("abc") is None
+
+
+# ── _round_or_none ────────────────────────────────────────────────────────────
+
+class TestRoundOrNone:
+    def test_rounds_to_digits(self):
+        assert _round_or_none(3.14159, 2) == pytest.approx(3.14)
+
+    def test_default_4_digits(self):
+        assert _round_or_none(1.23456789) == pytest.approx(1.2346)
+
+    def test_none_returns_none(self):
+        assert _round_or_none(None) is None
+
+    def test_integer_value(self):
+        assert _round_or_none(5) == pytest.approx(5.0)
+
+
+# ── _compact_timestamp ────────────────────────────────────────────────────────
+
+class TestCompactTimestamp:
+    def test_iso_format_compacted(self):
+        result = _compact_timestamp("2026-01-15T14:30:00Z")
+        assert result == "2026-01-15 14:30:00"
+
+    def test_empty_returns_na(self):
+        assert _compact_timestamp("") == "n/a"
+
+    def test_none_returns_na(self):
+        assert _compact_timestamp(None) == "n/a"
+
+    def test_short_value_passthrough(self):
+        result = _compact_timestamp("abc")
+        assert result == "abc"
+
+
+# ── _path_get ─────────────────────────────────────────────────────────────────
+
+class TestPathGet:
+    def test_single_key(self):
+        assert _path_get({"a": 1}, ["a"]) == 1
+
+    def test_nested_keys(self):
+        payload = {"a": {"b": {"c": "found"}}}
+        assert _path_get(payload, ["a", "b", "c"]) == "found"
+
+    def test_missing_key_returns_none(self):
+        assert _path_get({"a": 1}, ["b"]) is None
+
+    def test_non_dict_intermediate_returns_none(self):
+        assert _path_get({"a": "not-a-dict"}, ["a", "b"]) is None
+
+    def test_empty_path_returns_payload(self):
+        assert _path_get({"a": 1}, []) == {"a": 1}
+
+
+# ── _entry_payload ────────────────────────────────────────────────────────────
+
+class TestEntryPayload:
+    def test_extracts_payload_key(self):
+        row = {"payload": {"k": "v"}, "other": "x"}
+        assert _entry_payload(row) == {"k": "v"}
+
+    def test_non_dict_payload_returns_row(self):
+        row = {"payload": "string", "k": "v"}
+        assert _entry_payload(row) == row
+
+    def test_missing_payload_returns_row(self):
+        row = {"k": "v"}
+        assert _entry_payload(row) == row
+
+
+# ── _truncate_points ──────────────────────────────────────────────────────────
+
+class TestTruncatePoints:
+    def _pts(self, values):
+        return [{"value": v} for v in values]
+
+    def test_keeps_last_n(self):
+        pts = self._pts([1, 2, 3, 4, 5])
+        result = _truncate_points(pts, 3)
+        assert [p["value"] for p in result] == [3, 4, 5]
+
+    def test_max_larger_than_list(self):
+        pts = self._pts([1, 2])
+        assert len(_truncate_points(pts, 10)) == 2
+
+    def test_max_zero_clamps_to_one(self):
+        pts = self._pts([1, 2, 3])
+        result = _truncate_points(pts, 0)
+        assert len(result) == 1
+
+    def test_empty_list(self):
+        assert _truncate_points([], 5) == []
+
+
+# ── _metric_trend ─────────────────────────────────────────────────────────────
+
+class TestMetricTrend:
+    def _pts(self, values):
+        return [{"value": v} for v in values]
+
+    def test_insufficient_single_point(self):
+        assert _metric_trend(self._pts([0.5])) == "insufficient"
+
+    def test_empty_returns_insufficient(self):
+        assert _metric_trend([]) == "insufficient"
+
+    def test_rising(self):
+        assert _metric_trend(self._pts([0.1, 0.2, 0.8])) == "rising"
+
+    def test_falling(self):
+        assert _metric_trend(self._pts([0.9, 0.7, 0.2])) == "falling"
+
+    def test_stable(self):
+        assert _metric_trend(self._pts([0.5, 0.5, 0.5])) == "stable"
+
+    def test_two_points_rising(self):
+        assert _metric_trend(self._pts([0.1, 0.9])) == "rising"
+
+
+# ── _count_convergence_events ─────────────────────────────────────────────────
+
+class TestCountConvergenceEvents:
+    def _pts(self, values):
+        return [{"value": v} for v in values]
+
+    def test_no_convergence(self):
+        pts = self._pts([0.3, 0.3, 0.3])
+        count = _count_convergence_events(pts, high_threshold=0.8, settle_threshold=0.4, min_drop=0.2)
+        assert count == 0
+
+    def test_single_convergence(self):
+        pts = self._pts([0.9, 0.3, 0.3])
+        count = _count_convergence_events(pts, high_threshold=0.8, settle_threshold=0.4, min_drop=0.2)
+        assert count == 1
+
+    def test_empty_no_convergence(self):
+        count = _count_convergence_events([], high_threshold=0.8, settle_threshold=0.4, min_drop=0.2)
+        assert count == 0
+
+
+# ── _summarize_metric ─────────────────────────────────────────────────────────
+
+class TestSummarizeMetric:
+    def _pts(self, values):
+        return [{"value": v} for v in values]
+
+    def test_empty_returns_zero_state(self):
+        s = _summarize_metric([])
+        assert s["point_count"] == 0
+        assert s["trend"] == "empty"
+        assert s["latest"] is None
+
+    def test_single_point_summary(self):
+        s = _summarize_metric(self._pts([0.5]))
+        assert s["point_count"] == 1
+        assert s["latest"] == pytest.approx(0.5)
+
+    def test_average_computed(self):
+        s = _summarize_metric(self._pts([0.2, 0.4, 0.6]))
+        assert s["average"] == pytest.approx(0.4)
+
+    def test_trend_rising(self):
+        s = _summarize_metric(self._pts([0.1, 0.5, 0.9]))
+        assert s["trend"] == "rising"
+
+    def test_convergence_events_with_thresholds(self):
+        pts = self._pts([0.9, 0.3, 0.3])
+        s = _summarize_metric(pts, high_threshold=0.8, settle_threshold=0.4, min_drop=0.2)
+        assert s["convergence_events"] >= 1
+
+    def test_no_convergence_without_thresholds(self):
+        s = _summarize_metric(self._pts([0.9, 0.1]))
+        assert s["convergence_events"] == 0
 
 
 def _write_jsonl(path: Path, rows: list[dict[str, object]]) -> None:

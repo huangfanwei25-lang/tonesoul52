@@ -5,6 +5,11 @@ from typing import Any, Dict, List
 
 import numpy as np
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Hippocampus: short-to-long-term memory consolidation and indexed recall."
+)
+
 try:
     import faiss
 except ImportError:  # pragma: no cover - optional dependency for local tests

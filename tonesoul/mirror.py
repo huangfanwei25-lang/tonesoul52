@@ -11,6 +11,11 @@ from tonesoul.schemas import (
     TensionSnapshot,
 )
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Mirror subsystem: reflect user emotional state back with calibration."
+)
+
 
 def _utcnow_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")

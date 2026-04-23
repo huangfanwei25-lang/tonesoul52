@@ -14,6 +14,11 @@ from .subjectivity_reporting import (
     _record_excerpt,
 )
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Subjectivity shadow: maintain a quarantine layer for unverified subjective claims."
+)
+
 _SHADOW_PROFILES = {
     "classified_first",
     "tension_first",

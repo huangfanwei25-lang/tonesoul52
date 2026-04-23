@@ -18,6 +18,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Observability logger: structured event logger for runtime and governance signals."
+)
+
 try:
     import structlog
 except ModuleNotFoundError:  # pragma: no cover - exercised in environments without structlog

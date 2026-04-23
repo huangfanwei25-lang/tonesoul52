@@ -1,10 +1,50 @@
-"""Adversarial self-reflection interfaces (experimental stub)."""
+"""Adversarial self-reflection interfaces for AI calibration loops."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List, Optional
+
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Adversarial memory: store and retrieve adversarial probe results for calibration."
+)
+
+_REPAIR_STRATEGIES: Dict[str, Dict[str, str]] = {
+    "contradiction": {
+        "repair_type": "resolve_contradiction",
+        "template": (
+            "Contradiction detected: '{description}'. "
+            "Revisit the conflicting statements at {evidence} and issue a correction "
+            "or clarification that acknowledges the inconsistency explicitly."
+        ),
+    },
+    "broken_commitment": {
+        "repair_type": "renew_commitment",
+        "template": (
+            "Broken commitment: '{description}'. "
+            "Re-state the original commitment, explain what changed, and either renew "
+            "the commitment or formally revise it with justification."
+        ),
+    },
+    "value_drift": {
+        "repair_type": "reanchor_values",
+        "template": (
+            "Value drift detected: '{description}'. "
+            "Compare current output against the declared value set at {evidence} "
+            "and reanchor to the governing axioms before proceeding."
+        ),
+    },
+    "inconsistency": {
+        "repair_type": "clarify_position",
+        "template": (
+            "Inconsistency found: '{description}'. "
+            "Produce a single coherent position that resolves the tension "
+            "identified at {evidence}, and mark any superseded statements."
+        ),
+    },
+}
 
 
 class ChallengeType(Enum):
@@ -50,8 +90,50 @@ class Repair:
         }
 
 
+def _parse_evidence(raw: object) -> List[str]:
+    if isinstance(raw, list):
+        return [str(item) for item in raw]
+    if raw:
+        return [str(raw)]
+    return []
+
+
+def _parse_severity(raw: object) -> float:
+    try:
+        return max(0.0, min(1.0, float(raw)))  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return 0.5
+
+
+def _challenges_from_list(
+    items: List[Dict],
+    challenge_type: ChallengeType,
+    description_key: str = "description",
+) -> List[Challenge]:
+    result: List[Challenge] = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        desc = str(item.get(description_key, f"Unknown {challenge_type.value}"))
+        evidence = _parse_evidence(item.get("path") or item.get("evidence") or [])
+        severity = _parse_severity(item.get("severity", 0.5))
+        result.append(
+            Challenge(
+                challenge_type=challenge_type,
+                description=desc,
+                evidence=evidence,
+                severity=severity,
+            )
+        )
+    return result
+
+
 class AdversarialReflector:
-    """Research stub for red/blue adversarial self-reflection loops."""
+    """Red/blue adversarial self-reflection loop for AI calibration.
+
+    Red team: surface challenges from commitments, contradictions, and value
+    signals. Blue team: generate targeted repair proposals for each challenge.
+    """
 
     def __init__(self) -> None:
         self._challenges: List[Challenge] = []
@@ -63,52 +145,78 @@ class AdversarialReflector:
         contradictions: List[Dict],
         values: List[Dict],
     ) -> List[Challenge]:
-        del commitments, values
+        """Surface challenges from all three signal types.
+
+        Each signal list may carry: description, path/evidence, severity.
+        """
         challenges: List[Challenge] = []
-        for contradiction in contradictions:
-            if not isinstance(contradiction, dict):
+
+        challenges.extend(
+            _challenges_from_list(contradictions, ChallengeType.CONTRADICTION)
+        )
+
+        for commitment in commitments:
+            if not isinstance(commitment, dict):
                 continue
-            description = str(contradiction.get("description", "Unknown contradiction"))
-            raw_severity = contradiction.get("severity", 0.5)
-            try:
-                severity = float(raw_severity)
-            except (TypeError, ValueError):
-                severity = 0.5
-            evidence_value = contradiction.get("path", [])
-            if isinstance(evidence_value, list):
-                evidence = [str(item) for item in evidence_value]
-            else:
-                evidence = [str(evidence_value)] if evidence_value else []
-            challenges.append(
-                Challenge(
-                    challenge_type=ChallengeType.CONTRADICTION,
-                    description=description,
-                    evidence=evidence,
-                    severity=max(0.0, min(1.0, severity)),
+            if commitment.get("broken") or commitment.get("status") == "broken":
+                challenges.extend(
+                    _challenges_from_list([commitment], ChallengeType.BROKEN_COMMITMENT)
                 )
-            )
+
+        for value in values:
+            if not isinstance(value, dict):
+                continue
+            if value.get("drift") or value.get("status") == "drifted":
+                challenges.extend(
+                    _challenges_from_list([value], ChallengeType.VALUE_DRIFT)
+                )
 
         self._challenges = challenges
         return challenges
 
     def run_blue_team(self, challenges: Optional[List[Challenge]] = None) -> List[Repair]:
-        source = challenges or self._challenges
+        """Generate targeted repair proposals for each challenge."""
+        source = challenges if challenges is not None else self._challenges
         repairs: List[Repair] = []
+
         for challenge in source:
+            strategy = _REPAIR_STRATEGIES.get(challenge.challenge_type.value, {})
+            repair_type = strategy.get("repair_type", "acknowledge_change")
+            template = strategy.get(
+                "template", "Review '{description}' at {evidence} and address the issue."
+            )
+            evidence_str = ", ".join(challenge.evidence) if challenge.evidence else "unknown location"
+            explanation = template.format(
+                description=challenge.description,
+                evidence=evidence_str,
+            )
             repairs.append(
                 Repair(
                     challenge=challenge,
-                    repair_type="acknowledge_change",
-                    explanation=f"Stub: {challenge.description} — needs review",
+                    repair_type=repair_type,
+                    explanation=explanation,
                 )
             )
+
         self._repairs = repairs
         return repairs
 
     def get_summary(self) -> Dict[str, object]:
+        by_type: Dict[str, int] = {}
+        for ch in self._challenges:
+            by_type[ch.challenge_type.value] = by_type.get(ch.challenge_type.value, 0) + 1
+
+        avg_severity = (
+            sum(ch.severity for ch in self._challenges) / len(self._challenges)
+            if self._challenges
+            else 0.0
+        )
+
         return {
             "challenges_found": len(self._challenges),
             "repairs_proposed": len(self._repairs),
-            "challenges": [challenge.to_dict() for challenge in self._challenges],
-            "repairs": [repair.to_dict() for repair in self._repairs],
+            "avg_severity": round(avg_severity, 4),
+            "by_type": by_type,
+            "challenges": [ch.to_dict() for ch in self._challenges],
+            "repairs": [r.to_dict() for r in self._repairs],
         }

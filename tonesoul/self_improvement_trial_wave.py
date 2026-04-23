@@ -2,6 +2,15 @@ from __future__ import annotations
 
 from typing import Any
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Trial wave harness for iterative self-improvement experiments."
+)
+
+
+
+__ts_layer__ = "evolution"
+__ts_purpose__ = "Self-improvement trial wave: admits, runs, and registers bounded self-improvement trials."
 
 def _build_result_surface(
     *,

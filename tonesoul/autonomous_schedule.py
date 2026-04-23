@@ -11,6 +11,11 @@ from tonesoul.autonomous_cycle import build_autonomous_cycle_runner
 from tonesoul.dream_observability import HTML_FILENAME, JSON_FILENAME, build_dashboard, render_html
 from tonesoul.perception.source_registry import CuratedSourceSelection, select_curated_registry_urls
 
+__ts_layer__ = "orchestration"
+__ts_purpose__ = (
+    "Autonomous schedule: manage timed and triggered autonomous loop cycles."
+)
+
 SleepFunc = Callable[[float], None]
 
 

@@ -74,6 +74,11 @@ import unicodedata
 from dataclasses import dataclass, field
 from typing import Iterable, List, Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Epistemic labeler: tag council inputs and outputs with confidence and source grades."
+)
+
 _METAPHYSICAL_MARKERS_EN = (
     "meaning of life",
     "meaning of suffering",

@@ -14,10 +14,20 @@ Categories:
 
 from __future__ import annotations
 
+
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Resonance scoring between AI output and user emotional register."
+)
+
+
+
+__ts_layer__ = "evolution"
+__ts_purpose__ = "Resonance: models emotional-coherence resonance between AI posture and user intent."
 
 class ResonanceType(str, Enum):
     FLOW = "flow"

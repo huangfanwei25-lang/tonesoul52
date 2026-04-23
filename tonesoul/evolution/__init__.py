@@ -4,6 +4,10 @@ from .context_distiller import ContextDistiller, ContextPattern, DistillationRes
 from .corpus_builder import CorpusBuilder
 from .corpus_schema import CorpusEntry
 
+
+__ts_layer__ = "evolution"
+__ts_purpose__ = "Evolution package: self-improvement, skill promotion, and trial-wave exports."
+
 __all__ = [
     "ContextDistiller",
     "ContextPattern",

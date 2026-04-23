@@ -83,6 +83,76 @@ def test_ingest_handoff_markdown_and_sync_md(tmp_path: Path):
     assert db.records[1]["payload"]["provenance"]["kind"] == "handoff_sync_md"
 
 
+def test_ingest_handoff_nonexistent_dir(tmp_path: Path):
+    db = DummySoulDB()
+    ingester = HandoffIngester(db)
+    result = ingester.ingest_handoff_dir(tmp_path / "no_such_dir")
+    assert result == {"ingested": 0, "skipped": 0, "errors": 0}
+
+
+def test_ingest_handoff_unknown_extension_is_skipped(tmp_path: Path):
+    handoff_dir = tmp_path / "handoff"
+    handoff_dir.mkdir(parents=True)
+    (handoff_dir / "notes.txt").write_text("some text", encoding="utf-8")
+
+    db = DummySoulDB()
+    ingester = HandoffIngester(db)
+    result = ingester.ingest_handoff_dir(handoff_dir)
+
+    assert result["skipped"] == 1
+    assert result["ingested"] == 0
+
+
+def test_ingest_handoff_invalid_json_counted_as_error(tmp_path: Path):
+    handoff_dir = tmp_path / "handoff"
+    handoff_dir.mkdir(parents=True)
+    (handoff_dir / "broken.json").write_text("{broken json", encoding="utf-8")
+
+    db = DummySoulDB()
+    ingester = HandoffIngester(db)
+    result = ingester.ingest_handoff_dir(handoff_dir)
+
+    assert result["errors"] == 1
+
+
+def test_ingest_handoff_json_fallback_summary_from_phase(tmp_path: Path):
+    handoff_dir = tmp_path / "handoff"
+    _write_json(
+        handoff_dir / "no_goal.json",
+        {
+            "timestamp": "2026-03-02T01:00:00Z",
+            "source_model": "a",
+            "target_model": "b",
+            "phase": {"current": "review", "reason": "phase reason here"},
+        },
+    )
+
+    db = DummySoulDB()
+    ingester = HandoffIngester(db)
+    ingester.ingest_handoff_dir(handoff_dir)
+
+    assert db.records[0]["payload"]["summary"] == "phase reason here"
+
+
+def test_ingest_sync_md_missing_file(tmp_path: Path):
+    db = DummySoulDB()
+    ingester = HandoffIngester(db)
+    result = ingester.ingest_sync_md(tmp_path / "nonexistent.md")
+    assert result == {"ingested": 0, "skipped": 1, "errors": 0}
+
+
+def test_ingest_sync_md_empty_file_is_skipped(tmp_path: Path):
+    md = tmp_path / "empty.md"
+    md.write_text("", encoding="utf-8")
+
+    db = DummySoulDB()
+    ingester = HandoffIngester(db)
+    result = ingester.ingest_sync_md(md)
+
+    assert result["ingested"] == 0
+    assert result["skipped"] == 1
+
+
 def test_ingest_handoff_since_filter(tmp_path: Path):
     handoff_dir = tmp_path / "handoff"
     old_ts = datetime(2026, 3, 1, 10, 0, tzinfo=timezone.utc)

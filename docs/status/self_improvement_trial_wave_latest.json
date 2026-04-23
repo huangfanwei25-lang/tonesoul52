@@ -2,8 +2,8 @@
   "contract_version": "v1",
   "bundle": "self_improvement_trial_wave",
   "agent": "codex-self-improvement-refresh",
-  "status": "completed",
-  "summary_text": "self_improvement_trial_wave promote=18 park=1 retire=0 blocked=0",
+  "status": "active",
+  "summary_text": "self_improvement_trial_wave promote=19 park=1 retire=0 blocked=0",
   "receiver_rule": "Trial-wave outcomes are bounded self-improvement results. They may inform future patches or parking decisions, but they do not become governance truth, identity truth, or hot-memory authority.",
   "trial_families": [
     "cross_consumer_parity_packaging",
@@ -24,10 +24,11 @@
     "hot_memory_pull_boundary_clarity",
     "memory_panel_tier_subordination_clarity",
     "status_panel_operator_copy_clarity",
-    "dashboard_command_shelf_activation_clarity"
+    "dashboard_command_shelf_activation_clarity",
+    "code_health_posture_packaging"
   ],
   "outcome_counts": {
-    "promote": 18,
+    "promote": 19,
     "park": 1,
     "retire": 0,
     "blocked": 0,
@@ -737,7 +738,44 @@
         "visibility": "status_surface_only",
         "carry_forward_rule": "may inform future dashboard command-shelf packaging, but does not authorize browser-side execution, stronger permissions, or a new authority lane"
       }
+    },
+    {
+      "candidate_record": {
+        "candidate_id": "code_health_posture_packaging_v1",
+        "target_surface": "session_start.tier0.code_health_posture",
+        "target_consumer": "codex_claude_dashboard_operator_shells",
+        "baseline_story": "Operators entering a new session have no first-hop signal about layer-annotation coverage or layer violation count; they must run analyze_codebase_graph.py separately to learn whether the codebase map is complete.",
+        "candidate_story": "Tier-0 session-start now surfaces a bounded code_health_posture field reading annotation_coverage (annotated/total), layer_violations count, and a posture label (complete/partial/unknown) from the cached codebase_graph_latest.json, with a safe fallback when the file is absent.",
+        "success_metric": "code_health_posture.present=true and posture=complete in tier-0 output for a repo with 100% annotation coverage and 0 violations",
+        "failure_mode_watch": "code health posture starts reading like a governance gate or broadens layer permissions by itself",
+        "rollback_path": "remove code_health_posture from _build_tier0_payload and delete _build_code_health_posture; no other surfaces depend on it",
+        "overclaim_to_avoid": "complete annotation coverage is not proof of correct architecture, better governance, or safer mutation",
+        "scope_limit": "tier-0 session-start packaging only; no governance change, no ALLOWED_DEPS widening, no identity or transport change"
+      },
+      "analyzer_closeout": {
+        "status": "promote",
+        "result_story": "Tier-0 session-start now surfaces code health as a first-hop packaging signal without requiring operators to run the body-map script.",
+        "evidence_bundle_summary": "code_health_posture present=true posture=complete annotation_coverage=259/259 layer_violations=0 tests_added=5",
+        "unresolved_items": [
+          "code health posture is a snapshot of the cached graph; it goes stale if analyze_codebase_graph.py is not rerun after new modules are added",
+          "complete posture does not authorize any governance, layer-permission, or mutation claims"
+        ],
+        "failure_pressure": "low",
+        "rollback_posture": "bounded_restore",
+        "promotion_limit": "does not authorize governance changes, ALLOWED_DEPS widening, or any permission expansion",
+        "overclaim_warning": "code health posture is a packaging signal; it is not architecture validation, mutation safety, or runtime correctness",
+        "next_action": "hold trial wave at status surface; reopen only when a new genuine packaging gap appears in operator/runtime surfaces"
+      },
+      "result_surface": {
+        "surface_status": "promoted_result",
+        "registry_recommendation": "promotion_ready_result",
+        "supersession_posture": "active_until_newer_code_health_posture_trials_exist",
+        "replay_rule": "prefer_status_surface_then_probe_current_tier0_code_health_shape_before_reusing_the_story",
+        "residue_posture": "keep_visible_as_current_packaging_result",
+        "visibility": "status_surface_only",
+        "carry_forward_rule": "may inform future codebase-health readout packaging, but does not authorize governance changes or permission widening"
+      }
     }
   ],
-  "next_short_board": "Explicitly ratify the next active bucket; do not silently auto-open queued governance-depth work."
+  "next_short_board": "Trial wave promoted=19 park=1. Hold at status surface; admit a new candidate only when a genuine operator/runtime packaging gap appears that does not reopen governance, identity, or transport mythology."
 }

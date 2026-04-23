@@ -2,9 +2,19 @@
 
 from __future__ import annotations
 
+
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Capture and structure exception traces for audit and analysis."
+)
+
+
+
+__ts_layer__ = "observability"
+__ts_purpose__ = "Exception trace: structured exception capture for governance fault observability."
 
 @dataclass
 class SuppressedError:

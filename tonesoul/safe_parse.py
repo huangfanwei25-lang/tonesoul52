@@ -17,11 +17,17 @@ Usage:
 
 from __future__ import annotations
 
+
 import json
 import re
 from typing import Any, Dict, Optional, Type, TypeVar
 
 from pydantic import BaseModel, ValidationError
+
+__ts_layer__ = "shared"
+__ts_purpose__ = (
+    "Safe parsing utilities: JSON, YAML, and structured-text extraction."
+)
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -168,6 +174,10 @@ def parse_llm_response(
 
     Example:
         from tonesoul.schemas import ToneAnalysisResult
+
+__ts_layer__ = "shared"
+__ts_purpose__ = "Safe parse: defensive JSON/YAML parsing utilities that never raise on malformed input."
+
         result = parse_llm_response(llm_text, ToneAnalysisResult)
         if result:
             print(f"Tone strength: {result.tone_strength}")

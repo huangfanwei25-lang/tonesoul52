@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+__ts_layer__ = "memory"
+__ts_purpose__ = "Memory package: adversarial reflector, consolidation, vow promotion, subjectivity analysis, AAAK compaction, and freshness tracking."
+
 from .adversarial import AdversarialReflector, Challenge, ChallengeType, Repair
 from .consolidator import (
     build_reviewed_vow_payload,

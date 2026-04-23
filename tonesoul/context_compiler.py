@@ -9,6 +9,10 @@ import yaml
 
 from .ystm.schema import stable_hash, utc_now
 
+
+__ts_layer__ = "pipeline"
+__ts_purpose__ = "Context compiler: assembles the full governance context dict from packet + live signals."
+
 DEFAULT_CONTEXT_SEED = {
     "task": "Build a minimal, auditable YSTM demo.",
     "objective": "Produce traceable outputs with clear audit hooks.",

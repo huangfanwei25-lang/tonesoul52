@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from tonesoul.loop.config import LoopConfig, LoopResult
 from tonesoul.loop.events import (
     AIResponseEvent,
@@ -76,3 +78,58 @@ def test_non_overridden_events_keep_base_to_dict_shape():
     assert VowDeclarationEvent(vow_id="v1", declared=True, iteration=3).to_dict() == {
         "event_type": "vow_declaration"
     }
+
+
+# ─────────────────────────────────────────────
+# Extended coverage — None guard paths
+# ─────────────────────────────────────────────
+
+
+class TestNoneGuardPaths:
+    def test_loop_start_with_no_config_defaults_to_zero(self):
+        event = LoopStartEvent()
+        d = event.to_dict()
+        assert d["max_iterations"] == 0
+        assert d["timeout_ms"] == 0
+
+    def test_loop_complete_with_no_result_defaults_to_zero(self):
+        event = LoopCompleteEvent()
+        d = event.to_dict()
+        assert d["iterations"] == 0
+        assert d["duration_ms"] == 0
+
+    def test_loop_failed_with_no_error_returns_none(self):
+        event = LoopFailedEvent(result=LoopResult(state="failed", iterations=1, duration_ms=0))
+        d = event.to_dict()
+        assert d["error"] is None
+
+    def test_loop_failed_with_no_result_returns_zero_iterations(self):
+        event = LoopFailedEvent(error=ValueError("oops"))
+        d = event.to_dict()
+        assert d["iterations"] == 0
+
+    def test_error_event_with_none_error_returns_none(self):
+        event = ErrorEvent(iteration=3)
+        d = event.to_dict()
+        assert d["error"] is None
+        assert d["recoverable"] is True
+
+
+class TestEventTypeDefaults:
+    def test_loop_start_event_type(self):
+        assert LoopStartEvent().event_type == "loop_start"
+
+    def test_loop_complete_event_type(self):
+        assert LoopCompleteEvent().event_type == "loop_complete"
+
+    def test_loop_failed_event_type(self):
+        assert LoopFailedEvent().event_type == "loop_failed"
+
+    def test_loop_cancelled_event_type(self):
+        assert LoopCancelledEvent().event_type == "loop_cancelled"
+
+    def test_error_event_type(self):
+        assert ErrorEvent().event_type == "error"
+
+    def test_vow_declaration_event_type(self):
+        assert VowDeclarationEvent().event_type == "vow_declaration"

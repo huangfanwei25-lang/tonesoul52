@@ -65,6 +65,11 @@
   - `DESIGN.md`: added a `⚠️` callout near the top distinguishing "why the system is shaped this way at all" (this doc) from "what does this file do" (body map), so agents opening the design center no longer use it as a file lookup.
   - `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md`: kept as canonical (it is referenced from `docs/INDEX.md`) but added a `⚠️` disclaimer at the top declaring it a **request-flow axis** (ingress → sensing → … → attachment) orthogonal to the **import-dependency axis** of the 13-layer body map; explains that one request can cross several body-map layers and one body-map layer can serve several request-flow stages, so the two views do not compete.
   - Routing rule for agents now reads cleanly across four cold-entry surfaces: `README` → file-level lookup lane → body map; `tonesoul/__init__.py` → body map pointer; `DESIGN.md` → body map pointer; `EIGHT_LAYER_CONVERGENCE_MAP.md` → labeled as orthogonal axis with a link back to the body map.
+- Phase 865: ~~file-backed session heartbeat + tier-0 open-branch summary~~ **done** (`scripts/session_pulse.py`, `scripts/start_agent_session.py` `_build_open_branch_summary`, `AI_ONBOARDING.md`)
+- Phase 866: ~~zero body-map layer violations~~ **done** (23 → 0; `ALLOWED_DEPS` widened for governance + memory, `mcp_server` + `tonebridge` + `ystm.demo` + `action_set` + `frame_router` reclassified; root `__init__` re-export removed; `docs/status/codebase_graph_latest.{json,md}` regenerated)
+- Phase 867: ~~self-declared layer annotations for all 23 subpackage `__init__.py` files~~ **done** (coverage 5.9% → 17.1%; `tonesoul/{cli,corpus,council,deliberation,evolution,gates,gateway,governance,inter_soul,llm,loop,market,memory,memory/openclaw,observability,perception,pipeline,scribe,semantic,shared,tech_trace,ystm,yuhun}/__init__.py` + `ystm/schema.py` + `ystm/acceptance.py`)
+- Phase 868: ~~self-declared layer annotations for 68 root-level modules (AST-safe insertion)~~ **done** (coverage 17.1% → 43.6%; governance, evolution, memory, observability, pipeline, infrastructure, surface, domain, shared layers; 0 syntax errors, 0 violations)
+- Phase 869: ~~self-declared layer annotations for all remaining 144 subpackage modules + 3 reclassifications~~ **done** (coverage 43.6% → 100%; `work_classifier` pipeline→shared, `issue_codes` observability→shared, `openclaw_auditor` memory→evolution; `tonesoul/__init__.py` declared shared; final state: 257/257 annotated, 0 violations, 0 cycles)
 
 ## Active Program: Agent Workspace And IDE Translation (2026-04-06)
 - Program Goal: translate ToneSoul's tiered runtime surfaces into an operator workspace / IDE.
@@ -106,8 +111,9 @@
   - Keep `R-memory`, `compiled knowledge`, `experiment lineage`, and `canonical governance truth` visibly separate.
 - Foundation: evaluator harness, experiment registry, mutation-space contract, analyzer gate, promotion-ready result surface, dashboard cue, shell boundary guard
 - Trial Execution Pattern: `admit candidate -> run trial -> classify result -> register in lineage`
-- Progress: **18 trials promoted, 1 parked** (as of 2026-04-16, per `docs/status/self_improvement_trial_wave_latest.json`)
-- Current posture: no new admitted candidate is currently visible in the latest status surface; reuse the existing promotion limits and replay rules instead of inventing a new candidate ad hoc.
+- Progress: **19 trials promoted, 1 parked** (as of 2026-04-23, per `docs/status/self_improvement_trial_wave_latest.json`)
+- Latest promoted trial: `code_health_posture_packaging_v1` — tier-0 session-start now surfaces layer-annotation coverage (259/259, 0 violations) as a first-hop packaging signal via `code_health_posture` field; `_build_code_health_posture()` reads from `docs/status/codebase_graph_latest.json` with a safe fallback; 5 new tests added.
+- Current posture: hold at status surface; admit a new candidate only when a genuine operator/runtime packaging gap appears that does not reopen governance, identity, or transport mythology.
 - Next: admit one next bounded candidate only if it improves operator/runtime packaging without reopening governance, identity, or transport mythology. Each trial still follows `admit -> run -> classify -> register`; no need to list each one as a separate phase.
 
 ---

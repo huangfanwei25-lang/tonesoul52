@@ -17,6 +17,11 @@ from tonesoul.working_style import (
     build_working_style_observability,
 )
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Compute composite risk score from drift, tone, and constraint signals."
+)
+
 _PROMPT_STYLE_DEFAULTS = [
     "state the goal function before long transfer or extraction prompts",
     "keep P0/P1/P2 explicit when constraints may conflict",

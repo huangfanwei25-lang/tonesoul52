@@ -14,6 +14,11 @@ from typing import Any, Dict, List, Optional
 
 from .session_digest import digest_session
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Memory pipeline: orchestrate ingest, consolidation, and retrieval stages."
+)
+
 # ---------------------------------------------------------------------------
 # Pipeline result
 # ---------------------------------------------------------------------------

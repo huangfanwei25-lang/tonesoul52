@@ -5,6 +5,15 @@ from typing import Dict, List, Optional, Sequence, Tuple
 
 from .ystm.schema import utc_now
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Collect and index evidence records for governance review."
+)
+
+
+
+__ts_layer__ = "observability"
+__ts_purpose__ = "Evidence collector: gathers and structures evidence for verification claims."
 
 def _load_json(path: str) -> Optional[Dict[str, object]]:
     try:

@@ -225,3 +225,51 @@ def test_list_subjectivity_records_surfaces_deferred_review_context_from_action_
     )
     assert rows[0]["review_actor_id"] == "operator"
     assert rows[0]["review_actor_type"] == "operator"
+
+
+def test_summarize_subjectivity_distribution_empty_db_returns_zeros(tmp_path) -> None:
+    db, source = _build_db(tmp_path)
+    report = summarize_subjectivity_distribution(db, source=source)
+
+    assert report["total_records"] == 0
+    assert report["unresolved_tension_count"] == 0
+    assert report["settled_tension_count"] == 0
+    assert report["deferred_tension_count"] == 0
+
+
+def test_list_subjectivity_records_with_limit(tmp_path) -> None:
+    db, source = _build_db(tmp_path)
+    for i in range(5):
+        db.append(source, {
+            "summary": f"Event record {i}",
+            "subjectivity_layer": "event",
+            "timestamp": f"2026-03-10T0{i}:00:00Z",
+        })
+
+    rows = list_subjectivity_records(db, source=source, limit=2)
+    assert len(rows) == 2
+
+
+def test_list_subjectivity_records_all_layers_when_no_filter(tmp_path) -> None:
+    db, source = _build_db(tmp_path)
+    db.append(source, {"summary": "A tension record", "subjectivity_layer": "tension",
+                       "promotion_gate": {"status": "candidate"}, "timestamp": "2026-03-01T01:00:00Z"})
+    db.append(source, {"summary": "An event record", "subjectivity_layer": "event",
+                       "timestamp": "2026-03-01T02:00:00Z"})
+
+    rows = list_subjectivity_records(db, source=source)
+    layers = {row["subjectivity_layer"] for row in rows}
+    assert "tension" in layers
+    assert "event" in layers
+
+
+def test_list_subjectivity_records_filters_by_subjectivity_layer(tmp_path) -> None:
+    db, source = _build_db(tmp_path)
+    db.append(source, {"summary": "A vow record", "subjectivity_layer": "vow",
+                       "timestamp": "2026-03-01T01:00:00Z"})
+    db.append(source, {"summary": "An event record", "subjectivity_layer": "event",
+                       "timestamp": "2026-03-01T02:00:00Z"})
+
+    rows = list_subjectivity_records(db, source=source, subjectivity_layer="vow")
+    assert len(rows) == 1
+    assert rows[0]["subjectivity_layer"] == "vow"

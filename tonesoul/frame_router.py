@@ -9,6 +9,12 @@ from .council.runtime import build_council_summary
 from .ystm.schema import stable_hash, utc_now
 
 
+
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Frame router: scores and selects response frames based on context, roles, and council summary."
+)
+
 def _load_context(path: str) -> Dict[str, object]:
     with open(path, "r", encoding="utf-8") as handle:
         payload = yaml.safe_load(handle)

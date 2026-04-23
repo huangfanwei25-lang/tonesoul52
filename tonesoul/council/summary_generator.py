@@ -5,6 +5,11 @@ from typing import Dict, List, Optional
 
 from .types import CouncilVerdict, PerspectiveType, PerspectiveVote, VerdictType, VoteDecision
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Summary generator: synthesise council verdicts into a single governance summary."
+)
+
 PERSPECTIVE_LABELS = {
     "guardian": "Safety Council",
     "analyst": "Analyst Review",

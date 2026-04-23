@@ -16,6 +16,11 @@ from typing import Any
 
 import requests
 
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = (
+    "Supabase persistence adapter: store and retrieve governance state via Supabase."
+)
+
 DEFAULT_TIMEOUT_SECONDS = 8.0
 MAX_RATIONALE_LENGTH = 3000
 MAX_SESSION_LINK_SCAN = 1000

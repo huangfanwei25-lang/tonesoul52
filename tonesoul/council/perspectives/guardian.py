@@ -7,6 +7,11 @@ from typing import Optional
 from ..base import IPerspective
 from ..types import PerspectiveType, PerspectiveVote, VoteDecision
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Guardian perspective: enforce safety and ethical constraints on output."
+)
+
 
 class GuardianPerspective(IPerspective):
     BLOCK_TRIGGER_KEYWORDS = {

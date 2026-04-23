@@ -69,6 +69,9 @@ ystm_viz = [
     "pillow>=10.0",
 ]
 
+[project.scripts]
+ts = "tonesoul.cli.main:main"
+
 [project.urls]
 Homepage = "https://fan1234-1.github.io/tonesoul52/"
 Documentation = "https://fan1234-1.github.io/tonesoul52/getting-started.html"

@@ -32,6 +32,11 @@ from typing import Any, List, Optional, Union
 
 from .types import PerspectiveType
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Council transcript: log all perspective arguments and votes in order."
+)
+
 
 class TranscriptFormat(Enum):
     """Output formats for council transcripts"""

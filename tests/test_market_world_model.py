@@ -7,6 +7,7 @@ from tonesoul.market.world_model import (
     PERSONA_WARREN,
     STANCE_BEARISH,
     STANCE_BULLISH,
+    STANCE_MIXED,
     STANCE_WATCHFUL,
     InvestmentPersona,
     MultiPerspectiveSimulator,
@@ -100,3 +101,86 @@ def test_run_simulation_surfaces_strategy_plurality() -> None:
     assert context.strategy_plurality.stance_counts[STANCE_WATCHFUL] == 1
     assert context.perspective_friction == context.strategy_plurality.perspective_friction
     assert context.consensus.startswith("Consensus:")
+
+
+# ── classify_persona_stance additional branches ───────────────────────────────
+
+def test_classify_persona_stance_detects_bearish_language() -> None:
+    persona = InvestmentPersona(id="bear", name="Bear", system_prompt="")
+    stance = classify_persona_stance(
+        persona,
+        "The stock is overvalued with deteriorating margins and obvious downside risk.",
+    )
+    assert stance.stance == STANCE_BEARISH
+    assert "overvalued" in stance.bearish_terms
+    assert stance.conviction > 0.0
+
+
+def test_classify_persona_stance_detects_watchful_language() -> None:
+    persona = InvestmentPersona(id="macro", name="Macro", system_prompt="")
+    stance = classify_persona_stance(
+        persona,
+        "Stay cautious. Monitor the inventory cycle and wait for clearer confirmation.",
+    )
+    assert stance.stance == STANCE_WATCHFUL
+    assert stance.conviction > 0.0
+
+
+def test_classify_persona_stance_empty_narrative_returns_mixed() -> None:
+    persona = InvestmentPersona(id="x", name="X", system_prompt="")
+    stance = classify_persona_stance(persona, "")
+    assert stance.stance == STANCE_MIXED
+
+
+def test_classify_persona_stance_error_narrative_returns_mixed() -> None:
+    persona = InvestmentPersona(id="x", name="X", system_prompt="")
+    stance = classify_persona_stance(persona, "error: LLM unreachable")
+    assert stance.stance == STANCE_MIXED
+
+
+# ── build_strategy_plurality_report edge cases ────────────────────────────────
+
+def test_build_strategy_plurality_report_empty_input() -> None:
+    report = build_strategy_plurality_report({})
+    assert report.perspectives == []
+    assert report.dominant_conflict == "insufficient_signal"
+
+
+def test_build_strategy_plurality_report_panic_language_flag() -> None:
+    report = build_strategy_plurality_report(
+        {
+            "bear": "There is panic and forced selling with capitulation across the board.",
+            "macro": "Deteriorating environment.",
+        },
+        personas=[PERSONA_SHORT, PERSONA_RAY],
+    )
+    assert "panic_language" in report.irrationality_flags
+    assert report.recommended_posture == "slow_down"
+
+
+def test_build_strategy_plurality_report_conviction_vs_patience() -> None:
+    report = build_strategy_plurality_report(
+        {
+            "value": "Undervalued with improving fundamentals and clear upside.",
+            "macro": "Monitor closely; cautious and uncertain about macro.",
+        },
+        personas=[PERSONA_WARREN, PERSONA_RAY],
+    )
+    assert report.dominant_conflict == "conviction_vs_patience"
+    assert report.recommended_posture == "monitor_for_resolution"
+
+
+# ── format_snapshots_for_llm ─────────────────────────────────────────────────
+
+def test_format_snapshots_for_llm_empty_list() -> None:
+    simulator = _DeterministicSimulator()
+    result = simulator.format_snapshots_for_llm([])
+    assert result == "No data available."
+
+
+def test_format_snapshots_for_llm_includes_quarter_data() -> None:
+    simulator = _DeterministicSimulator()
+    snaps = [QuarterlySnapshot(quarter="2025Q3", revenue=5.0, gross_margin=0.25, eps=0.8)]
+    result = simulator.format_snapshots_for_llm(snaps)
+    assert "2025Q3" in result
+    assert "5.0" in result

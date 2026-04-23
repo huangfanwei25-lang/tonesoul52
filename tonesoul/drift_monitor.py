@@ -14,11 +14,21 @@ Formula (from TONESOUL_THEORY spec):
 
 from __future__ import annotations
 
+
 import math
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List, Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Monitor semantic drift between successive AI outputs."
+)
+
+
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Drift monitor: detects governance rule drift by comparing active rules to baseline."
 
 class DriftAlert(Enum):
     NONE = "none"

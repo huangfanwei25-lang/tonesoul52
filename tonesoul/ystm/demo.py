@@ -1,4 +1,4 @@
-"""YSTM demo surface: end-to-end terrain/field visualization pipeline."""
+"""YSTM demo domain: end-to-end terrain/field visualization pipeline."""
 
 import json
 import os
@@ -20,9 +20,9 @@ from .terrain import (
     marching_squares,
 )
 
-__ts_layer__ = "surface"
+__ts_layer__ = "domain"
 __ts_purpose__ = (
-    "End-to-end YSTM demo: ingest segments, build terrain, render HTML/PNG/SVG surfaces."
+    "End-to-end YSTM demo: ingest segments, build terrain, render HTML/PNG/SVG outputs."
 )
 
 DEFAULT_SEGMENTS = [

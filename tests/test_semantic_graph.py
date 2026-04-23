@@ -194,3 +194,99 @@ def test_increment_turn_summary_export_and_reset() -> None:
         "current_turn": 0,
         "contradictions": 0,
     }
+
+
+def test_retrieve_relevant_empty_graph_returns_no_match_summary() -> None:
+    graph = SemanticGraph()
+    result = graph.retrieve_relevant(["honesty"])
+    assert result["matched_nodes"] == []
+    assert result["related_nodes"] == []
+    assert "No matching" in result["context_summary"]
+
+
+def test_retrieve_relevant_empty_query_returns_empty() -> None:
+    graph = SemanticGraph()
+    graph.add_node("honesty", NodeType.CONCEPT)
+    result = graph.retrieve_relevant([])
+    assert result["matched_nodes"] == []
+    assert result["context_summary"] == ""
+
+
+def test_retrieve_relevant_no_match_in_populated_graph() -> None:
+    graph = SemanticGraph()
+    graph.add_node("trust", NodeType.CONCEPT)
+    result = graph.retrieve_relevant(["xyz_no_match"])
+    assert result["matched_nodes"] == []
+    assert "No matching" in result["context_summary"]
+
+
+def test_retrieve_relevant_surfaces_commitments_in_scope() -> None:
+    graph = SemanticGraph()
+    commit = graph.add_node("maintain honesty", NodeType.COMMITMENT)
+    topic = graph.add_node("honesty", NodeType.TOPIC)
+    graph.add_edge(commit, topic, EdgeType.SUPPORTS)
+
+    result = graph.retrieve_relevant(["honesty"], max_hops=2)
+
+    in_scope_labels = {item["label"] for item in result["commitments_in_scope"]}
+    assert "maintain honesty" in in_scope_labels
+
+
+def test_get_node_returns_none_for_unknown_id() -> None:
+    graph = SemanticGraph()
+    assert graph.get_node("nonexistent") is None
+
+
+def test_find_nodes_by_label_returns_empty_when_no_match() -> None:
+    graph = SemanticGraph()
+    graph.add_node("trust", NodeType.CONCEPT)
+    assert graph.find_nodes_by_label("xyz") == []
+
+
+def test_get_neighbors_returns_empty_for_isolated_node() -> None:
+    graph = SemanticGraph()
+    node = graph.add_node("isolated", NodeType.CONCEPT)
+    assert graph.get_neighbors(node.id) == []
+
+
+def test_get_edges_between_returns_empty_for_unconnected_nodes() -> None:
+    graph = SemanticGraph()
+    a = graph.add_node("a", NodeType.CONCEPT)
+    b = graph.add_node("b", NodeType.CONCEPT)
+    assert graph.get_edges_between(a.id, b.id) == []
+
+
+def test_get_edges_between_returns_bidirectional_edge() -> None:
+    graph = SemanticGraph()
+    a = graph.add_node("a", NodeType.CONCEPT)
+    b = graph.add_node("b", NodeType.CONCEPT)
+    edge = graph.add_edge(a, b, EdgeType.IMPLIES)
+    # Both orderings should return the edge
+    assert graph.get_edges_between(a.id, b.id) == [edge]
+    assert graph.get_edges_between(b.id, a.id) == [edge]
+
+
+def test_detect_contradictions_empty_graph_returns_empty() -> None:
+    graph = SemanticGraph()
+    assert graph.detect_contradictions() == []
+
+
+def test_detect_contradictions_no_contradicts_edge() -> None:
+    graph = SemanticGraph()
+    a = graph.add_node("a", NodeType.CONCEPT)
+    b = graph.add_node("b", NodeType.CONCEPT)
+    graph.add_edge(a, b, EdgeType.SUPPORTS)
+    assert graph.detect_contradictions() == []
+
+
+def test_extract_from_commitment_type_commitment() -> None:
+    graph = SemanticGraph()
+    node = graph.extract_from_commitment({"content": "always be transparent", "type": "commitment"})
+    assert node.node_type == NodeType.COMMITMENT
+    assert node.label == "always be transparent"
+
+
+def test_create_semantic_graph_factory_returns_empty_graph() -> None:
+    graph = create_semantic_graph()
+    assert isinstance(graph, SemanticGraph)
+    assert graph.get_summary()["total_nodes"] == 0

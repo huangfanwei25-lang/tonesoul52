@@ -326,3 +326,105 @@ def test_run_pipeline_from_unified_request_preserves_existing_config_fields(
         "decision_mode": "preset mode",
     }
     assert result["unified_seed"]["decision_mode"] == "strict"
+
+
+# ── _apply_trace_level ────────────────────────────────────────────────────────
+
+class TestApplyTraceLevel:
+    def test_standard_disables_optional_features(self):
+        config = module.PipelineConfig(trace_level="standard")
+        module._apply_trace_level(config)
+        assert config.trace_level == "standard"
+        assert config.record_memory is False
+        assert config.promote_skills is False
+        assert config.auto_review_skills is False
+        assert config.auto_compact is False
+
+    def test_full_does_not_force_disable(self):
+        config = module.PipelineConfig(trace_level="full", record_memory=True)
+        module._apply_trace_level(config)
+        assert config.trace_level == "full"
+        assert config.record_memory is True
+
+    def test_invalid_raises_value_error(self):
+        with pytest.raises(ValueError, match="trace_level"):
+            module._apply_trace_level(module.PipelineConfig(trace_level="verbose"))
+
+    def test_none_defaults_to_standard(self):
+        config = module.PipelineConfig(trace_level=None)
+        module._apply_trace_level(config)
+        assert config.trace_level == "standard"
+
+    def test_whitespace_stripped(self):
+        config = module.PipelineConfig(trace_level="  full  ")
+        module._apply_trace_level(config)
+        assert config.trace_level == "full"
+
+
+# ── _load_policy ──────────────────────────────────────────────────────────────
+
+class TestLoadPolicy:
+    def test_none_path_returns_empty(self):
+        assert module._load_policy(None) == {}
+
+    def test_missing_file_returns_empty(self, tmp_path: Path):
+        assert module._load_policy(str(tmp_path / "nonexistent.yaml")) == {}
+
+    def test_valid_yaml_returned(self, tmp_path: Path):
+        path = tmp_path / "policy.yaml"
+        path.write_text("retention:\n  enabled: true\n", encoding="utf-8")
+        result = module._load_policy(str(path))
+        assert result["retention"]["enabled"] is True
+
+    def test_non_dict_yaml_returns_empty(self, tmp_path: Path):
+        path = tmp_path / "policy.yaml"
+        path.write_text("- item1\n- item2\n", encoding="utf-8")
+        assert module._load_policy(str(path)) == {}
+
+
+# ── _build_seed_from_config ───────────────────────────────────────────────────
+
+class TestBuildSeedFromConfig:
+    def test_empty_config_returns_empty_seed(self):
+        config = module.PipelineConfig()
+        assert module._build_seed_from_config(config) == {}
+
+    def test_task_and_objective_included(self):
+        config = module.PipelineConfig(task="review", objective="verify accuracy")
+        seed = module._build_seed_from_config(config)
+        assert seed["task"] == "review"
+        assert seed["objective"] == "verify accuracy"
+
+    def test_domain_and_decision_mode_included(self):
+        config = module.PipelineConfig(domain="governance", decision_mode="council")
+        seed = module._build_seed_from_config(config)
+        assert seed["domain"] == "governance"
+        assert seed["decision_mode"] == "council"
+
+
+# ── _resolve_optional_path ────────────────────────────────────────────────────
+
+class TestResolveOptionalPath:
+    def test_none_returns_none(self):
+        assert module._resolve_optional_path(None) is None
+
+    def test_empty_string_returns_none(self):
+        assert module._resolve_optional_path("") is None
+
+    def test_relative_path_absolutized(self):
+        result = module._resolve_optional_path("relative/path.json")
+        import os
+        assert os.path.isabs(result)
+        assert result.endswith("relative/path.json")
+
+
+# ── _generate_run_id ──────────────────────────────────────────────────────────
+
+class TestGenerateRunId:
+    def test_returns_string_with_z_separator(self):
+        run_id = module._generate_run_id()
+        assert isinstance(run_id, str)
+        assert "Z_" in run_id
+
+    def test_two_calls_differ(self):
+        assert module._generate_run_id() != module._generate_run_id()

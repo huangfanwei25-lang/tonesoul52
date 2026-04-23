@@ -27,6 +27,10 @@ from .shadow_doc import (
 )
 from .vod import TensionLevel, VoDResult, assess_divergence
 
+
+__ts_layer__ = "semantic"
+__ts_purpose__ = "YuHun semantic package: language-soul analysis and semantic alignment utilities."
+
 __all__ = [
     # DPR
     "route",

@@ -6,11 +6,21 @@ This module prevents infinite rejections when multiple audit layers
 
 from __future__ import annotations
 
+
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Controlled release mechanism for governance deadlocks."
+)
+
+
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Escape valve: provides bounded off-ramp when governance constraints are over-binding."
 
 class EscapeReason(str, Enum):
     """Reasons for triggering the Escape Valve."""

@@ -5,6 +5,11 @@ from typing import Any, Dict, List
 
 from .types import CouncilVerdict, VerdictType
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "VTP (Verdict Trace Protocol): produce verifiable audit trails for council verdicts."
+)
+
 VTP_STATUS_CONTINUE = "continue"
 VTP_STATUS_DEFER = "defer"
 VTP_STATUS_TERMINATE = "terminate"

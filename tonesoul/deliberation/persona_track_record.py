@@ -13,6 +13,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Optional
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Persona track record: accumulate per-perspective calibration history over sessions."
+)
+
 
 def _utc_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")

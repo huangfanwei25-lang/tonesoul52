@@ -16,6 +16,11 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Corpus consent: record and verify data provenance before ingestion."
+)
+
 
 class ConsentType(Enum):
     """Types of consent users can grant."""

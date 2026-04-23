@@ -1,6 +1,10 @@
 import re
 from typing import Dict, List
 
+
+__ts_layer__ = "observability"
+__ts_purpose__ = "POAV: posture-over-agent-vocabulary score — measures claim-language alignment."
+
 DEFAULT_MAX_TOKENS = 800
 DEFAULT_MAX_AVG_SENTENCE = 40
 DEFAULT_EVIDENCE_TARGET = 8.0

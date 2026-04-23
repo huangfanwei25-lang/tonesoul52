@@ -20,6 +20,11 @@ from .shadow_doc import (
     ShadowDocument,
 )
 
+__ts_layer__ = "semantic"
+__ts_purpose__ = (
+    "VOD (Voice-of-Design): encode and query design intent as semantic constraints."
+)
+
 
 class TensionLevel(str, Enum):
     CONVERGENCE = "CONVERGENCE"  # < 20% 語義距離 → 單軌整合

@@ -12,6 +12,11 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Trajectory analyzer: track resonance state changes across conversation turns."
+)
+
 
 class DirectionChange(Enum):
     """語氣變化方向"""

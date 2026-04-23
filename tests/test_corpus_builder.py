@@ -2,7 +2,113 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from tonesoul.evolution.corpus_builder import CorpusBuilder
+import pytest
+
+from tonesoul.evolution.corpus_builder import (
+    CorpusBuilder,
+    _clamp01,
+    _normalize_str,
+    _normalize_str_list,
+    _to_float,
+    _unique,
+    _utc_now,
+)
+
+
+# ── _utc_now ──────────────────────────────────────────────────────────────────
+
+class TestUtcNow:
+    def test_returns_string(self):
+        assert isinstance(_utc_now(), str)
+
+    def test_ends_with_z(self):
+        assert _utc_now().endswith("Z")
+
+
+# ── _normalize_str ────────────────────────────────────────────────────────────
+
+class TestNormalizeStr:
+    def test_strips_whitespace(self):
+        assert _normalize_str("  hello  ") == "hello"
+
+    def test_none_returns_empty(self):
+        assert _normalize_str(None) == ""
+
+    def test_empty_string(self):
+        assert _normalize_str("") == ""
+
+    def test_normal_string(self):
+        assert _normalize_str("hello") == "hello"
+
+
+# ── _normalize_str_list ───────────────────────────────────────────────────────
+
+class TestNormalizeStrList:
+    def test_list_of_strings(self):
+        assert _normalize_str_list(["a", "b"]) == ["a", "b"]
+
+    def test_filters_empty(self):
+        assert _normalize_str_list(["", "  ", "c"]) == ["c"]
+
+    def test_single_string_wrapped(self):
+        assert _normalize_str_list("hello") == ["hello"]
+
+    def test_none_returns_empty(self):
+        assert _normalize_str_list(None) == []
+
+    def test_strips_items(self):
+        assert _normalize_str_list(["  x  "]) == ["x"]
+
+
+# ── _to_float ─────────────────────────────────────────────────────────────────
+
+class TestToFloat:
+    def test_int_converted(self):
+        assert _to_float(3) == pytest.approx(3.0)
+
+    def test_string_float(self):
+        assert _to_float("1.5") == pytest.approx(1.5)
+
+    def test_none_returns_none(self):
+        assert _to_float(None) is None
+
+    def test_invalid_returns_none(self):
+        assert _to_float("bad") is None
+
+
+# ── _clamp01 ──────────────────────────────────────────────────────────────────
+
+class TestClamp01:
+    def test_normal_passthrough(self):
+        assert _clamp01(0.5) == pytest.approx(0.5)
+
+    def test_clamps_above_one(self):
+        assert _clamp01(1.5) == pytest.approx(1.0)
+
+    def test_clamps_below_zero(self):
+        assert _clamp01(-0.5) == pytest.approx(0.0)
+
+    def test_zero(self):
+        assert _clamp01(0.0) == pytest.approx(0.0)
+
+    def test_one(self):
+        assert _clamp01(1.0) == pytest.approx(1.0)
+
+
+# ── _unique ───────────────────────────────────────────────────────────────────
+
+class TestUnique:
+    def test_deduplicates(self):
+        assert _unique(["a", "b", "a"]) == ["a", "b"]
+
+    def test_preserves_order(self):
+        assert _unique(["c", "a", "b"]) == ["c", "a", "b"]
+
+    def test_filters_empty(self):
+        assert _unique(["", "  ", "x"]) == ["x"]
+
+    def test_empty_list(self):
+        assert _unique([]) == []
 
 
 class _FakePersistence:

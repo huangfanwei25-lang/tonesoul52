@@ -11,6 +11,11 @@ from tonesoul.semantic_control import (
     SemanticController,
 )
 
+__ts_layer__ = "pipeline"
+__ts_purpose__ = (
+    "Top-level controller wiring all pipeline stages into a single entry point."
+)
+
 
 class UnifiedController:
     """

@@ -1,7 +1,9 @@
 import json
 from datetime import datetime, timezone
 
-from tonesoul.observability.token_meter import TokenMeter
+import pytest
+
+from tonesoul.observability.token_meter import BudgetExceeded, TokenMeter
 
 
 def _today_log_name() -> str:
@@ -77,3 +79,56 @@ def test_check_budget_allows_exact_limit(tmp_path) -> None:
     meter.record("gpt-4.1", prompt_tokens=1000, completion_tokens=500, cost_usd=1.0)
 
     meter.check_budget(daily_limit_usd=1.0)
+
+
+def test_check_budget_raises_budget_exceeded_when_over_limit(tmp_path) -> None:
+    meter = TokenMeter(log_dir=tmp_path)
+    meter.record("gpt-4.1", prompt_tokens=1_000_000, completion_tokens=0, cost_usd=3.0)
+
+    with pytest.raises(BudgetExceeded):
+        meter.check_budget(daily_limit_usd=1.0)
+
+
+def test_record_cloud_model_estimates_cost(tmp_path) -> None:
+    meter = TokenMeter(log_dir=tmp_path)
+    # gemini-2.0-flash: 0.10 prompt + 0.40 completion per 1M
+    record = meter.record("gemini-2.0-flash", prompt_tokens=1_000_000, completion_tokens=1_000_000)
+    assert abs(record.cost_usd - 0.50) < 0.01
+
+
+def test_record_local_model_has_zero_cost(tmp_path) -> None:
+    meter = TokenMeter(log_dir=tmp_path)
+    record = meter.record("gemma3:4b", prompt_tokens=500, completion_tokens=300)
+    assert record.cost_usd == 0.0
+
+
+def test_get_session_totals_accumulates_multiple_calls(tmp_path) -> None:
+    meter = TokenMeter(log_dir=tmp_path)
+    meter.record("gemma3:4b", prompt_tokens=100, completion_tokens=50)
+    meter.record("gemma3:4b", prompt_tokens=200, completion_tokens=100)
+
+    totals = meter.get_session_totals()
+    assert totals["calls"] == 2
+    assert totals["prompt_tokens"] == 300
+    assert totals["completion_tokens"] == 150
+    assert totals["total_tokens"] == 450
+    assert totals["models"]["gemma3:4b"] == 2
+
+
+def test_record_writes_to_daily_log_file(tmp_path) -> None:
+    meter = TokenMeter(log_dir=tmp_path)
+    meter.record("gemma3:4b", prompt_tokens=10, completion_tokens=5, trace_id="t-001")
+
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    log_path = tmp_path / f"token_usage_{today}.jsonl"
+    assert log_path.exists()
+    payload = json.loads(log_path.read_text(encoding="utf-8").strip())
+    assert payload["model"] == "gemma3:4b"
+    assert payload["trace_id"] == "t-001"
+    assert payload["prompt_tokens"] == 10
+
+
+def test_override_cost_usd_is_used_directly(tmp_path) -> None:
+    meter = TokenMeter(log_dir=tmp_path)
+    record = meter.record("gpt-4.1", prompt_tokens=100, completion_tokens=50, cost_usd=9.99)
+    assert record.cost_usd == 9.99

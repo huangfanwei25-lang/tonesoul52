@@ -3,6 +3,11 @@ import json
 import pytest
 
 from tonesoul.skill_apply import (
+    _constraints_for_action,
+    _context_text,
+    _directives_for_action,
+    _directives_for_provides,
+    _extend_unique,
     _keyword_matches,
     _matches_when,
     _trigger_summary,
@@ -11,6 +16,101 @@ from tonesoul.skill_apply import (
     format_skill_section,
     load_skills,
 )
+
+
+# ── _context_text ─────────────────────────────────────────────────────────────
+
+class TestContextText:
+    def test_combines_fields(self):
+        key = {"task": "audit", "domain": "governance"}
+        result = _context_text(key)
+        assert "audit" in result
+        assert "governance" in result
+
+    def test_lowercase(self):
+        key = {"task": "Audit"}
+        assert _context_text(key) == "audit"
+
+    def test_skips_none(self):
+        key = {"task": None, "domain": "security"}
+        result = _context_text(key)
+        assert result == "security"
+
+    def test_frame_ids_included(self):
+        key = {"frame_ids": ["frame_a", "frame_b"]}
+        result = _context_text(key)
+        assert "frame_a" in result and "frame_b" in result
+
+
+# ── _directives_for_action ────────────────────────────────────────────────────
+
+class TestDirectivesForAction:
+    def test_governance_baseline_action(self):
+        d = _directives_for_action("apply_governance_baseline")
+        assert d["force_gates"] is True
+        assert d["require_evidence"] is True
+
+    def test_none_returns_empty(self):
+        assert _directives_for_action(None) == {}
+
+    def test_unknown_returns_empty(self):
+        assert _directives_for_action("custom_action") == {}
+
+
+# ── _constraints_for_action ───────────────────────────────────────────────────
+
+class TestConstraintsForAction:
+    def test_governance_baseline_returns_constraints(self):
+        constraints = _constraints_for_action("apply_governance_baseline")
+        assert len(constraints) > 0
+        assert any("YSS" in c for c in constraints)
+
+    def test_none_returns_empty(self):
+        assert _constraints_for_action(None) == []
+
+    def test_unknown_returns_empty(self):
+        assert _constraints_for_action("unknown") == []
+
+
+# ── _directives_for_provides ──────────────────────────────────────────────────
+
+class TestDirectivesForProvides:
+    def test_force_gates_in_list(self):
+        d = _directives_for_provides(["force_gates"])
+        assert d["force_gates"] is True
+
+    def test_string_force_gates(self):
+        d = _directives_for_provides("force_gates")
+        assert d["force_gates"] is True
+
+    def test_require_evidence(self):
+        d = _directives_for_provides(["require_evidence"])
+        assert d["require_evidence"] is True
+
+    def test_unknown_provides_empty(self):
+        assert _directives_for_provides(["custom"]) == {}
+
+    def test_none_returns_empty(self):
+        assert _directives_for_provides(None) == {}
+
+
+# ── _extend_unique ────────────────────────────────────────────────────────────
+
+class TestExtendUnique:
+    def test_appends_new_items(self):
+        values = ["a"]
+        _extend_unique(values, ["b", "c"])
+        assert values == ["a", "b", "c"]
+
+    def test_skips_duplicates(self):
+        values = ["a", "b"]
+        _extend_unique(values, ["a", "c"])
+        assert values == ["a", "b", "c"]
+
+    def test_empty_additions(self):
+        values = ["a"]
+        _extend_unique(values, [])
+        assert values == ["a"]
 
 
 def _write_skill(memory_root, name: str, payload: dict[str, object]) -> None:

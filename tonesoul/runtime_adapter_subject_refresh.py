@@ -8,6 +8,11 @@ from tonesoul.runtime_adapter_normalization import (
     find_recycled_carry_forward_hazard,
 )
 
+__ts_layer__ = "pipeline"
+__ts_purpose__ = (
+    "Refresh subject context within the runtime adapter lifecycle."
+)
+
 
 def _safe_parse_dt(
     raw_timestamp: Any,

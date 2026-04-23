@@ -10,6 +10,11 @@ Following Copilot Ralph's pattern of:
 from dataclasses import dataclass
 from typing import Literal, Optional
 
+__ts_layer__ = "orchestration"
+__ts_purpose__ = (
+    "Loop config: define parameters for autonomous loop timing and retry policy."
+)
+
 # State machine type
 LoopState = Literal["idle", "running", "complete", "failed", "cancelled"]
 

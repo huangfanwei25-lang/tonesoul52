@@ -19,6 +19,11 @@ from tonesoul.scribe.status_artifact import (
     write_scribe_status_artifact,
 )
 
+__ts_layer__ = "orchestration"
+__ts_purpose__ = (
+    "Wakeup loop: initialize autonomous loop state on session resume."
+)
+
 SleepFunc = Callable[[float], None]
 ConsolidateFunc = Callable[..., Any]
 

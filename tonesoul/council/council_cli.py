@@ -19,6 +19,11 @@ import logging
 import sys
 from typing import Any, Dict
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Council CLI: command-line interface for running and inspecting council sessions."
+)
+
 # Suppress all logging to stderr so stdout stays clean JSON
 logging.basicConfig(level=logging.WARNING, stream=sys.stderr)
 
@@ -114,7 +119,7 @@ def _run_council(draft: str, intent: str, mode: str, visual_context: str = "") -
     }
 
 
-def main() -> None:
+def main(argv: list | None = None) -> None:
     parser = argparse.ArgumentParser(
         description="ToneSoul Council CLI for Elisa bridge",
     )
@@ -139,7 +144,7 @@ def main() -> None:
         default="",
         help="Optional Mermaid diagram representing the workspace state",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     try:
         result = _run_council(args.draft, args.intent, args.mode, args.visual_context)

@@ -3,7 +3,140 @@ from __future__ import annotations
 import json
 from io import StringIO
 
+import pytest
+
 from tonesoul import mcp_server
+from tonesoul.mcp_server import (
+    _claim_blocked_reasons,
+    _claim_evidence_level,
+    _normalize_mode,
+    _require_duration_minutes,
+    _require_object_list,
+    _require_string_list,
+)
+
+
+# ── _normalize_mode ───────────────────────────────────────────────────────────
+
+class TestNormalizeMode:
+    def test_rules_passthrough(self):
+        assert _normalize_mode("rules") == "rules"
+
+    def test_hybrid_passthrough(self):
+        assert _normalize_mode("hybrid") == "hybrid"
+
+    def test_full_llm_passthrough(self):
+        assert _normalize_mode("full_llm") == "full_llm"
+
+    def test_rules_only_aliases_to_rules(self):
+        assert _normalize_mode("rules_only") == "rules"
+
+    def test_none_defaults_to_rules(self):
+        assert _normalize_mode(None) == "rules"
+
+    def test_unknown_defaults_to_rules(self):
+        assert _normalize_mode("custom") == "rules"
+
+    def test_strips_whitespace(self):
+        assert _normalize_mode("  hybrid  ") == "hybrid"
+
+
+# ── _require_string_list ──────────────────────────────────────────────────────
+
+class TestRequireStringList:
+    def test_returns_empty_when_missing(self):
+        assert _require_string_list({}, "key") == []
+
+    def test_returns_empty_for_none_value(self):
+        assert _require_string_list({"key": None}, "key") == []
+
+    def test_non_list_raises(self):
+        with pytest.raises(ValueError, match="must be an array"):
+            _require_string_list({"key": "not-a-list"}, "key")
+
+    def test_non_string_item_raises(self):
+        with pytest.raises(ValueError, match="must be a string"):
+            _require_string_list({"key": [1, 2]}, "key")
+
+    def test_filters_empty_strings(self):
+        result = _require_string_list({"key": ["a", "", "  ", "b"]}, "key")
+        assert result == ["a", "b"]
+
+
+# ── _require_object_list ──────────────────────────────────────────────────────
+
+class TestRequireObjectList:
+    def test_returns_empty_when_missing(self):
+        assert _require_object_list({}, "key") == []
+
+    def test_non_list_raises(self):
+        with pytest.raises(ValueError, match="must be an array"):
+            _require_object_list({"key": "bad"}, "key")
+
+    def test_non_dict_item_raises(self):
+        with pytest.raises(ValueError, match="must be an object"):
+            _require_object_list({"key": ["not-a-dict"]}, "key")
+
+    def test_valid_list(self):
+        result = _require_object_list({"key": [{"a": 1}, {"b": 2}]}, "key")
+        assert result == [{"a": 1}, {"b": 2}]
+
+
+# ── _require_duration_minutes ─────────────────────────────────────────────────
+
+class TestRequireDurationMinutes:
+    def test_zero_default(self):
+        assert _require_duration_minutes({}) == pytest.approx(0.0)
+
+    def test_valid_duration(self):
+        assert _require_duration_minutes({"duration_minutes": 30.0}) == pytest.approx(30.0)
+
+    def test_negative_raises(self):
+        with pytest.raises(ValueError, match=">= 0"):
+            _require_duration_minutes({"duration_minutes": -5})
+
+    def test_invalid_raises(self):
+        with pytest.raises(ValueError, match="must be a number"):
+            _require_duration_minutes({"duration_minutes": "bad"})
+
+
+# ── _claim_blocked_reasons ────────────────────────────────────────────────────
+
+class TestClaimBlockedReasons:
+    def test_production_ready_blocked(self):
+        reasons = _claim_blocked_reasons("ToneSoul is production-ready")
+        assert "production_readiness_overclaim" in reasons
+
+    def test_consciousness_blocked(self):
+        reasons = _claim_blocked_reasons("AI with genuine consciousness")
+        assert "ai_selfhood_overclaim" in reasons
+
+    def test_clean_claim_no_blocks(self):
+        reasons = _claim_blocked_reasons("ToneSoul is a governance framework")
+        assert reasons == []
+
+    def test_multiple_patterns_detected(self):
+        reasons = _claim_blocked_reasons("production ready with validated at scale")
+        assert "production_readiness_overclaim" in reasons
+        assert "live_shared_memory_overclaim" in reasons
+
+
+# ── _claim_evidence_level ─────────────────────────────────────────────────────
+
+class TestClaimEvidenceLevel:
+    def test_blocked_reasons_returns_blocked_overclaim(self):
+        level = _claim_evidence_level("anything", ["some_block"])
+        assert level == "blocked_overclaim"
+
+    def test_safe_pattern_returns_bounded_current_truth(self):
+        level = _claim_evidence_level(
+            "governance state is computed and persisted", []
+        )
+        assert level == "bounded_current_truth"
+
+    def test_unknown_returns_needs_human_review(self):
+        level = _claim_evidence_level("Some claim without safe patterns", [])
+        assert level == "needs_human_review"
 
 
 def test_handle_initialize_returns_tools_capability() -> None:

@@ -12,6 +12,11 @@ from ..types import (
     VoteDecision,
 )
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Analyst perspective: provide evidence-based factual assessment of the request."
+)
+
 
 class AnalystPerspective(IPerspective):
     """

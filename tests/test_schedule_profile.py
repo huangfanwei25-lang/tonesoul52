@@ -4,7 +4,141 @@ from pathlib import Path
 
 import pytest
 
-from tonesoul.schedule_profile import load_schedule_profiles, resolve_schedule_profile
+from tonesoul.schedule_profile import (
+    _as_bool,
+    _as_float,
+    _as_int,
+    _as_int_map,
+    _as_optional_float,
+    _as_optional_int,
+    _as_str_list,
+    load_schedule_profiles,
+    resolve_schedule_profile,
+)
+
+
+# ── _as_str_list ──────────────────────────────────────────────────────────────
+
+class TestAsStrList:
+    def test_list_of_strings(self):
+        assert _as_str_list(["a", "b"]) == ["a", "b"]
+
+    def test_filters_empty(self):
+        assert _as_str_list(["", "  ", "x"]) == ["x"]
+
+    def test_non_list_returns_empty(self):
+        assert _as_str_list("not-a-list") == []
+        assert _as_str_list(None) == []
+
+    def test_strips_items(self):
+        assert _as_str_list(["  x  "]) == ["x"]
+
+
+# ── _as_bool ──────────────────────────────────────────────────────────────────
+
+class TestAsBool:
+    def test_bool_true(self):
+        assert _as_bool(True, default=False) is True
+
+    def test_bool_false(self):
+        assert _as_bool(False, default=True) is False
+
+    def test_none_uses_default(self):
+        assert _as_bool(None, default=True) is True
+
+    def test_string_true_values(self):
+        for v in ["true", "1", "yes", "on"]:
+            assert _as_bool(v, default=False) is True
+
+    def test_string_false_values(self):
+        for v in ["false", "0", "no", "off"]:
+            assert _as_bool(v, default=True) is False
+
+    def test_unknown_string_uses_default(self):
+        assert _as_bool("maybe", default=True) is True
+
+
+# ── _as_int ───────────────────────────────────────────────────────────────────
+
+class TestAsInt:
+    def test_int_value(self):
+        assert _as_int(5, default=1, minimum=0) == 5
+
+    def test_minimum_enforced(self):
+        assert _as_int(-10, default=1, minimum=0) == 0
+
+    def test_invalid_uses_default(self):
+        assert _as_int("bad", default=3, minimum=0) == 3
+
+    def test_none_uses_default(self):
+        assert _as_int(None, default=2, minimum=0) == 2
+
+
+# ── _as_float ─────────────────────────────────────────────────────────────────
+
+class TestAsFloat:
+    def test_float_value(self):
+        assert _as_float(0.5, default=1.0, minimum=0.0) == pytest.approx(0.5)
+
+    def test_minimum_enforced(self):
+        assert _as_float(-1.0, default=1.0, minimum=0.0) == pytest.approx(0.0)
+
+    def test_invalid_uses_default(self):
+        assert _as_float("bad", default=2.5, minimum=0.0) == pytest.approx(2.5)
+
+
+# ── _as_optional_int ──────────────────────────────────────────────────────────
+
+class TestAsOptionalInt:
+    def test_none_returns_none(self):
+        assert _as_optional_int(None, minimum=0) is None
+
+    def test_empty_returns_none(self):
+        assert _as_optional_int("", minimum=0) is None
+
+    def test_valid_int(self):
+        assert _as_optional_int(5, minimum=0) == 5
+
+    def test_minimum_enforced(self):
+        assert _as_optional_int(-1, minimum=0) == 0
+
+    def test_invalid_returns_none(self):
+        assert _as_optional_int("bad", minimum=0) is None
+
+
+# ── _as_optional_float ────────────────────────────────────────────────────────
+
+class TestAsOptionalFloat:
+    def test_none_returns_none(self):
+        assert _as_optional_float(None, minimum=0.0) is None
+
+    def test_empty_returns_none(self):
+        assert _as_optional_float("", minimum=0.0) is None
+
+    def test_valid_float(self):
+        assert _as_optional_float(0.5, minimum=0.0) == pytest.approx(0.5)
+
+    def test_minimum_enforced(self):
+        assert _as_optional_float(-1.0, minimum=0.0) == pytest.approx(0.0)
+
+
+# ── _as_int_map ───────────────────────────────────────────────────────────────
+
+class TestAsIntMap:
+    def test_basic_map(self):
+        result = _as_int_map({"a": 2, "b": 3}, minimum=1)
+        assert result == {"a": 2, "b": 3}
+
+    def test_non_dict_returns_empty(self):
+        assert _as_int_map("not-a-dict", minimum=0) == {}
+
+    def test_minimum_enforced_per_value(self):
+        result = _as_int_map({"a": -5}, minimum=0)
+        assert result["a"] == 0
+
+    def test_keys_lowercased(self):
+        result = _as_int_map({"KEY": 1}, minimum=0)
+        assert "key" in result
 
 
 def test_load_schedule_profiles_reads_named_profiles() -> None:

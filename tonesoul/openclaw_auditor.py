@@ -10,6 +10,11 @@ from memory.provenance_chain import ProvenanceManager
 from tonesoul.benevolence import AuditLayer, filter_benevolence
 from tonesoul.gateway.session import GatewaySession
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "OpenClaw auditor: verify integrity and freshness of vector memory entries."
+)
+
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")

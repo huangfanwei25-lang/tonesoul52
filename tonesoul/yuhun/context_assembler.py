@@ -25,6 +25,11 @@ from typing import Optional
 
 from tonesoul.yuhun.dpr import DPRResult, RoutingDecision
 
+__ts_layer__ = "semantic"
+__ts_purpose__ = (
+    "Context assembler: build rich semantic context objects from fragmented session state."
+)
+
 # ─────────────────────────────────────────────
 # 禁止源清單（永遠不進提示詞）
 # ─────────────────────────────────────────────

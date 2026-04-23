@@ -3,6 +3,9 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
+__ts_layer__ = "shared"
+__ts_purpose__ = "YSTM pure-data schema: Node, WhereTime, and stable_hash used across governance, memory, and observability."
+
 
 @dataclass
 class WhereTime:

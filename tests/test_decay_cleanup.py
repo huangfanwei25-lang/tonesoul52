@@ -52,3 +52,55 @@ def test_sqlite_cleanup_decayed_returns_integer_count(tmp_path):
 
     assert isinstance(cleaned, int)
     assert cleaned >= 1
+
+
+def test_jsonl_cleanup_with_only_recent_records_removes_none(tmp_path):
+    source = MemorySource.SELF_JOURNAL
+    db = JsonlSoulDB(source_map={source: tmp_path / "self_journal.jsonl"})
+    db.append(source, {
+        "timestamp": _iso_now(),
+        "statement": "fresh memory",
+        "relevance_score": 0.9,
+        "access_count": 5,
+    })
+
+    cleaned = db.cleanup_decayed(source)
+
+    assert isinstance(cleaned, int)
+    assert cleaned == 0
+
+
+def test_sqlite_cleanup_with_only_recent_records_removes_none(tmp_path):
+    source = MemorySource.SELF_JOURNAL
+    db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    db.append(source, {
+        "timestamp": _iso_now(),
+        "statement": "fresh memory",
+        "relevance_score": 0.9,
+        "access_count": 5,
+    })
+
+    cleaned = db.cleanup_decayed(source)
+
+    assert isinstance(cleaned, int)
+    assert cleaned == 0
+
+
+def test_jsonl_cleanup_empty_db_returns_zero(tmp_path):
+    source = MemorySource.SELF_JOURNAL
+    db = JsonlSoulDB(source_map={source: tmp_path / "self_journal.jsonl"})
+
+    cleaned = db.cleanup_decayed(source)
+
+    assert cleaned == 0
+
+
+def test_sqlite_cleanup_custom_source(tmp_path):
+    source = MemorySource.CUSTOM
+    db = SqliteSoulDB(db_path=tmp_path / "soul.db")
+    _append_old_and_recent_records(db, source)
+
+    cleaned = db.cleanup_decayed(source)
+
+    assert isinstance(cleaned, int)
+    assert cleaned >= 1

@@ -16,6 +16,11 @@ import typing
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "Market analyzer: evaluate semantic field market signals for domain intelligence."
+)
+
 logger = logging.getLogger(__name__)
 
 

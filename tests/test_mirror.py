@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 
 from tonesoul.memory.soul_db import MemorySource, SqliteSoulDB
 from tonesoul.memory.write_gateway import MemoryWriteGateway
-from tonesoul.mirror import ToneSoulMirror
+from tonesoul.mirror import ToneSoulMirror, _get_field, _safe_float
 from tonesoul.unified_pipeline import UnifiedPipeline
 
 
@@ -262,3 +262,80 @@ def test_pipeline_mirror_enforce_mode_can_apply_governed_response(monkeypatch) -
     assert mirror_trace.get("mode") == "enforce"
     assert mirror_trace.get("applied_response") == "governed"
     assert mirror_trace.get("enforced") is True
+
+
+# ── Module-level helpers ──────────────────────────────────────────────────────
+
+def test_safe_float_converts_numeric() -> None:
+    assert _safe_float(1) == 1.0
+    assert _safe_float("0.5") == 0.5
+
+
+def test_safe_float_returns_default_for_invalid() -> None:
+    assert _safe_float("bad") == 0.0
+    assert _safe_float(None, default=0.7) == 0.7
+
+
+def test_get_field_from_dict() -> None:
+    assert _get_field({"key": "val"}, "key") == "val"
+    assert _get_field({"key": "val"}, "missing", "default") == "default"
+
+
+def test_get_field_from_object() -> None:
+    from types import SimpleNamespace
+    obj = SimpleNamespace(x=42)
+    assert _get_field(obj, "x") == 42
+    assert _get_field(obj, "missing", "fallback") == "fallback"
+
+
+# ── ToneSoulMirror static helpers ─────────────────────────────────────────────
+
+def test_resolve_confidence_clamps_to_range() -> None:
+    assert ToneSoulMirror._resolve_confidence({"confidence": 1.5}) == 1.0
+    assert ToneSoulMirror._resolve_confidence({"confidence": -0.5}) == 0.0
+    assert ToneSoulMirror._resolve_confidence({}) == 0.8
+
+
+def test_build_evidence_deduplicates_and_truncates() -> None:
+    evidence = ToneSoulMirror._build_evidence("alpha", "beta", "ALPHA", None, "")
+    assert evidence == ["alpha", "beta"]
+
+
+def test_extract_total_clamps_to_range() -> None:
+    from types import SimpleNamespace
+    obj = SimpleNamespace(total=1.5)
+    assert ToneSoulMirror._extract_total(obj) == 1.0
+    assert ToneSoulMirror._extract_total(SimpleNamespace(total=-0.1)) == 0.0
+
+
+def test_extract_cognitive_friction_from_dict_signals() -> None:
+    from types import SimpleNamespace
+    obj = SimpleNamespace(signals={"cognitive_friction": 0.72})
+    assert ToneSoulMirror._extract_cognitive_friction(obj) == 0.72
+
+
+def test_empty_snapshot_has_stable_state() -> None:
+    snapshot = ToneSoulMirror._empty_snapshot()
+    assert snapshot.cognitive_friction == 0.0
+    assert snapshot.lyapunov_exponent == 0.0
+    assert snapshot.phase_state == "stable"
+
+
+def test_snapshot_from_tension_none_returns_empty() -> None:
+    snapshot = ToneSoulMirror._snapshot_from_tension(None)
+    assert snapshot.phase_state == "stable"
+    assert snapshot.cognitive_friction == 0.0
+
+
+def test_snapshot_from_tension_with_dummy_result() -> None:
+    result = _DummyTensionResult(
+        total=0.7,
+        signals=_DummySignals(cognitive_friction=0.7, text_tension=0.7),
+        zone=_DummyZone("unstable"),
+        prediction=_DummyPrediction(0.22),
+        timestamp="2026-01-01T00:00:00Z",
+    )
+    snapshot = ToneSoulMirror._snapshot_from_tension(result)
+    assert snapshot.phase_state == "unstable"
+    assert snapshot.cognitive_friction == 0.7
+    assert snapshot.lyapunov_exponent == 0.22

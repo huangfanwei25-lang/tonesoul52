@@ -27,6 +27,11 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import List, Optional
 
+__ts_layer__ = "perception"
+__ts_purpose__ = (
+    "Web ingest: fetch and parse web content into structured perception units."
+)
+
 
 @dataclass
 class IngestResult:

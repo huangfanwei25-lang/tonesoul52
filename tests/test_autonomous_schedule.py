@@ -3,8 +3,93 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from tonesoul.autonomous_schedule import AutonomousRegistrySchedule
+import pytest
+
+from tonesoul.autonomous_schedule import (
+    AutonomousRegistrySchedule,
+    LLMBackoffState,
+    RegistryCategoryState,
+    RegistryEntryState,
+)
 from tonesoul.dream_observability import JSON_FILENAME
+
+
+# ── RegistryEntryState ────────────────────────────────────────────────────────
+
+class TestRegistryEntryState:
+    def test_default_values(self):
+        s = RegistryEntryState()
+        assert s.last_selected_cycle == 0
+        assert s.consecutive_failures == 0
+        assert s.last_outcome == "unknown"
+
+    def test_to_dict_keys(self):
+        s = RegistryEntryState(last_selected_cycle=5, last_outcome="ok")
+        d = s.to_dict()
+        for k in ("last_selected_cycle", "backoff_until_cycle", "consecutive_failures",
+                  "last_outcome", "updated_at"):
+            assert k in d
+
+    def test_roundtrip(self):
+        s = RegistryEntryState(last_selected_cycle=3, consecutive_failures=2, last_outcome="error")
+        recovered = RegistryEntryState.from_dict(s.to_dict())
+        assert recovered.last_selected_cycle == 3
+        assert recovered.consecutive_failures == 2
+        assert recovered.last_outcome == "error"
+
+    def test_from_dict_clamps_negatives(self):
+        s = RegistryEntryState.from_dict({"last_selected_cycle": -5})
+        assert s.last_selected_cycle == 0
+
+
+# ── RegistryCategoryState ─────────────────────────────────────────────────────
+
+class TestRegistryCategoryState:
+    def test_default_values(self):
+        s = RegistryCategoryState()
+        assert s.tension_cooldown_until_cycle == 0
+        assert s.last_budget_status == "unknown"
+
+    def test_roundtrip_with_floats(self):
+        s = RegistryCategoryState(
+            tension_cooldown_until_cycle=3,
+            last_max_friction_score=0.75,
+            last_max_lyapunov_proxy=0.3,
+        )
+        recovered = RegistryCategoryState.from_dict(s.to_dict())
+        assert recovered.tension_cooldown_until_cycle == 3
+        assert recovered.last_max_friction_score == pytest.approx(0.75)
+
+    def test_none_floats_preserved(self):
+        s = RegistryCategoryState()
+        d = s.to_dict()
+        assert d["last_max_friction_score"] is None
+
+
+# ── LLMBackoffState ───────────────────────────────────────────────────────────
+
+class TestLLMBackoffState:
+    def test_default_values(self):
+        s = LLMBackoffState()
+        assert s.backoff_until_cycle == 0
+        assert s.last_status == "idle"
+        assert s.last_mode == "none"
+
+    def test_roundtrip(self):
+        s = LLMBackoffState(
+            backoff_until_cycle=5,
+            last_status="breached",
+            last_mode="probe_latency",
+            last_breach_reasons=["reason1"],
+        )
+        recovered = LLMBackoffState.from_dict(s.to_dict())
+        assert recovered.backoff_until_cycle == 5
+        assert recovered.last_status == "breached"
+        assert recovered.last_breach_reasons == ["reason1"]
+
+    def test_from_dict_clamps_negative(self):
+        s = LLMBackoffState.from_dict({"backoff_until_cycle": -3})
+        assert s.backoff_until_cycle == 0
 
 
 def _write_registry(path: Path) -> Path:

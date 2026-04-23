@@ -202,6 +202,104 @@ review:
     assert json.loads(skill_path.read_text(encoding="utf-8")) == payload
 
 
+def test_list_skill_paths_returns_empty_when_dir_missing(tmp_path: Path) -> None:
+    assert list_skill_paths(str(tmp_path / "no_such_dir")) == []
+
+
+def test_evaluate_skill_empty_criteria_returns_false_and_zero(tmp_path: Path) -> None:
+    passed, score, rule_ids = evaluate_skill({})
+    assert passed is False
+    assert score == 0.0
+    assert rule_ids == []
+
+
+def test_evaluate_skill_all_thresholds_met_returns_true() -> None:
+    passed, score, rule_ids = evaluate_skill(
+        {
+            "criteria": {
+                "support_count": 10,
+                "pass_rate": 0.95,
+                "thresholds": {
+                    "min_support": 5,
+                    "min_pass_rate": 0.80,
+                },
+            }
+        }
+    )
+    assert passed is True
+    assert score == pytest.approx(1.0)
+
+
+def test_review_skill_already_approved_returns_no_review(tmp_path: Path) -> None:
+    skill_path = tmp_path / "skills" / "done.json"
+    _write_json(
+        skill_path,
+        {
+            "skill_id": "done",
+            "status": "approved",
+            "criteria": {"support_count": 5, "thresholds": {"min_support": 3}},
+        },
+    )
+    result = review_skill(str(skill_path))
+    assert result["reviewed"] is False
+    assert result["status"] == "approved"
+
+
+def test_review_skill_no_decision_no_auto_returns_current_status(tmp_path: Path) -> None:
+    skill_path = tmp_path / "skills" / "pending.json"
+    _write_json(
+        skill_path,
+        {
+            "skill_id": "pending",
+            "status": "candidate",
+            "criteria": {"support_count": 5, "thresholds": {"min_support": 3}},
+        },
+    )
+    result = review_skill(str(skill_path))
+    assert result["reviewed"] is False
+    assert result["status"] == "candidate"
+
+
+def test_review_skill_raises_when_reviewer_required_but_missing(tmp_path: Path) -> None:
+    skill_path = tmp_path / "skills" / "gate.json"
+    policy_path = tmp_path / "policy.yaml"
+    _write_json(
+        skill_path,
+        {
+            "skill_id": "gate",
+            "status": "candidate",
+            "criteria": {"support_count": 5, "thresholds": {"min_support": 3}},
+        },
+    )
+    _write_policy(policy_path, "review:\n  require_reviewer: true\n")
+    with pytest.raises(ValueError, match="Reviewer is required"):
+        review_skill(str(skill_path), decision="approved", policy_path=str(policy_path))
+
+
+def test_review_skills_dry_run_skips_index(tmp_path: Path) -> None:
+    memory_root = tmp_path / "memory"
+    skill_path = memory_root / "skills" / "s.json"
+    _write_json(
+        skill_path,
+        {
+            "skill_id": "s",
+            "status": "candidate",
+            "criteria": {"support_count": 5, "thresholds": {"min_support": 3}},
+        },
+    )
+    _write_policy(tmp_path / "policy.yaml", "review:\n  require_reviewer: false\n")
+
+    result = review_skills(
+        [str(skill_path)],
+        decision="approved",
+        memory_root=str(memory_root),
+        policy_path=str(tmp_path / "policy.yaml"),
+        dry_run=True,
+    )
+    assert result["skill_index"] == ""
+    assert not (memory_root / "skill_index.json").exists()
+
+
 def test_review_skills_writes_skill_index_when_memory_root_is_provided(tmp_path: Path) -> None:
     memory_root = tmp_path / "memory"
     skills_dir = memory_root / "skills"

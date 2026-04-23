@@ -33,6 +33,11 @@ from tonesoul.store_keys import (
     STREAM_TRACES,
 )
 
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = (
+    "Redis-backed key-value store: fast in-memory persistence with pub/sub support."
+)
+
 
 class RedisStore:
     """Redis-backed store. Pass a connected `redis.Redis` client."""

@@ -5,6 +5,11 @@ from typing import Optional
 from ..base import IPerspective
 from ..types import PerspectiveType, PerspectiveVote, VoteDecision
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Advocate perspective: argue for the user-aligned interpretation of a request."
+)
+
 
 class AdvocatePerspective(IPerspective):
     """Evaluates whether the draft serves the user's stated intent.

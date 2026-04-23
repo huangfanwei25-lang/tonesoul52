@@ -1,3 +1,8 @@
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "YSTM domain: semantic terrain model — segment ingestion, field computation, and rendering."
+)
+
 """YSTM v0.1 demo modules for ToneSoul 5.2."""
 
 from .demo import DEFAULT_SEGMENTS, write_demo_outputs

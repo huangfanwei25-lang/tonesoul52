@@ -13,6 +13,11 @@ Usage:
         handle_timeout()
 """
 
+__ts_layer__ = "shared"
+__ts_purpose__ = (
+    "Shared error types: canonical exception hierarchy for structured error handling."
+)
+
 
 class ToneSoulError(Exception):
     """Base error for ToneSoul system"""

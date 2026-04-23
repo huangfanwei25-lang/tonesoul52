@@ -113,6 +113,7 @@ tonesoul_evolution/
 # Test output
 pytest_output.txt
 pytest_err.txt
+black_gate_report.json
 
 # Autonomous runtime artifacts (probe runs, dream wakeup logs)
 memory/autonomous/

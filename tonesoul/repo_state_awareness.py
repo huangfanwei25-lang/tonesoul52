@@ -2,8 +2,18 @@
 
 from __future__ import annotations
 
+
 from typing import Any
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Maintain awareness of repository state changes over time."
+)
+
+
+
+__ts_layer__ = "observability"
+__ts_purpose__ = "Repo state awareness: reads git delta feed for session-start orientation."
 
 def build_repo_state_awareness(
     *,

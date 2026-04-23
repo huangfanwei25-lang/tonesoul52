@@ -8,6 +8,11 @@ from __future__ import annotations
 import os
 from typing import Dict, List, Optional
 
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = (
+    "Gemini client: inference adapter for Google Gemini model endpoints."
+)
+
 
 def _load_genai():
     try:

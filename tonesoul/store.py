@@ -43,6 +43,11 @@ from tonesoul.store_keys import (  # noqa: F401 — re-export
     STREAM_TRACES,
 )
 
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = (
+    "Persistent key-value store abstraction over Redis and JSON fallback."
+)
+
 # ---------------------------------------------------------------------------
 # Factory
 # ---------------------------------------------------------------------------

@@ -264,3 +264,58 @@ class TestLoopEngineState:
         # Try to start again - should raise
         with pytest.raises(Exception):
             await engine.start()
+
+
+# =============================================================================
+# Property and utility coverage
+# =============================================================================
+
+
+class TestLoopEngineProperties:
+    def test_config_property_returns_config(self):
+        config = build_config(max_iterations=4, promise_phrase="DONE")
+        engine = LoopEngine(config=config)
+        assert engine.config is config
+        assert engine.config.max_iterations == 4
+
+    def test_iteration_property_starts_at_zero(self):
+        engine = LoopEngine(config=build_config())
+        assert engine.iteration == 0
+
+    def test_events_stream_returns_async_iterable(self):
+        engine = LoopEngine(config=build_config())
+        stream = engine.events_stream()
+        assert hasattr(stream, "__aiter__")
+
+    def test_build_iteration_prompt_omits_promise_directive_when_no_phrase(self):
+        config = build_config(promise_phrase="")
+        engine = LoopEngine(config=config)
+        engine._iteration = 2
+        prompt = engine._build_iteration_prompt()
+        assert "<promise>" not in prompt
+        assert "Task:" in prompt
+
+    def test_pre_iteration_check_skips_timeout_when_zero(self):
+        """When timeout_ms=0, timeout is not checked."""
+        config = build_config(max_iterations=99, timeout_ms=0)
+        engine = LoopEngine(config=config)
+        engine._state = "running"
+        engine._start_time_ms = 0  # very old start — would time out if checked
+        result = engine._pre_iteration_check(None)
+        assert result is None  # not timed out, not complete yet
+
+    @pytest.mark.asyncio
+    async def test_result_duration_ms_is_non_negative(self):
+        config = build_config(max_iterations=1)
+        engine = LoopEngine(config=config)
+        result = await engine.start()
+        assert result.duration_ms >= 0
+
+    @pytest.mark.asyncio
+    async def test_complete_result_has_no_error(self):
+        """Normal completion produces error=None."""
+        config = build_config(max_iterations=1)
+        engine = LoopEngine(config=config)
+        result = await engine.start()
+        assert result.state == "complete"
+        assert result.error is None

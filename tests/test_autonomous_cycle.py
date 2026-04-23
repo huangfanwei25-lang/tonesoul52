@@ -5,9 +5,45 @@ from pathlib import Path
 
 import pytest
 
-from tonesoul.autonomous_cycle import AutonomousDreamCycleRunner
+from tonesoul.autonomous_cycle import (
+    AutonomousDreamCycleRunner,
+    _derive_overall_status,
+    _iso_now,
+)
 from tonesoul.perception.stimulus import StimulusProcessor
 from tonesoul.perception.web_ingest import IngestResult, WebIngestor
+
+
+# ── _iso_now ──────────────────────────────────────────────────────────────────
+
+class TestIsoNow:
+    def test_returns_string(self):
+        assert isinstance(_iso_now(), str)
+
+    def test_ends_with_z(self):
+        assert _iso_now().endswith("Z")
+
+
+# ── _derive_overall_status ────────────────────────────────────────────────────
+
+class TestDeriveOverallStatus:
+    def test_empty_returns_idle(self):
+        assert _derive_overall_status([]) == "idle"
+
+    def test_all_same_returns_that_status(self):
+        results = [{"status": "ok"}, {"status": "ok"}]
+        assert _derive_overall_status(results) == "ok"
+
+    def test_mixed_statuses_returns_mixed(self):
+        results = [{"status": "ok"}, {"status": "error"}]
+        assert _derive_overall_status(results) == "mixed"
+
+    def test_missing_status_ignored(self):
+        results = [{"status": None}, {"status": None}]
+        assert _derive_overall_status(results) == "idle"
+
+    def test_single_result(self):
+        assert _derive_overall_status([{"status": "idle"}]) == "idle"
 
 
 class DummyIngestor:

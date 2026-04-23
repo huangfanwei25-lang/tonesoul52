@@ -20,6 +20,11 @@ from typing import Dict, Mapping, Optional
 
 from .perspective_factory import DEFAULT_LLM_MODEL
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Model registry: enumerate available LLM endpoints for council perspective assignment."
+)
+
 # Default perspective-to-model mapping
 # Key insight: Different models have different "personalities"
 # - Pro models: More cautious, thorough analysis

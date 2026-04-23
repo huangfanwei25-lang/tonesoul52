@@ -1,4 +1,6 @@
 from __future__ import annotations
+import pytest
+pytest.importorskip("flask")
 
 import apps.api.server as server
 

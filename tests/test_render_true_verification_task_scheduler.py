@@ -86,7 +86,7 @@ def test_render_task_template_writes_xml_and_summary(tmp_path: Path) -> None:
     command = _find(root, "task:Actions/task:Exec/task:Command").text
     arguments = _find(root, "task:Actions/task:Exec/task:Arguments").text
     working_directory = _find(root, "task:Actions/task:Exec/task:WorkingDirectory").text
-    assert command is not None and PurePath(command).name in {"python", "python.exe"}
+    assert command is not None and PurePath(command).name in {"python", "python3", "python.exe"}
     assert arguments is not None and "run_true_verification_host_tick_task.py" in arguments
     assert working_directory is not None
     assert Path(working_directory).name == module.repo_root.name

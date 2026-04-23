@@ -8,6 +8,11 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import ClassVar, Dict, FrozenSet, Mapping
 
+__ts_layer__ = "surface"
+__ts_purpose__ = (
+    "Inter-soul type definitions: message envelopes and sovereignty claim structures."
+)
+
 
 def _utcnow_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")

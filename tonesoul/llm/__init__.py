@@ -7,6 +7,10 @@ from .gemini_client import GeminiClient, create_gemini_client, generate_narrativ
 from .lmstudio_client import LMStudioClient, create_lmstudio_client
 from .ollama_client import OllamaClient, create_ollama_client
 
+
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = "LLM infrastructure: local LLM integration and prompt pipeline adapters."
+
 __all__ = [
     "GeminiClient",
     "create_gemini_client",

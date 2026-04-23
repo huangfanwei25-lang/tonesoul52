@@ -15,6 +15,11 @@ import os
 from pathlib import Path
 from typing import Optional
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Env config observability: surface active environment configuration for inspection."
+)
+
 try:
     from dotenv import load_dotenv as _dotenv_load
 except ImportError:

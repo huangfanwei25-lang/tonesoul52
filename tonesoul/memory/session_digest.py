@@ -10,6 +10,11 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
+__ts_layer__ = "memory"
+__ts_purpose__ = (
+    "Session digest: produce a compact summary of session memory for handoff."
+)
+
 
 def _utcnow_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")

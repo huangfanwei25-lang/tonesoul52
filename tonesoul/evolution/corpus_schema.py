@@ -5,6 +5,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Corpus schema: define the canonical data shape for evolution training examples."
+)
+
 
 @dataclass(slots=True)
 class CorpusEntry:

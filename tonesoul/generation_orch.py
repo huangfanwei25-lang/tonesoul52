@@ -8,6 +8,15 @@ import yaml
 from .error_event import ErrorEvent, ErrorLedger
 from .ystm.schema import stable_hash, utc_now
 
+__ts_layer__ = "pipeline"
+__ts_purpose__ = (
+    "Orchestrate multi-step generation with gate checkpoints."
+)
+
+
+
+__ts_layer__ = "pipeline"
+__ts_purpose__ = "Generation orchestration: coordinates LLM generation with council gate and output routing."
 
 def _load_context(path: str) -> Dict[str, object]:
     with open(path, "r", encoding="utf-8") as handle:

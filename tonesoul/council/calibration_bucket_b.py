@@ -77,6 +77,11 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from tonesoul.council.outcome_persistence import compute_verdict_fingerprint
 
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Council calibration Bucket B: JOIN-phase calibration signal aggregation."
+)
+
 _SCHEMA_VERSION = "v0b-bucket-b-1.0.0"
 
 _ADVERSARIAL_CATEGORIES = frozenset(

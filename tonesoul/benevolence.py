@@ -21,6 +21,15 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List, Optional, Set, Tuple
 
+__ts_layer__ = "evolution"
+__ts_purpose__ = (
+    "Encode benevolence objectives into AI output shaping."
+)
+
+
+
+__ts_layer__ = "evolution"
+__ts_purpose__ = "Benevolence module: models compassionate intent signals for council and governance deliberation."
 
 class AuditLayer(Enum):
     """語義層級 / Semantic Layers"""
