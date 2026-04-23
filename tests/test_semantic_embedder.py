@@ -60,3 +60,38 @@ def test_semantic_embedder_handles_missing_dependency_and_default_helpers(monkey
     monkeypatch.setattr(embed_mod, "_default_embedder", FakeDefaultEmbedder())
     assert np.array_equal(embed_mod.embed("x"), np.array([1.0]))
     assert embed_mod.similarity("a", "b") == 0.75
+
+
+def test_cosine_similarity_parallel_vectors_returns_one():
+    v = np.array([0.6, 0.8])
+    assert embed_mod.cosine_similarity(v, v) == pytest.approx(1.0)
+
+
+def test_cosine_similarity_known_values():
+    a = np.array([1.0, 0.0, 0.0])
+    b = np.array([0.0, 1.0, 0.0])
+    assert embed_mod.cosine_similarity(a, b) == pytest.approx(0.0)
+    c = np.array([1.0, 1.0])
+    d = np.array([1.0, 0.0])
+    result = embed_mod.cosine_similarity(c, d)
+    assert 0.5 < result < 1.0
+
+
+def test_get_default_embedder_returns_singleton(monkeypatch):
+    monkeypatch.setattr(embed_mod, "_default_embedder", None)
+    e1 = embed_mod._get_default_embedder()
+    e2 = embed_mod._get_default_embedder()
+    assert e1 is e2
+
+
+def test_embedder_is_available_false_without_model(monkeypatch):
+    original_import = builtins.__import__
+
+    def fake_import(name, *args, **kwargs):
+        if name == "sentence_transformers":
+            raise ImportError("not installed")
+        return original_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", fake_import)
+    embedder = embed_mod.SemanticEmbedder()
+    assert embedder.is_available() is False
