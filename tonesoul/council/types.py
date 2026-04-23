@@ -8,15 +8,16 @@ from typing import TYPE_CHECKING, List, Optional, Union
 
 from memory.genesis import Genesis
 
-__ts_layer__ = "shared"
-__ts_purpose__ = (
-    "Shared type primitives (PerspectiveType, VoteDecision, verdicts) for the council subsystem."
-)
-
 if TYPE_CHECKING:
     from .epistemic_labeler import EpistemicLabel
     from .persona_audit import AuditResult
 
+
+
+__ts_layer__ = "shared"
+__ts_purpose__ = (
+    "Shared type primitives (PerspectiveType, VoteDecision, verdicts) for the council subsystem."
+)
 
 class PerspectiveType(Enum):
     GUARDIAN = "guardian"

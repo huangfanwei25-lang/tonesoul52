@@ -1,9 +1,6 @@
 from dataclasses import replace
 from typing import Dict, List
 
-__ts_layer__ = "domain"
-__ts_purpose__ = "YSTM acceptance test harness: run_acceptance() validates terrain pipeline self-consistency end-to-end."
-
 from .demo import DEFAULT_SEGMENTS, serialize_contours
 from .energy import EnergyConfig
 from .governance import update_what, update_where
@@ -12,6 +9,10 @@ from .projection import compute_pca_positions
 from .representation import EmbeddingConfig, build_nodes
 from .schema import as_clean_dict, round_floats
 from .terrain import (
+
+__ts_layer__ = "domain"
+__ts_purpose__ = "YSTM acceptance test harness: run_acceptance() validates terrain pipeline self-consistency end-to-end."
+
     TerrainConfig,
     build_levels,
     compute_plane_positions,

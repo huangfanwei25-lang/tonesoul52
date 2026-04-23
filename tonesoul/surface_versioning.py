@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+
 from typing import Any
 
 __ts_layer__ = "observability"
@@ -9,6 +10,10 @@ __ts_purpose__ = (
     "Track version lineage of surface outputs across sessions."
 )
 
+
+
+__ts_layer__ = "observability"
+__ts_purpose__ = "Surface versioning: tracks schema versions of all governance output surfaces."
 
 def build_surface_versioning_readout() -> dict[str, Any]:
     """Return one bounded versioning and lineage view for current repo-native consumers."""

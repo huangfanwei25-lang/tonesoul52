@@ -27,6 +27,10 @@ def _utc_now() -> str:
 def _default_council_check(payload: Mapping[str, Any]) -> dict[str, Any]:
     from integrations.openclaw.skills.tonesoul import invoke_skill
 
+
+__ts_layer__ = "observability"
+__ts_purpose__ = "Heartbeat: emits periodic governance-state snapshots for session liveness monitoring."
+
     return invoke_skill("council_deliberate", payload)
 
 

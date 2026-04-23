@@ -9,10 +9,9 @@ import yaml
 
 from .ystm.schema import stable_hash, utc_now
 
+
 __ts_layer__ = "pipeline"
-__ts_purpose__ = (
-    "Compile session context into a structured input for downstream gates."
-)
+__ts_purpose__ = "Context compiler: assembles the full governance context dict from packet + live signals."
 
 DEFAULT_CONTEXT_SEED = {
     "task": "Build a minimal, auditable YSTM demo.",
@@ -112,9 +111,9 @@ def _generate_run_id() -> str:
     return f"{stamp}{ms}Z_{suffix}"
 
 
-def main(argv: Optional[list] = None) -> Dict[str, str]:
+def main() -> Dict[str, str]:
     parser = build_arg_parser()
-    args = parser.parse_args(argv)
+    args = parser.parse_args()
     seed = dict(DEFAULT_CONTEXT_SEED)
     if args.input:
         seed.update(_load_seed(args.input))

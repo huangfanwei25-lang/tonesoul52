@@ -29,6 +29,7 @@ Key storage (File fallback):
 
 from __future__ import annotations
 
+
 import hashlib
 import json
 import re
@@ -257,6 +258,10 @@ def verify_signature(trace_dict: Dict[str, Any]) -> Tuple[bool, str]:
 
     try:
         from nacl.signing import VerifyKey
+
+
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = "Aegis shield: Ed25519 key management and chain-head validation for governance audit."
 
         vk = VerifyKey(bytes.fromhex(pubkey_hex))
         content = json.dumps(

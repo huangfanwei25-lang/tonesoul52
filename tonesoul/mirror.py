@@ -229,6 +229,10 @@ class ToneSoulMirror:
     def _build_memory_payload(self, dual: DualTrackResponse) -> Dict[str, Any]:
         from tonesoul.memory.soul_db import MemoryLayer
 
+
+__ts_layer__ = "evolution"
+__ts_purpose__ = "Mirror module: reflective self-model — compares current session posture to historical baseline."
+
         delta = dual.mirror_delta
         decision = delta.governance_decision
         timestamp = (

@@ -1,6 +1,3 @@
-__ts_layer__ = "perception"
-__ts_purpose__ = "Perception package: input sensing, environment reading, and context inference."
-
 """
 ToneSoul Perception Module — environmental input for AI subjectivity.
 
@@ -14,6 +11,10 @@ Submodules:
 
 from .source_registry import CuratedSourceSelection, select_curated_registry_urls
 from .stimulus import EnvironmentStimulus, StimulusProcessor
+
+
+__ts_layer__ = "perception"
+__ts_purpose__ = "Perception package: input sensing, environment reading, and context inference."
 
 __all__ = [
     "CuratedSourceSelection",

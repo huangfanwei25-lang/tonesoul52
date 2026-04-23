@@ -8,6 +8,10 @@ __ts_purpose__ = (
 )
 
 
+
+__ts_layer__ = "evolution"
+__ts_purpose__ = "Self-improvement trial wave: admits, runs, and registers bounded self-improvement trials."
+
 def _build_result_surface(
     *,
     status: str,

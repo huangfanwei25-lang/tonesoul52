@@ -16,6 +16,7 @@ Financial parallel:
 
 from __future__ import annotations
 
+
 import json
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -27,6 +28,10 @@ __ts_purpose__ = (
     "Enumerate and summarize active vows and their enforcement state."
 )
 
+
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Vow inventory: loads and indexes the active vow registry for governance enforcement."
 
 def _utc_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")

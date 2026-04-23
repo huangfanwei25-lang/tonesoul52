@@ -183,12 +183,9 @@ ROOT_MODULE_LAYER: dict[str, str] = {
 # Some modules are physically nested in a domain subpackage but are in fact
 # pure type primitives or cross-cutting utilities used everywhere. Listing
 # them here makes the body map honest without forcing a physical relocation.
-MODULE_LAYER_OVERRIDES: dict[str, str] = {
-    # ystm.schema is a pure @dataclass type module imported by governance,
-    # observability, memory, evolution — it has become the shared type
-    # vocabulary, regardless of living inside the ystm subpackage.
-    "tonesoul.ystm.schema": "shared",
-}
+# Note: ystm.schema no longer needs an override — it carries __ts_layer__ = "shared"
+# as a self-declaration (Phase 867), which takes priority over subpackage rules.
+MODULE_LAYER_OVERRIDES: dict[str, str] = {}
 
 # Allowed downward dependencies (layer A may import layer B)
 ALLOWED_DEPS: dict[str, set[str]] = {

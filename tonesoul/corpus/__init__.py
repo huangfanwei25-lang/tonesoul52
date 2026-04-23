@@ -1,6 +1,3 @@
-__ts_layer__ = "evolution"
-__ts_purpose__ = "Corpus utilities: training and evaluation data management for self-improvement."
-
 """
 ToneSoul Corpus Collection Module
 
@@ -17,6 +14,10 @@ Privacy-first design:
 from .consent import ConsentManager, ConsentType, UserConsent
 from .pipeline import CorpusPipeline, create_corpus_pipeline
 from .storage import Conversation, ConversationTurn, CorpusStorage
+
+
+__ts_layer__ = "evolution"
+__ts_purpose__ = "Corpus utilities: training and evaluation data management for self-improvement."
 
 __all__ = [
     # Consent

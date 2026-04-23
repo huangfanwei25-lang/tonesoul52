@@ -17,10 +17,6 @@ from typing import Dict, Iterable, List, Optional, Protocol
 
 from .decay import DECAY_CONSTANT, FORGET_THRESHOLD, calculate_decay
 
-__ts_layer__ = "memory"
-__ts_purpose__ = "SQLite-backed memory store with decay, layered retrieval, and source attribution."
-
-
 class MemorySource(Enum):
     SELF_JOURNAL = "self_journal"
     SUMMARY_BALLS = "summary_balls"
@@ -885,6 +881,10 @@ class SqliteSoulDB:
             )
         if apply_reflection:
             from .decay import apply_retrospective
+
+
+__ts_layer__ = "memory"
+__ts_purpose__ = "SQLite-backed memory store with decay, layered retrieval, and source attribution."
 
             records = apply_retrospective(
                 records,

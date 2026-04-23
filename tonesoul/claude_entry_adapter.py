@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+
 from typing import Any
 
 __ts_layer__ = "surface"
@@ -34,6 +35,10 @@ def build_claude_entry_adapter(*, session_start_payload: dict[str, Any]) -> dict
     """Translate a Tier-1 session-start bundle into a Claude-style entry shell."""
 
     from tonesoul.surface_versioning import build_surface_versioning_readout
+
+
+__ts_layer__ = "surface"
+__ts_purpose__ = "Claude entry adapter: adapts Claude Code session context to ToneSoul governance format."
 
     payload = dict(session_start_payload or {})
     consumer_contract = dict(payload.get("consumer_contract") or {})

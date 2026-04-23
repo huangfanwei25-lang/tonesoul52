@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+
 from typing import Any
 
 __ts_layer__ = "governance"
@@ -9,6 +10,10 @@ __ts_purpose__ = (
     "Pre-flight checks for shared-resource edits."
 )
 
+
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Shared-edit preflight: validates before touching shared governance/memory paths."
 
 def _normalize_repo_path(value: object) -> str:
     text = str(value or "").strip().replace("\\", "/")

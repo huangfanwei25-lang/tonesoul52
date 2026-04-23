@@ -10,6 +10,7 @@ Data flow:
 
 from __future__ import annotations
 
+
 import json
 from collections import Counter
 from dataclasses import asdict, dataclass, field
@@ -324,6 +325,10 @@ def _rebuild_from_store(store) -> WorldState:
     """Rebuild world state from Redis store."""
     from collections import Counter
     from datetime import datetime, timezone
+
+
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = "Zone registry: world-map zone definitions and spatial lookup for semantic routing."
 
     topic_counter: Counter = Counter()
     zone_first_seen: Dict[str, str] = {}

@@ -1,6 +1,3 @@
-__ts_layer__ = "infrastructure"
-__ts_purpose__ = "LLM infrastructure: local LLM integration and prompt pipeline adapters."
-
 """
 ToneSoul LLM Module
 Provides access to various LLM backends.
@@ -9,6 +6,10 @@ Provides access to various LLM backends.
 from .gemini_client import GeminiClient, create_gemini_client, generate_narrative_reasoning
 from .lmstudio_client import LMStudioClient, create_lmstudio_client
 from .ollama_client import OllamaClient, create_ollama_client
+
+
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = "LLM infrastructure: local LLM integration and prompt pipeline adapters."
 
 __all__ = [
     "GeminiClient",

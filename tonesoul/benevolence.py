@@ -27,6 +27,10 @@ __ts_purpose__ = (
 )
 
 
+
+__ts_layer__ = "evolution"
+__ts_purpose__ = "Benevolence module: models compassionate intent signals for council and governance deliberation."
+
 class AuditLayer(Enum):
     """語義層級 / Semantic Layers"""
 

@@ -19,10 +19,6 @@ from .summary_generator import (
 from .types import CouncilVerdict, PerspectiveType
 from .verdict import generate_verdict
 
-__ts_layer__ = "governance"
-__ts_purpose__ = "Convene the pre-output council: run perspectives, compute coherence, emit verdict and transcript."
-
-
 class PreOutputCouncil:
     def __init__(
         self,
@@ -140,6 +136,10 @@ class PreOutputCouncil:
         perspective_config: Optional[Dict[Union[PerspectiveType, str], Dict[str, Any]]],
     ) -> List[IPerspective]:
         from .perspective_factory import PerspectiveFactory
+
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Convene the pre-output council: run perspectives, compute coherence, emit verdict and transcript."
 
         if perspectives is None:
             return self._default_perspectives(perspective_config)

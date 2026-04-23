@@ -24,6 +24,10 @@ if TYPE_CHECKING:
     from tonesoul.vow_inventory import VowInventory
 
 
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Vow system: tracks and enforces AI governance commitments (vows) across sessions."
+
 def _utc_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 

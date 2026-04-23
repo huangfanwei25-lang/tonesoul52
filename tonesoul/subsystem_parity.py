@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+
 from typing import Any
 
 __ts_layer__ = "evolution"
@@ -9,6 +10,10 @@ __ts_purpose__ = (
     "Assert that subsystem capabilities are balanced and non-regressing."
 )
 
+
+
+__ts_layer__ = "evolution"
+__ts_purpose__ = "Subsystem parity: cross-checks that all governance subsystems agree on current state."
 
 def _family(
     name: str,

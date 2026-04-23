@@ -20,11 +20,6 @@ from .terrain import (
     marching_squares,
 )
 
-__ts_layer__ = "domain"
-__ts_purpose__ = (
-    "End-to-end YSTM demo: ingest segments, build terrain, render HTML/PNG/SVG outputs."
-)
-
 DEFAULT_SEGMENTS = [
     {
         "text": "User asks for an auditable trail of decisions.",
@@ -101,6 +96,12 @@ def _point_list(point: Tuple[float, float]) -> List[float]:
 def render_svg_to_png(svg: str, output_path: str, scale: float) -> bool:
     try:
         import cairosvg
+
+__ts_layer__ = "domain"
+__ts_purpose__ = (
+    "End-to-end YSTM demo: ingest segments, build terrain, render HTML/PNG/SVG outputs."
+)
+
     except Exception:
         return False
     if scale <= 0:

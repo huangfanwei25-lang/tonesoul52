@@ -10,6 +10,10 @@ __ts_purpose__ = (
 )
 
 
+
+__ts_layer__ = "memory"
+__ts_purpose__ = "Inventory: bounded index of governance artifacts — vows, traces, outcomes, and compactions."
+
 def build_inventory() -> List[Dict[str, object]]:
     results: List[Dict[str, object]] = []
     for folder in list_workspace_dirs():

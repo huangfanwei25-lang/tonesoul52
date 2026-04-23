@@ -14,6 +14,10 @@ __ts_purpose__ = (
 )
 
 
+
+__ts_layer__ = "memory"
+__ts_purpose__ = "Memory manager: coordinates workspace consolidation, archival, and YSTM report lifecycle."
+
 @dataclass
 class RunPointers:
     run_id: str

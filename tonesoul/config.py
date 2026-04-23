@@ -8,6 +8,10 @@ __ts_purpose__ = (
 )
 
 
+
+__ts_layer__ = "shared"
+__ts_purpose__ = "Config: repository-wide configuration constants and environment variable bindings."
+
 @dataclass(frozen=True)
 class EntryPoint:
     name: str

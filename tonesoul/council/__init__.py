@@ -1,10 +1,5 @@
 from __future__ import annotations
 
-__ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Council package: deliberation, verdict types, dossier, and swarm framework exports."
-)
-
 from .dossier import (
     DOSSIER_VERSION,
     build_dossier,
@@ -24,6 +19,12 @@ from .swarm_framework import (
     normalize_swarm_decision,
 )
 from .types import (
+
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Council package: deliberation, verdict types, dossier, and swarm framework exports."
+)
+
     CoherenceScore,
     CouncilVerdict,
     PerspectiveType,

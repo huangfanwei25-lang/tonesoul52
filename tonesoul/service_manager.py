@@ -20,6 +20,10 @@ __ts_purpose__ = (
 )
 
 
+
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = "Service manager: starts and monitors background infrastructure services (Redis, gateway)."
+
 class ServiceCode(Enum):
     """服務代碼（參考 Darlin W001-W010）"""
 

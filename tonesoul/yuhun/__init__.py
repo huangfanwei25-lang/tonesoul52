@@ -1,6 +1,3 @@
-__ts_layer__ = "semantic"
-__ts_purpose__ = "YuHun semantic package: language-soul analysis and semantic alignment utilities."
-
 """
 YUHUN Core Protocol v1.0 — yuhun 模組入口
 """
@@ -29,6 +26,10 @@ from .shadow_doc import (
     TrajectoryDigest,
 )
 from .vod import TensionLevel, VoDResult, assess_divergence
+
+
+__ts_layer__ = "semantic"
+__ts_purpose__ = "YuHun semantic package: language-soul analysis and semantic alignment utilities."
 
 __all__ = [
     # DPR

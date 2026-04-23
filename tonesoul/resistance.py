@@ -19,15 +19,15 @@ Integration:
 
 from __future__ import annotations
 
+
 import math
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List, Optional
 
+
 __ts_layer__ = "evolution"
-__ts_purpose__ = (
-    "Model healthy resistance as a signal for value-aligned pushback."
-)
+__ts_purpose__ = "Resistance module: models ethical pain and throttle signals — the AI's resistance to harmful action."
 
 # ── Exceptions ───────────────────────────────────────────────────
 

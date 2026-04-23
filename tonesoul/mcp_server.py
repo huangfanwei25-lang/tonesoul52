@@ -6,11 +6,6 @@ import json
 from contextlib import redirect_stdout
 from typing import Any, Callable, Iterable, TextIO
 
-__ts_layer__ = "surface"
-__ts_purpose__ = (
-    "MCP gateway surface: exposes council, runtime, and calibration tools over stdio JSON-RPC."
-)
-
 from tonesoul.council.compact import (
     compact_calibration,
     compact_governance_summary,
@@ -387,6 +382,12 @@ def _governance_visitors() -> dict[str, Any]:
 def _governance_audit() -> dict[str, Any]:
     from tonesoul.aegis_shield import AegisShield
     from tonesoul.store import get_store
+
+
+__ts_layer__ = "surface"
+__ts_purpose__ = (
+    "MCP gateway surface: exposes council, runtime, and calibration tools over stdio JSON-RPC."
+)
 
     store = _quiet_call(get_store)
     shield = _quiet_call(AegisShield.load, store)

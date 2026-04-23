@@ -4,6 +4,10 @@ from datetime import datetime
 from typing import Any, Callable, Dict, List, Optional
 
 from tonesoul.runtime_adapter_normalization import (
+
+__ts_layer__ = "pipeline"
+__ts_purpose__ = "Runtime adapter subject refresh: re-derives subject snapshot from live governance state."
+
     clean_string_list,
     find_recycled_carry_forward_hazard,
 )

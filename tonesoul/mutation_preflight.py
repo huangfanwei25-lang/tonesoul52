@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+
 from typing import Any
 
 __ts_layer__ = "governance"
@@ -9,6 +10,10 @@ __ts_purpose__ = (
     "Pre-flight checks before any mutation to governance state."
 )
 
+
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Mutation preflight: gate check before any governance-touching edit or scope change."
 
 def _point(
     name: str,

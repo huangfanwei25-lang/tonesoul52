@@ -10,6 +10,7 @@ This command gives later agents one place to inspect:
 
 from __future__ import annotations
 
+
 import sys
 from datetime import datetime, timezone
 from typing import Any
@@ -881,6 +882,10 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
 def main() -> None:
     import argparse
     import os
+
+
+__ts_layer__ = "surface"
+__ts_purpose__ = "Diagnose surface: CLI entry point for runtime governance state inspection and health check."
 
     parser = argparse.ArgumentParser(description="ToneSoul System Diagnostic")
     parser.add_argument("--agent", default="unknown")

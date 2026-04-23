@@ -2,9 +2,6 @@
 
 from __future__ import annotations
 
-__ts_layer__ = "governance"
-__ts_purpose__ = "Run the multi-perspective council, return verdict + coherence + minority opinion."
-
 import logging
 import os
 from dataclasses import dataclass
@@ -672,6 +669,10 @@ class CouncilRuntime:
 
         try:
             from .skill_parser import SkillContractParser
+
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Run the multi-perspective council, return verdict + coherence + minority opinion."
 
             parser = SkillContractParser()
             matches = parser.resolve_for_request(

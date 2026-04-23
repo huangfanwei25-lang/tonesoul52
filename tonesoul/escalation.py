@@ -11,6 +11,10 @@ __ts_purpose__ = (
 )
 
 
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Escalation: decides and records governance escalation events from context + decision mode."
+
 def decision_mode_from_context(context: Dict[str, object]) -> str:
     time_island = context.get("time_island") if isinstance(context, dict) else {}
     if not isinstance(time_island, dict):

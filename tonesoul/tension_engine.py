@@ -7,6 +7,7 @@ stateful tension result used by dispatch and gate decisions.
 
 from __future__ import annotations
 
+
 import math
 import pathlib
 from dataclasses import dataclass, field
@@ -336,6 +337,10 @@ class TensionEngine:
     def load_persistence(self, path: "Optional[pathlib.Path]" = None) -> None:
         """Restore the Ψ value from a previous session."""
         from tonesoul.soul_persistence import load_psi
+
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Tension engine: models multi-dimensional governance tension from nonlinear domain signals."
 
         snapshot = load_psi(path)
         self._persistence = snapshot.psi

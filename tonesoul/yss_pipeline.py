@@ -1,8 +1,5 @@
 """YSS semantic-field pipeline: route YSTM frames through gates, action set, and audit."""
 
-__ts_layer__ = "pipeline"
-__ts_purpose__ = "Compose YSS gates, action set, and audit into one semantic-field pipeline pass."
-
 import json
 import os
 import uuid
@@ -67,6 +64,10 @@ from .ystm.ingest import load_segments, normalize_segments
 from .ystm.representation import EmbeddingConfig
 from .ystm.terrain import TerrainConfig
 
+
+
+__ts_layer__ = "pipeline"
+__ts_purpose__ = "Compose YSS gates, action set, and audit into one semantic-field pipeline pass."
 
 @dataclass
 class PipelineConfig:

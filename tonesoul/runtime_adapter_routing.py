@@ -11,6 +11,10 @@ __ts_purpose__ = (
 )
 
 
+
+__ts_layer__ = "pipeline"
+__ts_purpose__ = "Runtime adapter routing: routes normalized context to the correct processing lane."
+
 def slug_from_summary(summary: str, *, fallback: str, prefix: str = "") -> str:
     raw = str(summary or "").strip().lower()
     chars: List[str] = []

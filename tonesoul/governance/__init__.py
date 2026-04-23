@@ -1,6 +1,3 @@
-__ts_layer__ = "governance"
-__ts_purpose__ = "Governance package: vow system, kernel, constraint stack, and policy exports."
-
 # tonesoul/governance — Core governance modules
 # benevolence, escape_valve, vow_system, kernel
 
@@ -28,3 +25,7 @@ from ..vow_system import (  # noqa: F401
     create_enforcer,
 )
 from .kernel import GovernanceDecision, GovernanceKernel, LLMRouteDecision  # noqa: F401
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Governance package: vow system, kernel, constraint stack, and policy exports."
+

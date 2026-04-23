@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -12,6 +13,10 @@ __ts_purpose__ = (
     "Unified adapter bridging YSS gates and the runtime pipeline."
 )
 
+
+
+__ts_layer__ = "pipeline"
+__ts_purpose__ = "YSS unified adapter: bridges YSS M1 pipeline outputs to the governance runtime adapter."
 
 def _iso_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")

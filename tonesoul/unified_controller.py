@@ -125,6 +125,10 @@ class UnifiedController:
         ctx = dict(context or {})
         from tonesoul.council import CouncilRequest
 
+
+__ts_layer__ = "pipeline"
+__ts_purpose__ = "Unified controller: integrates SemanticController with CouncilRuntime for end-to-end governance."
+
         verdict = self._council.deliberate(
             CouncilRequest(
                 draft_output=draft_output,

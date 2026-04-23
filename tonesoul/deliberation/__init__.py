@@ -1,8 +1,3 @@
-__ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Deliberation package: adaptive round calculation and tension-severity aggregation."
-)
-
 """
 ToneSoul 2.0 Internal Deliberation Module
 
@@ -44,6 +39,12 @@ from .perspectives import (
     create_perspectives,
 )
 from .types import (
+
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Deliberation package: adaptive round calculation and tension-severity aggregation."
+)
+
     DeliberationContext,
     DeliberationWeights,
     PerspectiveType,

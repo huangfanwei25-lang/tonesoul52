@@ -252,6 +252,10 @@ class TimeIsland:
         """Serialize to YAML format (for documentation)"""
         import yaml
 
+
+__ts_layer__ = "memory"
+__ts_purpose__ = "Time island: kairos-clock model — tracks session time, turn count, and decision mode."
+
         return yaml.dump(
             {"island": self.to_dict()},
             default_flow_style=False,

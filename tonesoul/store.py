@@ -19,6 +19,7 @@ Pub/sub (Redis only — FileStore silently skips):
 
 from __future__ import annotations
 
+
 import os
 import threading
 
@@ -130,6 +131,10 @@ def _try_redis(url: str):
 
 def _make_file_store():
     from tonesoul.backends.file_store import FileStore
+
+
+__ts_layer__ = "infrastructure"
+__ts_purpose__ = "Store: key-value persistence interface — file-backed with Redis fallback."
 
     print("[ToneSoul] Storage: FileStore (Redis not available)")
     return FileStore()

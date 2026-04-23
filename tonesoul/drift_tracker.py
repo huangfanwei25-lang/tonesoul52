@@ -10,6 +10,7 @@ existing ``DEFAULT_HOME_VECTOR`` convention in ``unified_core.py``.
 
 from __future__ import annotations
 
+
 from dataclasses import dataclass
 from typing import Dict, Optional
 
@@ -18,6 +19,10 @@ __ts_purpose__ = (
     "Track drift history and trigger alerts when threshold is exceeded."
 )
 
+
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Drift tracker: time-series record of governance drift events for trend analysis."
 
 @dataclass
 class DriftResult:

@@ -29,11 +29,6 @@ Lineage: Antigravity (2026-03 · kernel extraction)
 
 from __future__ import annotations
 
-__ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Governance kernel: decides how the pipeline behaves (routing, council convening, friction)."
-)
-
 import os
 import re
 from datetime import datetime, timezone
@@ -412,6 +407,12 @@ class GovernanceKernel:
             return "ok", None, state
         except Exception as exc:
             from tonesoul.resistance import CollapseException
+
+
+__ts_layer__ = "governance"
+__ts_purpose__ = (
+    "Governance kernel: decides how the pipeline behaves (routing, council convening, friction)."
+)
 
             if isinstance(exc, CollapseException):
                 state = breaker.state.to_dict()

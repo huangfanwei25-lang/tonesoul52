@@ -11,6 +11,10 @@ __ts_purpose__ = (
 )
 
 
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Intent verification: checks user intent signals against council posture for ambiguity detection."
+
 @dataclass
 class Intent:
     surface: str

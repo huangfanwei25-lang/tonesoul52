@@ -21,6 +21,10 @@ __ts_purpose__ = (
 )
 
 
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Semantic control: enforces semantic responsibility rules — framing, citation, claim ceiling."
+
 class SemanticZone(Enum):
     """語義區域"""
 

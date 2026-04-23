@@ -14,6 +14,10 @@ __ts_purpose__ = (
 )
 
 
+
+__ts_layer__ = "pipeline"
+__ts_purpose__ = "Generation orchestration: coordinates LLM generation with council gate and output routing."
+
 def _load_context(path: str) -> Dict[str, object]:
     with open(path, "r", encoding="utf-8") as handle:
         payload = yaml.safe_load(handle)

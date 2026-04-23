@@ -11,6 +11,10 @@ __ts_purpose__ = (
 )
 
 
+
+__ts_layer__ = "observability"
+__ts_purpose__ = "Evidence collector: gathers and structures evidence for verification claims."
+
 def _load_json(path: str) -> Optional[Dict[str, object]]:
     try:
         with open(path, "r", encoding="utf-8-sig") as handle:

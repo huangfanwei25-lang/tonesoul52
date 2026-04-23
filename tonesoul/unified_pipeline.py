@@ -5,9 +5,6 @@ Combines ToneBridge psychological analysis with Council deliberation.
 
 from __future__ import annotations
 
-__ts_layer__ = "pipeline"
-__ts_purpose__ = "Top-level runtime pipeline that wires perception, council, and output surfaces."
-
 import inspect
 import os
 import re
@@ -3560,6 +3557,10 @@ Respond with a clear, practical answer."""
         try:
             from tonesoul.governance.reflex import evaluate_drift
             from tonesoul.runtime_adapter import load as load_posture
+
+
+__ts_layer__ = "pipeline"
+__ts_purpose__ = "Top-level runtime pipeline that wires perception, council, and output surfaces."
 
             posture = load_posture()
             drift = dict(getattr(posture, "baseline_drift", {}) or {})

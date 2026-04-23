@@ -7,9 +7,7 @@ This module is a leaf — it imports nothing from tonesoul.
 """
 
 __ts_layer__ = "infrastructure"
-__ts_purpose__ = (
-    "Canonical key definitions for the governance state store."
-)
+__ts_purpose__ = "Store keys: canonical key-name constants for all governance store entries."
 
 # ── Governance ──────────────────────────────────────────────────────────
 KEY_GOVERNANCE = "ts:governance"  # JSON string

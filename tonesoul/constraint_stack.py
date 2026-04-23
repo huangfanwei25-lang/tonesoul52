@@ -14,6 +14,10 @@ __ts_purpose__ = (
 )
 
 
+
+__ts_layer__ = "governance"
+__ts_purpose__ = "Constraint stack: resolves ordered governance constraints and action-set policy."
+
 def _load_context(path: str) -> Dict[str, object]:
     with open(path, "r", encoding="utf-8") as handle:
         payload = yaml.safe_load(handle)

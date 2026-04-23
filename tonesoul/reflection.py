@@ -15,6 +15,10 @@ if TYPE_CHECKING:
     from .vow_system import VowEnforcementResult
 
 
+
+__ts_layer__ = "evolution"
+__ts_purpose__ = "Reflection: generates structured self-reflection over governance events and session arcs."
+
 MAX_REVISIONS: int = 2
 REFLECTION_TENSION_THRESHOLD: float = 0.25
 
