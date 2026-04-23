@@ -3,7 +3,68 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from tonesoul.dream_engine import DreamEngine
+import pytest
+
+from tonesoul.dream_engine import (
+    DreamEngine,
+    _normalize_signature_part,
+    _parse_iso_sort_key,
+    _utcnow_iso,
+)
+
+
+# ── _utcnow_iso ───────────────────────────────────────────────────────────────
+
+class TestUtcnowIso:
+    def test_returns_string(self):
+        assert isinstance(_utcnow_iso(), str)
+
+    def test_ends_with_z(self):
+        assert _utcnow_iso().endswith("Z")
+
+
+# ── _normalize_signature_part ─────────────────────────────────────────────────
+
+class TestNormalizeSignaturePart:
+    def test_lowercases(self):
+        assert _normalize_signature_part("HELLO WORLD") == "hello world"
+
+    def test_strips_whitespace(self):
+        assert _normalize_signature_part("  hello  ") == "hello"
+
+    def test_collapses_spaces(self):
+        assert _normalize_signature_part("a   b   c") == "a b c"
+
+    def test_none_returns_empty(self):
+        assert _normalize_signature_part(None) == ""
+
+    def test_empty_string(self):
+        assert _normalize_signature_part("") == ""
+
+
+# ── _parse_iso_sort_key ───────────────────────────────────────────────────────
+
+class TestParseIsoSortKey:
+    def test_z_suffix_parsed(self):
+        from datetime import timezone
+        result = _parse_iso_sort_key("2026-01-15T12:00:00Z")
+        assert result.tzinfo is not None
+        assert result.tzinfo == timezone.utc
+
+    def test_empty_returns_datetime_min(self):
+        from datetime import datetime, timezone
+        result = _parse_iso_sort_key("")
+        assert result == datetime.min.replace(tzinfo=timezone.utc)
+
+    def test_invalid_returns_datetime_min(self):
+        from datetime import datetime, timezone
+        result = _parse_iso_sort_key("not-a-date")
+        assert result == datetime.min.replace(tzinfo=timezone.utc)
+
+    def test_none_returns_datetime_min(self):
+        from datetime import datetime, timezone
+        result = _parse_iso_sort_key(None)
+        assert result == datetime.min.replace(tzinfo=timezone.utc)
 from tonesoul.memory.crystallizer import Crystal, MemoryCrystallizer
 from tonesoul.memory.reviewed_promotion import (
     apply_reviewed_promotion,

@@ -1,4 +1,11 @@
+import pytest
+
 from tonesoul.council.dossier import (
+    _coerce_ratio,
+    _coverage_posture,
+    _evidence_posture,
+    _grounding_name,
+    _string_list,
     build_dossier,
     derive_confidence_posture,
     derive_dissent_ratio,
@@ -13,6 +20,97 @@ from tonesoul.council.types import (
     VerdictType,
     VoteDecision,
 )
+
+
+# ── _string_list ──────────────────────────────────────────────────────────────
+
+class TestStringList:
+    def test_normal_list(self):
+        assert _string_list(["a", "b"]) == ["a", "b"]
+
+    def test_filters_empty(self):
+        assert _string_list(["", "  ", "x"]) == ["x"]
+
+    def test_none_returns_empty(self):
+        assert _string_list(None) == []
+
+    def test_converts_non_strings(self):
+        assert _string_list([1, 2]) == ["1", "2"]
+
+
+# ── _grounding_name ───────────────────────────────────────────────────────────
+
+class TestGroundingName:
+    def test_string_lowercased(self):
+        assert _grounding_name("GROUNDED") == "grounded"
+
+    def test_enum_value_extracted(self):
+        result = _grounding_name(GroundingStatus.UNGROUNDED)
+        assert result == "ungrounded"
+
+    def test_none_as_string(self):
+        assert _grounding_name(None) == "none"
+
+
+# ── _coerce_ratio ─────────────────────────────────────────────────────────────
+
+class TestCoerceRatio:
+    def test_none_returns_none(self):
+        assert _coerce_ratio(None) is None
+
+    def test_clamps_above_one(self):
+        assert _coerce_ratio(1.5) == pytest.approx(1.0)
+
+    def test_clamps_below_zero(self):
+        assert _coerce_ratio(-0.5) == pytest.approx(0.0)
+
+    def test_normal_value(self):
+        assert _coerce_ratio(0.333) == pytest.approx(0.333)
+
+
+# ── _coverage_posture ─────────────────────────────────────────────────────────
+
+class TestCoveragePosture:
+    def test_empty_is_none(self):
+        count, label = _coverage_posture([])
+        assert count == 0
+        assert label == "none"
+
+    def test_single_perspective_is_thin(self):
+        votes = [_vote(PerspectiveType.ANALYST, VoteDecision.APPROVE, 0.8, "ok")]
+        count, label = _coverage_posture(votes)
+        assert label == "thin"
+
+    def test_two_perspectives_is_partial(self):
+        votes = [
+            _vote(PerspectiveType.ANALYST, VoteDecision.APPROVE, 0.8, "ok"),
+            _vote(PerspectiveType.CRITIC, VoteDecision.APPROVE, 0.9, "ok"),
+        ]
+        _, label = _coverage_posture(votes)
+        assert label == "partial"
+
+    def test_four_perspectives_is_broad(self):
+        perspectives = [PerspectiveType.ANALYST, PerspectiveType.CRITIC,
+                        PerspectiveType.ADVOCATE, PerspectiveType.GUARDIAN]
+        votes = [_vote(p, VoteDecision.APPROVE, 0.8, "ok") for p in perspectives]
+        _, label = _coverage_posture(votes)
+        assert label == "broad"
+
+
+# ── _evidence_posture ─────────────────────────────────────────────────────────
+
+class TestEvidencePosture:
+    def test_zero_is_none(self):
+        assert _evidence_posture(0.0) == "none"
+
+    def test_sparse(self):
+        assert _evidence_posture(0.3) == "sparse"
+
+    def test_moderate(self):
+        assert _evidence_posture(0.7) == "moderate"
+
+    def test_dense(self):
+        assert _evidence_posture(1.5) == "dense"
 
 
 def _vote(
