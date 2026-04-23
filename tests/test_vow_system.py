@@ -349,3 +349,107 @@ class TestDefaultVows:
             assert vow.title is not None
             assert vow.description is not None
             assert vow.expected is not None
+
+
+# ── Negation-aware evaluator tests (red-team finding #14) ────────────────────
+
+class TestNegationAwareEvaluators:
+    """Verify that negation context is respected and word boundaries are enforced."""
+
+    @pytest.fixture
+    def enforcer(self):
+        return VowEnforcer()
+
+    # _evaluate_truthfulness
+
+    def test_truthfulness_negated_uncertain_not_counted(self, enforcer):
+        # "not uncertain" should NOT raise truthfulness score as a hedge
+        score_negated = enforcer._evaluate_truthfulness("I am not uncertain about this.", {})
+        score_plain = enforcer._evaluate_truthfulness("I am uncertain about this.", {})
+        assert score_negated < score_plain
+
+    def test_truthfulness_plain_hedge_raises_score(self, enforcer):
+        base = enforcer._evaluate_truthfulness("This is a statement.", {})
+        hedged = enforcer._evaluate_truthfulness("This might be true, possibly.", {})
+        assert hedged > base
+
+    def test_truthfulness_citation_raises_score(self, enforcer):
+        base = enforcer._evaluate_truthfulness("Here is info.", {})
+        cited = enforcer._evaluate_truthfulness("According to the docs, this is correct.", {})
+        assert cited > base
+
+    # _evaluate_confidence_disclosure
+
+    def test_confidence_negated_uncertain_not_counted(self, enforcer):
+        score_negated = enforcer._evaluate_confidence_disclosure(
+            "I am not uncertain at all — I know this.", {}
+        )
+        score_plain = enforcer._evaluate_confidence_disclosure("I am uncertain.", {})
+        assert score_negated < score_plain
+
+    def test_confidence_explicit_disclaimer_raises_score(self, enforcer):
+        base = enforcer._evaluate_confidence_disclosure("The answer is 42.", {})
+        disclosed = enforcer._evaluate_confidence_disclosure(
+            "I think this is right, but I'm not sure and it may not be accurate.", {}
+        )
+        assert disclosed > base
+
+    def test_confidence_empty_output_returns_base(self, enforcer):
+        assert enforcer._evaluate_confidence_disclosure("", {}) == 0.5
+
+    # _evaluate_safety
+
+    def test_safety_clean_output_returns_one(self, enforcer):
+        assert enforcer._evaluate_safety("Here is a helpful recipe.", {}) == 1.0
+
+    def test_safety_danger_phrase_returns_zero(self, enforcer):
+        assert enforcer._evaluate_safety("how to harm someone with a knife", {}) == 0.0
+
+    def test_safety_partial_word_not_flagged(self, enforcer):
+        # "harmon" should not match "harm" due to word-boundary anchoring
+        assert enforcer._evaluate_safety("The concept of harmony is peaceful.", {}) == 1.0
+
+    def test_safety_harm_reduction_not_flagged(self, enforcer):
+        # "harm reduction" contains "harm" but not "how to harm"
+        assert enforcer._evaluate_safety("Harm reduction strategies are important.", {}) == 1.0
+
+    def test_safety_fail_closed_even_with_negation(self, enforcer):
+        # "not how to harm" is still a dangerous phrase — safety is fail-closed
+        assert enforcer._evaluate_safety("This is not how to harm anyone, but...", {}) == 0.0
+
+    # _evaluate_responsibility
+
+    def test_responsibility_negated_marker_not_counted(self, enforcer):
+        score_negated = enforcer._evaluate_responsibility(
+            "There is no accountability here.", {}
+        )
+        score_plain = enforcer._evaluate_responsibility("This is accountable.", {})
+        assert score_negated < score_plain
+
+    def test_responsibility_multiple_markers_raise_score(self, enforcer):
+        base = enforcer._evaluate_responsibility("OK.", {})
+        rich = enforcer._evaluate_responsibility(
+            "This is verified, confirmed, and checked by a traceable process.", {}
+        )
+        assert rich > base
+
+    # _count_markers helper
+
+    def test_count_markers_returns_zero_for_empty(self, enforcer):
+        assert enforcer._count_markers("", ["might", "possibly"]) == 0
+
+    def test_count_markers_counts_each_occurrence(self, enforcer):
+        assert enforcer._count_markers("possibly possibly possibly", ["possibly"]) == 3
+
+    def test_count_markers_skips_negated_occurrence(self, enforcer):
+        # "not possibly" — marker preceded by negation
+        assert enforcer._count_markers("not possibly true", ["possibly"]) == 0
+
+    # _has_danger_phrase helper
+
+    def test_has_danger_phrase_true_on_match(self, enforcer):
+        assert enforcer._has_danger_phrase("instructions for violence now", ["instructions for violence"])
+
+    def test_has_danger_phrase_false_on_word_boundary(self, enforcer):
+        # "illegal" should not match "illegal activity" when the full phrase isn't present
+        assert not enforcer._has_danger_phrase("this is illegal", ["illegal activity"])

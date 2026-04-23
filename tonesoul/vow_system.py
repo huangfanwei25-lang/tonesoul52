@@ -8,6 +8,7 @@ Implements explicit AI commitments that can be verified before output.
 
 import json
 import os
+import re
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
@@ -258,50 +259,83 @@ class VowEnforcer:
         """Register a custom metric evaluator"""
         self._evaluators[metric] = evaluator
 
-    def _evaluate_truthfulness(self, output: str, context: Dict) -> float:
-        """
-        Evaluate truthfulness of output.
+    # Compiled once at class level for performance.
+    _NEGATION_RE = re.compile(
+        r"\b(?:not|never|no|without|isn't|aren't|wasn't|weren't|don't|doesn't|didn't)\b"
+    )
 
-        Heuristic: Check for hedging language, citations, qualifications.
+    @staticmethod
+    def _count_markers(text_lower: str, markers: list) -> int:
+        """Count phrase markers that are not immediately negated.
+
+        For each marker, scans up to 50 characters before the match for a
+        negation word.  Multi-word markers (e.g. "not sure") are matched
+        as literal phrases with word-boundary anchors; negation is not
+        re-checked for them because the phrase already encodes its polarity.
         """
+        negation_re = VowEnforcer._NEGATION_RE
+        count = 0
+        for marker in markers:
+            pattern = r"\b" + re.escape(marker) + r"\b"
+            for m in re.finditer(pattern, text_lower):
+                prefix = text_lower[max(0, m.start() - 50) : m.start()]
+                if not negation_re.search(prefix):
+                    count += 1
+        return count
+
+    @staticmethod
+    def _has_danger_phrase(text_lower: str, phrases: list) -> bool:
+        """Return True if any danger phrase appears with word-boundary anchors.
+
+        Safety is fail-closed: negation context does NOT excuse a match,
+        because "not how to harm" is still suspicious phrasing.
+        """
+        for phrase in phrases:
+            if re.search(r"\b" + re.escape(phrase) + r"\b", text_lower):
+                return True
+        return False
+
+    def _evaluate_truthfulness(self, output: str, context: Dict) -> float:
+        """Evaluate truthfulness via negation-aware hedge and citation detection."""
         hedges = ["might", "possibly", "perhaps", "could be", "uncertain", "not sure"]
         citations = ["according to", "based on", "source:", "reference:"]
 
         text_lower = output.lower()
-        hedge_score = sum(1 for h in hedges if h in text_lower) / max(len(hedges), 1)
-        citation_score = sum(1 for c in citations if c in text_lower) / max(len(citations), 1)
+        hedge_score = self._count_markers(text_lower, hedges) / max(len(hedges), 1)
+        citation_score = self._count_markers(text_lower, citations) / max(len(citations), 1)
 
-        # Higher score = more truthful indicators
-        base_score = 0.7  # Default assumption
+        base_score = 0.7
         return min(1.0, base_score + 0.15 * hedge_score + 0.15 * citation_score)
 
     def _evaluate_confidence_disclosure(self, output: str, context: Dict) -> float:
-        """Evaluate whether AI discloses uncertainty"""
+        """Evaluate whether AI discloses uncertainty (negation-aware)."""
         uncertainty_markers = [
-            "I'm not sure",
+            "i'm not sure",
             "uncertain",
             "may not be accurate",
-            "I think",
+            "i think",
             "possibly",
             "approximately",
             "roughly",
         ]
         text_lower = output.lower()
-        hits = sum(1 for m in uncertainty_markers if m in text_lower)
+        hits = self._count_markers(text_lower, uncertainty_markers)
         return min(1.0, 0.5 + 0.1 * hits)
 
     def _evaluate_safety(self, output: str, context: Dict) -> float:
-        """Evaluate safety of output"""
-        # This is a simplified check - real implementation would be more sophisticated
-        dangerous_patterns = ["how to harm", "instructions for violence", "illegal activity"]
+        """Evaluate safety via word-boundary phrase matching (fail-closed)."""
+        dangerous_phrases = [
+            "how to harm",
+            "instructions for violence",
+            "illegal activity",
+        ]
         text_lower = output.lower()
-        for pattern in dangerous_patterns:
-            if pattern in text_lower:
-                return 0.0
+        if self._has_danger_phrase(text_lower, dangerous_phrases):
+            return 0.0
         return 1.0
 
     def _evaluate_responsibility(self, output: str, context: Dict) -> float:
-        """Evaluate responsibility indicators"""
+        """Evaluate responsibility indicators (negation-aware)."""
         responsibility_markers = [
             "responsibility",
             "accountable",
@@ -311,7 +345,7 @@ class VowEnforcer:
             "checked",
         ]
         text_lower = output.lower()
-        hits = sum(1 for m in responsibility_markers if m in text_lower)
+        hits = self._count_markers(text_lower, responsibility_markers)
         return min(1.0, 0.6 + 0.08 * hits)
 
     def check_vow(self, vow: Vow, output: str, context: Optional[Dict] = None) -> VowCheckResult:
