@@ -1,26 +1,26 @@
 {
-  "generated_at": "2026-04-22T03:29:22Z",
+  "generated_at": "2026-04-24T09:49:54Z",
   "source": "scripts/analyze_codebase_graph.py",
   "root_package": "tonesoul",
   "summary": {
-    "total_modules": 259,
-    "total_lines": 80783,
-    "total_classes": 501,
-    "total_functions": 2705,
-    "total_edges": 464,
+    "total_modules": 267,
+    "total_lines": 83082,
+    "total_classes": 515,
+    "total_functions": 2786,
+    "total_edges": 466,
     "total_cycles": 0,
     "total_layer_violations": 0,
     "total_orphans": 1,
     "total_community_drifts": 23,
-    "self_declared_layer_count": 259,
+    "self_declared_layer_count": 267,
     "self_declared_layer_ratio": 1.0,
-    "purpose_count": 259,
+    "purpose_count": 267,
     "purpose_ratio": 1.0
   },
   "annotation_coverage": {
-    "self_declared_layer_count": 259,
+    "self_declared_layer_count": 267,
     "self_declared_layer_ratio": 1.0,
-    "purpose_count": 259,
+    "purpose_count": 267,
     "purpose_ratio": 1.0
   },
   "god_nodes": [
@@ -56,12 +56,25 @@
       "in_degree": 1,
       "out_degree": 25,
       "total_degree": 26,
-      "lines": 1096,
+      "lines": 1095,
       "classes": 5,
       "functions": 29,
       "layer": "pipeline",
       "layer_source": "self_declared",
       "purpose": "Compose YSS gates, action set, and audit into one semantic-field pipeline pass."
+    },
+    {
+      "module": "tonesoul.council.types",
+      "path": "tonesoul/council/types.py",
+      "in_degree": 22,
+      "out_degree": 0,
+      "total_degree": 22,
+      "lines": 176,
+      "classes": 7,
+      "functions": 2,
+      "layer": "shared",
+      "layer_source": "self_declared",
+      "purpose": "Shared type primitives (PerspectiveType, VoteDecision, verdicts) for the council subsystem."
     },
     {
       "module": "tonesoul.runtime_adapter",
@@ -75,19 +88,6 @@
       "layer": "pipeline",
       "layer_source": "self_declared",
       "purpose": "Load/commit governance state across session boundaries; the model-agnostic runtime spine."
-    },
-    {
-      "module": "tonesoul.council.types",
-      "path": "tonesoul/council/types.py",
-      "in_degree": 21,
-      "out_degree": 0,
-      "total_degree": 21,
-      "lines": 175,
-      "classes": 7,
-      "functions": 2,
-      "layer": "shared",
-      "layer_source": "self_declared",
-      "purpose": "Shared type primitives (PerspectiveType, VoteDecision, verdicts) for the council subsystem."
     },
     {
       "module": "tonesoul.council.runtime",
@@ -243,7 +243,7 @@
       "functions": 0,
       "layer": "memory",
       "layer_source": "self_declared",
-      "purpose": "Memory package: adversarial reflector, consolidation, vow promotion, and subjectivity analysis."
+      "purpose": "Memory package: adversarial reflector, consolidation, vow promotion, subjectivity analysis, AAAK compaction, and freshness tracking."
     },
     {
       "module": "tonesoul.council",
@@ -293,9 +293,15 @@
   "subpackage_stats": {
     "(root)": {
       "files": 97,
-      "lines": 39820,
+      "lines": 39961,
       "classes": 193,
-      "functions": 1183
+      "functions": 1185
+    },
+    "axioms": {
+      "files": 2,
+      "lines": 380,
+      "classes": 3,
+      "functions": 14
     },
     "backends": {
       "files": 2,
@@ -316,14 +322,14 @@
       "functions": 37
     },
     "council": {
-      "files": 33,
-      "lines": 9043,
-      "classes": 50,
-      "functions": 302
+      "files": 35,
+      "lines": 9515,
+      "classes": 53,
+      "functions": 318
     },
     "deliberation": {
       "files": 7,
-      "lines": 1923,
+      "lines": 1921,
       "classes": 18,
       "functions": 86
     },
@@ -347,7 +353,7 @@
     },
     "governance": {
       "files": 5,
-      "lines": 1614,
+      "lines": 1615,
       "classes": 12,
       "functions": 42
     },
@@ -376,10 +382,10 @@
       "functions": 35
     },
     "memory": {
-      "files": 25,
-      "lines": 8231,
-      "classes": 39,
-      "functions": 327
+      "files": 29,
+      "lines": 9540,
+      "classes": 47,
+      "functions": 376
     },
     "observability": {
       "files": 5,
@@ -431,7 +437,7 @@
     },
     "ystm": {
       "files": 13,
-      "lines": 2229,
+      "lines": 2227,
       "classes": 21,
       "functions": 60
     },
@@ -460,6 +466,9 @@
       "deliberation": 2,
       "tech_trace": 3
     },
+    "axioms": {
+      "axioms": 1
+    },
     "backends": {
       "(root)": 1
     },
@@ -474,7 +483,7 @@
       "deliberation": 1
     },
     "council": {
-      "council": 68,
+      "council": 69,
       "(root)": 8,
       "llm": 1,
       "semantic": 2,

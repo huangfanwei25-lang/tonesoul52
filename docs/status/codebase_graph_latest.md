@@ -1,23 +1,23 @@
 # ToneSoul Codebase Graph Analysis
 
-Generated: 2026-04-22T03:29:22Z
+Generated: 2026-04-24T09:49:54Z
 Package: `tonesoul`
 
 ## Summary
 
 | Metric | Value |
 | --- | ---: |
-| Modules | 259 |
-| Lines | 80,783 |
-| Classes | 501 |
-| Functions | 2,705 |
-| Import edges | 464 |
+| Modules | 267 |
+| Lines | 83,082 |
+| Classes | 515 |
+| Functions | 2,786 |
+| Import edges | 466 |
 | Circular deps | 0 |
 | Layer violations | 0 |
 | Orphan modules | 1 |
 | Community drifts | 23 |
-| Self-declared layer | 259 / 259 (100.0%) |
-| Purpose declared | 259 / 259 (100.0%) |
+| Self-declared layer | 267 / 267 (100.0%) |
+| Purpose declared | 267 / 267 (100.0%) |
 
 ## God Nodes (Top 20 by coupling)
 
@@ -28,8 +28,8 @@ Modules with the highest total degree (in + out). High coupling = high change ri
 | 1 | `unified_pipeline` | pipeline | self_declared | 0 | 34 | **34** | Top-level runtime pipeline that wires perception, council, and output surfaces. |
 | 2 | `ystm.schema` | shared | self_declared | 27 | 0 | **27** | YSTM pure-data schema: Node, WhereTime, and stable_hash used across governance, memory, and observability. |
 | 3 | `yss_pipeline` | pipeline | self_declared | 1 | 25 | **26** | Compose YSS gates, action set, and audit into one semantic-field pipeline pass. |
-| 4 | `runtime_adapter` | pipeline | self_declared | 5 | 17 | **22** | Load/commit governance state across session boundaries; the model-agnostic runtime spine. |
-| 5 | `council.types` | shared | self_declared | 21 | 0 | **21** | Shared type primitives (PerspectiveType, VoteDecision, verdicts) for the council subsystem. |
+| 4 | `council.types` | shared | self_declared | 22 | 0 | **22** | Shared type primitives (PerspectiveType, VoteDecision, verdicts) for the council subsystem. |
+| 5 | `runtime_adapter` | pipeline | self_declared | 5 | 17 | **22** | Load/commit governance state across session boundaries; the model-agnostic runtime spine. |
 | 6 | `council.runtime` | governance | self_declared | 4 | 14 | **18** | Run the multi-perspective council, return verdict + coherence + minority opinion. |
 | 7 | `memory.soul_db` | memory | self_declared | 16 | 1 | **17** | SQLite-backed memory store with decay, layered retrieval, and source attribution. |
 | 8 | `autonomous_cycle` | orchestration | self_declared | 1 | 14 | **15** | Drive the autonomous wake/sense/dream loop without a human trigger. |
@@ -41,7 +41,7 @@ Modules with the highest total degree (in + out). High coupling = high change ri
 | 14 | `governance.kernel` | governance | self_declared | 4 | 7 | **11** | Governance kernel: decides how the pipeline behaves (routing, council convening, friction). |
 | 15 | `council.base` | shared | self_declared | 9 | 1 | **10** | Abstract IPerspective contract implemented by every council perspective. |
 | 16 | `dream_engine` | evolution | self_declared | 2 | 8 | **10** | Offline dream cycle: crystallize memory and update subjectivity layers between waking sessions. |
-| 17 | `memory` | memory | self_declared | 0 | 10 | **10** | Memory package: adversarial reflector, consolidation, vow promotion, and subjectivity analysis. |
+| 17 | `memory` | memory | self_declared | 0 | 10 | **10** | Memory package: adversarial reflector, consolidation, vow promotion, subjectivity analysis, AAAK compaction, and freshness tracking. |
 | 18 | `council` | governance | self_declared | 3 | 6 | **9** | Council package: deliberation, verdict types, dossier, and swarm framework exports. |
 | 19 | `schemas` | shared | self_declared | 9 | 0 | **9** | Pydantic data contracts shared across council, LLM, and governance layers. |
 | 20 | `ystm.acceptance` | domain | self_declared | 1 | 8 | **9** | YSTM acceptance test harness: run_acceptance() validates terrain pipeline self-consistency end-to-end. |
@@ -56,21 +56,22 @@ Nobody imports these. Potential dead code or standalone entry points.
 
 | Subpackage | Layer | Files | Lines | Classes | Functions |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `(root)` | — | 97 | 39,820 | 193 | 1183 |
+| `(root)` | — | 97 | 39,961 | 193 | 1185 |
+| `axioms` | — | 2 | 380 | 3 | 14 |
 | `backends` | infrastructure | 2 | 909 | 2 | 72 |
 | `cli` | surface | 3 | 189 | 0 | 8 |
 | `corpus` | evolution | 4 | 877 | 8 | 37 |
-| `council` | governance | 33 | 9,043 | 50 | 302 |
-| `deliberation` | governance | 7 | 1,923 | 18 | 86 |
+| `council` | governance | 35 | 9,515 | 53 | 318 |
+| `deliberation` | governance | 7 | 1,921 | 18 | 86 |
 | `evolution` | evolution | 4 | 1,146 | 5 | 46 |
 | `gates` | governance | 2 | 408 | 6 | 13 |
 | `gateway` | infrastructure | 3 | 202 | 4 | 16 |
-| `governance` | governance | 5 | 1,614 | 12 | 42 |
+| `governance` | governance | 5 | 1,615 | 12 | 42 |
 | `inter_soul` | surface | 5 | 495 | 9 | 40 |
 | `llm` | infrastructure | 5 | 1,398 | 7 | 73 |
 | `loop` | orchestration | 4 | 640 | 16 | 23 |
 | `market` | domain | 4 | 1,342 | 16 | 35 |
-| `memory` | memory | 25 | 8,231 | 39 | 327 |
+| `memory` | memory | 29 | 9,540 | 47 | 376 |
 | `observability` | observability | 5 | 787 | 7 | 35 |
 | `perception` | perception | 4 | 1,036 | 5 | 30 |
 | `pipeline` | pipeline | 1 | 14 | 0 | 0 |
@@ -79,7 +80,7 @@ Nobody imports these. Potential dead code or standalone entry points.
 | `shared` | shared | 3 | 262 | 6 | 7 |
 | `tech_trace` | observability | 4 | 596 | 0 | 29 |
 | `tonebridge` | domain | 12 | 3,563 | 39 | 130 |
-| `ystm` | domain | 13 | 2,229 | 21 | 60 |
+| `ystm` | domain | 13 | 2,227 | 21 | 60 |
 | `yuhun` | semantic | 7 | 2,043 | 28 | 32 |
 
 ## Cross-Package Coupling (top edges)
