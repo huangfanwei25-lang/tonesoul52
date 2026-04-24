@@ -4,20 +4,31 @@
 Loads character persona from character_pack.local.json (git-ignored).
 Game-specific IP stays local; this file is framework only.
 
-Modes:
+Modes
+-----
   HTTP mode (default):
-    python bridge/server.py --token TOKEN
+    python bridge/server.py --provider anthropic --token TOKEN
     GML calls http_request → POST /event  (requires HTTP ext in game build)
 
-  File bridge mode (fallback when http_request not available in build):
-    python bridge/server.py --mode file
-    GML writes temp file → bridge polls, calls AI, writes reply file → GML polls reply
+  File bridge mode (use when http_request not available in build):
+    python bridge/server.py --mode file --game-save-folder "C:\\...\\UnderTheIsland"
+    GML writes event file → bridge polls, calls AI, writes reply file → GML polls reply
 
-HTTP endpoints:
-    POST /event          Game event (Route B GML / Route A manual)
-    GET  /ask?msg=...    Ask the character directly
-    GET  /state          Current soul store state
-    POST /save_event     Manually record a story event (Route A)
+  Diagnose (check config without calling any API):
+    python bridge/server.py --diagnose
+
+Providers
+---------
+  anthropic   pip install anthropic          env: ANTHROPIC_API_KEY
+  gemini      pip install google-genai       env: GEMINI_API_KEY
+  auto        selects based on BRIDGE_LLM_PROVIDER or which key is present
+
+HTTP endpoints
+--------------
+  POST /event          Game event (Route B GML / Route A manual)
+  GET  /ask?msg=...    Ask the character directly
+  GET  /state          Current soul store state
+  POST /save_event     Manually record a story event (Route A)
 """
 
 from __future__ import annotations
@@ -37,6 +48,12 @@ _BRIDGE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(_BRIDGE_DIR.parent.parent.parent))
 
 from games.under_the_island.bridge.event_adapter import FileBridgeAdapter
+from games.under_the_island.bridge.llm_provider import (
+    call_llm,
+    diagnostics,
+    resolve_model,
+    resolve_provider,
+)
 from games.under_the_island.bridge.persona_template import (
     DEFAULT_VALUE_AXES,
     build_system_prompt,
@@ -46,6 +63,8 @@ from games.under_the_island.bridge.persona_template import (
 _TOKEN: str = ""
 _SOUL_DB: dict = {}
 _PACK: dict = {}
+_PROVIDER: str = "anthropic"
+_MODEL: str = "claude-sonnet-4-6"
 
 
 def _load_soul_db(game_id: str, character: str) -> dict:
@@ -69,7 +88,8 @@ def _save_soul_db(db: dict) -> None:
     path.write_text(json.dumps(db, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def _build_context(db: dict, user_message: str) -> tuple[list[dict], str]:
+def _build_context(db: dict, user_message: str) -> tuple[str, str]:
+    """Return (user_message, system_prompt) ready for call_llm."""
     events_summary = ""
     if db.get("key_events"):
         recent = db["key_events"][-5:]
@@ -90,24 +110,11 @@ def _build_context(db: dict, user_message: str) -> tuple[list[dict], str]:
         system += f"\n\n【重要事件】\n{events_summary}"
     system += f"\n\n【當前狀態】{trust_note}"
 
-    return [{"role": "user", "content": user_message}], system
+    return user_message, system
 
 
-def _call_claude(system: str, messages: list[dict]) -> str:
-    try:
-        import anthropic
-        client = anthropic.Anthropic()
-        response = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=256,
-            system=system,
-            messages=messages,
-        )
-        return response.content[0].text.strip()
-    except ImportError:
-        return "[錯誤：pip install anthropic]"
-    except Exception as e:
-        return f"[API 錯誤：{e}]"
+def _call_ai(system: str, user_message: str) -> str:
+    return call_llm(system, user_message, _PROVIDER, _MODEL)
 
 
 def _record_event(db: dict, event: str, player_choice: str, reaction: str) -> None:
@@ -156,8 +163,8 @@ class _Handler(BaseHTTPRequestHandler):
             if not msg:
                 self._json({"error": "msg= required"}, 400)
                 return
-            messages, system = _build_context(_SOUL_DB, msg)
-            reply = _call_claude(system, messages)
+            user_msg, system = _build_context(_SOUL_DB, msg)
+            reply = _call_ai(system, user_msg)
             self._json({"reply": reply, "trust": _SOUL_DB.get("current_values", {}).get("trust", 0.4)})
 
         else:
@@ -182,8 +189,8 @@ class _Handler(BaseHTTPRequestHandler):
             player_choice = payload.get("player_choice", "")
             scene = payload.get("scene", "")
             prompt = f"場景：{scene}\n事件：{event}\n玩家：{player_choice}\n你會怎麼回應？"
-            messages, system = _build_context(_SOUL_DB, prompt)
-            reply = _call_claude(system, messages)
+            user_msg, system = _build_context(_SOUL_DB, prompt)
+            reply = _call_ai(system, user_msg)
             _record_event(_SOUL_DB, event, player_choice, reply)
             _save_soul_db(_SOUL_DB)
             self._json({"reply": reply})
@@ -203,13 +210,12 @@ class _Handler(BaseHTTPRequestHandler):
 
 
 def _run_file_bridge(adapter: FileBridgeAdapter, poll_interval: float = 0.25) -> None:
-    """Background thread: poll event file, call AI, write reply file."""
     print(f"File bridge active — watching {adapter.event_file}")
     while True:
         for ev in adapter.poll():
             prompt = f"場景：{ev.scene}\n事件：{ev.event}\n玩家：{ev.player_choice}\n你會怎麼回應？"
-            messages, system = _build_context(_SOUL_DB, prompt)
-            reply = _call_claude(system, messages)
+            user_msg, system = _build_context(_SOUL_DB, prompt)
+            reply = _call_ai(system, user_msg)
             _record_event(_SOUL_DB, ev.event, ev.player_choice, reply)
             _save_soul_db(_SOUL_DB)
             trust = _SOUL_DB.get("current_values", {}).get("trust", 0.4)
@@ -219,7 +225,7 @@ def _run_file_bridge(adapter: FileBridgeAdapter, poll_interval: float = 0.25) ->
 
 
 def main() -> None:
-    global _TOKEN, _SOUL_DB, _PACK
+    global _TOKEN, _SOUL_DB, _PACK, _PROVIDER, _MODEL
 
     parser = argparse.ArgumentParser(description="AI Character Bridge Server")
     parser.add_argument("--port", type=int, default=7701)
@@ -228,28 +234,48 @@ def main() -> None:
     parser.add_argument("--character", default="character")
     parser.add_argument(
         "--mode", choices=["http", "file", "both"], default="http",
-        help="http: HTTP server only  |  file: file-bridge only  |  both: run both"
+        help="http: HTTP only  |  file: file-bridge only  |  both: run both",
+    )
+    parser.add_argument(
+        "--provider", choices=["auto", "anthropic", "gemini"], default="auto",
+        help=(
+            "LLM provider. auto selects based on BRIDGE_LLM_PROVIDER env var,\n"
+            "then whichever API key is present. Explicit flag overrides env var."
+        ),
+    )
+    parser.add_argument(
+        "--model", default=None,
+        help="Model name override. Falls back to BRIDGE_LLM_MODEL env var, then provider default.",
     )
     parser.add_argument("--game-save-folder", default=None,
                         help=(
-                            "Bridge file directory. Two forms accepted:\n"
-                            "  bare name:   'UnderTheIsland'  "
-                            "→ expands to %%LOCALAPPDATA%%\\UnderTheIsland (Windows)\n"
-                            "  full path:   'C:\\Users\\user\\AppData\\Local\\UnderTheIsland'  "
-                            "→ used as-is on any OS\n"
-                            "Falls back to %%TEMP%% if unset or expansion fails."
+                            "Bridge file directory — two forms:\n"
+                            "  bare name 'UnderTheIsland' → %%LOCALAPPDATA%%\\UnderTheIsland (Windows)\n"
+                            "  full path 'C:\\...\\UnderTheIsland' → used as-is\n"
+                            "Falls back to %%TEMP%% if unset."
                         ))
-    parser.add_argument("--event-file", default=None, help="Full override for event file path")
-    parser.add_argument("--reply-file", default=None, help="Full override for reply file path")
+    parser.add_argument("--event-file", default=None, help="Full path override for event file")
+    parser.add_argument("--reply-file", default=None, help="Full path override for reply file")
+    parser.add_argument("--diagnose", action="store_true",
+                        help="Print config diagnostics and exit (no API calls made)")
     args = parser.parse_args()
+
+    _PROVIDER = resolve_provider(args.provider)
+    _MODEL = resolve_model(_PROVIDER, args.model)
+
+    if args.diagnose:
+        diag = diagnostics(_PROVIDER, _MODEL)
+        print(json.dumps(diag, ensure_ascii=False, indent=2))
+        sys.exit(0 if diag["ready"] else 1)
 
     _TOKEN = args.token
     _PACK = load_character_pack()
     _SOUL_DB = _load_soul_db(args.game_id, args.character)
 
     char_name = _PACK.get("character_name", args.character)
-    print(f"Character: {char_name}  |  Trust: {_SOUL_DB.get('current_values', {}).get('trust', 0.4):.2f}")
-    print(f"Mode: {args.mode}")
+    trust = _SOUL_DB.get("current_values", {}).get("trust", 0.4)
+    print(f"Character: {char_name}  |  Provider: {_PROVIDER}  |  Model: {_MODEL}  |  Trust: {trust:.2f}")
+    print(f"Mode: {args.mode}  |  Token: {'set' if _TOKEN else 'open'}")
     print("---")
 
     if args.mode in ("file", "both"):
@@ -267,10 +293,10 @@ def main() -> None:
 
     if args.mode in ("http", "both"):
         print(f"HTTP server: http://localhost:{args.port}")
-        print("GET  /ask?msg=hello     → ask character")
-        print("GET  /state             → soul store")
-        print("POST /event             → game event")
-        print("POST /save_event        → manual event")
+        print("GET  /ask?msg=hello   → ask character")
+        print("GET  /state           → soul store")
+        print("POST /event           → game event")
+        print("POST /save_event      → manual event")
         server = HTTPServer(("localhost", args.port), _Handler)
         try:
             server.serve_forever()
