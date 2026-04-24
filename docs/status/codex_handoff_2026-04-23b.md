@@ -71,8 +71,8 @@ Tier-0 session-start now surfaces `session_pulse_status` field:
 1. **~~Route B file bridge round-trip~~** ✅ DONE (2026-04-24, Codex)
    - bridge_event.json → bridge_reply.json verified on Windows
    - BOM bug found + fixed (`utf-8-sig` encoding, 5 tests added)
-   - Blocker remaining: `pip install anthropic` + `ANTHROPIC_API_KEY`
-2. **Route B live API test** (next, Codex): `pip install anthropic`, set API key, rerun PowerShell round-trip, confirm reply is non-empty Claude response
+   - Blocker remaining: `ANTHROPIC_API_KEY` only (`anthropic` package already installed)
+2. **Route B live API test** (next, Codex): set `ANTHROPIC_API_KEY`, rerun PowerShell round-trip, confirm reply is non-empty Claude response (`anthropic` already installed)
 3. **GML injection** (after live API test passes): write GML snippet using `environment_get_variable("LOCALAPPDATA")` path, inject into `o_cutscene_trigger_inspect_permanent_yes_no_dialog` Step event
 4. **~~Branch merge~~** ✅ DONE — merged to master `259ef5d`
 5. **Trial 21**: hold until genuine packaging gap appears; do not force
