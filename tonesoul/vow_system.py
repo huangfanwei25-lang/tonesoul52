@@ -59,9 +59,12 @@ class Vow:
     active: bool = True
     falsifiable_by: Optional[str] = None
     measurable_via: Optional[str] = None
+    # GSE upgrade: operatable ontology fields (optional, backward-compatible)
+    trigger: Optional[str] = None             # condition that activates this vow
+    operation_instruction: Optional[str] = None  # step-by-step instruction agent can follow
 
     def to_dict(self) -> Dict:
-        return {
+        d = {
             "id": self.id,
             "title": self.title,
             "description": self.description,
@@ -72,6 +75,11 @@ class Vow:
             "falsifiable_by": self.falsifiable_by,
             "measurable_via": self.measurable_via,
         }
+        if self.trigger is not None:
+            d["trigger"] = self.trigger
+        if self.operation_instruction is not None:
+            d["operation_instruction"] = self.operation_instruction
+        return d
 
     @classmethod
     def from_dict(cls, data: Dict) -> "Vow":
@@ -87,6 +95,8 @@ class Vow:
             active=data.get("active", True),
             falsifiable_by=data.get("falsifiable_by"),
             measurable_via=data.get("measurable_via"),
+            trigger=data.get("trigger"),
+            operation_instruction=data.get("operation_instruction"),
         )
 
 

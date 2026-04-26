@@ -39,7 +39,9 @@ import os
 
 DEFAULT_MODELS: dict[str, str] = {
     "anthropic": "claude-sonnet-4-6",
-    "gemini": "gemini-2.0-flash",
+    # gemini-2.0-flash may not be available in all accounts;
+    # models/gemini-flash-lite-latest is the confirmed working alias
+    "gemini": "models/gemini-flash-lite-latest",
 }
 
 VALID_PROVIDERS = frozenset({"anthropic", "gemini"})

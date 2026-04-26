@@ -113,7 +113,20 @@ python games/under_the_island/bridge/server.py --mode http \
 |---|---|---|
 | 1 (highest) | `--provider` / `--model` CLI flags | `--provider gemini` |
 | 2 | `BRIDGE_LLM_PROVIDER` / `BRIDGE_LLM_MODEL` env vars | `export BRIDGE_LLM_MODEL=gemini-pro` |
-| 3 (lowest) | Built-in defaults | anthropic → `claude-sonnet-4-6` / gemini → `gemini-2.0-flash` |
+| 3 (lowest) | Built-in defaults | anthropic → `claude-sonnet-4-6` / gemini → `models/gemini-flash-lite-latest` |
+
+### Gemini model availability note
+
+The default Gemini model is `models/gemini-flash-lite-latest` (confirmed working).
+`gemini-2.0-flash` is **not** available in all accounts — if you get a 404 or
+"model not found" error, use the default or override with:
+
+```bash
+python games/under_the_island/bridge/server.py --mode file \
+  --provider gemini \
+  --model models/gemini-flash-lite-latest \
+  --game-save-folder "C:\Users\user\AppData\Local\YourGame"
+```
 
 **`auto` provider selection order:**
 1. `BRIDGE_LLM_PROVIDER` env var

@@ -153,6 +153,7 @@ class TestResolveModel:
     def test_default_gemini_model(self, monkeypatch) -> None:
         monkeypatch.delenv("BRIDGE_LLM_MODEL", raising=False)
         assert resolve_model("gemini", None) == DEFAULT_MODELS["gemini"]
+        assert DEFAULT_MODELS["gemini"] == "models/gemini-flash-lite-latest"
 
     def test_explicit_overrides_env(self, monkeypatch) -> None:
         monkeypatch.setenv("BRIDGE_LLM_MODEL", "env-model")

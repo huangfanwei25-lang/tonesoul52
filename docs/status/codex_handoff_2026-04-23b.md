@@ -40,12 +40,13 @@ recon/
 - `inter_agent/from_codex/patch_manifest.json` — real hook points (not committed here)
 - `inter_agent/character_pack/nia_pack.json` — 妮婭 persona (not committed here)
 
-**Where Route B ended this session:**
-- `server.py --mode file --game-save-folder "C:\Users\...\UnderTheIsland"` was
-  launched on Codex's machine (PID 19300), watching
-  `C:\Users\user\AppData\Local\UnderTheIsland\bridge_event.json`
-- PowerShell API round-trip test was NOT completed (Codex ran out of compute)
-- Next step: write test event JSON, observe reply file, confirm ANTHROPIC_API_KEY works
+**Where Route B ended this session (2026-04-25 update):**
+- Live Gemini API round-trip ✅ confirmed: `models/gemini-flash-lite-latest` works
+- Anthropic blocked by billing in Codex's account (not a bridge issue)
+- `DEFAULT_MODELS["gemini"]` updated to `models/gemini-flash-lite-latest`
+- `recon/gml_integration_notes.md` added: public state-machine template for GML injection
+- README updated with Gemini model availability notes
+- Next step for Codex: GML injection into `o_cutscene_trigger_inspect_permanent_yes_no_dialog`
 
 ### Self-Improvement Trial 20 — `session_pulse_freshness_v1`
 
@@ -71,9 +72,15 @@ Tier-0 session-start now surfaces `session_pulse_status` field:
 1. **~~Route B file bridge round-trip~~** ✅ DONE (2026-04-24, Codex)
    - bridge_event.json → bridge_reply.json verified on Windows
    - BOM bug found + fixed (`utf-8-sig` encoding, 5 tests added)
-   - Blocker remaining: `ANTHROPIC_API_KEY` only (`anthropic` package already installed)
-2. **Route B live API test** (next, Codex): set `ANTHROPIC_API_KEY`, rerun PowerShell round-trip, confirm reply is non-empty Claude response (`anthropic` already installed)
-3. **GML injection** (after live API test passes): write GML snippet using `environment_get_variable("LOCALAPPDATA")` path, inject into `o_cutscene_trigger_inspect_permanent_yes_no_dialog` Step event
+2. **~~Route B live API test~~** ✅ DONE (2026-04-25, Codex)
+   - Gemini: `models/gemini-flash-lite-latest` → non-empty reply confirmed
+   - Anthropic: billing not enabled in Codex account (blocked, not a bridge bug)
+   - `DEFAULT_MODELS["gemini"]` updated to `models/gemini-flash-lite-latest`
+   - Public GML integration notes written: `recon/gml_integration_notes.md`
+3. **GML injection** (next, Codex): inject file-bridge state machine into
+   `o_cutscene_trigger_inspect_permanent_yes_no_dialog` Step event using
+   `environment_get_variable("LOCALAPPDATA") + "\UnderTheIsland\"` path;
+   see `recon/gml_integration_notes.md` for the state machine template
 4. **~~Branch merge~~** ✅ DONE — merged to master `259ef5d`
 5. **Trial 21**: hold until genuine packaging gap appears; do not force
 
