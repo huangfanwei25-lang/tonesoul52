@@ -1,9 +1,30 @@
 name: Deploy GitHub Pages
 
+# Landing page (site/) + interactive Council demo (docs/demo_ui/) are assembled
+# into one Pages artifact. Sample verdicts for Mode D are regenerated fresh in CI
+# so /demo/ always reflects current council behavior — never a stale snapshot.
+#
+# Layout on the deployed site:
+#   /          -> site/         (SEO landing page)
+#   /demo/     -> docs/demo_ui/ (interactive Council Demo UI v0)
+#
+# Trigger paths cover every input that can change the rendered output:
+#   - site/**                                 landing HTML/CSS
+#   - docs/demo_ui/**                         demo HTML/JS/CSS (not samples — those are regenerated)
+#   - scripts/precompute_demo_ui_samples.py   sample-regen logic
+#   - tonesoul/council/**                     council that produces the verdicts
+#   - tests/fixtures/outcome_smoke/**         corpora that feed the samples
+
 on:
   push:
     branches: [master]
-    paths: [site/**]
+    paths:
+      - 'site/**'
+      - 'docs/demo_ui/**'
+      - 'scripts/precompute_demo_ui_samples.py'
+      - 'tonesoul/council/**'
+      - 'tests/fixtures/outcome_smoke/**'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -16,16 +37,44 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build-and-deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install tonesoul (needed to regenerate Demo UI samples)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Regenerate Demo UI sample verdicts
+        run: python scripts/precompute_demo_ui_samples.py
+
+      - name: Fail if sample regen did not produce expected output
+        run: |
+          test -f docs/demo_ui/samples/sample_verdicts.json || { echo "sample_verdicts.json missing"; exit 1; }
+          # Sanity-check the file is non-trivial (>1 KiB) and valid JSON with samples array.
+          python -c "import json,sys; d=json.load(open('docs/demo_ui/samples/sample_verdicts.json')); assert isinstance(d.get('samples'), list) and len(d['samples']) > 0, 'samples empty'; print(f\"sample count: {len(d['samples'])}\")"
+
+      - name: Assemble Pages site
+        run: |
+          mkdir -p _site
+          cp -r site/* _site/
+          mkdir -p _site/demo
+          cp -r docs/demo_ui/* _site/demo/
+
       - uses: actions/configure-pages@v4
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: _site
+
       - id: deployment
         uses: actions/deploy-pages@v4

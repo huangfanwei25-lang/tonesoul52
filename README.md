@@ -48,6 +48,16 @@ adapter-ready architecture, LoRA-ready distillation.
 
 ## Quick Start (5 minutes)
 
+### 0) Try it in your browser (no install)
+
+Watch five Council perspectives deliberate a draft before it reaches the user —
+on your own text (Mode A, needs a local gateway) or on a curated sample corpus
+(Mode D, verdicts precomputed in CI):
+
+**→ [https://fan1234-1.github.io/tonesoul52/demo/](https://fan1234-1.github.io/tonesoul52/demo/)**
+
+For local install continue below.
+
 ### 1) Install
 
 ```bash
