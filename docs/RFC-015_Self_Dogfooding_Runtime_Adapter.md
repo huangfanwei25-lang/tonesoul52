@@ -1,10 +1,17 @@
 # RFC-015: Self-Dogfooding Runtime Adapter
 
-> **Status**: Canonical Draft v1.0
+> **Status**: **Implemented** (status updated 2026-04-26 — see implementation references below)
 > **Authors**: Antigravity (Gemini), reviewed by Codex
-> **Date**: 2026-03-23
+> **Date drafted**: 2026-03-23
 > **Anchored by**: `docs/notes/TONESOUL_RUNTIME_ADAPTER_MEMORY_ANCHOR_2026-03-23.md`
 > **Compatible with**: L7 Retrieval Contract, L8 Distillation Boundary, ABC Firewall Doctrine
+>
+> **Implementation references** (added 2026-04-26 to fix status drift — RFC was previously labeled "Canonical Draft" while its design was already running in production):
+> - [scripts/start_agent_session.py](../scripts/start_agent_session.py) — session-start tier 0/1/2 bundle loader
+> - [scripts/end_agent_session.py](../scripts/end_agent_session.py) — session-end compaction + claim release
+> - [tonesoul/runtime_adapter.py](../tonesoul/runtime_adapter.py) — governance posture loader
+> - [tonesoul/runtime_adapter_normalization.py](../tonesoul/runtime_adapter_normalization.py), [tonesoul/runtime_adapter_routing.py](../tonesoul/runtime_adapter_routing.py), [tonesoul/runtime_adapter_subject_refresh.py](../tonesoul/runtime_adapter_subject_refresh.py) — extracted seams (Phase 794-796)
+> - CLAUDE.md "Session 開始時必做" / "Session 結束時應做" sections enforce the contract operationally
 
 ---
 
