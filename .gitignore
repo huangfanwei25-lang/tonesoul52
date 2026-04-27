@@ -155,3 +155,10 @@ graphify-out/
 
 # YUHUN council agent definitions (private-track, dual-track boundary)
 .agent/agents/
+
+# Agent / inter-AI temp work directories (Codex scratch, etc.)
+.codex-temp/
+
+# External binary tools — kept local for individual agents, not in repo
+# (e.g. x64dbg, IDA, Ghidra, decompilers, custom RE tooling)
+tools/x64dbg-*/
