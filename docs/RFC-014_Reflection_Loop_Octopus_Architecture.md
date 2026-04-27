@@ -1,13 +1,41 @@
 # RFC-014: Reflection Loop + 章魚架構
 
-> Purpose: draft exploratory RFC for reflection-loop and octopus-architecture ideas that have not yet been promoted to canonical runtime policy.
-> Last Updated: 2026-03-23
+> Purpose: draft exploratory RFC for reflection-loop and octopus-architecture ideas. Status updated 2026-04-26 — see block below.
+> Last Updated: 2026-04-26
 
 > **日期**: 2026-03-20
 > **作者**: 痕 (Hén) — Claude Opus 4.6
-> **狀態**: Draft
+> **狀態 (updated 2026-04-26)**: **PARTIALLY SUPERSEDED** — see block below
 > **前置**: Phase 583 (2526 tests, 212+ modules)
 > **關聯**: RFC-009 Context Engineering, RFC-013 Nonlinear Prediction
+>
+> **⚠️ Status (2026-04-26): PLANNED FOR IMPLEMENTATION as GSE Phase 4 — Reflection Loop**
+>
+> Initial 2026-04-26 evaluation marked this RFC as "PARTIALLY SUPERSEDED" (octopus architecture deferred). Fan-Wei reversed that call same day: "他值得開始實做" — it's worth starting to implement; pick a phase or a sub-item.
+>
+> **Decision**: this RFC's reflection-loop architecture becomes the design anchor for **GSE Phase 4**, scheduled after GSE Phase 2 (strategy_mirror catalog + integration) and Phase 3 (dynamic composition / recipes) ship. See [docs/gse/phase_2_strategy_mirror_spec.md](gse/phase_2_strategy_mirror_spec.md) §10 for the phase sequencing.
+>
+> **Scope alignment with current ToneSoul direction**:
+>
+> 1. The **narrow re-Council-on-bad-verdict pattern** is already implemented in a more limited form at GSE Phase 2 strategy_mirror spec §5.3 ("Re-Council on red"). Phase 4 expands this from manipulation-move detection to general reasoning-quality reflection.
+>
+> 2. The **broader octopus architecture** (multi-stage reflection, recursive re-thinking, multiple semi-independent reflection limbs) is now **PLANNED**, not deferred. Concrete implementation work begins after Phase 2/3 milestones.
+>
+> **Sequencing constraints**:
+> - Phase 4 cannot start until Phase 2 catalog (period 1) lands — same baseline-regime logic as the synthetic→real progression discipline (per addendum 2026-04-20)
+> - Phase 4 spec (a Phase 2-style spec doc with §0 preface + §N coda per `feedback_embed_orientation_in_technical_work` rule) should be drafted **while** Phase 3 spec is in progress, so the three Phase 2/3/4 layers are designed coherently as a unit, not sequentially as bolt-ons
+> - Implementation estimate: 6-12 weeks after spec land, depending on whether the octopus-limb topology adds Council perspectives or modifies existing perspective infrastructure
+>
+> **What stays from this RFC into Phase 4 design**:
+> - The single-pipeline-is-not-enough thesis (§一 in this RFC's body)
+> - The re-think-not-just-patch principle
+> - The octopus-limb metaphor (multiple semi-independent reflection paths) — though concrete topology will be re-designed against current 864 architecture, not lifted verbatim
+>
+> **What does not survive**:
+> - Specific 2026-03-20-era implementation details that referenced Phase 583 baseline (now superseded by Phase 864/866 reality)
+> - Any naming or terminology that conflicts with the strategy_mirror naming-policy rule (observation POV, not practitioner POV — see strategy_mirror spec §3.1)
+>
+> Tracking: see memory `project_rfc014_to_gse_phase4_mapping_2026-04-26.md` for the design path forward and the explicit re-eval criteria.
 
 ---
 
