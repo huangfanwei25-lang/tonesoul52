@@ -18,7 +18,9 @@ from dataclasses import dataclass, field
 from typing import List
 
 __ts_layer__ = "shared"
-__ts_purpose__ = "Soul config: ToneSoul-specific runtime configuration — agent identity and session parameters."
+__ts_purpose__ = (
+    "Soul config: ToneSoul-specific runtime configuration — agent identity and session parameters."
+)
 
 # ---------------------------------------------------------------------------
 # Core Values — weights for governance scoring
@@ -131,6 +133,27 @@ class MemoryConfig:
 
 
 # ---------------------------------------------------------------------------
+# GSE — Governance Semantic Engine
+# Derived from: Phase 1 (governance elements) + Phase 2 (strategy_mirror)
+# Default-off: strategy_mirror integration is opt-in until catalog calibrated
+# against real traffic (per Phase 2 spec §5.1, §10 step 7).
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class GSEConfig:
+    # Phase 2 strategy_mirror: when True, PreOutputCouncil runs the
+    # StrategyDetector after generate_verdict() and attaches the
+    # signature to the verdict. Red detections + undeclared yellow
+    # force verdict downgrade to BLOCK (per Phase 2 spec §5.3, §5.4).
+    strategy_mirror_enabled: bool = False
+    # Phase 2 spec §5 confidence threshold for detector. Default matches
+    # the spec's CONFIDENCE_THRESHOLD constant; exposed here so beta
+    # operators can lower it during calibration without code changes.
+    strategy_mirror_confidence_threshold: float = 0.5
+
+
+# ---------------------------------------------------------------------------
 # Composite — all soul config in one object
 # ---------------------------------------------------------------------------
 
@@ -144,6 +167,7 @@ class SoulConfig:
     vow: VowConfig = field(default_factory=VowConfig)
     risk: RiskConfig = field(default_factory=RiskConfig)
     memory: MemoryConfig = field(default_factory=MemoryConfig)
+    gse: GSEConfig = field(default_factory=GSEConfig)
     forbidden_actions: List[str] = field(default_factory=lambda: list(FORBIDDEN_ACTIONS))
 
 
@@ -160,5 +184,6 @@ __all__ = [
     "VowConfig",
     "RiskConfig",
     "MemoryConfig",
+    "GSEConfig",
     "FORBIDDEN_ACTIONS",
 ]
