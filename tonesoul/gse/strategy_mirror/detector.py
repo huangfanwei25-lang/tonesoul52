@@ -42,6 +42,14 @@ CONFIDENCE_CAP: float = 1.0
 # re-quoting the whole draft).
 EXCERPT_CONTEXT_CHARS: int = 30
 
+# Phase 2 declaration-scope binding (post-Codex review 2026-04-28).
+# A marker phrase (e.g. "我用了") only declares a move if its position
+# in the draft is within this many characters of the move name. Without
+# this proximity binding, "I used alpha. <long text> beta name" would
+# incorrectly mark beta as declared, letting undeclared yellow slip past
+# the §5.4 BLOCK contract.
+DECLARATION_PROXIMITY_CHARS: int = 50
+
 
 class StrategyDetector:
     """Scan drafts against the loaded strategy_mirror catalog.
@@ -134,6 +142,19 @@ class StrategyDetector:
         confidence = min(confidence, CONFIDENCE_CAP)
         return confidence, excerpts[:4]  # cap excerpts to avoid bloat
 
+    # Marker phrases that, when adjacent to a move name, count as
+    # explicit declaration of that move (per spec §5.4).
+    _DECLARATION_MARKERS: tuple = (
+        "我用了",
+        "本段使用",
+        "我使用",
+        "聲明使用",
+        "我這裡用",
+        "I used",
+        "this uses",
+        "we use",
+    )
+
     def _is_declared(
         self,
         move: StrategyMove,
@@ -142,22 +163,68 @@ class StrategyDetector:
     ) -> bool:
         """Spec §5.4 declaration check.
 
-        Phase 2: keyword-based. A move is considered declared if either:
-          (a) its symbol or name was passed in declared_moves list
-          (b) the draft text contains its symbol or name verbatim
-              (e.g. "我用了 [Ev] 注意力強驅構造", "本段使用 [Hook]")
+        Phase 2 declaration is keyword-based. A move is considered declared
+        when ANY of the following holds:
+
+          (a) its symbol or name was passed in the explicit declared_moves
+              list at scan time
+          (b) its symbol (e.g. "[Ev]") appears literally in the draft —
+              writing the symbol IS labelling the move
+          (c) its name (e.g. "注意力強驅構造") appears within
+              DECLARATION_PROXIMITY_CHARS of a marker phrase like
+              "我用了" / "本段使用" / "I used"
+
+        Pre-Codex-review Phase 2: branch (c) only checked that marker AND
+        name both appear *anywhere* in the text, which let "I used alpha
+        ... <long text> ... beta name" wrongly mark beta as declared.
+        Post-fix: marker must be within DECLARATION_PROXIMITY_CHARS of the
+        name occurrence. This binds the declaration to a specific move
+        instead of cross-pollinating across the whole draft.
         """
+        # (a) explicit list — strongest, no proximity needed
         if move.symbol in declared_set or move.name in declared_set:
             return True
-        # In-text declaration: symbol like [Ev] or name like 注意力強驅構造
+        # (b) symbol appears literally — symbol-as-label is self-declaring
         if move.symbol and move.symbol in text:
             return True
-        # Look for an explicit "declared" framing near the name.
+        # (c) marker near name — proximity-bound to avoid cross-pollination
         if move.name and move.name in text:
-            for marker in ("我用了", "本段使用", "我使用", "聲明使用", "I used", "this uses"):
-                if marker in text:
-                    return True
+            return self._marker_near_name(text, move.name)
         return False
+
+    def _marker_near_name(self, text: str, name: str) -> bool:
+        """Return True if any DECLARATION_MARKERS phrase appears within
+        DECLARATION_PROXIMITY_CHARS of any occurrence of `name` in `text`.
+
+        Distance is measured between the start positions of marker and
+        name (so a marker followed immediately by the name has distance
+        equal to the marker's length, well within the 50-char window).
+        """
+        name_positions = self._find_all_positions(text, name)
+        if not name_positions:
+            return False
+        for marker in self._DECLARATION_MARKERS:
+            marker_positions = self._find_all_positions(text, marker)
+            for mp in marker_positions:
+                for np in name_positions:
+                    if abs(mp - np) <= DECLARATION_PROXIMITY_CHARS:
+                        return True
+        return False
+
+    @staticmethod
+    def _find_all_positions(text: str, substring: str) -> List[int]:
+        """All start positions where `substring` occurs in `text`."""
+        if not substring:
+            return []
+        positions: List[int] = []
+        start = 0
+        while True:
+            idx = text.find(substring, start)
+            if idx < 0:
+                break
+            positions.append(idx)
+            start = idx + 1
+        return positions
 
     # ------------------------------------------------------------------
     # Reporting

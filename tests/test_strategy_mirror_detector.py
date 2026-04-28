@@ -208,6 +208,105 @@ class TestDeclarationMarking:
         sig = detector.scan("我用了假時限構造這個招式：限時三天，倒數結束")
         assert sig.detected_moves[0].declared is True
 
+    # ------------------------------------------------------------------
+    # NEGATIVE cases — added 2026-04-28 after Codex review found the
+    # pre-fix detector was marking unrelated moves as declared whenever
+    # any marker phrase + any move name both appeared in the same text.
+    # The fix binds marker → name via DECLARATION_PROXIMITY_CHARS = 50.
+    # ------------------------------------------------------------------
+
+    def test_marker_far_from_name_does_not_declare(self, tmp_path: Path) -> None:
+        """Codex repro: 'I used alpha <long text> beta name' must not
+        mark beta as declared just because 'I used' appears anywhere."""
+        long_filler = " content " * 30  # ~270 chars between marker and beta
+        detector = _detector_with(
+            tmp_path,
+            [
+                _move("1.001.A", "yellow", surface=["alpha-x", "alpha-y"], name="alpha move"),
+                _move("1.002.B", "yellow", surface=["beta-x", "beta-y"], name="beta move"),
+            ],
+        )
+        text = (
+            f"I used alpha move with alpha-x and alpha-y everywhere. "
+            f"{long_filler}"
+            f"Now consider beta move which uses beta-x and beta-y as keywords."
+        )
+        sig = detector.scan(text)
+        by_id = {d.move.id: d for d in sig.detected_moves}
+        # alpha was actually declared (marker right next to name)
+        assert by_id["1.001.A"].declared is True
+        # beta should NOT be declared — marker phrase is ~270 chars away
+        assert by_id["1.002.B"].declared is False, (
+            "beta move was wrongly marked declared just because 'I used' "
+            "appears somewhere in the text — the proximity binding is broken"
+        )
+
+    def test_marker_in_different_paragraph_does_not_declare(self, tmp_path: Path) -> None:
+        """Marker and name separated by sufficient text (>50 chars):
+        not a declaration of the second move."""
+        detector = _detector_with(
+            tmp_path,
+            [
+                _move("1.001.A", "yellow", surface=["foo-x", "foo-y"], name="alpha thing"),
+                _move("1.002.B", "yellow", surface=["bar-x", "bar-y"], name="beta thing"),
+            ],
+        )
+        # Construct gap of well over 50 chars between "我用了" and "beta thing"
+        gap = "中間隔了非常多其他內容、句子、段落，總共加起來超過五十個字元的距離。" * 2
+        text = (
+            "我用了 alpha thing 來示範：foo-x 和 foo-y。\n\n"
+            f"{gap}\n\n"
+            "另一段獨立內容，這裡有 beta thing 但沒有任何聲明 marker。bar-x bar-y\n"
+        )
+        sig = detector.scan(text)
+        by_id = {d.move.id: d for d in sig.detected_moves}
+        if "1.002.B" in by_id:
+            assert by_id["1.002.B"].declared is False, (
+                "beta thing was wrongly marked declared by the marker in "
+                "the previous paragraph (gap > 50 chars)"
+            )
+
+    def test_marker_within_proximity_does_declare(self, tmp_path: Path) -> None:
+        """Positive control for the proximity binding: marker right
+        before the name (well within 50 chars) → declared."""
+        detector = _detector_with(
+            tmp_path,
+            [_move("1.001.A", "yellow", surface=["limit", "deadline"], name="urgency move")],
+        )
+        sig = detector.scan("I used urgency move here: limit and deadline.")
+        assert sig.detected_moves[0].declared is True
+
+    def test_two_markers_two_names_only_local_pairs_declare(self, tmp_path: Path) -> None:
+        """Realistic mixed case: two markers + two names, both pairs
+        local. Both should declare correctly because each marker is near
+        its own name."""
+        detector = _detector_with(
+            tmp_path,
+            [
+                _move("1.001.A", "yellow", surface=["x1", "x2"], name="alpha craft"),
+                _move("1.002.B", "yellow", surface=["y1", "y2"], name="beta craft"),
+            ],
+        )
+        text = (
+            "本段使用 alpha craft：x1 和 x2 出現。"
+            + " " * 100  # gap so the two declarations don't bleed
+            + "本段使用 beta craft：y1 和 y2 出現。"
+        )
+        sig = detector.scan(text)
+        by_id = {d.move.id: d for d in sig.detected_moves}
+        assert by_id["1.001.A"].declared is True
+        assert by_id["1.002.B"].declared is True
+
+    def test_name_alone_without_any_marker_not_declared(self, tmp_path: Path) -> None:
+        """Just the name appearing in text (no marker phrase anywhere)
+        is not declaration — it's just usage."""
+        detector = _detector_with(
+            tmp_path,
+            [_move("1.001.A", "yellow", surface=["w1", "w2"], name="some craft")],
+        )
+        sig = detector.scan("這個段落用了 some craft，包含 w1 和 w2，但沒寫任何聲明 marker。")
+        assert sig.detected_moves[0].declared is False
+
 
 # ---------------------------------------------------------------------------
 # StrategySignature integration: Council flags
@@ -281,9 +380,15 @@ class TestEdgeCases:
 
 
 class TestStructuralPatterns:
-    def test_all_referenced_patterns_documented(self) -> None:
-        """Diagnostic: list registered patterns; if catalog references one
-        not in this list it is silently skipped — track which ones."""
+    def test_basic_patterns_registered_smoke(self) -> None:
+        """Smoke test: a handful of load-bearing patterns are registered.
+
+        This is NOT a coverage test — see test_structural_pattern_coverage_budget
+        below for the gap-vs-catalog assertion. The pre-Codex-review name of
+        this test was test_all_referenced_patterns_documented, which was
+        misleading (the catalog references ~450 unique patterns; this test
+        only checked 3). Renamed 2026-04-28 for honesty.
+        """
         registered = registered_patterns()
         assert "question_in_first_sentence" in registered
         assert "countdown_phrase" in registered
@@ -324,6 +429,122 @@ class TestStructuralPatterns:
 # ---------------------------------------------------------------------------
 # End-to-end against real period-1 catalog
 # ---------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------
+# Catalog ↔ registry coverage
+# ---------------------------------------------------------------------------
+
+
+# Coverage budget floor (post-Codex-review 2026-04-28).
+# Empirical state on the period-1 catalog:
+#   - 450 total structural_signal references (also 450 unique — no name
+#     reuse across entries)
+#   - 18 patterns registered in structural_patterns.py
+#   - 15 of those 18 are actually referenced by the catalog
+#   - 3 registered patterns (deadline_assertion, scarcity_quantifier,
+#     time_constraint_phrase) are NOT referenced anywhere — registered
+#     defensively when detector.py was first written, then catalog
+#     authoring chose different names; left in place because removing
+#     them is a separate cleanup pass
+#   - coverage_ratio = 15 / 450 = 3.33%
+# Budget pinned at 3% so any further drop (catalog growth without
+# registry registration, or registry pattern deletion) fails loudly.
+# Future PRs may RAISE this budget as more patterns get implemented;
+# LOWERING it requires explicit rationale in the PR description (which
+# acknowledges that more of the catalog's structural_signals axis is
+# decoration rather than detection).
+STRUCTURAL_COVERAGE_BUDGET: float = 0.03
+
+
+class TestStructuralPatternCoverage:
+    """Catalog vs registry drift detection.
+
+    Pre-Codex-review state was: 18 registered patterns, ~450 unique
+    pattern names referenced in catalog → ~4% coverage. The catalog was
+    written ahead of the registry, with the silent-skip design intentionally
+    accepting unsupported patterns. The OLD diagnostic test only checked
+    that 3 specific patterns existed, completely missing this drift —
+    catalog entries could continue adding new pattern names indefinitely
+    while the test stayed green.
+
+    These two tests pin the gap honestly:
+      - test_structural_pattern_coverage_budget: hard floor (fails on drift)
+      - test_structural_pattern_coverage_diagnostic: print breakdown (always passes)
+    """
+
+    @staticmethod
+    def _gather_referenced() -> set:
+        """All unique structural_signal names referenced across all loaded
+        catalog entries."""
+        loader = CatalogLoader().load()
+        referenced: set = set()
+        for move in loader.all():
+            for sig in move.structural_signals:
+                if sig:
+                    referenced.add(sig)
+        return referenced
+
+    def test_structural_pattern_coverage_budget(self) -> None:
+        """Catalog/registry coverage must not drop below the budget floor.
+
+        Failure modes this test catches:
+          - new catalog entry adds 5 new structural_signal names without
+            registering them → coverage_ratio drops → test fails
+          - someone deletes a registered pattern → coverage drops → fails
+          - someone deletes catalog entries with COVERED patterns →
+            registered ratio could even rise; this test only enforces FLOOR
+            (raising the budget is a separate, intentional act)
+
+        Failure messages list the top missing patterns so the dev fixing
+        it sees the gap concretely.
+        """
+        referenced = self._gather_referenced()
+        registered = set(registered_patterns())
+        if not referenced:
+            pytest.skip("No structural signals in catalog yet")
+
+        covered = referenced & registered
+        coverage_ratio = len(covered) / len(referenced)
+
+        missing = sorted(referenced - registered)[:15]
+
+        assert coverage_ratio >= STRUCTURAL_COVERAGE_BUDGET, (
+            f"\nStructural pattern coverage dropped below budget "
+            f"({STRUCTURAL_COVERAGE_BUDGET:.2%}):\n"
+            f"  current = {coverage_ratio:.2%} ({len(covered)}/{len(referenced)})\n"
+            f"  missing = {len(referenced - registered)} patterns "
+            f"in catalog but not in registry\n"
+            f"  top 15 missing: {missing}\n\n"
+            f"To fix:\n"
+            f"  EITHER register the missing patterns in "
+            f"tonesoul/gse/strategy_mirror/structural_patterns.py PATTERNS dict,\n"
+            f"  OR raise STRUCTURAL_COVERAGE_BUDGET in this test with rationale "
+            f"in the PR description (which acknowledges that part of the "
+            f"catalog's structural_signals axis is decoration, not detection)."
+        )
+
+    def test_structural_pattern_coverage_diagnostic(self, capsys) -> None:
+        """Diagnostic only: prints breakdown. Always passes.
+
+        Useful for dev: run pytest -s to see the actual gap numbers
+        without having to bump the budget to provoke a failure.
+        """
+        referenced = self._gather_referenced()
+        registered = set(registered_patterns())
+        covered = referenced & registered
+        missing = referenced - registered
+        coverage_ratio = (len(covered) / len(referenced)) if referenced else 0.0
+
+        print("\n=== Structural pattern coverage (diagnostic) ===")
+        print(f"  Catalog references: {len(referenced)} unique patterns")
+        print(f"  Registry has:       {len(registered)} patterns")
+        print(f"  Covered:            {len(covered)} patterns")
+        print(f"  Missing in registry: {len(missing)} patterns")
+        print(f"  Coverage ratio:     {coverage_ratio:.2%}")
+        print(f"  Budget floor:       {STRUCTURAL_COVERAGE_BUDGET:.2%}")
+        # Always passes — purely informational.
+        assert True
 
 
 class TestRealPeriod1Catalog:
