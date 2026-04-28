@@ -142,15 +142,39 @@ class MemoryConfig:
 
 @dataclass(frozen=True)
 class GSEConfig:
-    # Phase 2 strategy_mirror: when True, PreOutputCouncil runs the
-    # StrategyDetector after generate_verdict() and attaches the
-    # signature to the verdict. Red detections + undeclared yellow
-    # force verdict downgrade to BLOCK (per Phase 2 spec §5.3, §5.4).
-    strategy_mirror_enabled: bool = False
+    # Phase 2 strategy_mirror — split into two flags (2026-04-29) so the
+    # 14-day beta wave Day 7-9 calibration can run "scan-only shadow"
+    # mode: capture StrategySignature on every verdict without forcing
+    # APPROVE→BLOCK downgrade. Three valid states + one auto-promoted
+    # state:
+    #
+    #   scan=False, enforce=False  → no scan, no signature, no downgrade
+    #                                (Phase 2 default; existing behaviour)
+    #   scan=True,  enforce=False  → scan + attach signature, NO downgrade
+    #                                (shadow mode — for Day 7-9 calibration)
+    #   scan=True,  enforce=True   → scan + signature + downgrade rules
+    #                                (full enforcement — Day 10+ if approved)
+    #   scan=False, enforce=True   → IMPOSSIBLE STATE; auto-promoted to
+    #                                scan=True via __post_init__
+    #
+    # The auto-promotion is by design (Codex 2026-04-28): enforce cannot
+    # logically exist without scan — enforce operates on scan output.
+    # The split makes that relationship explicit at config-load time.
+    strategy_mirror_scan_enabled: bool = False
+    strategy_mirror_enforce_enabled: bool = False
     # Phase 2 spec §5 confidence threshold for detector. Default matches
     # the spec's CONFIDENCE_THRESHOLD constant; exposed here so beta
     # operators can lower it during calibration without code changes.
     strategy_mirror_confidence_threshold: float = 0.5
+
+    def __post_init__(self) -> None:
+        # enforce ⇒ scan auto-promotion. Frozen dataclass requires
+        # object.__setattr__ since direct assignment would raise. The
+        # promotion is silent-with-rationale: any caller that sets
+        # enforce=True implicitly states "I want scan output to act on";
+        # we honour that by ensuring scan is on too.
+        if self.strategy_mirror_enforce_enabled and not self.strategy_mirror_scan_enabled:
+            object.__setattr__(self, "strategy_mirror_scan_enabled", True)
 
 
 # ---------------------------------------------------------------------------
