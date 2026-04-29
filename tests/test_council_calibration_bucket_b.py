@@ -1,4 +1,5 @@
 """Tests for tonesoul.council.calibration_bucket_b — pure helpers (no council run)."""
+
 from __future__ import annotations
 
 import json
@@ -12,8 +13,8 @@ from tonesoul.council.calibration_bucket_b import (
     _canonical_key,
     _epistemic_label_status,
     _utc_now_iso,
-    build_calibration_table,
     bucket_b_equal,
+    build_calibration_table,
     derive_alignment_judgment_v0b,
     derive_baseline_regime,
     join_verdicts_with_outcomes,
@@ -21,8 +22,8 @@ from tonesoul.council.calibration_bucket_b import (
     load_outcomes,
 )
 
-
 # ── _utc_now_iso ──────────────────────────────────────────────────────────────
+
 
 class TestUtcNowIso:
     def test_returns_string(self):
@@ -38,12 +39,15 @@ class TestUtcNowIso:
 
 # ── load_corpus / load_outcomes ───────────────────────────────────────────────
 
+
 class TestLoadCorpus:
     def test_loads_valid_jsonl(self, tmp_path):
         f = tmp_path / "corpus.jsonl"
         f.write_text(
-            json.dumps({"draft_output": "Hello", "category": "greeting"}) + "\n"
-            + json.dumps({"draft_output": "World", "category": "test"}) + "\n",
+            json.dumps({"draft_output": "Hello", "category": "greeting"})
+            + "\n"
+            + json.dumps({"draft_output": "World", "category": "test"})
+            + "\n",
             encoding="utf-8",
         )
         entries = load_corpus(f)
@@ -81,6 +85,7 @@ class TestLoadOutcomes:
 
 # ── derive_baseline_regime ────────────────────────────────────────────────────
 
+
 class TestDeriveBaselineRegime:
     def _outcome(self, source: str) -> dict:
         return {"outcome_signal": {"signal_source": source}}
@@ -109,6 +114,7 @@ class TestDeriveBaselineRegime:
 
 
 # ── derive_alignment_judgment_v0b ─────────────────────────────────────────────
+
 
 class TestDeriveAlignmentJudgmentV0b:
     # block verdicts
@@ -174,6 +180,7 @@ class TestDeriveAlignmentJudgmentV0b:
 
 # ── _epistemic_label_status ───────────────────────────────────────────────────
 
+
 class TestEpistemicLabelStatus:
     def test_returns_status_when_present(self):
         verdict = {"epistemic_label": {"status": "retrieved"}}
@@ -192,6 +199,7 @@ class TestEpistemicLabelStatus:
 
 
 # ── join_verdicts_with_outcomes ───────────────────────────────────────────────
+
 
 class TestJoinVerdictsWithOutcomes:
     def _recon(self, fp: str, verdict_type: str = "approve", cat: str = "test") -> dict:
@@ -248,6 +256,7 @@ class TestJoinVerdictsWithOutcomes:
 
 # ── _canonical_key ────────────────────────────────────────────────────────────
 
+
 class TestCanonicalKey:
     def test_deterministic(self):
         key = {"verdict_type": "approve", "signal": "accept", "epistemic_label_status": None}
@@ -266,8 +275,16 @@ class TestCanonicalKey:
 
 # ── build_calibration_table ───────────────────────────────────────────────────
 
+
 class TestBuildCalibrationTable:
-    def _row(self, verdict_type="approve", signal="accept", judgment="aligned", source="synthetic", label=None):
+    def _row(
+        self,
+        verdict_type="approve",
+        signal="accept",
+        judgment="aligned",
+        source="synthetic",
+        label=None,
+    ):
         return {
             "verdict_type": verdict_type,
             "signal": signal,
@@ -324,6 +341,7 @@ class TestBuildCalibrationTable:
 
 # ── _audit_adversarial ────────────────────────────────────────────────────────
 
+
 class TestAuditAdversarial:
     def _row(self, category="tone_laundering", verdict="approve", judgment="aligned"):
         return {
@@ -362,6 +380,7 @@ class TestAuditAdversarial:
 
 # ── _audit_anti_pattern_3 ─────────────────────────────────────────────────────
 
+
 class TestAuditAntiPattern3:
     def _row(self, verdict_type="block", signal="accept", judgment="unconfirmed"):
         return {
@@ -392,6 +411,7 @@ class TestAuditAntiPattern3:
 
 
 # ── bucket_b_equal ────────────────────────────────────────────────────────────
+
 
 class TestBucketBEqual:
     def _base(self) -> dict:

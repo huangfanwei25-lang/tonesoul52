@@ -4,7 +4,6 @@ import pytest
 
 from tonesoul.memory.decay import (
     ACCESS_BOOST,
-    DECAY_CONSTANT,
     FORGET_THRESHOLD,
     HALF_LIFE_DAYS,
     apply_retrospective,

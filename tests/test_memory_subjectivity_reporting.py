@@ -1,9 +1,8 @@
 """Tests for pure helper functions in tonesoul/memory/subjectivity_reporting.py"""
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
-
-import pytest
 
 from tonesoul.memory.subjectivity_reporting import (
     _extract_promotion_status,
@@ -15,10 +14,10 @@ from tonesoul.memory.subjectivity_reporting import (
     _record_excerpt,
 )
 
-
 # ---------------------------------------------------------------------------
 # TestNormalizeText
 # ---------------------------------------------------------------------------
+
 
 class TestNormalizeText:
     def test_strips_leading_trailing_whitespace(self):
@@ -47,6 +46,7 @@ class TestNormalizeText:
 # ---------------------------------------------------------------------------
 # TestNormalizeSubjectivityLayer
 # ---------------------------------------------------------------------------
+
 
 class TestNormalizeSubjectivityLayer:
     def test_tension(self):
@@ -82,6 +82,7 @@ class TestNormalizeSubjectivityLayer:
 # TestNormalizeMemoryLayer
 # ---------------------------------------------------------------------------
 
+
 class TestNormalizeMemoryLayer:
     def test_working_layer(self):
         assert _normalize_memory_layer("working") == "working"
@@ -105,6 +106,7 @@ class TestNormalizeMemoryLayer:
 # ---------------------------------------------------------------------------
 # TestExtractPromotionStatus
 # ---------------------------------------------------------------------------
+
 
 class TestExtractPromotionStatus:
     def test_string_gate_reviewed(self):
@@ -142,6 +144,7 @@ class TestExtractPromotionStatus:
 # TestParseTimestamp
 # ---------------------------------------------------------------------------
 
+
 class TestParseTimestamp:
     def test_valid_iso_with_z_returns_utc(self):
         result = _parse_timestamp("2026-03-10T01:00:00Z")
@@ -173,6 +176,7 @@ class TestParseTimestamp:
 # ---------------------------------------------------------------------------
 # TestRecordExcerpt
 # ---------------------------------------------------------------------------
+
 
 class TestRecordExcerpt:
     def test_prefers_summary(self):
@@ -207,6 +211,7 @@ class TestRecordExcerpt:
 # ---------------------------------------------------------------------------
 # TestIsUnresolvedTension
 # ---------------------------------------------------------------------------
+
 
 class TestIsUnresolvedTension:
     def test_non_tension_payload_returns_false(self):
@@ -243,18 +248,24 @@ class TestIsUnresolvedTension:
         review_status = {
             "rec-1": {"settled": True},
         }
-        assert _is_unresolved_tension(
-            payload, record_id="rec-1", review_status_by_record_id=review_status
-        ) is False
+        assert (
+            _is_unresolved_tension(
+                payload, record_id="rec-1", review_status_by_record_id=review_status
+            )
+            is False
+        )
 
     def test_tension_with_unsettled_review_status_returns_true(self):
         payload = {"subjectivity_layer": "tension"}
         review_status = {
             "rec-1": {"settled": False},
         }
-        assert _is_unresolved_tension(
-            payload, record_id="rec-1", review_status_by_record_id=review_status
-        ) is True
+        assert (
+            _is_unresolved_tension(
+                payload, record_id="rec-1", review_status_by_record_id=review_status
+            )
+            is True
+        )
 
     def test_event_layer_not_unresolved_tension(self):
         payload = {"subjectivity_layer": "event"}
@@ -268,6 +279,9 @@ class TestIsUnresolvedTension:
         payload = {"subjectivity_layer": "tension"}
         review_status = {"some-other-id": {"settled": True}}
         # No record_id provided → review_status_by_record_id not consulted
-        assert _is_unresolved_tension(
-            payload, record_id=None, review_status_by_record_id=review_status
-        ) is True
+        assert (
+            _is_unresolved_tension(
+                payload, record_id=None, review_status_by_record_id=review_status
+            )
+            is True
+        )

@@ -13,8 +13,8 @@ from tonesoul.runtime_adapter_routing import (
     slug_from_summary,
 )
 
-
 # ─── slug_from_summary ───────────────────────────────────────────────────────
+
 
 class TestSlugFromSummary:
     def test_basic_slug(self):
@@ -47,6 +47,7 @@ class TestSlugFromSummary:
 
 
 # ─── route_r_memory_signal ───────────────────────────────────────────────────
+
 
 class TestRouteRMemorySignalSurface:
     def test_prefer_surface_overrides_shape(self):
@@ -156,6 +157,7 @@ class TestRoutePayloadShape:
 
 # ─── persist_routed_signal ───────────────────────────────────────────────────
 
+
 def _noop(*args: Any, **kwargs: Any) -> Dict[str, Any]:
     raise AssertionError(f"unexpected writer: {args} {kwargs}")
 
@@ -170,10 +172,25 @@ class TestPersistRoutedSignal:
             source="test",
         )
 
-        def checkpoint_writer(checkpoint_id, *, agent_id, session_id, summary,
-                              pending_paths, next_action, source, ttl_seconds, store):
-            return {"checkpoint_id": checkpoint_id, "ttl_seconds": ttl_seconds, "store": store,
-                    "pending_paths": pending_paths, "next_action": next_action}
+        def checkpoint_writer(
+            checkpoint_id,
+            *,
+            agent_id,
+            session_id,
+            summary,
+            pending_paths,
+            next_action,
+            source,
+            ttl_seconds,
+            store,
+        ):
+            return {
+                "checkpoint_id": checkpoint_id,
+                "ttl_seconds": ttl_seconds,
+                "store": store,
+                "pending_paths": pending_paths,
+                "next_action": next_action,
+            }
 
         written = persist_routed_signal(
             route,
@@ -214,9 +231,20 @@ class TestPersistRoutedSignal:
         route = route_r_memory_signal(agent_id="a", stance="open")
         results = {}
 
-        def perspective_writer(agent_id, *, session_id, summary, stance, tensions,
-                               proposed_drift, proposed_vows, evidence_refs, source,
-                               ttl_seconds, store):
+        def perspective_writer(
+            agent_id,
+            *,
+            session_id,
+            summary,
+            stance,
+            tensions,
+            proposed_drift,
+            proposed_vows,
+            evidence_refs,
+            source,
+            ttl_seconds,
+            store,
+        ):
             results["stance"] = stance
             results["ttl_seconds"] = ttl_seconds
             return results
@@ -236,9 +264,20 @@ class TestPersistRoutedSignal:
         route = route_r_memory_signal(agent_id="a", carry_forward=["item"])
         results = {}
 
-        def compaction_writer(*, agent_id, session_id, summary, carry_forward,
-                              pending_paths, evidence_refs, next_action, source,
-                              ttl_seconds, limit, store):
+        def compaction_writer(
+            *,
+            agent_id,
+            session_id,
+            summary,
+            carry_forward,
+            pending_paths,
+            evidence_refs,
+            next_action,
+            source,
+            ttl_seconds,
+            limit,
+            store,
+        ):
             results["carry_forward"] = carry_forward
             results["ttl_seconds"] = ttl_seconds
             results["limit"] = limit
@@ -260,10 +299,23 @@ class TestPersistRoutedSignal:
         route = route_r_memory_signal(agent_id="a", stable_vows=["vow1"])
         results = {}
 
-        def subject_snapshot_writer(*, agent_id, session_id, summary, stable_vows,
-                                    durable_boundaries, decision_preferences,
-                                    verified_routines, active_threads, evidence_refs,
-                                    refresh_signals, source, ttl_seconds, limit, store):
+        def subject_snapshot_writer(
+            *,
+            agent_id,
+            session_id,
+            summary,
+            stable_vows,
+            durable_boundaries,
+            decision_preferences,
+            verified_routines,
+            active_threads,
+            evidence_refs,
+            refresh_signals,
+            source,
+            ttl_seconds,
+            limit,
+            store,
+        ):
             results["stable_vows"] = stable_vows
             results["ttl_seconds"] = ttl_seconds
             results["limit"] = limit
@@ -306,6 +358,7 @@ class TestPersistRoutedSignal:
 
 # ─── build_routing_event ─────────────────────────────────────────────────────
 
+
 class TestBuildRoutingEvent:
     def test_forced_overlap_marks_misroute(self):
         route = route_r_memory_signal(
@@ -337,6 +390,7 @@ class TestBuildRoutingEvent:
 
     def test_event_id_is_uuid(self):
         import uuid
+
         route = route_r_memory_signal(agent_id="a")
         event = build_routing_event(route, utc_now=lambda: "ts")
         uuid.UUID(event["event_id"])  # raises if invalid
@@ -344,9 +398,21 @@ class TestBuildRoutingEvent:
     def test_required_keys_present(self):
         route = route_r_memory_signal(agent_id="a")
         event = build_routing_event(route, utc_now=lambda: "ts")
-        for key in ("event_id", "agent", "surface", "action", "written", "confidence",
-                    "reason", "forced", "overlap", "misroute_signal",
-                    "secondary_signal_count", "secondary_signals", "updated_at"):
+        for key in (
+            "event_id",
+            "agent",
+            "surface",
+            "action",
+            "written",
+            "confidence",
+            "reason",
+            "forced",
+            "overlap",
+            "misroute_signal",
+            "secondary_signal_count",
+            "secondary_signals",
+            "updated_at",
+        ):
             assert key in event
 
     def test_default_action_is_preview(self):
@@ -356,6 +422,7 @@ class TestBuildRoutingEvent:
 
 
 # ─── safe_list_routing_events ────────────────────────────────────────────────
+
 
 class TestSafeListRoutingEvents:
     def test_returns_events_on_success(self):
@@ -383,6 +450,7 @@ class TestSafeListRoutingEvents:
 
 # ─── build_routing_summary ───────────────────────────────────────────────────
 
+
 class TestBuildRoutingSummary:
     def test_empty_events_returns_zero_totals(self):
         result = build_routing_summary([])
@@ -392,12 +460,28 @@ class TestBuildRoutingSummary:
 
     def test_counts_writes_and_previews(self):
         events = [
-            {"action": "write", "surface": "claim", "forced": False, "overlap": False,
-             "misroute_signal": False, "agent": "a", "event_id": "1",
-             "updated_at": "t", "summary": "s"},
-            {"action": "preview", "surface": "claim", "forced": False, "overlap": False,
-             "misroute_signal": False, "agent": "b", "event_id": "2",
-             "updated_at": "t", "summary": "s"},
+            {
+                "action": "write",
+                "surface": "claim",
+                "forced": False,
+                "overlap": False,
+                "misroute_signal": False,
+                "agent": "a",
+                "event_id": "1",
+                "updated_at": "t",
+                "summary": "s",
+            },
+            {
+                "action": "preview",
+                "surface": "claim",
+                "forced": False,
+                "overlap": False,
+                "misroute_signal": False,
+                "agent": "b",
+                "event_id": "2",
+                "updated_at": "t",
+                "summary": "s",
+            },
         ]
         result = build_routing_summary(events)
         assert result["write_count"] == 1
@@ -405,24 +489,56 @@ class TestBuildRoutingSummary:
 
     def test_dominant_surface_most_common(self):
         events = [
-            {"action": "preview", "surface": "checkpoint", "forced": False, "overlap": False,
-             "misroute_signal": False, "agent": "a", "event_id": "1",
-             "updated_at": "t", "summary": "s"},
-            {"action": "preview", "surface": "checkpoint", "forced": False, "overlap": False,
-             "misroute_signal": False, "agent": "b", "event_id": "2",
-             "updated_at": "t", "summary": "s"},
-            {"action": "preview", "surface": "claim", "forced": False, "overlap": False,
-             "misroute_signal": False, "agent": "c", "event_id": "3",
-             "updated_at": "t", "summary": "s"},
+            {
+                "action": "preview",
+                "surface": "checkpoint",
+                "forced": False,
+                "overlap": False,
+                "misroute_signal": False,
+                "agent": "a",
+                "event_id": "1",
+                "updated_at": "t",
+                "summary": "s",
+            },
+            {
+                "action": "preview",
+                "surface": "checkpoint",
+                "forced": False,
+                "overlap": False,
+                "misroute_signal": False,
+                "agent": "b",
+                "event_id": "2",
+                "updated_at": "t",
+                "summary": "s",
+            },
+            {
+                "action": "preview",
+                "surface": "claim",
+                "forced": False,
+                "overlap": False,
+                "misroute_signal": False,
+                "agent": "c",
+                "event_id": "3",
+                "updated_at": "t",
+                "summary": "s",
+            },
         ]
         result = build_routing_summary(events)
         assert result["dominant_surface"] == "checkpoint"
 
     def test_recent_agents_deduplicated(self):
         events = [
-            {"action": "preview", "surface": "claim", "forced": False, "overlap": False,
-             "misroute_signal": False, "agent": "same-agent", "event_id": str(i),
-             "updated_at": "t", "summary": "s"}
+            {
+                "action": "preview",
+                "surface": "claim",
+                "forced": False,
+                "overlap": False,
+                "misroute_signal": False,
+                "agent": "same-agent",
+                "event_id": str(i),
+                "updated_at": "t",
+                "summary": "s",
+            }
             for i in range(3)
         ]
         result = build_routing_summary(events)
@@ -430,9 +546,17 @@ class TestBuildRoutingSummary:
 
     def test_forced_count_incremented(self):
         events = [
-            {"action": "write", "surface": "compaction", "forced": True, "overlap": False,
-             "misroute_signal": True, "agent": "a", "event_id": "1",
-             "updated_at": "t", "summary": "s"},
+            {
+                "action": "write",
+                "surface": "compaction",
+                "forced": True,
+                "overlap": False,
+                "misroute_signal": True,
+                "agent": "a",
+                "event_id": "1",
+                "updated_at": "t",
+                "summary": "s",
+            },
         ]
         result = build_routing_summary(events)
         assert result["forced_count"] == 1
@@ -460,9 +584,17 @@ class TestBuildRoutingSummary:
 
     def test_summary_text_format(self):
         events = [
-            {"action": "write", "surface": "claim", "forced": False, "overlap": False,
-             "misroute_signal": False, "agent": "a", "event_id": "1",
-             "updated_at": "t", "summary": "s"},
+            {
+                "action": "write",
+                "surface": "claim",
+                "forced": False,
+                "overlap": False,
+                "misroute_signal": False,
+                "agent": "a",
+                "event_id": "1",
+                "updated_at": "t",
+                "summary": "s",
+            },
         ]
         result = build_routing_summary(events)
         assert result["summary_text"].startswith("router=")

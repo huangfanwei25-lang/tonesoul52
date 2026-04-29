@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import pytest
-
 from tonesoul.council.convergence import (
-    CONVERGENCE_THRESHOLD,
     MAX_RECOMMENDED_ROUNDS,
     ConvergenceResult,
     check_convergence,
@@ -26,6 +23,7 @@ def _vote(perspective, decision=VoteDecision.APPROVE, confidence=0.8):
 
 # ── convergence_score ─────────────────────────────────────────────────────────
 
+
 class TestConvergenceScore:
     def test_empty_votes_returns_one(self):
         assert convergence_score([]) == 1.0
@@ -35,33 +33,44 @@ class TestConvergenceScore:
         assert convergence_score([vote]) == 0.75
 
     def test_identical_confidences_returns_one(self):
-        votes = [_vote(PerspectiveType.ANALYST, confidence=0.8),
-                 _vote(PerspectiveType.GUARDIAN, confidence=0.8),
-                 _vote(PerspectiveType.CRITIC, confidence=0.8)]
+        votes = [
+            _vote(PerspectiveType.ANALYST, confidence=0.8),
+            _vote(PerspectiveType.GUARDIAN, confidence=0.8),
+            _vote(PerspectiveType.CRITIC, confidence=0.8),
+        ]
         assert convergence_score(votes) == 1.0
 
     def test_maximally_spread_returns_low_score(self):
         # 0.0 and 1.0 → maximum variance
-        votes = [_vote(PerspectiveType.ANALYST, confidence=0.0),
-                 _vote(PerspectiveType.GUARDIAN, confidence=1.0)]
+        votes = [
+            _vote(PerspectiveType.ANALYST, confidence=0.0),
+            _vote(PerspectiveType.GUARDIAN, confidence=1.0),
+        ]
         score = convergence_score(votes)
         assert score < 0.5
 
     def test_score_in_unit_interval(self):
-        votes = [_vote(PerspectiveType.ANALYST, confidence=0.6),
-                 _vote(PerspectiveType.GUARDIAN, confidence=0.9)]
+        votes = [
+            _vote(PerspectiveType.ANALYST, confidence=0.6),
+            _vote(PerspectiveType.GUARDIAN, confidence=0.9),
+        ]
         score = convergence_score(votes)
         assert 0.0 <= score <= 1.0
 
     def test_tighter_spread_gives_higher_score(self):
-        tight = [_vote(PerspectiveType.ANALYST, confidence=0.79),
-                 _vote(PerspectiveType.GUARDIAN, confidence=0.81)]
-        wide = [_vote(PerspectiveType.ANALYST, confidence=0.5),
-                _vote(PerspectiveType.GUARDIAN, confidence=1.0)]
+        tight = [
+            _vote(PerspectiveType.ANALYST, confidence=0.79),
+            _vote(PerspectiveType.GUARDIAN, confidence=0.81),
+        ]
+        wide = [
+            _vote(PerspectiveType.ANALYST, confidence=0.5),
+            _vote(PerspectiveType.GUARDIAN, confidence=1.0),
+        ]
         assert convergence_score(tight) > convergence_score(wide)
 
 
 # ── check_convergence ─────────────────────────────────────────────────────────
+
 
 class TestCheckConvergence:
     def _converged_votes(self):
@@ -132,8 +141,15 @@ class TestCheckConvergence:
     def test_to_dict_has_required_keys(self):
         result = check_convergence(self._converged_votes())
         d = result.to_dict()
-        for key in ("converged", "score", "variance", "mean_confidence",
-                    "recommendation", "suggested_focus", "additional_rounds_recommended"):
+        for key in (
+            "converged",
+            "score",
+            "variance",
+            "mean_confidence",
+            "recommendation",
+            "suggested_focus",
+            "additional_rounds_recommended",
+        ):
             assert key in d
 
     def test_custom_threshold_respected(self):
@@ -153,6 +169,7 @@ class TestCheckConvergence:
 
 
 # ── should_continue_deliberating ──────────────────────────────────────────────
+
 
 class TestShouldContinueDeliberating:
     def _not_converged(self):
@@ -187,7 +204,9 @@ class TestShouldContinueDeliberating:
 
     def test_do_not_continue_beyond_max_rounds(self):
         result = self._not_converged()
-        assert should_continue_deliberating(result, current_round=MAX_RECOMMENDED_ROUNDS + 5) is False
+        assert (
+            should_continue_deliberating(result, current_round=MAX_RECOMMENDED_ROUNDS + 5) is False
+        )
 
     def test_custom_max_rounds_respected(self):
         result = self._not_converged()

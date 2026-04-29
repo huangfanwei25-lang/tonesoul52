@@ -16,8 +16,8 @@ from tonesoul.schedule_profile import (
     resolve_schedule_profile,
 )
 
-
 # ── _as_str_list ──────────────────────────────────────────────────────────────
+
 
 class TestAsStrList:
     def test_list_of_strings(self):
@@ -35,6 +35,7 @@ class TestAsStrList:
 
 
 # ── _as_bool ──────────────────────────────────────────────────────────────────
+
 
 class TestAsBool:
     def test_bool_true(self):
@@ -60,6 +61,7 @@ class TestAsBool:
 
 # ── _as_int ───────────────────────────────────────────────────────────────────
 
+
 class TestAsInt:
     def test_int_value(self):
         assert _as_int(5, default=1, minimum=0) == 5
@@ -76,6 +78,7 @@ class TestAsInt:
 
 # ── _as_float ─────────────────────────────────────────────────────────────────
 
+
 class TestAsFloat:
     def test_float_value(self):
         assert _as_float(0.5, default=1.0, minimum=0.0) == pytest.approx(0.5)
@@ -88,6 +91,7 @@ class TestAsFloat:
 
 
 # ── _as_optional_int ──────────────────────────────────────────────────────────
+
 
 class TestAsOptionalInt:
     def test_none_returns_none(self):
@@ -108,6 +112,7 @@ class TestAsOptionalInt:
 
 # ── _as_optional_float ────────────────────────────────────────────────────────
 
+
 class TestAsOptionalFloat:
     def test_none_returns_none(self):
         assert _as_optional_float(None, minimum=0.0) is None
@@ -123,6 +128,7 @@ class TestAsOptionalFloat:
 
 
 # ── _as_int_map ───────────────────────────────────────────────────────────────
+
 
 class TestAsIntMap:
     def test_basic_map(self):

@@ -6,14 +6,12 @@ from tonesoul.memory.semantic_graph import (
     ContradictionResult,
     EdgeType,
     NodeType,
-    SemanticEdge,
     SemanticGraph,
-    SemanticNode,
     create_semantic_graph,
 )
 
-
 # ── SemanticNode.to_dict ──────────────────────────────────────────────────────
+
 
 class TestSemanticNodeToDict:
     def test_includes_required_keys(self):
@@ -35,6 +33,7 @@ class TestSemanticNodeToDict:
 
 # ── SemanticEdge.to_dict ──────────────────────────────────────────────────────
 
+
 class TestSemanticEdgeToDict:
     def test_includes_required_keys(self):
         graph = SemanticGraph()
@@ -50,6 +49,7 @@ class TestSemanticEdgeToDict:
 
 
 # ── ContradictionResult.to_dict ───────────────────────────────────────────────
+
 
 class TestContradictionResultToDict:
     def test_serializes_all_fields(self):
@@ -67,6 +67,7 @@ class TestContradictionResultToDict:
 
 
 # ── SemanticGraph.add_node ────────────────────────────────────────────────────
+
 
 class TestAddNode:
     def test_creates_new_node(self):
@@ -97,6 +98,7 @@ class TestAddNode:
 
 # ── SemanticGraph.find_nodes_by_label ────────────────────────────────────────
 
+
 class TestFindNodesByLabel:
     def test_partial_label_match(self):
         graph = SemanticGraph()
@@ -114,6 +116,7 @@ class TestFindNodesByLabel:
 
 # ── SemanticGraph.find_nodes_by_type ─────────────────────────────────────────
 
+
 class TestFindNodesByType:
     def test_filters_by_type(self):
         graph = SemanticGraph()
@@ -130,6 +133,7 @@ class TestFindNodesByType:
 
 # ── SemanticGraph.get_node ────────────────────────────────────────────────────
 
+
 class TestGetNode:
     def test_returns_node_by_id(self):
         graph = SemanticGraph()
@@ -141,6 +145,7 @@ class TestGetNode:
 
 
 # ── SemanticGraph.get_neighbors ───────────────────────────────────────────────
+
 
 class TestGetNeighbors:
     def test_connected_nodes_returned(self):
@@ -161,6 +166,7 @@ class TestGetNeighbors:
 
 
 # ── SemanticGraph.get_edges_between ──────────────────────────────────────────
+
 
 class TestGetEdgesBetween:
     def test_returns_matching_edges(self):
@@ -188,6 +194,7 @@ class TestGetEdgesBetween:
 
 # ── SemanticGraph.detect_contradictions ──────────────────────────────────────
 
+
 class TestDetectContradictions:
     def test_no_contradiction_edge_returns_empty(self):
         graph = SemanticGraph()
@@ -209,6 +216,7 @@ class TestDetectContradictions:
 
 
 # ── SemanticGraph.increment_turn / reset / get_summary ───────────────────────
+
 
 class TestGraphLifecycle:
     def test_increment_turn(self):

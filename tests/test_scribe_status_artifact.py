@@ -13,8 +13,8 @@ from tonesoul.scribe.status_artifact import (
     write_scribe_status_artifact,
 )
 
-
 # ── _route_label ──────────────────────────────────────────────────────────────
+
 
 class TestRouteLabel:
     def test_combines_family_code_and_family(self):
@@ -26,6 +26,7 @@ class TestRouteLabel:
 
 
 # ── _route_priority ───────────────────────────────────────────────────────────
+
 
 class TestRoutePriority:
     def test_known_invariant_returns_low_number(self):
@@ -41,6 +42,7 @@ class TestRoutePriority:
 
 
 # ── _dedupe_routes ────────────────────────────────────────────────────────────
+
 
 class TestDedupeRoutes:
     def _r(self, code, invariant, repair):
@@ -61,9 +63,12 @@ class TestDedupeRoutes:
 
 # ── scribe_state_document_posture ─────────────────────────────────────────────
 
+
 class TestScribeStateDocumentPosture:
     def _make_counts(self, tensions=0, collisions=0, crystals=0):
-        return _make_result(observed_counts={"tensions": tensions, "collisions": collisions, "crystals": crystals})
+        return _make_result(
+            observed_counts={"tensions": tensions, "collisions": collisions, "crystals": crystals}
+        )
 
     def test_pressure_without_counterweight(self):
         result = self._make_counts(tensions=1)

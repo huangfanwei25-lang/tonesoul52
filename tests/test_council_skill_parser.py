@@ -14,8 +14,8 @@ from tonesoul.council.skill_parser import (
     _split_frontmatter,
 )
 
-
 # ── _as_string_list ───────────────────────────────────────────────────────────
+
 
 class TestAsStringList:
     def test_list_of_strings_returned(self):
@@ -39,6 +39,7 @@ class TestAsStringList:
 
 # ── _normalize_text ───────────────────────────────────────────────────────────
 
+
 class TestNormalizeText:
     def test_lowercases(self):
         assert _normalize_text("HELLO") == "hello"
@@ -61,6 +62,7 @@ class TestNormalizeText:
 
 
 # ── _split_frontmatter ────────────────────────────────────────────────────────
+
 
 class TestSplitFrontmatter:
     def test_no_frontmatter_returns_empty_dict_and_text(self):
@@ -93,6 +95,7 @@ class TestSplitFrontmatter:
 
 # ── SkillContractParser — registry loading ────────────────────────────────────
 
+
 def _write_registry(tmp_path: Path, skills: list) -> Path:
     registry = {"skills": skills}
     path = tmp_path / "skills" / "registry.json"
@@ -108,7 +111,9 @@ def _write_skill_file(tmp_path: Path, filename: str, content: str) -> Path:
     return path
 
 
-def _make_parser(tmp_path: Path, skills: list, skill_files: dict[str, str] | None = None) -> SkillContractParser:
+def _make_parser(
+    tmp_path: Path, skills: list, skill_files: dict[str, str] | None = None
+) -> SkillContractParser:
     registry_path = _write_registry(tmp_path, skills)
     if skill_files:
         for filename, content in skill_files.items():

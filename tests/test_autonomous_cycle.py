@@ -13,8 +13,8 @@ from tonesoul.autonomous_cycle import (
 from tonesoul.perception.stimulus import StimulusProcessor
 from tonesoul.perception.web_ingest import IngestResult, WebIngestor
 
-
 # ── _iso_now ──────────────────────────────────────────────────────────────────
+
 
 class TestIsoNow:
     def test_returns_string(self):
@@ -25,6 +25,7 @@ class TestIsoNow:
 
 
 # ── _derive_overall_status ────────────────────────────────────────────────────
+
 
 class TestDeriveOverallStatus:
     def test_empty_returns_idle(self):

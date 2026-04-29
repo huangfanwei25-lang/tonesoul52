@@ -1,5 +1,3 @@
-import pytest
-
 from tonesoul.scribe.narrative_builder import (
     ScribeCollisionRecord,
     ScribeCrystalRecord,
@@ -8,8 +6,8 @@ from tonesoul.scribe.narrative_builder import (
     ScribeTensionRecord,
 )
 
-
 # ── helpers ───────────────────────────────────────────────────────────────────
+
 
 def _tension(
     tension_id: str = "T1",
@@ -58,6 +56,7 @@ def _crystal(
 
 # ── _clean_fragment ───────────────────────────────────────────────────────────
 
+
 class TestCleanFragment:
     def test_empty_returns_empty(self):
         assert ScribeNarrativeBuilder._clean_fragment(None) == ""
@@ -87,6 +86,7 @@ class TestCleanFragment:
 
 # ── _is_generic_tension_topic ─────────────────────────────────────────────────
 
+
 class TestIsGenericTensionTopic:
     def test_empty_string_is_generic(self):
         assert ScribeNarrativeBuilder._is_generic_tension_topic("") is True
@@ -106,13 +106,16 @@ class TestIsGenericTensionTopic:
 
 # ── _fragments_overlap ────────────────────────────────────────────────────────
 
+
 class TestFragmentsOverlap:
     def test_empty_strings_do_not_overlap(self):
         assert ScribeNarrativeBuilder._fragments_overlap("", "") is False
         assert ScribeNarrativeBuilder._fragments_overlap("abc", "") is False
 
     def test_identical_strings_overlap(self):
-        assert ScribeNarrativeBuilder._fragments_overlap("market pullback", "market pullback") is True
+        assert (
+            ScribeNarrativeBuilder._fragments_overlap("market pullback", "market pullback") is True
+        )
 
     def test_one_contains_other(self):
         assert ScribeNarrativeBuilder._fragments_overlap("market", "the market pullback") is True
@@ -125,6 +128,7 @@ class TestFragmentsOverlap:
 
 
 # ── _posture_line ─────────────────────────────────────────────────────────────
+
 
 class TestPostureLine:
     def _summary(self, tc=0, cc=0, xc=0) -> ScribeObservationSummary:
@@ -159,6 +163,7 @@ class TestPostureLine:
 
 # ── format helpers ────────────────────────────────────────────────────────────
 
+
 class TestFormatTensions:
     def test_empty_returns_no_tensions_message(self):
         assert ScribeNarrativeBuilder.format_tensions([]) == "No significant tensions recorded."
@@ -178,7 +183,9 @@ class TestFormatCrystals:
         assert ScribeNarrativeBuilder.format_crystals([]) == "No crystallized beliefs formed yet."
 
     def test_none_tensions_resolved_shows_unavailable(self):
-        result = ScribeNarrativeBuilder.format_crystals([_crystal(underlying_tensions_resolved=None)])
+        result = ScribeNarrativeBuilder.format_crystals(
+            [_crystal(underlying_tensions_resolved=None)]
+        )
         assert "unavailable" in result
 
     def test_crystal_with_resolved_count(self):

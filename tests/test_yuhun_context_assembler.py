@@ -1,4 +1,5 @@
 """Tests for tonesoul.yuhun.context_assembler — pure helpers and ContextPackage."""
+
 from __future__ import annotations
 
 import pytest
@@ -12,8 +13,8 @@ from tonesoul.yuhun.context_assembler import (
 )
 from tonesoul.yuhun.dpr import RoutingDecision
 
-
 # ── _classify_conflict_type ───────────────────────────────────────────────────
+
 
 class TestClassifyConflictType:
     def test_legal_keywords(self):
@@ -42,6 +43,7 @@ class TestClassifyConflictType:
 
 
 # ── validate_context_sources ──────────────────────────────────────────────────
+
 
 class TestValidateContextSources:
     def test_valid_sources_return_true(self):
@@ -76,6 +78,7 @@ class TestValidateContextSources:
 
 
 # ── ContextPackage.to_prompt_sections ─────────────────────────────────────────
+
 
 class TestContextPackageToPromptSections:
     def _make(self, routing=RoutingDecision.FAST_PATH, **kw):

@@ -14,8 +14,8 @@ from tonesoul.evolution.corpus_builder import (
     _utc_now,
 )
 
-
 # ── _utc_now ──────────────────────────────────────────────────────────────────
+
 
 class TestUtcNow:
     def test_returns_string(self):
@@ -26,6 +26,7 @@ class TestUtcNow:
 
 
 # ── _normalize_str ────────────────────────────────────────────────────────────
+
 
 class TestNormalizeStr:
     def test_strips_whitespace(self):
@@ -42,6 +43,7 @@ class TestNormalizeStr:
 
 
 # ── _normalize_str_list ───────────────────────────────────────────────────────
+
 
 class TestNormalizeStrList:
     def test_list_of_strings(self):
@@ -62,6 +64,7 @@ class TestNormalizeStrList:
 
 # ── _to_float ─────────────────────────────────────────────────────────────────
 
+
 class TestToFloat:
     def test_int_converted(self):
         assert _to_float(3) == pytest.approx(3.0)
@@ -77,6 +80,7 @@ class TestToFloat:
 
 
 # ── _clamp01 ──────────────────────────────────────────────────────────────────
+
 
 class TestClamp01:
     def test_normal_passthrough(self):
@@ -96,6 +100,7 @@ class TestClamp01:
 
 
 # ── _unique ───────────────────────────────────────────────────────────────────
+
 
 class TestUnique:
     def test_deduplicates(self):

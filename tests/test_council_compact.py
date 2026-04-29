@@ -3,6 +3,17 @@ from __future__ import annotations
 import pytest
 
 from tonesoul.council.compact import (
+    _compact_metric,
+    _derive_risk_level,
+    _extract_coherence,
+    _extract_grounding_summary,
+    _extract_has_strong_objection,
+    _extract_matched_skill_ids,
+    _extract_minorities,
+    _extract_vote_profile,
+    _normalize_tool_name,
+    _round_number,
+    _trimmed_list,
     compact_calibration,
     compact_governance_summary,
     compact_verdict,
@@ -214,20 +225,6 @@ def test_compact_governance_summary_can_derive_tool_names_from_commands() -> Non
 
 # ── Helper function unit tests ────────────────────────────────────────────────
 
-from tonesoul.council.compact import (
-    _compact_metric,
-    _derive_risk_level,
-    _extract_coherence,
-    _extract_grounding_summary,
-    _extract_has_strong_objection,
-    _extract_matched_skill_ids,
-    _extract_minorities,
-    _extract_vote_profile,
-    _normalize_tool_name,
-    _round_number,
-    _trimmed_list,
-)
-
 
 class TestRoundNumber:
     def test_rounds_to_4_digits(self):
@@ -264,8 +261,17 @@ class TestExtractVoteProfile:
         assert len(result) == 1 and result[0]["perspective"] == "g"
 
     def test_falls_back_to_votes_key(self):
-        payload = {"votes": [{"perspective": "g", "decision": "APPROVE", "confidence": 0.9,
-                               "requires_grounding": False, "grounding_status": "grounded"}]}
+        payload = {
+            "votes": [
+                {
+                    "perspective": "g",
+                    "decision": "APPROVE",
+                    "confidence": 0.9,
+                    "requires_grounding": False,
+                    "grounding_status": "grounded",
+                }
+            ]
+        }
         result = _extract_vote_profile(payload)
         assert result[0]["decision"] == "APPROVE"
 
@@ -275,19 +281,23 @@ class TestExtractVoteProfile:
 
 class TestExtractMinorities:
     def test_infers_minority_from_votes(self):
-        payload = {"votes": [
-            {"perspective": "guardian", "decision": "APPROVE"},
-            {"perspective": "guardian2", "decision": "APPROVE"},
-            {"perspective": "critic", "decision": "REJECT"},
-        ]}
+        payload = {
+            "votes": [
+                {"perspective": "guardian", "decision": "APPROVE"},
+                {"perspective": "guardian2", "decision": "APPROVE"},
+                {"perspective": "critic", "decision": "REJECT"},
+            ]
+        }
         result = _extract_minorities(payload)
         assert "critic" in result
 
     def test_unanimous_gives_empty(self):
-        payload = {"votes": [
-            {"perspective": "g", "decision": "APPROVE"},
-            {"perspective": "a", "decision": "APPROVE"},
-        ]}
+        payload = {
+            "votes": [
+                {"perspective": "g", "decision": "APPROVE"},
+                {"perspective": "a", "decision": "APPROVE"},
+            ]
+        }
         assert _extract_minorities(payload) == []
 
 
@@ -365,5 +375,7 @@ class TestCompactMetric:
         assert result["status"] == "ok" and result["n"] == 5
 
     def test_extracts_value_key(self):
-        result = _compact_metric({"status": "ok", "sample_count": 3, "rate": 0.9}, value_keys=["rate"])
+        result = _compact_metric(
+            {"status": "ok", "sample_count": 3, "rate": 0.9}, value_keys=["rate"]
+        )
         assert result["rate"] == pytest.approx(0.9)

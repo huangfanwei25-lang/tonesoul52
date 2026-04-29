@@ -17,8 +17,8 @@ from tonesoul.skill_apply import (
     load_skills,
 )
 
-
 # ── _context_text ─────────────────────────────────────────────────────────────
+
 
 class TestContextText:
     def test_combines_fields(self):
@@ -44,6 +44,7 @@ class TestContextText:
 
 # ── _directives_for_action ────────────────────────────────────────────────────
 
+
 class TestDirectivesForAction:
     def test_governance_baseline_action(self):
         d = _directives_for_action("apply_governance_baseline")
@@ -59,6 +60,7 @@ class TestDirectivesForAction:
 
 # ── _constraints_for_action ───────────────────────────────────────────────────
 
+
 class TestConstraintsForAction:
     def test_governance_baseline_returns_constraints(self):
         constraints = _constraints_for_action("apply_governance_baseline")
@@ -73,6 +75,7 @@ class TestConstraintsForAction:
 
 
 # ── _directives_for_provides ──────────────────────────────────────────────────
+
 
 class TestDirectivesForProvides:
     def test_force_gates_in_list(self):
@@ -95,6 +98,7 @@ class TestDirectivesForProvides:
 
 
 # ── _extend_unique ────────────────────────────────────────────────────────────
+
 
 class TestExtendUnique:
     def test_appends_new_items(self):

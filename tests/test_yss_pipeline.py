@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -330,6 +331,7 @@ def test_run_pipeline_from_unified_request_preserves_existing_config_fields(
 
 # ── _apply_trace_level ────────────────────────────────────────────────────────
 
+
 class TestApplyTraceLevel:
     def test_standard_disables_optional_features(self):
         config = module.PipelineConfig(trace_level="standard")
@@ -363,6 +365,7 @@ class TestApplyTraceLevel:
 
 # ── _load_policy ──────────────────────────────────────────────────────────────
 
+
 class TestLoadPolicy:
     def test_none_path_returns_empty(self):
         assert module._load_policy(None) == {}
@@ -384,6 +387,7 @@ class TestLoadPolicy:
 
 # ── _build_seed_from_config ───────────────────────────────────────────────────
 
+
 class TestBuildSeedFromConfig:
     def test_empty_config_returns_empty_seed(self):
         config = module.PipelineConfig()
@@ -404,6 +408,7 @@ class TestBuildSeedFromConfig:
 
 # ── _resolve_optional_path ────────────────────────────────────────────────────
 
+
 class TestResolveOptionalPath:
     def test_none_returns_none(self):
         assert module._resolve_optional_path(None) is None
@@ -413,12 +418,12 @@ class TestResolveOptionalPath:
 
     def test_relative_path_absolutized(self):
         result = module._resolve_optional_path("relative/path.json")
-        import os
         assert os.path.isabs(result)
-        assert result.endswith("relative/path.json")
+        assert Path(result).parts[-2:] == ("relative", "path.json")
 
 
 # ── _generate_run_id ──────────────────────────────────────────────────────────
+
 
 class TestGenerateRunId:
     def test_returns_string_with_z_separator(self):

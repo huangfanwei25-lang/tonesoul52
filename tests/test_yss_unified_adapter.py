@@ -17,8 +17,8 @@ from tonesoul.yss_unified_adapter import (
     write_multi_persona_eval_snapshot,
 )
 
-
 # ─── _clamp_unit ─────────────────────────────────────────────────────────────
+
 
 class TestClampUnit:
     def test_zero_stays_zero(self):
@@ -39,6 +39,7 @@ class TestClampUnit:
 
 # ─── _safe_float ─────────────────────────────────────────────────────────────
 
+
 class TestSafeFloat:
     def test_numeric_string_converted(self):
         assert _safe_float("0.5") == 0.5
@@ -57,6 +58,7 @@ class TestSafeFloat:
 
 
 # ─── _dispatch_state_to_decision_mode ────────────────────────────────────────
+
 
 class TestDispatchStateToDecisionMode:
     def test_state_c_is_strict(self):
@@ -79,6 +81,7 @@ class TestDispatchStateToDecisionMode:
 
 
 # ─── _extract_poav_total ─────────────────────────────────────────────────────
+
 
 class TestExtractPoavTotal:
     def test_extracts_from_results(self):
@@ -117,6 +120,7 @@ class TestExtractPoavTotal:
 
 # ─── _extract_gate_pass_rate ─────────────────────────────────────────────────
 
+
 class TestExtractGatePassRate:
     def test_all_passed(self):
         gate_report = {
@@ -149,19 +153,24 @@ class TestExtractGatePassRate:
 
 # ─── build_unified_seed ──────────────────────────────────────────────────────
 
+
 class TestBuildUnifiedSeed:
     def test_dispatch_state_c_maps_strict(self):
-        seed = build_unified_seed({
-            "user_message": "test",
-            "dispatch_trace": {"state": "C"},
-        })
+        seed = build_unified_seed(
+            {
+                "user_message": "test",
+                "dispatch_trace": {"state": "C"},
+            }
+        )
         assert seed["decision_mode"] == "strict"
 
     def test_dispatch_state_b_maps_guarded(self):
-        seed = build_unified_seed({
-            "user_message": "test",
-            "dispatch_trace": {"state": "B"},
-        })
+        seed = build_unified_seed(
+            {
+                "user_message": "test",
+                "dispatch_trace": {"state": "B"},
+            }
+        )
         assert seed["decision_mode"] == "guarded"
 
     def test_dispatch_state_a_maps_normal(self):
@@ -169,9 +178,11 @@ class TestBuildUnifiedSeed:
         assert seed["decision_mode"] == "normal"
 
     def test_history_count_counted(self):
-        seed = build_unified_seed({
-            "history": [{"role": "user"}, {"role": "assistant"}],
-        })
+        seed = build_unified_seed(
+            {
+                "history": [{"role": "user"}, {"role": "assistant"}],
+            }
+        )
         assert seed["payload"]["history_count"] == 2
 
     def test_non_list_history_zero(self):
@@ -179,9 +190,11 @@ class TestBuildUnifiedSeed:
         assert seed["payload"]["history_count"] == 0
 
     def test_persona_name_sets_domain(self):
-        seed = build_unified_seed({
-            "persona_config": {"name": "Ops Guardian"},
-        })
+        seed = build_unified_seed(
+            {
+                "persona_config": {"name": "Ops Guardian"},
+            }
+        )
         assert seed["domain"] == "ops_guardian"
 
     def test_no_persona_domain_general(self):
@@ -189,9 +202,11 @@ class TestBuildUnifiedSeed:
         assert seed["domain"] == "general"
 
     def test_custom_roles_counted(self):
-        seed = build_unified_seed({
-            "persona_config": {"custom_roles": ["r1", "r2"]},
-        })
+        seed = build_unified_seed(
+            {
+                "persona_config": {"custom_roles": ["r1", "r2"]},
+            }
+        )
         assert seed["payload"]["custom_role_count"] == 2
 
     def test_task_truncated_to_120_chars(self):
@@ -205,8 +220,15 @@ class TestBuildUnifiedSeed:
 
     def test_required_keys_present(self):
         seed = build_unified_seed({})
-        for key in ("task", "objective", "domain", "decision_mode", "assumptions",
-                    "constraints", "payload"):
+        for key in (
+            "task",
+            "objective",
+            "domain",
+            "decision_mode",
+            "assumptions",
+            "constraints",
+            "payload",
+        ):
             assert key in seed
 
     def test_council_mode_default_hybrid(self):
@@ -220,6 +242,7 @@ class TestBuildUnifiedSeed:
 
 # ─── build_multi_persona_eval_snapshot ───────────────────────────────────────
 
+
 class TestBuildMultiPersonaEvalSnapshot:
     def test_all_modes_present(self):
         snapshot = build_multi_persona_eval_snapshot(gate_report=None)
@@ -229,8 +252,14 @@ class TestBuildMultiPersonaEvalSnapshot:
     def test_mode_a_has_all_metrics(self):
         snapshot = build_multi_persona_eval_snapshot(gate_report=None)
         metrics = snapshot["modes"]["A"]
-        for key in ("task_quality", "safety_pass_rate", "consistency_at_session",
-                    "disagreement_utility", "token_latency_cost_index", "p95_latency_ms"):
+        for key in (
+            "task_quality",
+            "safety_pass_rate",
+            "consistency_at_session",
+            "disagreement_utility",
+            "token_latency_cost_index",
+            "p95_latency_ms",
+        ):
             assert key in metrics
 
     def test_mode_c_has_higher_task_quality_than_a(self):
@@ -258,7 +287,10 @@ class TestBuildMultiPersonaEvalSnapshot:
         high_tension = build_multi_persona_eval_snapshot(
             gate_report=None, dispatch_trace={"adjusted_tension": 1.0}
         )
-        assert high_tension["modes"]["A"]["p95_latency_ms"] > low_tension["modes"]["A"]["p95_latency_ms"]
+        assert (
+            high_tension["modes"]["A"]["p95_latency_ms"]
+            > low_tension["modes"]["A"]["p95_latency_ms"]
+        )
 
     def test_poav_total_reflected_in_task_quality(self):
         snapshot = build_multi_persona_eval_snapshot(
@@ -282,8 +314,11 @@ class TestBuildMultiPersonaEvalSnapshot:
         snapshot = build_multi_persona_eval_snapshot(
             gate_report={
                 "results": [
-                    {"gate": "poav_gate", "passed": True,
-                     "details": {"components": {"total": 0.83}}},
+                    {
+                        "gate": "poav_gate",
+                        "passed": True,
+                        "details": {"components": {"total": 0.83}},
+                    },
                     {"gate": "guardian_gate", "passed": True},
                     {"gate": "mercy_gate", "passed": True},
                 ]
@@ -292,12 +327,19 @@ class TestBuildMultiPersonaEvalSnapshot:
         )
         for mode in ("A", "B", "C"):
             metrics = snapshot["modes"][mode]
-            for key in ("task_quality", "safety_pass_rate", "consistency_at_session",
-                        "disagreement_utility", "token_latency_cost_index", "p95_latency_ms"):
+            for key in (
+                "task_quality",
+                "safety_pass_rate",
+                "consistency_at_session",
+                "disagreement_utility",
+                "token_latency_cost_index",
+                "p95_latency_ms",
+            ):
                 assert metrics[key] is not None
 
 
 # ─── write_multi_persona_eval_snapshot ───────────────────────────────────────
+
 
 class TestWriteMultiPersonaEvalSnapshot:
     def test_creates_file(self, tmp_path):
@@ -319,6 +361,7 @@ class TestWriteMultiPersonaEvalSnapshot:
 
 # ─── run_pipeline_from_unified_request ───────────────────────────────────────
 
+
 def test_run_pipeline_from_unified_request_injects_seed_defaults(monkeypatch) -> None:
     captured = {}
 
@@ -328,10 +371,12 @@ def test_run_pipeline_from_unified_request_injects_seed_defaults(monkeypatch) ->
         return {"run_dir": "dummy"}
 
     monkeypatch.setattr(yss_pipeline, "run_pipeline", _fake_run_pipeline)
-    result = yss_pipeline.run_pipeline_from_unified_request({
-        "user_message": "請給我可審計的方案",
-        "dispatch_trace": {"state": "B"},
-    })
+    result = yss_pipeline.run_pipeline_from_unified_request(
+        {
+            "user_message": "請給我可審計的方案",
+            "dispatch_trace": {"state": "B"},
+        }
+    )
 
     assert captured["task"]
     assert captured["decision_mode"] == "guarded"

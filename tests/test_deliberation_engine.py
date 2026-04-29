@@ -108,8 +108,9 @@ def test_record_outcome_updates_persona_track_summary(tmp_path, monkeypatch) -> 
 
 # ── _build_debate_context ─────────────────────────────────────────────────────
 
+
 def test_build_debate_context_copies_fields_and_adds_prior_viewpoints() -> None:
-    from tonesoul.deliberation.types import ViewPoint, PerspectiveType
+    from tonesoul.deliberation.types import PerspectiveType, ViewPoint
 
     context = DeliberationContext(
         user_input="hello",
@@ -117,7 +118,9 @@ def test_build_debate_context_copies_fields_and_adds_prior_viewpoints() -> None:
         resonance_state="resonance",
         loop_detected=True,
     )
-    vp = ViewPoint(perspective=PerspectiveType.MUSE, confidence=0.8, reasoning="ok", proposed_response="resp")
+    vp = ViewPoint(
+        perspective=PerspectiveType.MUSE, confidence=0.8, reasoning="ok", proposed_response="resp"
+    )
 
     debate_ctx = InternalDeliberation._build_debate_context(context, [vp], round_number=2)
 
@@ -131,13 +134,26 @@ def test_build_debate_context_copies_fields_and_adds_prior_viewpoints() -> None:
 
 # ── _attach_round_metadata ────────────────────────────────────────────────────
 
+
 def test_attach_round_metadata_sets_rounds_used_and_results() -> None:
     from types import SimpleNamespace
 
     result = SimpleNamespace(rounds_used=0, round_results=[])
     round_results = [
-        RoundResult(round_number=1, viewpoints=[], tensions=[], weights=DeliberationWeights(), aggregate_tension=0.0),
-        RoundResult(round_number=2, viewpoints=[], tensions=[], weights=DeliberationWeights(), aggregate_tension=0.0),
+        RoundResult(
+            round_number=1,
+            viewpoints=[],
+            tensions=[],
+            weights=DeliberationWeights(),
+            aggregate_tension=0.0,
+        ),
+        RoundResult(
+            round_number=2,
+            viewpoints=[],
+            tensions=[],
+            weights=DeliberationWeights(),
+            aggregate_tension=0.0,
+        ),
     ]
 
     InternalDeliberation._attach_round_metadata(result, round_results)
@@ -156,6 +172,7 @@ def test_attach_round_metadata_skips_objects_without_attrs() -> None:
 
 # ── get_last_debate ───────────────────────────────────────────────────────────
 
+
 def test_get_last_debate_returns_no_debate_status_when_empty() -> None:
     engine = InternalDeliberation()
     assert engine.get_last_debate() == {"status": "no_debate_yet"}
@@ -163,16 +180,19 @@ def test_get_last_debate_returns_no_debate_status_when_empty() -> None:
 
 # ── deliberation_count ────────────────────────────────────────────────────────
 
+
 def test_deliberation_count_starts_at_zero() -> None:
     assert InternalDeliberation().deliberation_count == 0
 
 
 # ── record_outcome with no dominant_voice ─────────────────────────────────────
 
+
 def test_record_outcome_skips_when_no_dominant_voice() -> None:
     engine = InternalDeliberation()
     before = engine.deliberation_count
     engine.record_outcome(dominant_voice=None, verdict="approve")
     # count should not have changed and muse total remains 0
+    assert engine.deliberation_count == before
     summary = engine.get_persona_track_summary()
     assert summary.get("muse", {}).get("total", 0) == 0

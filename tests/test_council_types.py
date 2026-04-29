@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from tonesoul.council.types import (
     UNGROUNDED_CONFIDENCE_CAP,
     CoherenceScore,
@@ -122,8 +120,14 @@ class TestCouncilVerdictToDict:
     def test_required_keys_present(self):
         d = _make_verdict().to_dict()
         for key in (
-            "verdict", "coherence", "summary", "votes", "genesis",
-            "grounding_summary", "transcript", "benevolence_audit",
+            "verdict",
+            "coherence",
+            "summary",
+            "votes",
+            "genesis",
+            "grounding_summary",
+            "transcript",
+            "benevolence_audit",
         ):
             assert key in d
 
@@ -155,9 +159,7 @@ class TestCouncilVerdictToDict:
         assert d["genesis"] is None
 
     def test_grounding_summary_has_ungrounded_claims(self):
-        ungrounded_vote = _make_vote(
-            grounding_status=GroundingStatus.UNGROUNDED
-        )
+        ungrounded_vote = _make_vote(grounding_status=GroundingStatus.UNGROUNDED)
         d = _make_verdict(votes=[ungrounded_vote]).to_dict()
         assert d["grounding_summary"]["has_ungrounded_claims"] is True
 
