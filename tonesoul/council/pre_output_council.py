@@ -48,7 +48,7 @@ class PreOutputCouncil:
         # Phase 864a Layer 1: deterministic, side-effect-free; safe to share.
         self._epistemic_labeler = EpistemicLabeler()
         # Phase 2 strategy_mirror: lazy-initialised on first scan. Built
-        # only if SOUL.gse.strategy_mirror_enabled is True; cached per
+        # only if SOUL.gse.strategy_mirror_scan_enabled is True; cached per
         # PreOutputCouncil instance so the catalog (~150 entries) is read
         # at most once per council lifetime.
         self._strategy_detector = None
@@ -143,8 +143,8 @@ class PreOutputCouncil:
         """Lazy-init the StrategyDetector with the period catalog loaded.
 
         Returns None if the catalog cannot be loaded (e.g. dev environment
-        without the JSON file), so that strategy_mirror_enabled doesn't
-        hard-fail an otherwise functioning council.
+        without the JSON file), so that scan-only shadow mode or full
+        enforcement mode do not hard-fail an otherwise functioning council.
         """
         if self._strategy_detector is not None:
             return self._strategy_detector

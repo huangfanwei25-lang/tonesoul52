@@ -232,7 +232,7 @@ The mirror runs as a post-draft, pre-output step inside `PreOutputCouncil.valida
 Existing flow:
   draft_output → perspectives.evaluate() → coherence → generate_verdict() → return verdict
 
-New flow (with strategy_mirror enabled):
+New flow (with strategy_mirror scan enabled):
   draft_output → perspectives.evaluate() → coherence → generate_verdict()
                                                               ↓
                                             StrategyDetector.scan(draft_output)
@@ -252,13 +252,22 @@ New flow (with strategy_mirror enabled):
 
 ### 5.1 Activation gate
 
-Mirror is **opt-in via config flag**:
+Mirror is **opt-in via two config flags**:
 
 ```python
-SOUL.gse.strategy_mirror_enabled = False  # default off in Phase 2
+SOUL.gse.strategy_mirror_scan_enabled = False     # default off in Phase 2
+SOUL.gse.strategy_mirror_enforce_enabled = False  # default off in Phase 2
 ```
 
-This is intentional. Phase 2's first job is to **exist as a callable surface** with tests proving it works. Phase 3 will discuss whether it becomes default-on. Default-off means: existing council behavior is unchanged, no regression risk for downstream consumers (gateway, demo UI, integration tests).
+This is intentional. Phase 2's first job is to **exist as a callable surface** with tests proving it works. Default-off means: existing council behavior is unchanged, no regression risk for downstream consumers (gateway, demo UI, integration tests).
+
+The split supports three operational states:
+
+- `scan=False, enforce=False`: no scan, no signature, no downgrade.
+- `scan=True, enforce=False`: scan-only shadow mode; attach `strategy_signature` but do not change the verdict.
+- `scan=True, enforce=True`: full enforcement; attach `strategy_signature` and force-downgrade APPROVE verdicts on red / undeclared yellow findings.
+
+`enforce=True` implies `scan=True`; `GSEConfig.__post_init__` auto-promotes the impossible `scan=False, enforce=True` state to full enforcement.
 
 ### 5.2 New CouncilVerdict field
 
@@ -271,9 +280,11 @@ class CouncilVerdict:
 
 `to_dict()` adds `"strategy_signature": signature.to_dict() if signature else None`. Backward compatible (downstream consumers ignoring unknown keys see no change).
 
-### 5.3 Re-Council on red
+### 5.3 Red-move handling
 
-When `signature.has_red == True`:
+Current Phase 2 implementation uses a narrower enforcement rule than the original re-Council sketch: when enforcement is on and `signature.has_red == True`, an APPROVE verdict is forced to BLOCK and the strategy_mirror reason is appended to `summary`.
+
+Deferred Phase 4 design target:
 
 1. The verdict is **not finalized as APPROVE**, even if the original verdict was APPROVE.
 2. Council is re-invoked with extra context: `{"strategy_concern": signature.red_moves}`.
@@ -374,9 +385,9 @@ Per Axiom 4 and the GSE element pattern, every component of strategy_mirror must
 | `StrategyMove.transparency_class` assignment | Each of the 700 elements has a class with documented rationale | All-elements test: `assert all(m.rationale for m in catalog.all())` |
 | `StrategyDetector.scan()` | When given a draft known to use `[Bh] 迫切性`, the signature must include `[Bh]` with confidence ≥ 0.7 | Fixture test with hand-crafted drafts per move |
 | `[Bh]` (fake urgency) detection | A draft containing words like "限時", "倒數", "錯過就沒了" within 3 sentences triggers `[Bh]` | Regex/structural test |
-| `signature.has_red → re-Council` | Council convene count increases by 1 when signature has red moves | Integration test |
+| `signature.has_red → BLOCK in enforce mode` | An APPROVE verdict with red moves downgrades to BLOCK only when enforcement is enabled | Integration test |
 | `undeclared yellow → BLOCK` | A draft using `[Ev] Hook` without explicit acknowledgment downgrades verdict to BLOCK | Integration test |
-| Backward compatibility | When `strategy_mirror_enabled = False`, every existing test passes unchanged | Run full pytest matrix with flag off |
+| Backward compatibility | When `strategy_mirror_scan_enabled = False` and `strategy_mirror_enforce_enabled = False`, every existing test passes unchanged | Run full pytest matrix with both flags off |
 
 Test count target for Phase 2 ship: **≥ 25 unit tests + ≥ 5 integration tests**.
 
@@ -387,7 +398,7 @@ Test count target for Phase 2 ship: **≥ 25 unit tests + ≥ 5 integration test
 ### 9.1 In scope (Phase 2)
 
 - New module `tonesoul/gse/strategy_mirror/` with: `strategy.py` (StrategyMove + StrategySignature), `detector.py` (StrategyDetector), `transparency.py` (classification helpers), `catalog/` (PSE-derived JSON, period 1 first)
-- Integration into `tonesoul/council/pre_output_council.py` behind opt-in flag
+- Integration into `tonesoul/council/pre_output_council.py` behind opt-in scan/enforce flags
 - New `CouncilVerdict.strategy_signature` field (optional, backward compatible)
 - Phase 2 ships with **period 1 fully classified** (~150 elements). Periods 2-5 ship in subsequent commits, each as its own audit pass.
 
@@ -415,9 +426,9 @@ Each step is independently reviewable and revertible:
 2. **Period 1 catalog** — `catalog/period_1_foundation.json` with all ~150 elements classified, each with rationale. PR adds JSON + a loader test. No integration with council yet.
 3. **`StrategyMove` + `StrategySignature` + catalog loader** — pure data structures + loader. New tests, no integration.
 4. **`StrategyDetector` minimal** — surface_signals matching only. Per-move detection tests using hand-crafted fixtures.
-5. **`PreOutputCouncil` integration behind flag** — opt-in `SOUL.gse.strategy_mirror_enabled = False` default. Council validate() conditionally calls scan(). Adds the integration tests for re-Council and undeclared-yellow BLOCK.
+5. **`PreOutputCouncil` integration behind split flags** — opt-in `SOUL.gse.strategy_mirror_scan_enabled = False` and `SOUL.gse.strategy_mirror_enforce_enabled = False` defaults. Council validate() conditionally calls scan(). Integration tests cover default-off compatibility, scan-only shadow mode, full enforcement, and enforce-implies-scan auto-promotion.
 6. **Periods 2-5 catalogs** — one period per PR, same 3-gate audit per element.
-7. **Transition to default-on** (Phase 2.5 or Phase 3) — only after at least 2 weeks of opt-in observation in real usage and a calibration pass on false-positive rate.
+7. **Transition decision after shadow calibration** (Phase 2.5 or Phase 3) — only after at least 2 weeks of scan-only observation in real usage and a calibration pass on false-positive rate. The decision may graduate to enforcement, remain shadow-only, or stay default-off.
 
 8. **Phase 4 — Reflection Loop integration** *(planned 2026-04-26 — resurrected from RFC-014 by Fan-Wei after initial deferral was reversed)* — after Phase 2 and Phase 3 ship: extend the §5.3 "Re-Council on red" pattern from manipulation-move detection to general reasoning-quality reflection. Implements the broader "octopus architecture" originally proposed in [docs/RFC-014_Reflection_Loop_Octopus_Architecture.md](../RFC-014_Reflection_Loop_Octopus_Architecture.md). Phase 4 spec should be drafted in parallel with Phase 3 spec so the three layers (strategy_mirror / dynamic composition / reflection loop) are designed coherently as a unit, not as sequential bolt-ons. See RFC-014 status block for sequencing constraints and what survives vs what gets re-designed.
 
@@ -433,7 +444,7 @@ Each step is independently reviewable and revertible:
 
 3. **Detection of declaration**: how does the detector recognize that a draft "declared" using a move? Phase 2 uses keyword presence (`「我用了 [Hook]」` or similar). This is shallow. Question: is this acceptable for Phase 2 ship? (Recommended yes — better to ship a too-strict "declared" test that catches more drafts as undeclared, than a too-loose one that lets manipulation slip through under fake declarations.)
 
-4. **Default-off vs default-on**: §5.1 says default off in Phase 2. Question: does Fan-Wei want default-on from the start? (Recommended: stay default-off until period 1 has ≥2 weeks of opt-in observation, per ToneSoul's own promotion-gating discipline established in [project_864_unlock_2026-04-20.md].)
+4. **Shadow vs enforcement promotion**: §5.1 says both flags default off in Phase 2 and supports scan-only shadow mode. Question: after the 14-day wave has real signature data, should Day 10 graduate to `scan=True, enforce=True`, remain `scan=True, enforce=False`, or return to default-off? (Recommended: decide from observed false-positive / false-negative data, not from intent.)
 
 5. **strategy_signature in Aegis log**: should the signature get hashed into the Aegis chain alongside the verdict? Question: yes/no, and if yes, on which fields? (Recommended: hash the full signature dict — it is part of the verdict's reasoning, and removing it from the audit chain would let manipulation moves be silently un-recorded.)
 
