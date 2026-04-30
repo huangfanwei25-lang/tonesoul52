@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import pytest
 from pathlib import Path
+
+import pytest
 
 from tonesoul.deliberation.persona_track_record import (
     PersonaTrackRecord,
@@ -123,7 +124,9 @@ class TestMultiplierClamping:
     def test_multiplier_clamped_below_1_15(self, tmp_path):
         record = PersonaTrackRecord.create(tmp_path / "ptr.json")
         for _ in range(50):
-            record.record_outcome("muse", "approve", resonance_state="resonance", loop_detected=False)
+            record.record_outcome(
+                "muse", "approve", resonance_state="resonance", loop_detected=False
+            )
         m = record.get_multiplier("muse", resonance_state="resonance", loop_detected=False)
         assert m <= 1.15
 

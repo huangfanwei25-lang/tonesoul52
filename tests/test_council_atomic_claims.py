@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from tonesoul.council.atomic_claims import (
     AtomicClaim,
     ClaimType,
@@ -12,8 +10,8 @@ from tonesoul.council.atomic_claims import (
     format_claim_report,
 )
 
-
 # ── AtomicClaim dataclass ─────────────────────────────────────────────────────
+
 
 class TestAtomicClaim:
     def _claim(self, **kwargs):
@@ -30,8 +28,15 @@ class TestAtomicClaim:
     def test_to_dict_has_required_keys(self):
         c = self._claim()
         d = c.to_dict()
-        for key in ("id", "text", "source_span", "claim_type", "confidence",
-                    "line_number", "evidence_ids"):
+        for key in (
+            "id",
+            "text",
+            "source_span",
+            "claim_type",
+            "confidence",
+            "line_number",
+            "evidence_ids",
+        ):
             assert key in d
 
     def test_claim_type_serialized_as_string(self):
@@ -46,6 +51,7 @@ class TestAtomicClaim:
 
 
 # ── extract_atomic_claims ─────────────────────────────────────────────────────
+
 
 class TestExtractAtomicClaims:
     def test_returns_list(self):
@@ -87,9 +93,7 @@ class TestExtractAtomicClaims:
         assert ClaimType.EVALUATIVE in types
 
     def test_result_sorted_by_confidence_descending(self):
-        result = extract_atomic_claims(
-            "The system is 4x faster.\nGovernance means accountability."
-        )
+        result = extract_atomic_claims("The system is 4x faster.\nGovernance means accountability.")
         if len(result) > 1:
             scores = [c.confidence for c in result]
             assert scores == sorted(scores, reverse=True)
@@ -111,9 +115,7 @@ class TestExtractAtomicClaims:
         assert len(result) <= 5
 
     def test_evidence_ids_propagated(self):
-        result = extract_atomic_claims(
-            "Revenue grew 12%.", evidence_ids=["doc-1", "doc-2"]
-        )
+        result = extract_atomic_claims("Revenue grew 12%.", evidence_ids=["doc-1", "doc-2"])
         for c in result:
             assert c.evidence_ids == ["doc-1", "doc-2"]
 
@@ -123,9 +125,7 @@ class TestExtractAtomicClaims:
             assert c.evidence_ids == []
 
     def test_ids_are_unique(self):
-        result = extract_atomic_claims(
-            "First claim with 10% growth.\nSecond claim leads to third."
-        )
+        result = extract_atomic_claims("First claim with 10% growth.\nSecond claim leads to third.")
         ids = [c.id for c in result]
         assert len(ids) == len(set(ids))
 
@@ -136,6 +136,7 @@ class TestExtractAtomicClaims:
 
 
 # ── claims_requiring_evidence ─────────────────────────────────────────────────
+
 
 class TestClaimsRequiringEvidence:
     def _make_claim(self, claim_type, has_evidence=False):
@@ -192,6 +193,7 @@ class TestClaimsRequiringEvidence:
 
 # ── format_claim_report ───────────────────────────────────────────────────────
 
+
 class TestFormatClaimReport:
     def test_empty_returns_fallback_string(self):
         result = format_claim_report([])
@@ -203,24 +205,35 @@ class TestFormatClaimReport:
 
     def test_output_contains_source_span(self):
         claim = AtomicClaim(
-            id="cl-x", text="Revenue grew 12%.", source_span="L5",
-            claim_type=ClaimType.QUANTITATIVE, confidence=0.85,
+            id="cl-x",
+            text="Revenue grew 12%.",
+            source_span="L5",
+            claim_type=ClaimType.QUANTITATIVE,
+            confidence=0.85,
         )
         report = format_claim_report([claim])
         assert "L5" in report
 
     def test_output_contains_claim_type(self):
         claim = AtomicClaim(
-            id="cl-x", text="Revenue grew 12%.", source_span="L5",
-            claim_type=ClaimType.QUANTITATIVE, confidence=0.85,
+            id="cl-x",
+            text="Revenue grew 12%.",
+            source_span="L5",
+            claim_type=ClaimType.QUANTITATIVE,
+            confidence=0.85,
         )
         report = format_claim_report([claim])
         assert "quantitative" in report
 
     def test_one_line_per_claim(self):
         claims = [
-            AtomicClaim(id=f"cl-{i}", text=f"Claim {i}.", source_span=f"L{i}",
-                        claim_type=ClaimType.FACTUAL, confidence=0.7)
+            AtomicClaim(
+                id=f"cl-{i}",
+                text=f"Claim {i}.",
+                source_span=f"L{i}",
+                claim_type=ClaimType.FACTUAL,
+                confidence=0.7,
+            )
             for i in range(3)
         ]
         report = format_claim_report(claims)

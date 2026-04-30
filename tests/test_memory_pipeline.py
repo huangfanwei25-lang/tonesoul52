@@ -17,8 +17,8 @@ from tonesoul.memory.pipeline import (
     run_session_end_pipeline,
 )
 
-
 # ── PipelineResult ────────────────────────────────────────────────────────────
+
 
 class TestPipelineResult:
     def test_default_digest_written_false(self):
@@ -53,6 +53,7 @@ class TestPipelineResult:
 
 
 # ── classify_lane ─────────────────────────────────────────────────────────────
+
 
 class TestClassifyLane:
     def test_vow_keyword_gives_governance(self):
@@ -102,6 +103,7 @@ class TestClassifyLane:
 
 # ── _count_rediscoveries ──────────────────────────────────────────────────────
 
+
 class TestCountRediscoveries:
     def test_empty_events_returns_zero(self):
         assert _count_rediscoveries([], []) == 0
@@ -149,6 +151,7 @@ class TestCountRediscoveries:
 
 
 # ── _digest_to_text ───────────────────────────────────────────────────────────
+
 
 class TestDigestToText:
     def test_includes_session_id(self):
@@ -204,6 +207,7 @@ class TestDigestToText:
 
 # ── _adapt_patterns ───────────────────────────────────────────────────────────
 
+
 class TestAdaptPatterns:
     def _make_consolidation(self, patterns):
         result = MagicMock()
@@ -244,12 +248,16 @@ class TestAdaptPatterns:
 
 # ── run_session_end_pipeline — error accumulation ─────────────────────────────
 
+
 class TestRunSessionEndPipeline:
     def test_returns_pipeline_result(self):
         with (
             patch("tonesoul.memory.pipeline._write_digest", side_effect=Exception("db error")),
             patch("tonesoul.memory.pipeline._maybe_consolidate", side_effect=Exception("no db")),
-            patch("tonesoul.memory.pipeline._compute_wisdom_delta", side_effect=Exception("no crystals")),
+            patch(
+                "tonesoul.memory.pipeline._compute_wisdom_delta",
+                side_effect=Exception("no crystals"),
+            ),
             patch("tonesoul.memory.pipeline._ingest_to_rag", side_effect=Exception("no faiss")),
         ):
             result = run_session_end_pipeline({"session_id": "s"}, session_count=1)
@@ -269,7 +277,9 @@ class TestRunSessionEndPipeline:
         with (
             patch("tonesoul.memory.pipeline._write_digest", side_effect=RuntimeError("BOOM")),
             patch("tonesoul.memory.pipeline._maybe_consolidate", side_effect=RuntimeError("BOOM")),
-            patch("tonesoul.memory.pipeline._compute_wisdom_delta", side_effect=RuntimeError("BOOM")),
+            patch(
+                "tonesoul.memory.pipeline._compute_wisdom_delta", side_effect=RuntimeError("BOOM")
+            ),
             patch("tonesoul.memory.pipeline._ingest_to_rag", side_effect=RuntimeError("BOOM")),
         ):
             result = run_session_end_pipeline({}, session_count=1)
@@ -310,8 +320,10 @@ class TestRunSessionEndPipeline:
         mock_consolidation.patterns = {"verdict_counts": {}, "average_weighted_tension": 0.1}
         with (
             patch("tonesoul.memory.pipeline._write_digest", return_value={}),
-            patch("tonesoul.memory.pipeline._maybe_consolidate", return_value=mock_consolidation) as mock_mc,
-            patch("tonesoul.memory.pipeline._crystallize", return_value=[]) as mock_crys,
+            patch(
+                "tonesoul.memory.pipeline._maybe_consolidate", return_value=mock_consolidation
+            ) as mock_mc,
+            patch("tonesoul.memory.pipeline._crystallize", return_value=[]),
             patch("tonesoul.memory.pipeline._compute_wisdom_delta", return_value=0.1),
             patch("tonesoul.memory.pipeline._ingest_to_rag", return_value=0),
             patch("tonesoul.memory.pipeline.export_crystal_index", return_value={}),
@@ -322,6 +334,7 @@ class TestRunSessionEndPipeline:
 
 
 # ── Constants ─────────────────────────────────────────────────────────────────
+
 
 class TestConstants:
     def test_consolidation_interval_positive(self):

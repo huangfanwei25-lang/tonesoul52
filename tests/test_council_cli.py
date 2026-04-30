@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import sys
 
 import pytest
 
@@ -39,7 +38,8 @@ def _verdict(
         ),
         votes=votes,
         summary="test summary",
-        divergence_analysis=divergence or {
+        divergence_analysis=divergence
+        or {
             "agree": [],
             "concern": ["guardian"],
             "object": [],
@@ -52,21 +52,29 @@ def _verdict(
 
 # ─── _fallback_triggered_from_votes ──────────────────────────────────────────
 
+
 class TestFallbackTriggeredFromVotes:
     def test_detects_bracket_fallback_marker(self):
-        assert council_cli._fallback_triggered_from_votes(
-            [_vote("[fallback_to_rules] VTP Philosopher fallback to rules; rule vote")]
-        ) is True
+        assert (
+            council_cli._fallback_triggered_from_votes(
+                [_vote("[fallback_to_rules] VTP Philosopher fallback to rules; rule vote")]
+            )
+            is True
+        )
 
     def test_detects_plain_fallback_to_rules(self):
-        assert council_cli._fallback_triggered_from_votes(
-            [_vote("fallback to rules used here")]
-        ) is True
+        assert (
+            council_cli._fallback_triggered_from_votes([_vote("fallback to rules used here")])
+            is True
+        )
 
     def test_detects_vtp_philosopher_marker(self):
-        assert council_cli._fallback_triggered_from_votes(
-            [_vote("vtp philosopher fallback to rules invoked")]
-        ) is True
+        assert (
+            council_cli._fallback_triggered_from_votes(
+                [_vote("vtp philosopher fallback to rules invoked")]
+            )
+            is True
+        )
 
     def test_regular_reasoning_returns_false(self):
         assert council_cli._fallback_triggered_from_votes([_vote("no fallback used")]) is False
@@ -90,6 +98,7 @@ class TestFallbackTriggeredFromVotes:
 
 
 # ─── _run_council ─────────────────────────────────────────────────────────────
+
 
 class TestRunCouncil:
     def _setup_monkeypatch(self, monkeypatch, votes=None, divergence=None):
@@ -119,8 +128,15 @@ class TestRunCouncil:
     def test_returns_required_keys(self, monkeypatch):
         self._setup_monkeypatch(monkeypatch)
         result = council_cli._run_council(draft="text", intent="", mode="local")
-        for key in ("verdict", "summary", "tension", "quality_band", "quality_score",
-                    "fallback_triggered", "divergence"):
+        for key in (
+            "verdict",
+            "summary",
+            "tension",
+            "quality_band",
+            "quality_score",
+            "fallback_triggered",
+            "divergence",
+        ):
             assert key in result
 
     def test_tension_computed_from_divergence(self, monkeypatch):
@@ -140,8 +156,12 @@ class TestRunCouncil:
     def test_quality_score_rounded(self, monkeypatch):
         self._setup_monkeypatch(
             monkeypatch,
-            divergence={"agree": [], "concern": [], "object": [],
-                        "quality": {"score": 0.76543, "band": "high"}},
+            divergence={
+                "agree": [],
+                "concern": [],
+                "object": [],
+                "quality": {"score": 0.76543, "band": "high"},
+            },
         )
         result = council_cli._run_council(draft="text", intent="", mode="local")
         assert result["quality_score"] == pytest.approx(0.765, abs=0.001)
@@ -153,6 +173,7 @@ class TestRunCouncil:
 
 
 # ─── main() ──────────────────────────────────────────────────────────────────
+
 
 class TestMain:
     def test_main_outputs_json_to_stdout(self, monkeypatch, capsys):

@@ -8,6 +8,7 @@ D4: Environment — path isolation, missing env vars
 import threading
 
 import pytest
+
 pytest.importorskip("freezegun")
 from freezegun import freeze_time
 

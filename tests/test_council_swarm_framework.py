@@ -1,4 +1,5 @@
 """Tests for tonesoul.council.swarm_framework — pure helpers and PersonaSwarmFramework."""
+
 from __future__ import annotations
 
 import pytest
@@ -12,8 +13,8 @@ from tonesoul.council.swarm_framework import (
     normalize_swarm_decision,
 )
 
-
 # ── _clamp01 ──────────────────────────────────────────────────────────────────
+
 
 class TestClamp01:
     def test_normal_value(self):
@@ -33,6 +34,7 @@ class TestClamp01:
 
 
 # ── normalize_swarm_decision ──────────────────────────────────────────────────
+
 
 class TestNormalizeSwarmDecision:
     def test_valid_decisions(self):
@@ -55,6 +57,7 @@ class TestNormalizeSwarmDecision:
 
 
 # ── SwarmAgentSignal.from_dict ────────────────────────────────────────────────
+
 
 def _signal_dict(**kw):
     defaults = {
@@ -107,6 +110,7 @@ class TestSwarmAgentSignalFromDict:
 
 # ── SwarmFrameworkResult.to_dict ──────────────────────────────────────────────
 
+
 class TestSwarmFrameworkResultToDict:
     def test_decision_support_rounded(self):
         result = SwarmFrameworkResult(
@@ -134,6 +138,7 @@ class TestSwarmFrameworkResultToDict:
 
 
 # ── PersonaSwarmFramework static helpers ──────────────────────────────────────
+
 
 class TestStaticHelpers:
     def setup_method(self):
@@ -183,6 +188,7 @@ class TestStaticHelpers:
 
 # ── PersonaSwarmFramework.evaluate ────────────────────────────────────────────
 
+
 def _make_signal(agent_id="a1", role="analyst", vote="approve", **kw):
     return SwarmAgentSignal.from_dict(_signal_dict(agent_id=agent_id, role=role, vote=vote, **kw))
 
@@ -229,8 +235,9 @@ class TestPersonaSwarmFrameworkEvaluate:
 
     def test_guardian_fail_fast_triggers_block(self):
         signals = [
-            _make_signal("guardian-1", role="guardian", vote="block",
-                         confidence=0.9, safety_score=0.9),
+            _make_signal(
+                "guardian-1", role="guardian", vote="block", confidence=0.9, safety_score=0.9
+            ),
             _make_signal("a2", vote="approve"),
         ]
         result = self.fw.evaluate(signals)
@@ -241,8 +248,9 @@ class TestPersonaSwarmFrameworkEvaluate:
         config = SwarmFrameworkConfig(guardian_fail_fast_enabled=False)
         fw = PersonaSwarmFramework(config=config)
         signals = [
-            _make_signal("guardian-1", role="guardian", vote="block",
-                         confidence=0.9, safety_score=0.9),
+            _make_signal(
+                "guardian-1", role="guardian", vote="block", confidence=0.9, safety_score=0.9
+            ),
             _make_signal("a2", vote="approve"),
             _make_signal("a3", vote="approve"),
         ]

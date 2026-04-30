@@ -12,8 +12,8 @@ from tonesoul.inter_soul.types import (
     _utcnow_iso,
 )
 
-
 # ── _utcnow_iso ───────────────────────────────────────────────────────────────
+
 
 class TestUtcnowIso:
     def test_returns_string(self):
@@ -24,6 +24,7 @@ class TestUtcnowIso:
 
 
 # ── _clamp_unit ───────────────────────────────────────────────────────────────
+
 
 class TestClampUnit:
     def test_normal_value(self):
@@ -43,6 +44,7 @@ class TestClampUnit:
 
 
 # ── _normalize_signals ────────────────────────────────────────────────────────
+
 
 class TestNormalizeSignals:
     def test_numeric_values_kept(self):

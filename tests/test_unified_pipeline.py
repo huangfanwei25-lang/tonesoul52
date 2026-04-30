@@ -1,4 +1,5 @@
 """Tests for tonesoul.unified_pipeline — pure env-reading helpers."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -12,8 +13,8 @@ from tonesoul.unified_pipeline import (
     _read_positive_int_env,
 )
 
-
 # ── _read_bool_env ────────────────────────────────────────────────────────────
+
 
 class TestReadBoolEnv:
     def test_unset_uses_default_false(self, monkeypatch):
@@ -49,6 +50,7 @@ class TestReadBoolEnv:
 
 # ── _read_positive_int_env ────────────────────────────────────────────────────
 
+
 class TestReadPositiveIntEnv:
     def test_unset_uses_default(self, monkeypatch):
         monkeypatch.delenv("TEST_INT_VAR", raising=False)
@@ -77,6 +79,7 @@ class TestReadPositiveIntEnv:
 
 # ── _normalize_runtime_zone ───────────────────────────────────────────────────
 
+
 class TestNormalizeRuntimeZone:
     def test_known_zones_returned_lowercased(self):
         for zone in ("safe", "transit", "risk", "danger"):
@@ -96,6 +99,7 @@ class TestNormalizeRuntimeZone:
 
 
 # ── _normalize_governance_depth_plan ─────────────────────────────────────────
+
 
 class TestNormalizeGovernanceDepthPlan:
     def test_none_returns_empty(self):
@@ -118,6 +122,7 @@ class TestNormalizeGovernanceDepthPlan:
 
 # ── _safe_unit_value ──────────────────────────────────────────────────────────
 
+
 class TestSafeUnitValue:
     def test_valid_in_range(self):
         assert UnifiedPipeline._safe_unit_value(0.5) == pytest.approx(0.5)
@@ -137,6 +142,7 @@ class TestSafeUnitValue:
 
 
 # ── _safe_bool ────────────────────────────────────────────────────────────────
+
 
 class TestSafeBool:
     def test_bool_passthrough(self):
@@ -158,6 +164,7 @@ class TestSafeBool:
 
 # ── _contains_override_pressure ───────────────────────────────────────────────
 
+
 class TestContainsOverridePressure:
     def test_clean_message_returns_false(self):
         assert UnifiedPipeline._contains_override_pressure("please help me") is False
@@ -177,6 +184,7 @@ class TestContainsOverridePressure:
 
 
 # ── _coerce_friction_score ────────────────────────────────────────────────────
+
 
 class TestCoerceFrictionScore:
     def test_float_clamped(self):
@@ -198,11 +206,13 @@ class TestCoerceFrictionScore:
 
 # ── _extract_contradiction_description ───────────────────────────────────────
 
+
 class TestExtractContradictionDescription:
     def test_dict_description(self):
-        assert UnifiedPipeline._extract_contradiction_description(
-            {"description": "  claim A vs B  "}
-        ) == "claim A vs B"
+        assert (
+            UnifiedPipeline._extract_contradiction_description({"description": "  claim A vs B  "})
+            == "claim A vs B"
+        )
 
     def test_object_with_description_attr(self):
         obj = SimpleNamespace(description="conflict found")
@@ -217,6 +227,7 @@ class TestExtractContradictionDescription:
 
 
 # ── _normalize_attachment_path ────────────────────────────────────────────────
+
 
 class TestNormalizeAttachmentPath:
     def test_strips_leading_dot_slash(self):
@@ -234,6 +245,7 @@ class TestNormalizeAttachmentPath:
 
 # ── _is_textual_attachment ────────────────────────────────────────────────────
 
+
 class TestIsTextualAttachment:
     def test_markdown_allowed(self):
         assert UnifiedPipeline._is_textual_attachment(Path("notes.md")) is True
@@ -250,6 +262,7 @@ class TestIsTextualAttachment:
 
 
 # ── _merge_memory_results ─────────────────────────────────────────────────────
+
 
 class TestMergeMemoryResults:
     def _item(self, doc_id, content="c"):
@@ -275,6 +288,7 @@ class TestMergeMemoryResults:
 
 # ── _collect_graph_query_terms ────────────────────────────────────────────────
 
+
 class TestCollectGraphQueryTerms:
     def test_extracts_words_from_message(self):
         terms = UnifiedPipeline._collect_graph_query_terms("what is governance here today")
@@ -299,6 +313,7 @@ class TestCollectGraphQueryTerms:
 
 
 # ── _semantic_projection ──────────────────────────────────────────────────────
+
 
 class TestSemanticProjection:
     def test_returns_six_dims(self):

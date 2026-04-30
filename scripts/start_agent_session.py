@@ -138,13 +138,21 @@ def _build_code_health_posture() -> dict:
             data = json.load(fh)
         summary = data.get("summary") or {}
         ac = data.get("annotation_coverage") or {}
-        annotated = int(ac.get("self_declared_layer_count") or summary.get("self_declared_layer_count") or 0)
+        annotated = int(
+            ac.get("self_declared_layer_count") or summary.get("self_declared_layer_count") or 0
+        )
         total = int(summary.get("total_modules") or 0)
         violations = int(summary.get("total_layer_violations") or 0)
-        ratio = float(ac.get("self_declared_layer_ratio") or summary.get("self_declared_layer_ratio") or 0.0)
+        ratio = float(
+            ac.get("self_declared_layer_ratio") or summary.get("self_declared_layer_ratio") or 0.0
+        )
         generated_at = str(data.get("generated_at") or "").strip()
         coverage_label = f"{annotated}/{total}" if total else "unknown"
-        posture = "complete" if ratio >= 1.0 and violations == 0 else ("partial" if ratio > 0.0 else "unknown")
+        posture = (
+            "complete"
+            if ratio >= 1.0 and violations == 0
+            else ("partial" if ratio > 0.0 else "unknown")
+        )
         return {
             "present": True,
             "posture": posture,
@@ -1936,7 +1944,7 @@ def main() -> None:
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(text, encoding="utf-8")
-    print(text, end="")
+    sys.stdout.buffer.write(text.encode("utf-8"))
 
 
 if __name__ == "__main__":

@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-import pytest
-
 from tonesoul.ystm.projection import compute_pca_positions
 
 

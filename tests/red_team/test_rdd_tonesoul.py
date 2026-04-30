@@ -3,6 +3,7 @@ Red Team Tests: ToneSoul-specific Architecture Bypasses.
 """
 
 import pytest
+
 pytest.importorskip("flask")
 
 from apps.api.server import app

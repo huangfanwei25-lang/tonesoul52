@@ -4,10 +4,10 @@ import json
 
 import pytest
 
-from tonesoul.gateway.client import DEFAULT_CHANNEL_ROUTES, GatewayClient, GatewayClientError
-
+from tonesoul.gateway.client import DEFAULT_CHANNEL_ROUTES, GatewayClient
 
 # ── sync properties ───────────────────────────────────────────────────────────
+
 
 class TestConnectedProperty:
     def test_initially_false(self):
@@ -39,6 +39,7 @@ class TestChannelRoutes:
 
 # ── resolve_route ─────────────────────────────────────────────────────────────
 
+
 class TestResolveRoute:
     def test_known_channel_returned(self):
         client = GatewayClient()
@@ -64,6 +65,7 @@ class TestResolveRoute:
 
 
 # ── async connect / close / send ──────────────────────────────────────────────
+
 
 class _FakeWS:
     def __init__(self):

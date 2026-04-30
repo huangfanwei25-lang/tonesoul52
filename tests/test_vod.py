@@ -7,6 +7,7 @@ import pytest
 from tonesoul.yuhun.shadow_doc import (
     BlockerSeverity,
     CreatorOutput,
+    IntentFrame,
     L1Blocker,
     L2Opportunity,
     LegalProfile,
@@ -18,11 +19,9 @@ from tonesoul.yuhun.shadow_doc import (
     SafetyVerdict,
     ShadowDocument,
     TensionMetrics,
-    IntentFrame,
 )
 from tonesoul.yuhun.vod import (
     TensionLevel,
-    VoDResult,
     _estimate_logical_conflict_rate,
     _estimate_semantic_distance,
     assess_divergence,

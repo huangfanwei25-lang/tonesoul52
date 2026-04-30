@@ -8,10 +8,10 @@ from pathlib import Path
 import pytest
 
 from tonesoul.axioms.living_insights import (
+    SEED_INSIGHTS,
     InsightStatus,
     InsightStore,
     LivingInsight,
-    SEED_INSIGHTS,
 )
 
 
@@ -32,6 +32,7 @@ def _make_insight(**kwargs) -> LivingInsight:
 
 
 # ── LivingInsight dataclass ───────────────────────────────────────────────────
+
 
 class TestLivingInsight:
     def test_default_status_is_active(self):
@@ -72,6 +73,7 @@ class TestLivingInsight:
 
 # ── Seed insights ─────────────────────────────────────────────────────────────
 
+
 class TestSeedInsights:
     def test_seed_insights_is_non_empty(self):
         assert len(SEED_INSIGHTS) > 0
@@ -109,6 +111,7 @@ class TestSeedInsights:
 
 # ── InsightStore.all ──────────────────────────────────────────────────────────
 
+
 class TestInsightStoreAll:
     def test_all_returns_seed_insights(self):
         store = InsightStore(path=None)
@@ -133,6 +136,7 @@ class TestInsightStoreAll:
 
 
 # ── InsightStore.search ───────────────────────────────────────────────────────
+
 
 class TestInsightStoreSearch:
     def test_search_by_tag_returns_matching(self):
@@ -172,6 +176,7 @@ class TestInsightStoreSearch:
 
 # ── InsightStore.add ──────────────────────────────────────────────────────────
 
+
 class TestInsightStoreAdd:
     def test_add_returns_the_insight(self):
         store = _tmp_store()
@@ -196,6 +201,7 @@ class TestInsightStoreAdd:
 
 # ── InsightStore.deprecate ────────────────────────────────────────────────────
 
+
 class TestInsightStoreDeprecate:
     def test_deprecate_changes_status(self):
         store = _tmp_store()
@@ -217,6 +223,7 @@ class TestInsightStoreDeprecate:
 
 
 # ── InsightStore.supersede ────────────────────────────────────────────────────
+
 
 class TestInsightStoreSupersede:
     def test_supersede_marks_old_as_superseded(self):
@@ -242,6 +249,7 @@ class TestInsightStoreSupersede:
 
 
 # ── InsightStore persistence ──────────────────────────────────────────────────
+
 
 class TestInsightStorePersistence:
     def test_added_insight_survives_reload(self):

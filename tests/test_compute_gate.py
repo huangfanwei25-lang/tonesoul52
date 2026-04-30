@@ -5,7 +5,13 @@ Validates the routing of tasks between local/cloud and free/premium tiers.
 
 import pytest
 
-from tonesoul.gates.compute import ComputeGate, RoutingPath
+from tonesoul.gates.compute import (
+    ComputeGate,
+    GovernanceDepth,
+    GovernanceDepthPlan,
+    RateLimiter,
+    RoutingPath,
+)
 
 
 @pytest.fixture
@@ -80,13 +86,6 @@ def test_free_user_high_friction_escalates_to_council(compute_gate):
 # Additional coverage for untested code paths
 # ─────────────────────────────────────────────
 
-from tonesoul.gates.compute import (
-    GovernanceDepth,
-    GovernanceDepthPlan,
-    RateLimiter,
-    RoutingDecision,
-)
-
 
 class TestClassifyRiskLevel:
     def test_low_tension_is_low_risk(self):
@@ -119,16 +118,12 @@ class TestClampUnit:
 
 class TestMeanWaveDelta:
     def test_identical_waves_give_zero(self):
-        result = ComputeGate._mean_wave_delta(
-            {"a": 0.5, "b": 0.3}, {"a": 0.5, "b": 0.3}
-        )
+        result = ComputeGate._mean_wave_delta({"a": 0.5, "b": 0.3}, {"a": 0.5, "b": 0.3})
         assert result == 0.0
 
     def test_missing_key_in_memory_wave_skipped(self):
         # Only shared key "a" used
-        result = ComputeGate._mean_wave_delta(
-            {"a": 1.0, "b": 0.0}, {"a": 0.0}
-        )
+        result = ComputeGate._mean_wave_delta({"a": 1.0, "b": 0.0}, {"a": 0.0})
         assert result == pytest.approx(1.0, abs=0.001)
 
     def test_no_shared_keys_returns_none(self):
@@ -192,9 +187,15 @@ class TestGovernanceDepthPlan:
 
     def test_to_dict_contains_all_keys(self):
         d = GovernanceDepthPlan().to_dict()
-        for key in ("depth", "reason", "preserve_default_behavior",
-                    "skip_cross_session_recovery", "skip_injection_context",
-                    "candidate_light_skips", "required_edges"):
+        for key in (
+            "depth",
+            "reason",
+            "preserve_default_behavior",
+            "skip_cross_session_recovery",
+            "skip_injection_context",
+            "candidate_light_skips",
+            "required_edges",
+        ):
             assert key in d
 
     def test_to_dict_tuples_become_lists(self):

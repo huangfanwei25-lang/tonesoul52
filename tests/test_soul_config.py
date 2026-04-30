@@ -5,8 +5,8 @@ from __future__ import annotations
 from tonesoul.soul_config import (
     FORBIDDEN_ACTIONS,
     SOUL,
-    CouncilConfig,
     CoreValues,
+    CouncilConfig,
     MemoryConfig,
     RiskConfig,
     SoulConfig,
@@ -21,6 +21,7 @@ class TestCoreValues:
 
     def test_frozen_dataclass_rejects_mutation(self):
         import pytest
+
         cv = CoreValues()
         with pytest.raises((AttributeError, TypeError)):
             cv.honesty = 0.5  # type: ignore[misc]
@@ -114,5 +115,6 @@ class TestSoulSingleton:
 
     def test_soul_is_frozen(self):
         import pytest
+
         with pytest.raises((AttributeError, TypeError)):
             SOUL.values = CoreValues()  # type: ignore[misc]

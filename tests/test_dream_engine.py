@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from pathlib import Path
-
-import pytest
 
 from tonesoul.dream_engine import (
     DreamEngine,
@@ -11,9 +10,18 @@ from tonesoul.dream_engine import (
     _parse_iso_sort_key,
     _utcnow_iso,
 )
-
+from tonesoul.memory.crystallizer import Crystal, MemoryCrystallizer
+from tonesoul.memory.reviewed_promotion import (
+    apply_reviewed_promotion,
+    build_reviewed_promotion_decision,
+)
+from tonesoul.memory.soul_db import MemorySource, SqliteSoulDB
+from tonesoul.memory.write_gateway import MemoryWriteGateway
+from tonesoul.perception.stimulus import EnvironmentStimulus
+from tonesoul.schemas import LLMCallMetrics
 
 # ── _utcnow_iso ───────────────────────────────────────────────────────────────
+
 
 class TestUtcnowIso:
     def test_returns_string(self):
@@ -24,6 +32,7 @@ class TestUtcnowIso:
 
 
 # ── _normalize_signature_part ─────────────────────────────────────────────────
+
 
 class TestNormalizeSignaturePart:
     def test_lowercases(self):
@@ -44,36 +53,24 @@ class TestNormalizeSignaturePart:
 
 # ── _parse_iso_sort_key ───────────────────────────────────────────────────────
 
+
 class TestParseIsoSortKey:
     def test_z_suffix_parsed(self):
-        from datetime import timezone
         result = _parse_iso_sort_key("2026-01-15T12:00:00Z")
         assert result.tzinfo is not None
         assert result.tzinfo == timezone.utc
 
     def test_empty_returns_datetime_min(self):
-        from datetime import datetime, timezone
         result = _parse_iso_sort_key("")
         assert result == datetime.min.replace(tzinfo=timezone.utc)
 
     def test_invalid_returns_datetime_min(self):
-        from datetime import datetime, timezone
         result = _parse_iso_sort_key("not-a-date")
         assert result == datetime.min.replace(tzinfo=timezone.utc)
 
     def test_none_returns_datetime_min(self):
-        from datetime import datetime, timezone
         result = _parse_iso_sort_key(None)
         assert result == datetime.min.replace(tzinfo=timezone.utc)
-from tonesoul.memory.crystallizer import Crystal, MemoryCrystallizer
-from tonesoul.memory.reviewed_promotion import (
-    apply_reviewed_promotion,
-    build_reviewed_promotion_decision,
-)
-from tonesoul.memory.soul_db import MemorySource, SqliteSoulDB
-from tonesoul.memory.write_gateway import MemoryWriteGateway
-from tonesoul.perception.stimulus import EnvironmentStimulus
-from tonesoul.schemas import LLMCallMetrics
 
 
 class DummyRouter:

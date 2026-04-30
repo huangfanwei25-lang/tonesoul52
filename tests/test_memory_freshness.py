@@ -4,14 +4,8 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 
-import pytest
-
 from tonesoul.memory.freshness import (
-    CRITICAL_THRESHOLD,
     HALF_LIFE_DAYS,
-    STALE_THRESHOLD,
-    FreshnessReport,
-    ZoneFreshness,
     build_freshness_report,
     compute_zone_freshness,
     filter_stale_zones,
@@ -28,6 +22,7 @@ def _ts(dt: datetime) -> str:
 
 
 # ── compute_zone_freshness ────────────────────────────────────────────────────
+
 
 class TestComputeZoneFreshness:
     def test_just_touched_score_is_one(self):
@@ -86,8 +81,14 @@ class TestComputeZoneFreshness:
     def test_to_dict_has_required_keys(self):
         result = compute_zone_freshness("z1", _ts(_now()))
         d = result.to_dict()
-        for key in ("zone_id", "last_touched_at", "freshness_score", "needs_review",
-                    "is_critical", "days_since_touch"):
+        for key in (
+            "zone_id",
+            "last_touched_at",
+            "freshness_score",
+            "needs_review",
+            "is_critical",
+            "days_since_touch",
+        ):
             assert key in d
 
     def test_score_is_clamped_non_negative(self):
@@ -97,6 +98,7 @@ class TestComputeZoneFreshness:
 
 
 # ── touch_zone ────────────────────────────────────────────────────────────────
+
 
 class TestTouchZone:
     def test_returns_freshness_one(self):
@@ -126,6 +128,7 @@ class TestTouchZone:
 
 
 # ── build_freshness_report ────────────────────────────────────────────────────
+
 
 class TestBuildFreshnessReport:
     def _mixed_zones(self, now):
@@ -191,12 +194,20 @@ class TestBuildFreshnessReport:
     def test_to_dict_has_required_keys(self):
         report = build_freshness_report({})
         d = report.to_dict()
-        for key in ("generated_at", "total_zones", "stale_count", "critical_count",
-                    "background_tension_delta", "stale_zone_ids", "critical_zone_ids"):
+        for key in (
+            "generated_at",
+            "total_zones",
+            "stale_count",
+            "critical_count",
+            "background_tension_delta",
+            "stale_zone_ids",
+            "critical_zone_ids",
+        ):
             assert key in d
 
 
 # ── filter_stale_zones ────────────────────────────────────────────────────────
+
 
 class TestFilterStaleZones:
     def test_returns_stale_zone_ids(self):

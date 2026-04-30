@@ -2,11 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 from tonesoul.ystm.schema import (
-    MathCoords,
-    NodeDrift,
     SourceRef,
     WhereField,
     WhereTask,

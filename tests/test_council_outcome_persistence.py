@@ -1,8 +1,9 @@
 """Tests for tonesoul.council.outcome_persistence — all pure helpers."""
+
 from __future__ import annotations
 
 import json
-import os
+from pathlib import Path
 
 import pytest
 
@@ -18,8 +19,8 @@ from tonesoul.council.outcome_persistence import (
     persist_outcome_record,
 )
 
-
 # ── _utc_now_iso ──────────────────────────────────────────────────────────────
+
 
 class TestUtcNowIso:
     def test_returns_string(self):
@@ -30,11 +31,13 @@ class TestUtcNowIso:
 
     def test_parseable(self):
         from datetime import datetime
+
         ts = _utc_now_iso()
         datetime.fromisoformat(ts.replace("Z", "+00:00"))
 
 
 # ── OutcomeSignal validation ──────────────────────────────────────────────────
+
 
 class TestOutcomeSignal:
     def test_valid_signal_source(self):
@@ -46,8 +49,13 @@ class TestOutcomeSignal:
             OutcomeSignal(signal_source="bad_source")
 
     def test_all_valid_sources_accepted(self):
-        for src in ("explicit_feedback", "follow_up_message", "session_close",
-                    "external_audit", "synthetic"):
+        for src in (
+            "explicit_feedback",
+            "follow_up_message",
+            "session_close",
+            "external_audit",
+            "synthetic",
+        ):
             sig = OutcomeSignal(signal_source=src)
             assert sig.signal_source == src
 
@@ -60,6 +68,7 @@ class TestOutcomeSignal:
 
 
 # ── OutcomeRecord validation ──────────────────────────────────────────────────
+
 
 def _make_signal(signal: str) -> OutcomeSignal:
     return OutcomeSignal(
@@ -136,6 +145,7 @@ class TestOutcomeRecord:
 
 # ── _strip_ignored_paths ──────────────────────────────────────────────────────
 
+
 class TestStripIgnoredPaths:
     def test_removes_transcript_timestamp(self):
         obj = {"transcript": {"timestamp": "2026-01-01", "verdict": "approve"}}
@@ -169,6 +179,7 @@ class TestStripIgnoredPaths:
 
 # ── compute_verdict_fingerprint ───────────────────────────────────────────────
 
+
 class TestComputeVerdictFingerprint:
     def test_returns_sha256_prefix(self):
         fp = compute_verdict_fingerprint({"verdict": "approve"})
@@ -188,7 +199,9 @@ class TestComputeVerdictFingerprint:
     def test_strips_timestamp_before_hashing(self):
         payload_with_ts = {"verdict": "approve", "transcript": {"timestamp": "2026-01-01"}}
         payload_no_ts = {"verdict": "approve", "transcript": {}}
-        assert compute_verdict_fingerprint(payload_with_ts) == compute_verdict_fingerprint(payload_no_ts)
+        assert compute_verdict_fingerprint(payload_with_ts) == compute_verdict_fingerprint(
+            payload_no_ts
+        )
 
     def test_custom_digest_length(self):
         fp = compute_verdict_fingerprint({"x": 1}, digest_length=8)
@@ -201,6 +214,7 @@ class TestComputeVerdictFingerprint:
 
 
 # ── derive_alignment_judgment ─────────────────────────────────────────────────
+
 
 class TestDeriveAlignmentJudgment:
     def test_accept_gives_aligned(self):
@@ -229,6 +243,7 @@ class TestDeriveAlignmentJudgment:
 
 
 # ── build_outcome_record ──────────────────────────────────────────────────────
+
 
 class TestBuildOutcomeRecord:
     def test_accept_signal(self):
@@ -279,6 +294,7 @@ class TestBuildOutcomeRecord:
 
 # ── _resolve_outcome_path ─────────────────────────────────────────────────────
 
+
 class TestResolveOutcomePath:
     def test_env_var_override(self, monkeypatch, tmp_path):
         override = str(tmp_path / "custom.jsonl")
@@ -288,7 +304,7 @@ class TestResolveOutcomePath:
     def test_surface_parameter(self, monkeypatch):
         monkeypatch.delenv("TONESOUL_OUTCOME_PATH", raising=False)
         result = _resolve_outcome_path(surface="/tmp/test.jsonl")
-        assert str(result) == "/tmp/test.jsonl"
+        assert result == Path("/tmp/test.jsonl")
 
     def test_default_path(self, monkeypatch):
         monkeypatch.delenv("TONESOUL_OUTCOME_PATH", raising=False)
@@ -297,6 +313,7 @@ class TestResolveOutcomePath:
 
 
 # ── persist_outcome_record ────────────────────────────────────────────────────
+
 
 class TestPersistOutcomeRecord:
     def test_writes_jsonl_line(self, tmp_path, monkeypatch):
@@ -320,7 +337,7 @@ class TestPersistOutcomeRecord:
             r = build_outcome_record(verdict_fingerprint="sha256:abc", signal=signal)
             persist_outcome_record(r, surface=str(output))
 
-        lines = [l for l in output.read_text().splitlines() if l.strip()]
+        lines = [line for line in output.read_text().splitlines() if line.strip()]
         assert len(lines) == 2
 
     def test_creates_parent_dirs(self, tmp_path, monkeypatch):

@@ -215,6 +215,7 @@ def test_router_inference_check_normalizes_non_primitive_model() -> None:
 
 # ── ThinkingTier ──────────────────────────────────────────────────────────────
 
+
 class TestThinkingTier:
     def test_enum_values(self):
         assert ThinkingTier.LOCAL.value == "local"
@@ -227,6 +228,7 @@ class TestThinkingTier:
 
 
 # ── resolve_thinking_tier ─────────────────────────────────────────────────────
+
 
 class TestResolveThinkingTier:
     def test_l2_gives_cloud(self):
@@ -257,10 +259,12 @@ class TestResolveThinkingTier:
     def test_object_with_value_attr(self):
         class _Obj:
             value = "L2"
+
         assert resolve_thinking_tier(_Obj()) is ThinkingTier.CLOUD
 
 
 # ── LLMRouter.__init__ ────────────────────────────────────────────────────────
+
 
 class TestLLMRouterInit:
     def test_default_preferred_is_auto(self):
@@ -296,6 +300,7 @@ class TestLLMRouterInit:
 
 
 # ── Static helpers ────────────────────────────────────────────────────────────
+
 
 class TestNormalizeBackendName:
     def test_strips_and_lowercases(self):
@@ -354,6 +359,7 @@ class TestDeadlineAndRemaining:
 
 # ── LLMRouter.prime ───────────────────────────────────────────────────────────
 
+
 class TestPrime:
     def test_prime_returns_client(self):
         router = LLMRouter()
@@ -403,6 +409,7 @@ class TestPrime:
 
 # ── LLMRouter._coerce_tier ────────────────────────────────────────────────────
 
+
 class TestCoerceTier:
     def test_local_enum_passthrough(self):
         assert LLMRouter._coerce_tier(ThinkingTier.LOCAL) is ThinkingTier.LOCAL
@@ -431,6 +438,7 @@ class TestCoerceTier:
 
 # ── LLMRouter._activate_client ────────────────────────────────────────────────
 
+
 class TestActivateClient:
     def test_sets_cached_client(self):
         router = LLMRouter()
@@ -453,11 +461,14 @@ class TestActivateClient:
     def test_last_thinking_tier_property(self):
         router = LLMRouter()
         assert router.last_thinking_tier is None
-        router._activate_client(_FakeClientWithoutProbe(), backend="ollama", requested_tier=ThinkingTier.LOCAL)
+        router._activate_client(
+            _FakeClientWithoutProbe(), backend="ollama", requested_tier=ThinkingTier.LOCAL
+        )
         assert router.last_thinking_tier == "local"
 
 
 # ── LLMRouter.reset ───────────────────────────────────────────────────────────
+
 
 class TestReset:
     def test_reset_clears_all_cached_state(self):
@@ -486,6 +497,7 @@ class TestReset:
 
 
 # ── LLMRouter.get_client ──────────────────────────────────────────────────────
+
 
 class TestGetClient:
     def test_returns_cached_when_set(self):
@@ -531,6 +543,7 @@ class TestGetClient:
 
 # ── LLMRouter._direct_resolve ─────────────────────────────────────────────────
 
+
 class TestDirectResolve:
     def test_preferred_backend_tried_first(self, monkeypatch):
         router = LLMRouter(preferred_backend="ollama")
@@ -571,6 +584,7 @@ class TestDirectResolve:
 
 # ── LLMRouter.health_check ────────────────────────────────────────────────────
 
+
 class TestHealthCheck:
     def test_all_unavailable(self, monkeypatch):
         router = LLMRouter()
@@ -601,6 +615,7 @@ class TestHealthCheck:
 
 # ── LLMRouter.chat ────────────────────────────────────────────────────────────
 
+
 class _ChatClient:
     def __init__(self):
         self.history_received = None
@@ -616,11 +631,13 @@ class _ChatClient:
 
 class _NoChatClient:
     """Has no send_message."""
+
     pass
 
 
 class _NoHistoryClient:
     """Has send_message but no start_chat."""
+
     def send_message(self, prompt):
         return "ok"
 
@@ -676,6 +693,7 @@ class TestChat:
 
 # ── LLMRouter.chat_with_tier ──────────────────────────────────────────────────
 
+
 class TestChatWithTier:
     def _router_with_client(self, client) -> LLMRouter:
         router = LLMRouter()
@@ -721,6 +739,7 @@ class TestChatWithTier:
 
 # ── LLMRouter._resolve_client_for_tier ────────────────────────────────────────
 
+
 class TestResolveClientForTier:
     def test_unnamed_cached_client_returned_directly(self):
         router = LLMRouter()
@@ -730,6 +749,15 @@ class TestResolveClientForTier:
         result_client, result_backend = router._resolve_client_for_tier(ThinkingTier.LOCAL)
         assert result_client is client
         assert result_backend is None
+
+    def test_matching_cached_backend_returned_directly(self):
+        router = LLMRouter()
+        client = _FakeClientWithoutProbe()
+        router._cached_client = client
+        router._cached_backend = "lmstudio"
+        result_client, result_backend = router._resolve_client_for_tier(ThinkingTier.LOCAL)
+        assert result_client is client
+        assert result_backend == "lmstudio"
 
     def test_local_tier_uses_local_client(self):
         router = LLMRouter()
