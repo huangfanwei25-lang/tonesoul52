@@ -1,4 +1,5 @@
 """Tests for tonesoul.gates.compute — pure helpers and ComputeGate/RateLimiter."""
+
 from __future__ import annotations
 
 import pytest
@@ -8,13 +9,12 @@ from tonesoul.gates.compute import (
     GovernanceDepth,
     GovernanceDepthPlan,
     RateLimiter,
-    RoutingDecision,
     RoutingPath,
     _free_tier_limiter,
 )
 
-
 # ── RoutingPath / GovernanceDepth enums ───────────────────────────────────────
+
 
 class TestEnums:
     def test_routing_path_values(self):
@@ -30,6 +30,7 @@ class TestEnums:
 
 
 # ── GovernanceDepthPlan.to_dict ────────────────────────────────────────────────
+
 
 class TestGovernanceDepthPlan:
     def test_default_to_dict(self):
@@ -59,6 +60,7 @@ class TestGovernanceDepthPlan:
 
 
 # ── RateLimiter ────────────────────────────────────────────────────────────────
+
 
 class TestRateLimiter:
     def test_consume_returns_true_when_tokens_available(self):
@@ -90,6 +92,7 @@ class TestRateLimiter:
 
 # ── ComputeGate._classify_risk_level ──────────────────────────────────────────
 
+
 class TestClassifyRiskLevel:
     def test_low_below_0_4(self):
         assert ComputeGate._classify_risk_level(0.3) == "low"
@@ -112,6 +115,7 @@ class TestClassifyRiskLevel:
 
 # ── ComputeGate._clamp_unit ────────────────────────────────────────────────────
 
+
 class TestClampUnit:
     def test_normal_value_unchanged(self):
         assert ComputeGate._clamp_unit(0.5) == pytest.approx(0.5)
@@ -130,6 +134,7 @@ class TestClampUnit:
 
 
 # ── ComputeGate._mean_wave_delta ───────────────────────────────────────────────
+
 
 class TestMeanWaveDelta:
     def test_none_inputs_return_none(self):
@@ -162,6 +167,7 @@ class TestMeanWaveDelta:
 
 
 # ── ComputeGate.compute_governance_friction ───────────────────────────────────
+
 
 class TestComputeGovernanceFriction:
     def test_none_tensions_no_wave_no_boundary_returns_none(self):
@@ -218,6 +224,7 @@ class TestComputeGovernanceFriction:
 
 
 # ── ComputeGate.evaluate ──────────────────────────────────────────────────────
+
 
 class TestComputeGateEvaluate:
     def setup_method(self):

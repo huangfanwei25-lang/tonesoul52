@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-import pytest
-
 from tonesoul.memory.hybrid_search import (
     FusedResult,
     RankedItem,
-    RRF_K,
     hybrid_search,
     rerank_with_signals,
     rrf_fuse,
@@ -15,11 +12,14 @@ from tonesoul.memory.hybrid_search import (
 
 
 def _items(doc_ids):
-    return [RankedItem(doc_id=d, content=f"content of {d}", score=1.0 - i * 0.1)
-            for i, d in enumerate(doc_ids)]
+    return [
+        RankedItem(doc_id=d, content=f"content of {d}", score=1.0 - i * 0.1)
+        for i, d in enumerate(doc_ids)
+    ]
 
 
 # ── rrf_fuse ──────────────────────────────────────────────────────────────────
+
 
 class TestRrfFuse:
     def test_returns_list_of_fused_results(self):
@@ -99,22 +99,39 @@ class TestRrfFuse:
     def test_to_dict_has_required_keys(self):
         result = rrf_fuse(_items(["a"]), _items(["a"]))
         d = result[0].to_dict()
-        for key in ("doc_id", "rrf_score", "final_score", "keyword_rank",
-                    "vector_rank", "trust_score", "freshness_score", "retrieved_by"):
+        for key in (
+            "doc_id",
+            "rrf_score",
+            "final_score",
+            "keyword_rank",
+            "vector_rank",
+            "trust_score",
+            "freshness_score",
+            "retrieved_by",
+        ):
             assert key in d
 
 
 # ── rerank_with_signals ───────────────────────────────────────────────────────
 
+
 class TestRerankWithSignals:
     def _base_results(self):
         return [
-            FusedResult("a", "content a", rrf_score=0.03, final_score=0.03,
-                        keyword_rank=0, vector_rank=0),
-            FusedResult("b", "content b", rrf_score=0.02, final_score=0.02,
-                        keyword_rank=1, vector_rank=None),
-            FusedResult("c", "content c", rrf_score=0.015, final_score=0.015,
-                        keyword_rank=None, vector_rank=1),
+            FusedResult(
+                "a", "content a", rrf_score=0.03, final_score=0.03, keyword_rank=0, vector_rank=0
+            ),
+            FusedResult(
+                "b", "content b", rrf_score=0.02, final_score=0.02, keyword_rank=1, vector_rank=None
+            ),
+            FusedResult(
+                "c",
+                "content c",
+                rrf_score=0.015,
+                final_score=0.015,
+                keyword_rank=None,
+                vector_rank=1,
+            ),
         ]
 
     def test_returns_same_number_of_results(self):
@@ -125,12 +142,26 @@ class TestRerankWithSignals:
     def test_high_trust_boosts_rank(self):
         # Give "b" and "c" nearly equal RRF scores; trust tips the tie toward "c"
         results = [
-            FusedResult("a", "content a", rrf_score=0.03, final_score=0.03,
-                        keyword_rank=0, vector_rank=0),
-            FusedResult("b", "content b", rrf_score=0.016, final_score=0.016,
-                        keyword_rank=1, vector_rank=None, trust_score=0.1),
-            FusedResult("c", "content c", rrf_score=0.015, final_score=0.015,
-                        keyword_rank=None, vector_rank=1),
+            FusedResult(
+                "a", "content a", rrf_score=0.03, final_score=0.03, keyword_rank=0, vector_rank=0
+            ),
+            FusedResult(
+                "b",
+                "content b",
+                rrf_score=0.016,
+                final_score=0.016,
+                keyword_rank=1,
+                vector_rank=None,
+                trust_score=0.1,
+            ),
+            FusedResult(
+                "c",
+                "content c",
+                rrf_score=0.015,
+                final_score=0.015,
+                keyword_rank=None,
+                vector_rank=1,
+            ),
         ]
         reranked = rerank_with_signals(results, trust_scores={"c": 1.0, "b": 0.1})
         doc_ids = [r.doc_id for r in reranked]
@@ -151,10 +182,21 @@ class TestRerankWithSignals:
             assert 0.0 <= r.trust_score <= 1.0
 
     def test_final_score_clamped_at_one(self):
-        results = [FusedResult("a", "content", rrf_score=1.0, final_score=1.0,
-                               keyword_rank=0, vector_rank=0, trust_score=1.0,
-                               freshness_score=1.0)]
-        reranked = rerank_with_signals(results, trust_scores={"a": 1.0}, freshness_scores={"a": 1.0})
+        results = [
+            FusedResult(
+                "a",
+                "content",
+                rrf_score=1.0,
+                final_score=1.0,
+                keyword_rank=0,
+                vector_rank=0,
+                trust_score=1.0,
+                freshness_score=1.0,
+            )
+        ]
+        reranked = rerank_with_signals(
+            results, trust_scores={"a": 1.0}, freshness_scores={"a": 1.0}
+        )
         assert reranked[0].final_score <= 1.0
 
     def test_sorted_by_final_score_descending(self):
@@ -175,6 +217,7 @@ class TestRerankWithSignals:
 
 
 # ── hybrid_search ─────────────────────────────────────────────────────────────
+
 
 class TestHybridSearch:
     def test_returns_list(self):

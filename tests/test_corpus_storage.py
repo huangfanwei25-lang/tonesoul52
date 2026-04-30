@@ -6,8 +6,8 @@ import pytest
 
 from tonesoul.corpus.storage import Conversation, ConversationTurn, CorpusStorage
 
-
 # ── ConversationTurn.to_dict ──────────────────────────────────────────────────
+
 
 class TestConversationTurnToDict:
     def test_includes_required_fields(self):
@@ -37,6 +37,7 @@ class TestConversationTurnToDict:
 
 
 # ── Conversation.add_turn / to_dict / to_jsonl_line ──────────────────────────
+
 
 class TestConversation:
     def _conv(self):
@@ -78,6 +79,7 @@ class TestConversation:
 
 # ── CorpusStorage.get_corpus_stats ────────────────────────────────────────────
 
+
 def test_get_corpus_stats_returns_counts(tmp_path) -> None:
     storage = _make_storage(tmp_path)
     conv = storage.create_conversation("session-stats")
@@ -91,6 +93,7 @@ def test_get_corpus_stats_returns_counts(tmp_path) -> None:
 
 
 # ── CorpusStorage.get_session_conversations ───────────────────────────────────
+
 
 def test_get_session_conversations_returns_ids_for_session(tmp_path) -> None:
     storage = _make_storage(tmp_path)

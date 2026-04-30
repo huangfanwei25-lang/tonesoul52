@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
-import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -13,17 +11,16 @@ import pytest
 from games.under_the_island.bridge.event_adapter import FileBridgeAdapter
 from games.under_the_island.bridge.llm_provider import (
     DEFAULT_MODELS,
-    _check_package,
     call_llm,
     diagnostics,
     resolve_model,
     resolve_provider,
 )
 
-
 # ---------------------------------------------------------------------------
 # FileBridgeAdapter — BOM + round-trip
 # ---------------------------------------------------------------------------
+
 
 class TestFileBridgeAdapterBom:
     """PowerShell Set-Content -Encoding utf8 writes a UTF-8 BOM.
@@ -56,7 +53,9 @@ class TestFileBridgeAdapterBom:
 
     def test_no_duplicate_read_same_mtime(self, tmp_path: Path) -> None:
         adapter, ev, _ = self._adapter(tmp_path)
-        ev.write_text(json.dumps({"event": "e", "player_choice": "c", "scene": "s"}), encoding="utf-8")
+        ev.write_text(
+            json.dumps({"event": "e", "player_choice": "c", "scene": "s"}), encoding="utf-8"
+        )
         first = list(adapter.poll())
         second = list(adapter.poll())
         assert len(first) == 1
@@ -82,6 +81,7 @@ class TestFileBridgeAdapterBom:
 # ---------------------------------------------------------------------------
 # resolve_provider — auto selection logic
 # ---------------------------------------------------------------------------
+
 
 class TestResolveProvider:
     def _clean_env(self, monkeypatch):
@@ -137,6 +137,7 @@ class TestResolveProvider:
 # resolve_model — priority chain
 # ---------------------------------------------------------------------------
 
+
 class TestResolveModel:
     def test_explicit_model_wins(self, monkeypatch) -> None:
         monkeypatch.delenv("BRIDGE_LLM_MODEL", raising=False)
@@ -163,6 +164,7 @@ class TestResolveModel:
 # ---------------------------------------------------------------------------
 # call_llm — package-missing branches return error strings, not exceptions
 # ---------------------------------------------------------------------------
+
 
 class TestCallLlmErrorStrings:
     def test_anthropic_import_error_returns_string(self) -> None:
@@ -197,6 +199,7 @@ class TestCallLlmErrorStrings:
 # diagnostics — structured readiness check
 # ---------------------------------------------------------------------------
 
+
 class TestDiagnostics:
     def _clean(self, monkeypatch):
         for k in ("ANTHROPIC_API_KEY", "GEMINI_API_KEY", "BRIDGE_LLM_PROVIDER", "BRIDGE_LLM_MODEL"):
@@ -224,6 +227,14 @@ class TestDiagnostics:
     def test_structure_keys_present(self, monkeypatch) -> None:
         self._clean(monkeypatch)
         diag = diagnostics("anthropic", "claude-sonnet-4-6")
-        for k in ("provider", "model", "anthropic_key_set", "gemini_key_set",
-                   "package_ok", "issues", "ready", "env_vars"):
+        for k in (
+            "provider",
+            "model",
+            "anthropic_key_set",
+            "gemini_key_set",
+            "package_ok",
+            "issues",
+            "ready",
+            "env_vars",
+        ):
             assert k in diag, f"missing key: {k}"

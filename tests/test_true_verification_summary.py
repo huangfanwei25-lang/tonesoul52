@@ -1,6 +1,14 @@
 from __future__ import annotations
 
 from tonesoul.true_verification_summary import (
+    _copy_scalar_keys,
+    _is_scalar,
+    _summarize_autonomous_payload,
+    _summarize_registry_batch,
+    _summarize_result,
+    _summarize_state,
+    _summarize_tension_budget,
+    _summarize_wakeup_summary,
     summarize_long_run_payload,
     summarize_schedule_payload,
 )
@@ -193,17 +201,6 @@ def test_summarize_long_run_payload_summarizes_nested_preflight_and_schedule() -
 
 # ── Helper function unit tests ────────────────────────────────────────────────
 
-from tonesoul.true_verification_summary import (
-    _copy_scalar_keys,
-    _is_scalar,
-    _summarize_autonomous_payload,
-    _summarize_registry_batch,
-    _summarize_result,
-    _summarize_state,
-    _summarize_tension_budget,
-    _summarize_wakeup_summary,
-)
-
 
 class TestIsScalar:
     def test_none_is_scalar(self):
@@ -380,15 +377,18 @@ class TestSummarizeState:
 class TestSummarizeSchedulePayloadEdgeCases:
     def test_none_returns_none(self):
         from tonesoul.true_verification_summary import summarize_schedule_payload
+
         assert summarize_schedule_payload(None) is None
 
     def test_non_dict_returns_as_is(self):
         from tonesoul.true_verification_summary import summarize_schedule_payload
+
         result = summarize_schedule_payload("not-a-dict")  # type: ignore
         assert result == "not-a-dict"
 
     def test_result_count_from_int(self):
         from tonesoul.true_verification_summary import summarize_schedule_payload
+
         payload = {"result_count": 7, "latest_result": {"cycle": 7, "overall_ok": True}}
         result = summarize_schedule_payload(payload)
         assert result["result_count"] == 7
@@ -397,9 +397,11 @@ class TestSummarizeSchedulePayloadEdgeCases:
 class TestSummarizeLongRunPayloadEdgeCases:
     def test_none_returns_none(self):
         from tonesoul.true_verification_summary import summarize_long_run_payload
+
         assert summarize_long_run_payload(None) is None
 
     def test_overall_ok_copied(self):
         from tonesoul.true_verification_summary import summarize_long_run_payload
+
         result = summarize_long_run_payload({"overall_ok": True})
         assert result["overall_ok"] is True

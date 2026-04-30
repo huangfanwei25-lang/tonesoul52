@@ -2,9 +2,6 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from datetime import datetime
-from typing import Any, Dict, List, Optional
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -15,14 +12,14 @@ from tonesoul.corpus.pipeline import (
     create_corpus_pipeline,
 )
 
-
 # ── Helpers ───────────────────────────────────────────────────────────────────
+
 
 def _make_pipeline() -> CorpusPipeline:
     """Create a CorpusPipeline with mocked storage backends."""
     with (
-        patch("tonesoul.corpus.pipeline.ConsentManager") as mock_cm,
-        patch("tonesoul.corpus.pipeline.CorpusStorage") as mock_cs,
+        patch("tonesoul.corpus.pipeline.ConsentManager"),
+        patch("tonesoul.corpus.pipeline.CorpusStorage"),
     ):
         pipeline = CorpusPipeline(
             consent_db=":memory:",
@@ -35,6 +32,7 @@ def _make_pipeline() -> CorpusPipeline:
 
 
 # ── PipelineResponse ──────────────────────────────────────────────────────────
+
 
 class TestPipelineResponse:
     def test_basic_fields(self):
@@ -97,6 +95,7 @@ class TestPipelineResponse:
 
 # ── CorpusPipeline.generate_session_id ───────────────────────────────────────
 
+
 class TestGenerateSessionId:
     def test_starts_with_session_prefix(self):
         pipeline = _make_pipeline()
@@ -116,6 +115,7 @@ class TestGenerateSessionId:
 
 # ── CorpusPipeline.has_consent ────────────────────────────────────────────────
 
+
 class TestHasConsent:
     def test_delegates_to_consent_manager(self):
         pipeline = _make_pipeline()
@@ -130,6 +130,7 @@ class TestHasConsent:
 
 
 # ── CorpusPipeline.record_consent ─────────────────────────────────────────────
+
 
 class TestRecordConsent:
     def test_delegates_to_consent_manager(self):
@@ -148,6 +149,7 @@ class TestRecordConsent:
 
 
 # ── CorpusPipeline.withdraw_consent ──────────────────────────────────────────
+
 
 class TestWithdrawConsent:
     def test_returns_combined_result(self):
@@ -168,6 +170,7 @@ class TestWithdrawConsent:
 
 
 # ── CorpusPipeline.start_conversation ────────────────────────────────────────
+
 
 class TestStartConversation:
     def test_raises_if_no_consent(self):
@@ -204,6 +207,7 @@ class TestStartConversation:
 
 # ── CorpusPipeline._fallback_response ────────────────────────────────────────
 
+
 class TestFallbackResponse:
     def test_contains_truncated_input(self):
         pipeline = _make_pipeline()
@@ -222,6 +226,7 @@ class TestFallbackResponse:
 
 
 # ── CorpusPipeline.process_message ───────────────────────────────────────────
+
 
 class TestProcessMessage:
     def test_returns_pipeline_response(self):
@@ -265,6 +270,7 @@ class TestProcessMessage:
 
 # ── CorpusPipeline.end_conversation ──────────────────────────────────────────
 
+
 class TestEndConversation:
     def test_calls_save_to_jsonl_when_conv_exists(self):
         pipeline = _make_pipeline()
@@ -281,6 +287,7 @@ class TestEndConversation:
 
 # ── CorpusPipeline.get_stats ─────────────────────────────────────────────────
 
+
 class TestGetStats:
     def test_returns_combined_dict(self):
         pipeline = _make_pipeline()
@@ -292,6 +299,7 @@ class TestGetStats:
 
 
 # ── create_corpus_pipeline factory ───────────────────────────────────────────
+
 
 class TestCreateCorpusPipeline:
     def test_returns_corpus_pipeline_instance(self):

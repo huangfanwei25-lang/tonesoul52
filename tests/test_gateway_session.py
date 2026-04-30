@@ -1,4 +1,5 @@
 """Tests for tonesoul.gateway.session — pure helpers and GatewaySession."""
+
 from __future__ import annotations
 
 import pytest
@@ -6,8 +7,8 @@ import pytest
 from memory.genesis import Genesis
 from tonesoul.gateway.session import GatewaySession, _parse_genesis, _utc_now
 
-
 # ── _utc_now ──────────────────────────────────────────────────────────────────
+
 
 class TestUtcNow:
     def test_returns_string(self):
@@ -18,6 +19,7 @@ class TestUtcNow:
 
 
 # ── _parse_genesis ────────────────────────────────────────────────────────────
+
 
 class TestParseGenesis:
     def test_valid_value(self):
@@ -46,6 +48,7 @@ class TestParseGenesis:
 
 
 # ── GatewaySession.from_payload ───────────────────────────────────────────────
+
 
 class TestGatewaySessionFromPayload:
     def test_minimal_payload(self):
@@ -90,6 +93,7 @@ class TestGatewaySessionFromPayload:
 
 
 # ── GatewaySession.to_gateway_payload ────────────────────────────────────────
+
 
 class TestGatewaySessionToGatewayPayload:
     def _make(self, **kw):

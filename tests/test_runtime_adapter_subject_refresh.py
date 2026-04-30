@@ -1,14 +1,11 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-
-import pytest
+from datetime import datetime
 
 from tonesoul.runtime_adapter_subject_refresh import (
     build_subject_refresh_summary,
     entries_newer_than,
 )
-
 
 _PARSE_DT = datetime.fromisoformat
 
@@ -32,6 +29,7 @@ def _make_summary(**kwargs):
 
 
 # ─── entries_newer_than ──────────────────────────────────────────────────────
+
 
 class TestEntriesNewerThan:
     def test_filters_old_entries(self):
@@ -75,6 +73,7 @@ class TestEntriesNewerThan:
 
 # ─── no_snapshot status ──────────────────────────────────────────────────────
 
+
 class TestNoSnapshotStatus:
     def test_all_empty_returns_no_snapshot(self):
         summary = _make_summary()
@@ -84,20 +83,34 @@ class TestNoSnapshotStatus:
 
     def test_contains_required_top_level_keys(self):
         summary = _make_summary()
-        for key in ("status", "refresh_recommended", "snapshot_present", "latest_snapshot_id",
-                    "snapshot_updated_at", "risk_level", "newer_compaction_count",
-                    "newer_checkpoint_count", "active_claim_count",
-                    "routing_misroute_signal_count", "field_guidance", "promotion_hazards",
-                    "recommended_command", "summary_text"):
+        for key in (
+            "status",
+            "refresh_recommended",
+            "snapshot_present",
+            "latest_snapshot_id",
+            "snapshot_updated_at",
+            "risk_level",
+            "newer_compaction_count",
+            "newer_checkpoint_count",
+            "active_claim_count",
+            "routing_misroute_signal_count",
+            "field_guidance",
+            "promotion_hazards",
+            "recommended_command",
+            "summary_text",
+        ):
             assert key in summary
 
     def test_no_snapshot_no_compactions_adds_hazard(self):
         summary = _make_summary()
-        assert any("no subject snapshot" in h.lower() or "traces alone" in h.lower()
-                   for h in summary["promotion_hazards"])
+        assert any(
+            "no subject snapshot" in h.lower() or "traces alone" in h.lower()
+            for h in summary["promotion_hazards"]
+        )
 
 
 # ─── seed_snapshot status ─────────────────────────────────────────────────────
+
 
 class TestSeedSnapshotStatus:
     def test_recommends_seed_snapshot(self):
@@ -112,8 +125,11 @@ class TestSeedSnapshotStatus:
                 }
             ],
             claims=[],
-            routing_summary={"total_events": 1, "dominant_surface": "compaction",
-                             "misroute_signal_count": 0},
+            routing_summary={
+                "total_events": 1,
+                "dominant_surface": "compaction",
+                "misroute_signal_count": 0,
+            },
             project_memory_summary={"focus_topics": ["runtime_adapter", "redis"]},
             risk_posture={"level": "stable"},
             parse_dt=_PARSE_DT,
@@ -132,18 +148,20 @@ class TestSeedSnapshotStatus:
 
 # ─── manual_review status ────────────────────────────────────────────────────
 
+
 class TestManualReviewStatus:
     def test_misroute_causes_hazard(self):
         summary = build_subject_refresh_summary(
-            subject_snapshots=[{
-                "snapshot_id": "snap-1",
-                "updated_at": "2026-04-14T12:00:00+00:00",
-            }],
+            subject_snapshots=[
+                {
+                    "snapshot_id": "snap-1",
+                    "updated_at": "2026-04-14T12:00:00+00:00",
+                }
+            ],
             checkpoints=[{"updated_at": "2026-04-14T13:00:00+00:00"}],
             compactions=[],
             claims=[{"task_id": "shared-lane"}],
-            routing_summary={"misroute_signal_count": 1, "total_events": 2,
-                             "dominant_surface": ""},
+            routing_summary={"misroute_signal_count": 1, "total_events": 2, "dominant_surface": ""},
             project_memory_summary={},
             risk_posture={"level": "elevated"},
             parse_dt=_PARSE_DT,
@@ -182,13 +200,16 @@ class TestManualReviewStatus:
 
 # ─── stable status ───────────────────────────────────────────────────────────
 
+
 class TestStableStatus:
     def test_existing_snapshot_no_newer_activity_is_stable(self):
         summary = _make_summary(
-            subject_snapshots=[{
-                "snapshot_id": "snap-1",
-                "updated_at": "2026-04-14T12:00:00+00:00",
-            }],
+            subject_snapshots=[
+                {
+                    "snapshot_id": "snap-1",
+                    "updated_at": "2026-04-14T12:00:00+00:00",
+                }
+            ],
         )
         assert summary["status"] == "stable"
         assert summary["refresh_recommended"] is False
@@ -196,12 +217,18 @@ class TestStableStatus:
 
 # ─── field_guidance structure ────────────────────────────────────────────────
 
+
 class TestFieldGuidanceStructure:
     def test_five_fields_always_present(self):
         summary = _make_summary()
         fields = [item["field"] for item in summary["field_guidance"]]
-        for f in ("stable_vows", "durable_boundaries", "decision_preferences",
-                  "verified_routines", "active_threads"):
+        for f in (
+            "stable_vows",
+            "durable_boundaries",
+            "decision_preferences",
+            "verified_routines",
+            "active_threads",
+        ):
             assert f in fields
 
     def test_stable_vows_always_must_not_auto_promote(self):
@@ -216,8 +243,11 @@ class TestFieldGuidanceStructure:
 
     def test_decision_preferences_with_routing_events(self):
         summary = _make_summary(
-            routing_summary={"total_events": 5, "dominant_surface": "compaction",
-                             "misroute_signal_count": 0}
+            routing_summary={
+                "total_events": 5,
+                "dominant_surface": "compaction",
+                "misroute_signal_count": 0,
+            }
         )
         dp = next(i for i in summary["field_guidance"] if i["field"] == "decision_preferences")
         assert dp["action"] == "may_influence_only"
@@ -225,6 +255,7 @@ class TestFieldGuidanceStructure:
 
 
 # ─── summary_text ────────────────────────────────────────────────────────────
+
 
 class TestSummaryText:
     def test_summary_text_starts_with_subject_refresh(self):

@@ -1,16 +1,14 @@
 """Tests for tonesoul.llm.gemini_client — pure helpers."""
-from __future__ import annotations
 
-import os
-import pytest
+from __future__ import annotations
 
 from tonesoul.llm.gemini_client import (
     _build_narrative_reasoning_prompt,
     _resolve_api_key,
 )
 
-
 # ── _resolve_api_key ──────────────────────────────────────────────────────────
+
 
 class TestResolveApiKey:
     def test_explicit_key_returned(self, monkeypatch):
@@ -54,6 +52,7 @@ class TestResolveApiKey:
 
 
 # ── _build_narrative_reasoning_prompt ─────────────────────────────────────────
+
 
 class TestBuildNarrativeReasoningPrompt:
     def _base_verdict(self, **kw):

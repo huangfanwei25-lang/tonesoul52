@@ -2,18 +2,17 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import pytest
 
 from tonesoul.gse import GSEElement, GSERegistry
-from tonesoul.vow_system import Vow, VowAction
-
+from tonesoul.vow_system import Vow
 
 # ---------------------------------------------------------------------------
 # GSEElement — schema and serialisation
 # ---------------------------------------------------------------------------
+
 
 class TestGSEElement:
     def _sample(self) -> GSEElement:
@@ -36,8 +35,17 @@ class TestGSEElement:
 
     def test_all_fields_present_in_to_dict(self) -> None:
         d = self._sample().to_dict()
-        for key in ("symbol", "name", "definition", "role", "cluster", "period",
-                    "trigger", "operation", "falsifiable"):
+        for key in (
+            "symbol",
+            "name",
+            "definition",
+            "role",
+            "cluster",
+            "period",
+            "trigger",
+            "operation",
+            "falsifiable",
+        ):
             assert key in d
 
     def test_frozen_cannot_mutate(self) -> None:
@@ -113,6 +121,7 @@ class TestGSERegistry:
 # ---------------------------------------------------------------------------
 # Vow dataclass — GSE upgrade backward-compatibility
 # ---------------------------------------------------------------------------
+
 
 class TestVowGSEUpgrade:
     def _base_dict(self) -> dict:

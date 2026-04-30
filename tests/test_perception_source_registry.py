@@ -1,9 +1,9 @@
 """Tests for tonesoul.perception.source_registry — pure helpers and evaluate_registry."""
+
 from __future__ import annotations
 
 from datetime import date, datetime
 
-import pytest
 import yaml
 
 from tonesoul.perception.source_registry import (
@@ -21,8 +21,8 @@ from tonesoul.perception.source_registry import (
     select_curated_registry_urls,
 )
 
-
 # ── _iso_now ──────────────────────────────────────────────────────────────────
+
 
 class TestIsoNow:
     def test_returns_string(self):
@@ -37,6 +37,7 @@ class TestIsoNow:
 
 
 # ── _as_str_list ──────────────────────────────────────────────────────────────
+
 
 class TestAsStrList:
     def test_non_list_returns_empty(self):
@@ -61,6 +62,7 @@ class TestAsStrList:
 
 # ── _host_allowed ─────────────────────────────────────────────────────────────
 
+
 class TestHostAllowed:
     def test_exact_match(self):
         assert _host_allowed("github.com", {"github.com", "example.com"}) is True
@@ -84,6 +86,7 @@ class TestHostAllowed:
 
 # ── _is_ip ────────────────────────────────────────────────────────────────────
 
+
 class TestIsIp:
     def test_ipv4_is_ip(self):
         assert _is_ip("192.168.1.1") is True
@@ -99,6 +102,7 @@ class TestIsIp:
 
 
 # ── _validate_url ─────────────────────────────────────────────────────────────
+
 
 class TestValidateUrl:
     def _call(self, url, allowed=None, blocked=None):
@@ -133,9 +137,9 @@ class TestValidateUrl:
         assert ok is False
 
     def test_blocked_host_rejected(self):
-        ok, msg, _ = self._call("https://blocked.com/path",
-                                  allowed={"blocked.com"},
-                                  blocked={"blocked.com"})
+        ok, msg, _ = self._call(
+            "https://blocked.com/path", allowed={"blocked.com"}, blocked={"blocked.com"}
+        )
         assert ok is False
 
     def test_non_allowlisted_host_rejected(self):
@@ -155,6 +159,7 @@ class TestValidateUrl:
 
 # ── _parse_date ───────────────────────────────────────────────────────────────
 
+
 class TestParseDate:
     def test_valid_date(self):
         result = _parse_date("2026-01-15")
@@ -172,6 +177,7 @@ class TestParseDate:
 
 # ── _resolve_today ────────────────────────────────────────────────────────────
 
+
 class TestResolveToday:
     def test_none_returns_today(self):
         today = _resolve_today(None)
@@ -186,6 +192,7 @@ class TestResolveToday:
 
 
 # ── _extract_open_source_apps ─────────────────────────────────────────────────
+
 
 class TestExtractOpenSourceApps:
     def test_list_of_dicts(self):
@@ -220,6 +227,7 @@ class TestExtractOpenSourceApps:
 
 # ── _normalized_filters ───────────────────────────────────────────────────────
 
+
 class TestNormalizedFilters:
     def test_lowercases(self):
         result = _normalized_filters(["GITHUB", "PyPI"])
@@ -244,13 +252,15 @@ class TestNormalizedFilters:
 
 # ── evaluate_registry ─────────────────────────────────────────────────────────
 
+
 class TestEvaluateRegistry:
     def _today(self):
         return date(2026, 4, 22)
 
     def _payload(self, registries=None, policy=None):
         return {
-            "policy": policy or {
+            "policy": policy
+            or {
                 "allowed_hosts": ["github.com"],
                 "blocked_hosts": [],
                 "review_cycle_days": 120,
@@ -325,14 +335,24 @@ class TestEvaluateRegistry:
 
 # ── CuratedSourceSelection.to_dict ────────────────────────────────────────────
 
+
 class TestCuratedSourceSelectionToDict:
     def test_all_keys_present(self):
         sel = CuratedSourceSelection(registry_path="/tmp/reg.yaml")
         d = sel.to_dict()
         for k in (
-            "generated_at", "registry_path", "filters", "selected_url_count",
-            "selected_urls", "selected_entry_count", "selected_entries",
-            "skipped_entries", "warning_count", "warnings", "policy", "ok",
+            "generated_at",
+            "registry_path",
+            "filters",
+            "selected_url_count",
+            "selected_urls",
+            "selected_entry_count",
+            "selected_entries",
+            "skipped_entries",
+            "warning_count",
+            "warnings",
+            "policy",
+            "ok",
         ):
             assert k in d
 
@@ -347,10 +367,12 @@ class TestCuratedSourceSelectionToDict:
 
 # ── select_curated_registry_urls (basic) ──────────────────────────────────────
 
+
 class TestSelectCuratedRegistryUrls:
     def _write_registry(self, tmp_path, entries=None, policy=None):
         content = {
-            "policy": policy or {
+            "policy": policy
+            or {
                 "allowed_hosts": ["github.com"],
                 "blocked_hosts": [],
                 "review_cycle_days": 120,
@@ -424,8 +446,18 @@ class TestSelectCuratedRegistryUrls:
 
     def test_category_filter_applied(self, tmp_path):
         entries = [
-            {"id": "a", "category": "code", "urls": ["https://github.com/a/b"], "reviewed_at": "2026-03-01"},
-            {"id": "b", "category": "docs", "urls": ["https://github.com/c/d"], "reviewed_at": "2026-03-01"},
+            {
+                "id": "a",
+                "category": "code",
+                "urls": ["https://github.com/a/b"],
+                "reviewed_at": "2026-03-01",
+            },
+            {
+                "id": "b",
+                "category": "docs",
+                "urls": ["https://github.com/c/d"],
+                "reviewed_at": "2026-03-01",
+            },
         ]
         path = self._write_registry(tmp_path, entries=entries)
         sel = select_curated_registry_urls(path, today=date(2026, 4, 22), categories=["code"])

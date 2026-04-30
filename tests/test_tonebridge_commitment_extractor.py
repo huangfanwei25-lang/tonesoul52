@@ -1,4 +1,5 @@
 """Tests for tonesoul.tonebridge.commitment_extractor — pure helpers."""
+
 from __future__ import annotations
 
 import pytest
@@ -9,8 +10,8 @@ from tonesoul.tonebridge.commitment_extractor import (
     create_commitment_extractor,
 )
 
-
 # ── CommitmentStructure.to_dict ───────────────────────────────────────────────
+
 
 class TestCommitmentStructureToDict:
     def _make(self, **kw) -> CommitmentStructure:
@@ -52,6 +53,7 @@ class TestCommitmentStructureToDict:
 
 # ── CommitmentExtractor._calculate_temporal_weight ────────────────────────────
 
+
 class TestCalculateTemporalWeight:
     def setup_method(self):
         self.extractor = CommitmentExtractor()
@@ -79,6 +81,7 @@ class TestCalculateTemporalWeight:
 
 
 # ── CommitmentExtractor._classify_commitment_type ────────────────────────────
+
 
 class TestClassifyCommitmentType:
     def setup_method(self):
@@ -121,6 +124,7 @@ class TestClassifyCommitmentType:
 
 # ── CommitmentExtractor._build_core_commitment ───────────────────────────────
 
+
 class TestBuildCoreCommitment:
     def setup_method(self):
         self.extractor = CommitmentExtractor()
@@ -148,6 +152,7 @@ class TestBuildCoreCommitment:
 
 # ── CommitmentExtractor._extract_verbs / _extract_nouns ──────────────────────
 
+
 class TestExtractVerbsNouns:
     def setup_method(self):
         self.extractor = CommitmentExtractor()
@@ -174,9 +179,11 @@ class TestExtractVerbsNouns:
 
 # ── CommitmentExtractor._segment (jieba not available fallback) ───────────────
 
+
 class TestSegmentFallback:
     def test_no_jieba_returns_empty(self, monkeypatch):
         import tonesoul.tonebridge.commitment_extractor as mod
+
         monkeypatch.setattr(mod, "JIEBA_AVAILABLE", False)
         extractor = CommitmentExtractor()
         result = extractor._segment("test text")
@@ -184,6 +191,7 @@ class TestSegmentFallback:
 
 
 # ── CommitmentExtractor.extract ───────────────────────────────────────────────
+
 
 class TestExtract:
     def setup_method(self):
@@ -201,7 +209,9 @@ class TestExtract:
         assert result.commitment_type == "none"
 
     def test_result_has_correct_temporal_weight(self):
-        result = self.extractor.extract("Some longer text here for testing.", turn_index=4, total_turns=5)
+        result = self.extractor.extract(
+            "Some longer text here for testing.", turn_index=4, total_turns=5
+        )
         assert result.temporal_weight == pytest.approx(1.0)
 
     def test_result_is_commitment_structure(self):
@@ -215,6 +225,7 @@ class TestExtract:
 
     def test_verbs_limited_to_10(self, monkeypatch):
         import tonesoul.tonebridge.commitment_extractor as mod
+
         monkeypatch.setattr(mod, "JIEBA_AVAILABLE", True)
 
         fake_segments = [(f"v{i}", "v") for i in range(20)]
@@ -228,6 +239,7 @@ class TestExtract:
 
     def test_nouns_limited_to_10(self, monkeypatch):
         import tonesoul.tonebridge.commitment_extractor as mod
+
         monkeypatch.setattr(mod, "JIEBA_AVAILABLE", True)
 
         fake_segments = [(f"n{i}", "n") for i in range(20)]
@@ -241,6 +253,7 @@ class TestExtract:
 
 
 # ── create_commitment_extractor factory ───────────────────────────────────────
+
 
 class TestFactory:
     def test_returns_extractor_instance(self):

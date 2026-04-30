@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from tonesoul.shared_edit_preflight import (
     _build_working_style_consumer,
     _candidate_path_gaps,
@@ -18,8 +16,8 @@ from tonesoul.shared_edit_preflight import (
     build_shared_edit_preflight,
 )
 
-
 # ── _normalize_repo_path ──────────────────────────────────────────────────────
+
 
 class TestNormalizeRepoPath:
     def test_strips_leading_dot_slash(self):
@@ -49,6 +47,7 @@ class TestNormalizeRepoPath:
 
 # ── _path_key ─────────────────────────────────────────────────────────────────
 
+
 class TestPathKey:
     def test_casefolds(self):
         assert _path_key("ToNeSoul/FOO.py") == "tonesoul/foo.py"
@@ -58,6 +57,7 @@ class TestPathKey:
 
 
 # ── _paths_overlap ────────────────────────────────────────────────────────────
+
 
 class TestPathsOverlap:
     def test_identical_paths_overlap(self):
@@ -87,6 +87,7 @@ class TestPathsOverlap:
 
 # ── _clean_paths ─────────────────────────────────────────────────────────────
 
+
 class TestCleanPaths:
     def test_normalizes_paths(self):
         result = _clean_paths(["./a/b.py"])
@@ -114,6 +115,7 @@ class TestCleanPaths:
 
 
 # ── _claim_overlap_records ────────────────────────────────────────────────────
+
 
 class TestClaimOverlapRecords:
     def _make_claim(self, task_id, agent, paths):
@@ -180,29 +182,29 @@ class TestClaimOverlapRecords:
 
 # ── _candidate_paths_covered ─────────────────────────────────────────────────
 
+
 class TestCandidatePathsCovered:
     def test_all_covered(self):
         records = [{"overlap_paths": ["a/b.py", "c/d.py"]}]
-        assert _candidate_paths_covered(
-            candidate_paths=["a/b.py", "c/d.py"], records=records
-        ) is True
+        assert (
+            _candidate_paths_covered(candidate_paths=["a/b.py", "c/d.py"], records=records) is True
+        )
 
     def test_partial_covered_is_false(self):
         records = [{"overlap_paths": ["a/b.py"]}]
-        assert _candidate_paths_covered(
-            candidate_paths=["a/b.py", "c/d.py"], records=records
-        ) is False
+        assert (
+            _candidate_paths_covered(candidate_paths=["a/b.py", "c/d.py"], records=records) is False
+        )
 
     def test_empty_paths_is_vacuously_true(self):
         assert _candidate_paths_covered(candidate_paths=[], records=[]) is True
 
     def test_no_records_with_paths_is_false(self):
-        assert _candidate_paths_covered(
-            candidate_paths=["a/b.py"], records=[]
-        ) is False
+        assert _candidate_paths_covered(candidate_paths=["a/b.py"], records=[]) is False
 
 
 # ── _candidate_path_gaps ─────────────────────────────────────────────────────
+
 
 class TestCandidatePathGaps:
     def test_uncovered_path_is_gap(self):
@@ -226,6 +228,7 @@ class TestCandidatePathGaps:
 
 
 # ── _flatten_overlap_paths ────────────────────────────────────────────────────
+
 
 class TestFlattenOverlapPaths:
     def test_collects_all_paths(self):
@@ -251,6 +254,7 @@ class TestFlattenOverlapPaths:
 
 # ── _claim_command ────────────────────────────────────────────────────────────
 
+
 class TestClaimCommand:
     def test_contains_agent_id(self):
         cmd = _claim_command("my-agent", ["tonesoul/foo.py"])
@@ -266,6 +270,7 @@ class TestClaimCommand:
 
 
 # ── _build_working_style_consumer ────────────────────────────────────────────
+
 
 class TestBuildWorkingStyleConsumer:
     def test_absent_playbook_returns_not_present(self):
@@ -309,6 +314,7 @@ class TestBuildWorkingStyleConsumer:
 
 # ── build_shared_edit_preflight ───────────────────────────────────────────────
 
+
 def _base_kwargs(**overrides):
     base = {
         "agent_id": "agent-x",
@@ -336,9 +342,7 @@ class TestBuildSharedEditPreflight:
         assert result["decision"] == "insufficient_input"
 
     def test_blocked_readiness_gives_blocked(self):
-        result = build_shared_edit_preflight(
-            **_base_kwargs(readiness={"status": "blocked"})
-        )
+        result = build_shared_edit_preflight(**_base_kwargs(readiness={"status": "blocked"}))
         assert result["decision"] == "blocked"
 
     def test_other_agent_overlap_gives_coordinate(self):

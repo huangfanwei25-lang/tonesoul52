@@ -8,8 +8,6 @@ from tonesoul.service_manager import (
     ServiceCode,
     ServiceManager,
     ServiceStatus,
-    get_service_manager,
-    record_service_call,
 )
 
 
@@ -81,6 +79,7 @@ def test_singleton_helpers_reuse_global_manager(monkeypatch):
 
 
 # ─── Extended coverage ────────────────────────────────────────────────────────
+
 
 class TestServiceCodeEnum:
     def test_all_seven_codes_present(self):
@@ -178,8 +177,9 @@ class TestServiceStatusToDict:
         assert d["error_count"] == 2
 
     def test_last_call_preserved(self):
-        status = ServiceStatus(code=ServiceCode.TS001, priority=Priority.CRITICAL,
-                               last_call="2026-04-22T10:00:00")
+        status = ServiceStatus(
+            code=ServiceCode.TS001, priority=Priority.CRITICAL, last_call="2026-04-22T10:00:00"
+        )
         assert status.to_dict()["last_call"] == "2026-04-22T10:00:00"
 
 

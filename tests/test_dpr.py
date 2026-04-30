@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from tonesoul.yuhun.dpr import (
     COMPLEXITY_THRESHOLD,
     DPRResult,
@@ -43,7 +41,7 @@ class TestEstimateComplexity:
         assert score_cond > score_plain
 
     def test_score_capped_at_one(self):
-        massive = ("if but however unless " * 50 + "? " * 20 + " ".join(["x"] * 500))
+        massive = "if but however unless " * 50 + "? " * 20 + " ".join(["x"] * 500)
         score = _estimate_complexity(massive)
         assert score == 1.0
 

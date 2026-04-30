@@ -13,8 +13,8 @@ from tonesoul.autonomous_schedule import (
 )
 from tonesoul.dream_observability import JSON_FILENAME
 
-
 # ── RegistryEntryState ────────────────────────────────────────────────────────
+
 
 class TestRegistryEntryState:
     def test_default_values(self):
@@ -26,8 +26,13 @@ class TestRegistryEntryState:
     def test_to_dict_keys(self):
         s = RegistryEntryState(last_selected_cycle=5, last_outcome="ok")
         d = s.to_dict()
-        for k in ("last_selected_cycle", "backoff_until_cycle", "consecutive_failures",
-                  "last_outcome", "updated_at"):
+        for k in (
+            "last_selected_cycle",
+            "backoff_until_cycle",
+            "consecutive_failures",
+            "last_outcome",
+            "updated_at",
+        ):
             assert k in d
 
     def test_roundtrip(self):
@@ -43,6 +48,7 @@ class TestRegistryEntryState:
 
 
 # ── RegistryCategoryState ─────────────────────────────────────────────────────
+
 
 class TestRegistryCategoryState:
     def test_default_values(self):
@@ -67,6 +73,7 @@ class TestRegistryCategoryState:
 
 
 # ── LLMBackoffState ───────────────────────────────────────────────────────────
+
 
 class TestLLMBackoffState:
     def test_default_values(self):

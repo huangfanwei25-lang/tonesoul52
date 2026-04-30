@@ -10,8 +10,8 @@ import pytest
 
 from tonesoul.backends.file_store import FileStore
 
-
 # ── Helpers ───────────────────────────────────────────────────────────────────
+
 
 def _store(tmp_path: Path) -> FileStore:
     """Build a FileStore with all paths isolated to tmp_path."""
@@ -34,6 +34,7 @@ def _store(tmp_path: Path) -> FileStore:
 
 # ── backend_name / is_redis ───────────────────────────────────────────────────
 
+
 class TestBackendInfo:
     def test_backend_name(self, tmp_path):
         assert _store(tmp_path).backend_name == "file"
@@ -43,6 +44,7 @@ class TestBackendInfo:
 
 
 # ── get_state / set_state ─────────────────────────────────────────────────────
+
 
 class TestGetSetState:
     def test_get_state_returns_empty_when_missing(self, tmp_path):
@@ -85,6 +87,7 @@ class TestGetSetState:
 
 
 # ── append_trace / get_traces ─────────────────────────────────────────────────
+
 
 class TestTraces:
     def test_get_traces_returns_empty_when_no_file(self, tmp_path):
@@ -129,6 +132,7 @@ class TestTraces:
 
 # ── get_zones / set_zones ─────────────────────────────────────────────────────
 
+
 class TestZones:
     def test_get_zones_empty_when_no_file(self, tmp_path):
         assert _store(tmp_path).get_zones() == {}
@@ -140,6 +144,7 @@ class TestZones:
 
 
 # ── publish / subscribe (no-op) ───────────────────────────────────────────────
+
 
 class TestPubSub:
     def test_publish_returns_none(self, tmp_path):
@@ -154,6 +159,7 @@ class TestPubSub:
 
 
 # ── claim_lock / release_lock / list_locks ────────────────────────────────────
+
 
 class TestClaimLock:
     def test_claim_lock_returns_true_for_new_claim(self, tmp_path):
@@ -200,7 +206,9 @@ class TestClaimLock:
     def test_expired_claims_purged_on_list(self, tmp_path):
         s = _store(tmp_path)
         past_time = str(time.time() - 10)
-        claims = {"task-expired": {"agent": "a", "expires_at": past_time, "task_id": "task-expired"}}
+        claims = {
+            "task-expired": {"agent": "a", "expires_at": past_time, "task_id": "task-expired"}
+        }
         (tmp_path / ".aegis").mkdir(parents=True, exist_ok=True)
         s.claims_path.write_text(json.dumps(claims), encoding="utf-8")
         locks = s.list_locks()
@@ -208,6 +216,7 @@ class TestClaimLock:
 
 
 # ── acquire_commit_lock / release_commit_lock ─────────────────────────────────
+
 
 class TestCommitLock:
     def test_acquire_returns_token_string(self, tmp_path):
@@ -239,13 +248,14 @@ class TestCommitLock:
 
     def test_expired_lock_can_be_reacquired(self, tmp_path):
         s = _store(tmp_path)
-        token1 = s.acquire_commit_lock("agent-a", ttl_seconds=0)
+        s.acquire_commit_lock("agent-a", ttl_seconds=0)
         # After TTL=0 it's immediately expired, second acquire should succeed
         token2 = s.acquire_commit_lock("agent-b")
         assert token2 is not None
 
 
 # ── set_perspective / list_perspectives ──────────────────────────────────────
+
 
 class TestPerspectives:
     def test_set_and_list_perspectives(self, tmp_path):
@@ -279,6 +289,7 @@ class TestPerspectives:
 
 # ── set_checkpoint / list_checkpoints ────────────────────────────────────────
 
+
 class TestCheckpoints:
     def test_set_and_list_checkpoint(self, tmp_path):
         s = _store(tmp_path)
@@ -295,6 +306,7 @@ class TestCheckpoints:
 
 
 # ── append_compaction / get_compactions ───────────────────────────────────────
+
 
 class TestCompactions:
     def test_get_compactions_empty_when_no_file(self, tmp_path):
@@ -331,6 +343,7 @@ class TestCompactions:
 
 # ── append_subject_snapshot / get_subject_snapshots ──────────────────────────
 
+
 class TestSubjectSnapshots:
     def test_get_empty_when_no_file(self, tmp_path):
         assert _store(tmp_path).get_subject_snapshots() == []
@@ -351,6 +364,7 @@ class TestSubjectSnapshots:
 
 
 # ── set_observer_cursor / get_observer_cursor ─────────────────────────────────
+
 
 class TestObserverCursors:
     def test_get_cursor_empty_when_missing(self, tmp_path):
@@ -374,6 +388,7 @@ class TestObserverCursors:
 
 # ── append_routing_event / get_routing_events ─────────────────────────────────
 
+
 class TestRoutingEvents:
     def test_get_empty_initially(self, tmp_path):
         assert _store(tmp_path).get_routing_events() == []
@@ -393,6 +408,7 @@ class TestRoutingEvents:
 
 
 # ── append_council_verdict / get_council_verdicts ─────────────────────────────
+
 
 class TestCouncilVerdicts:
     def test_get_empty_initially(self, tmp_path):
@@ -420,6 +436,7 @@ class TestCouncilVerdicts:
 
 
 # ── _purge_expired_list_entries ───────────────────────────────────────────────
+
 
 class TestPurgeExpiredListEntries:
     def test_expired_items_removed(self, tmp_path):
@@ -454,6 +471,7 @@ class TestPurgeExpiredListEntries:
 
 
 # ── _read_list_registry edge cases ───────────────────────────────────────────
+
 
 class TestReadListRegistry:
     def test_corrupt_json_returns_empty(self, tmp_path):

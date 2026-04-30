@@ -1,4 +1,5 @@
 """Tests for tonesoul.memory.soul_db — pure helper functions."""
+
 from __future__ import annotations
 
 import json
@@ -8,7 +9,6 @@ import pytest
 
 from tonesoul.memory.soul_db import (
     FORGET_THRESHOLD,
-    MemoryLayer,
     MemoryRecord,
     MemorySource,
     _coerce_float,
@@ -22,14 +22,13 @@ from tonesoul.memory.soul_db import (
     _normalize_provenance_value,
     _parse_timestamp,
     _record_identifier,
-    _record_text,
     _record_title,
     _resolve_decay_threshold,
     _serialize_json,
 )
 
-
 # ── _iso_now ──────────────────────────────────────────────────────────────────
+
 
 class TestIsoNow:
     def test_returns_string(self):
@@ -45,6 +44,7 @@ class TestIsoNow:
 
 
 # ── _serialize_json ───────────────────────────────────────────────────────────
+
 
 class TestSerializeJson:
     def test_dict_serialized(self):
@@ -67,6 +67,7 @@ class TestSerializeJson:
 
 # ── _deserialize_json ─────────────────────────────────────────────────────────
 
+
 class TestDeserializeJson:
     def test_valid_dict(self):
         result = _deserialize_json('{"a": 1}')
@@ -83,6 +84,7 @@ class TestDeserializeJson:
 
 
 # ── _deserialize_json_value ───────────────────────────────────────────────────
+
 
 class TestDeserializeJsonValue:
     def test_valid_dict(self):
@@ -108,6 +110,7 @@ class TestDeserializeJsonValue:
 
 
 # ── _normalize_provenance_value ───────────────────────────────────────────────
+
 
 class TestNormalizeProvenanceValue:
     def test_normal_string(self):
@@ -140,6 +143,7 @@ class TestNormalizeProvenanceValue:
 
 # ── _coerce_float ─────────────────────────────────────────────────────────────
 
+
 class TestCoerceFloat:
     def test_float_passthrough(self):
         assert _coerce_float(1.5) == pytest.approx(1.5)
@@ -162,6 +166,7 @@ class TestCoerceFloat:
 
 # ── _coerce_int ───────────────────────────────────────────────────────────────
 
+
 class TestCoerceInt:
     def test_int_passthrough(self):
         assert _coerce_int(5) == 5
@@ -183,6 +188,7 @@ class TestCoerceInt:
 
 
 # ── _parse_timestamp ──────────────────────────────────────────────────────────
+
 
 class TestParseTimestamp:
     def test_z_suffix(self):
@@ -215,6 +221,7 @@ class TestParseTimestamp:
 
 # ── _resolve_decay_threshold ──────────────────────────────────────────────────
 
+
 class TestResolveDecayThreshold:
     def test_none_uses_default(self):
         assert _resolve_decay_threshold(None) == pytest.approx(FORGET_THRESHOLD)
@@ -233,6 +240,7 @@ class TestResolveDecayThreshold:
 
 
 # ── _normalize_memory_layer ───────────────────────────────────────────────────
+
 
 class TestNormalizeMemoryLayer:
     def test_valid_layer(self):
@@ -256,6 +264,7 @@ class TestNormalizeMemoryLayer:
 
 
 # ── _record_title ─────────────────────────────────────────────────────────────
+
 
 def _make_record(payload=None, source=MemorySource.CUSTOM, timestamp="2026-01-01T00:00:00Z", **kw):
     return MemoryRecord(
@@ -295,6 +304,7 @@ class TestRecordTitle:
 
 # ── _record_identifier ────────────────────────────────────────────────────────
 
+
 class TestRecordIdentifier:
     def test_uses_record_id_when_set(self):
         r = _make_record(record_id="my-id-123")
@@ -313,12 +323,23 @@ class TestRecordIdentifier:
 
 # ── _full_record ──────────────────────────────────────────────────────────────
 
+
 class TestFullRecord:
     def test_required_keys_present(self):
         r = _make_record({"title": "t"}, record_id="r1")
         d = _full_record(r, 0)
-        for k in ("id", "source", "timestamp", "title", "tags", "layer",
-                  "relevance_score", "access_count", "last_accessed", "payload"):
+        for k in (
+            "id",
+            "source",
+            "timestamp",
+            "title",
+            "tags",
+            "layer",
+            "relevance_score",
+            "access_count",
+            "last_accessed",
+            "payload",
+        ):
             assert k in d
 
     def test_id_uses_record_id(self):
@@ -340,6 +361,7 @@ class TestFullRecord:
 
 # ── _infer_source_from_filename ───────────────────────────────────────────────
 
+
 class TestInferSourceFromFilename:
     def test_self_journal(self):
         assert _infer_source_from_filename("self_journal.jsonl") == MemorySource.SELF_JOURNAL
@@ -348,10 +370,14 @@ class TestInferSourceFromFilename:
         assert _infer_source_from_filename("summary_balls.jsonl") == MemorySource.SUMMARY_BALLS
 
     def test_provenance_ledger(self):
-        assert _infer_source_from_filename("provenance_ledger.jsonl") == MemorySource.PROVENANCE_LEDGER
+        assert (
+            _infer_source_from_filename("provenance_ledger.jsonl") == MemorySource.PROVENANCE_LEDGER
+        )
 
     def test_entropy_monitor(self):
-        assert _infer_source_from_filename("entropy_monitor_log.jsonl") == MemorySource.ENTROPY_MONITOR
+        assert (
+            _infer_source_from_filename("entropy_monitor_log.jsonl") == MemorySource.ENTROPY_MONITOR
+        )
 
     def test_scan_log(self):
         assert _infer_source_from_filename("scan_log.jsonl") == MemorySource.SCAN_LOG

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 from tonesoul.governance.reflex_config import ReflexConfig, load_reflex_config
 
@@ -44,13 +43,15 @@ def test_from_dict_council_block_cannot_be_disabled():
 
 
 def test_from_dict_custom_thresholds():
-    cfg = ReflexConfig.from_dict({
-        "soul_band_thresholds": {"alert": 0.20, "strained": 0.50, "critical": 0.75},
-        "caution_prompt_threshold": 0.55,
-        "risk_prompt_threshold": 0.70,
-        "tension_reflection_threshold": 0.65,
-        "soul_integral_reflection_threshold": 0.45,
-    })
+    cfg = ReflexConfig.from_dict(
+        {
+            "soul_band_thresholds": {"alert": 0.20, "strained": 0.50, "critical": 0.75},
+            "caution_prompt_threshold": 0.55,
+            "risk_prompt_threshold": 0.70,
+            "tension_reflection_threshold": 0.65,
+            "soul_integral_reflection_threshold": 0.45,
+        }
+    )
     assert cfg.soul_band_thresholds["alert"] == 0.20
     assert cfg.caution_prompt_threshold == 0.55
     assert cfg.risk_prompt_threshold == 0.70
@@ -75,9 +76,7 @@ def test_load_reflex_config_reads_from_json(tmp_path):
         "vow_enforcement_mode": "soft",
         "caution_prompt_threshold": 0.45,
     }
-    (tmp_path / "reflex_config.json").write_text(
-        json.dumps(config_data), encoding="utf-8"
-    )
+    (tmp_path / "reflex_config.json").write_text(json.dumps(config_data), encoding="utf-8")
     cfg = load_reflex_config(repo_root=tmp_path)
     assert cfg.enabled is False
     assert cfg.vow_enforcement_mode == "soft"

@@ -1,4 +1,5 @@
 """Tests for tonesoul.tonebridge.session_reporter — pure helpers and SessionReporter."""
+
 from __future__ import annotations
 
 import pytest
@@ -9,8 +10,8 @@ from tonesoul.tonebridge.session_reporter import (
     TurningPoint,
 )
 
-
 # ── TurningPoint.to_dict ──────────────────────────────────────────────────────
+
 
 class TestTurningPointToDict:
     def test_all_keys_present(self):
@@ -23,8 +24,14 @@ class TestTurningPointToDict:
             significance=0.8,
         )
         d = tp.to_dict()
-        for key in ("turn_index", "description", "before_state", "after_state",
-                    "trigger", "significance"):
+        for key in (
+            "turn_index",
+            "description",
+            "before_state",
+            "after_state",
+            "trigger",
+            "significance",
+        ):
             assert key in d
 
     def test_values_preserved(self):
@@ -35,6 +42,7 @@ class TestTurningPointToDict:
 
 
 # ── ThemeCluster.to_dict ──────────────────────────────────────────────────────
+
 
 class TestThemeClusterToDict:
     def test_all_keys_present(self):
@@ -51,6 +59,7 @@ class TestThemeClusterToDict:
 
 
 # ── SessionReporter._detect_emotion ──────────────────────────────────────────
+
 
 class TestDetectEmotion:
     def setup_method(self):
@@ -77,6 +86,7 @@ class TestDetectEmotion:
 
 
 # ── SessionReporter._build_emotional_arc ──────────────────────────────────────
+
 
 class TestBuildEmotionalArc:
     def setup_method(self):
@@ -105,6 +115,7 @@ class TestBuildEmotionalArc:
 
 
 # ── SessionReporter._calculate_volatility ────────────────────────────────────
+
 
 class TestCalculateVolatility:
     def setup_method(self):
@@ -136,6 +147,7 @@ class TestCalculateVolatility:
 
 
 # ── SessionReporter._detect_turning_points ───────────────────────────────────
+
 
 class TestDetectTurningPoints:
     def setup_method(self):
@@ -173,6 +185,7 @@ class TestDetectTurningPoints:
 
 # ── SessionReporter._find_high_tension_moments ───────────────────────────────
 
+
 class TestFindHighTensionMoments:
     def setup_method(self):
         self.reporter = SessionReporter()
@@ -206,6 +219,7 @@ class TestFindHighTensionMoments:
 
 # ── SessionReporter._classify_session ─────────────────────────────────────────
 
+
 class TestClassifySession:
     def setup_method(self):
         self.reporter = SessionReporter()
@@ -238,6 +252,7 @@ class TestClassifySession:
 
 # ── SessionReporter._generate_summary_text ───────────────────────────────────
 
+
 class TestGenerateSummaryText:
     def setup_method(self):
         self.reporter = SessionReporter()
@@ -265,6 +280,7 @@ class TestGenerateSummaryText:
     def test_turning_points_mentioned_when_present(self):
         class _FakeTP:
             pass
+
         text = self.reporter._generate_summary_text(
             total_turns=3,
             dominant_emotion="calm",
@@ -286,6 +302,7 @@ class TestGenerateSummaryText:
 
 
 # ── SessionReporter._detect_themes ───────────────────────────────────────────
+
 
 class TestDetectThemes:
     def setup_method(self):
@@ -333,6 +350,7 @@ class TestDetectThemes:
 
 # ── SessionReporter.analyze integration ──────────────────────────────────────
 
+
 class TestSessionReporterAnalyze:
     def setup_method(self):
         self.reporter = SessionReporter()
@@ -364,17 +382,28 @@ class TestSessionReporterAnalyze:
         summary = self.reporter.analyze(history)
         d = summary.to_dict()
         for key in (
-            "session_id", "total_turns", "user_messages", "ai_responses",
-            "emotional_arc", "dominant_emotion", "emotional_volatility",
-            "turning_points", "high_tension_moments", "theme_clusters",
-            "commitments_made", "ruptures_detected", "values_strengthened",
-            "session_quality", "summary_text",
+            "session_id",
+            "total_turns",
+            "user_messages",
+            "ai_responses",
+            "emotional_arc",
+            "dominant_emotion",
+            "emotional_volatility",
+            "turning_points",
+            "high_tension_moments",
+            "theme_clusters",
+            "commitments_made",
+            "ruptures_detected",
+            "values_strengthened",
+            "session_quality",
+            "summary_text",
         ):
             assert key in d
 
     def test_commitments_counted(self):
         class _Commit:
             pass
+
         summary = self.reporter.analyze([], self_commits=[_Commit(), _Commit()])
         assert summary.commitments_made == 2
 
@@ -385,5 +414,6 @@ class TestSessionReporterAnalyze:
     def test_emergent_values_with_name(self):
         class _Val:
             name = "honesty"
+
         summary = self.reporter.analyze([], emergent_values=[_Val()])
         assert "honesty" in summary.values_strengthened

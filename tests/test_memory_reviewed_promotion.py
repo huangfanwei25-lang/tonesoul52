@@ -1,4 +1,5 @@
 """Tests for tonesoul.memory.reviewed_promotion — pure helpers and build functions."""
+
 from __future__ import annotations
 
 import pytest
@@ -11,10 +12,10 @@ from tonesoul.memory.reviewed_promotion import (
     build_reviewed_promotion_payload,
     infer_subjectivity_layer,
 )
-from tonesoul.schemas import SubjectivityLayer, SubjectivityPromotionStatus
-
+from tonesoul.schemas import SubjectivityLayer
 
 # ── _utcnow_iso ───────────────────────────────────────────────────────────────
+
 
 class TestUtcnowIso:
     def test_returns_string(self):
@@ -25,11 +26,13 @@ class TestUtcnowIso:
 
     def test_parseable(self):
         from datetime import datetime
+
         ts = _utcnow_iso()
         datetime.fromisoformat(ts.replace("Z", "+00:00"))
 
 
 # ── _payload_excerpt ──────────────────────────────────────────────────────────
+
 
 class TestPayloadExcerpt:
     def test_prefers_summary(self):
@@ -54,6 +57,7 @@ class TestPayloadExcerpt:
 
 
 # ── _merge_source_record_ids ──────────────────────────────────────────────────
+
 
 class TestMergeSourceRecordIds:
     def test_merges_both_sources(self):
@@ -101,6 +105,7 @@ class TestMergeSourceRecordIds:
 
 # ── infer_subjectivity_layer ──────────────────────────────────────────────────
 
+
 class TestInferSubjectivityLayer:
     def test_existing_layer_passthrough(self):
         result = infer_subjectivity_layer({"subjectivity_layer": "vow"}, target_layer="working")
@@ -115,15 +120,21 @@ class TestInferSubjectivityLayer:
         assert result == SubjectivityLayer.TENSION.value
 
     def test_council_reason_gives_tension(self):
-        result = infer_subjectivity_layer({"council_reason": "disagreement"}, target_layer="working")
+        result = infer_subjectivity_layer(
+            {"council_reason": "disagreement"}, target_layer="working"
+        )
         assert result == SubjectivityLayer.TENSION.value
 
     def test_conflict_keyword_gives_tension(self):
-        result = infer_subjectivity_layer({"text": "there was a conflict here"}, target_layer="working")
+        result = infer_subjectivity_layer(
+            {"text": "there was a conflict here"}, target_layer="working"
+        )
         assert result == SubjectivityLayer.TENSION.value
 
     def test_friction_keyword_gives_tension(self):
-        result = infer_subjectivity_layer({"summary": "friction between views"}, target_layer="working")
+        result = infer_subjectivity_layer(
+            {"summary": "friction between views"}, target_layer="working"
+        )
         assert result == SubjectivityLayer.TENSION.value
 
     def test_experiential_target_gives_meaning(self):
@@ -136,6 +147,7 @@ class TestInferSubjectivityLayer:
 
 
 # ── build_reviewed_promotion_decision ─────────────────────────────────────────
+
 
 def _tension_payload(**kw) -> dict:
     defaults = {
@@ -221,6 +233,7 @@ class TestBuildReviewedPromotionDecision:
 
 # ── build_reviewed_promotion_payload ──────────────────────────────────────────
 
+
 class TestBuildReviewedPromotionPayload:
     def _decision(self, **kw):
         defaults = {
@@ -235,6 +248,7 @@ class TestBuildReviewedPromotionPayload:
         }
         defaults.update(kw)
         from tonesoul.schemas import ReviewedPromotionDecision
+
         return ReviewedPromotionDecision.model_validate(defaults)
 
     def test_sets_layer_to_factual(self):
@@ -271,16 +285,19 @@ class TestBuildReviewedPromotionPayload:
 
     def test_rejected_status_raises(self):
         from tonesoul.schemas import ReviewedPromotionDecision
-        decision = ReviewedPromotionDecision.model_validate({
-            "status": "rejected",
-            "promotion_source": "manual_review",
-            "review_actor": {"actor_id": "h", "actor_type": "human"},
-            "source_subjectivity_layer": "tension",
-            "target_subjectivity_layer": "vow",
-            "reviewed_at": "2026-01-01T00:00:00Z",
-            "review_basis": "reject it",
-            "source_record_ids": [],
-        })
+
+        decision = ReviewedPromotionDecision.model_validate(
+            {
+                "status": "rejected",
+                "promotion_source": "manual_review",
+                "review_actor": {"actor_id": "h", "actor_type": "human"},
+                "source_subjectivity_layer": "tension",
+                "target_subjectivity_layer": "vow",
+                "reviewed_at": "2026-01-01T00:00:00Z",
+                "review_basis": "reject it",
+                "source_record_ids": [],
+            }
+        )
         with pytest.raises(ValueError, match="non-approved"):
             build_reviewed_promotion_payload(_tension_payload(), decision=decision)
 
