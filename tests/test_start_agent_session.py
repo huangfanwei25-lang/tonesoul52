@@ -1632,6 +1632,7 @@ def test_ensure_repo_root_on_path_adds_repo_root(monkeypatch) -> None:
 
 # ── _build_code_health_posture ────────────────────────────────────────────────
 
+
 def test_build_code_health_posture_returns_complete_when_graph_is_present() -> None:
     module = _load_script_module()
     result = module._build_code_health_posture()
@@ -1643,24 +1644,28 @@ def test_build_code_health_posture_returns_complete_when_graph_is_present() -> N
     assert isinstance(result["receiver_note"], str)
 
 
-def test_build_code_health_posture_returns_complete_posture_for_full_coverage(tmp_path: Path) -> None:
+def test_build_code_health_posture_returns_complete_posture_for_full_coverage(
+    tmp_path: Path,
+) -> None:
     module = _load_script_module()
     graph_path = tmp_path / "docs" / "status" / "codebase_graph_latest.json"
     graph_path.parent.mkdir(parents=True, exist_ok=True)
     graph_path.write_text(
-        json.dumps({
-            "generated_at": "2026-04-23T00:00:00Z",
-            "summary": {
-                "total_modules": 10,
-                "total_layer_violations": 0,
-                "self_declared_layer_count": 10,
-                "self_declared_layer_ratio": 1.0,
-            },
-            "annotation_coverage": {
-                "self_declared_layer_count": 10,
-                "self_declared_layer_ratio": 1.0,
-            },
-        }),
+        json.dumps(
+            {
+                "generated_at": "2026-04-23T00:00:00Z",
+                "summary": {
+                    "total_modules": 10,
+                    "total_layer_violations": 0,
+                    "self_declared_layer_count": 10,
+                    "self_declared_layer_ratio": 1.0,
+                },
+                "annotation_coverage": {
+                    "self_declared_layer_count": 10,
+                    "self_declared_layer_ratio": 1.0,
+                },
+            }
+        ),
         encoding="utf-8",
     )
     original_root = module._REPO_ROOT
@@ -1682,19 +1687,21 @@ def test_build_code_health_posture_returns_partial_when_ratio_below_one(tmp_path
     graph_path = tmp_path / "docs" / "status" / "codebase_graph_latest.json"
     graph_path.parent.mkdir(parents=True, exist_ok=True)
     graph_path.write_text(
-        json.dumps({
-            "generated_at": "2026-04-23T00:00:00Z",
-            "summary": {
-                "total_modules": 10,
-                "total_layer_violations": 2,
-                "self_declared_layer_count": 5,
-                "self_declared_layer_ratio": 0.5,
-            },
-            "annotation_coverage": {
-                "self_declared_layer_count": 5,
-                "self_declared_layer_ratio": 0.5,
-            },
-        }),
+        json.dumps(
+            {
+                "generated_at": "2026-04-23T00:00:00Z",
+                "summary": {
+                    "total_modules": 10,
+                    "total_layer_violations": 2,
+                    "self_declared_layer_count": 5,
+                    "self_declared_layer_ratio": 0.5,
+                },
+                "annotation_coverage": {
+                    "self_declared_layer_count": 5,
+                    "self_declared_layer_ratio": 0.5,
+                },
+            }
+        ),
         encoding="utf-8",
     )
     original_root = module._REPO_ROOT
@@ -1735,10 +1742,14 @@ def test_tier0_output_includes_code_health_posture(capsys, monkeypatch, tmp_path
         "argv",
         [
             "start_agent_session.py",
-            "--state-path", str(state_path),
-            "--traces-path", str(traces_path),
-            "--agent", "health-check-agent",
-            "--tier", "0",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--agent",
+            "health-check-agent",
+            "--tier",
+            "0",
             "--no-ack",
         ],
     )
@@ -1758,6 +1769,7 @@ def test_tier0_output_includes_code_health_posture(capsys, monkeypatch, tmp_path
 # session_pulse_status tests (trial 20: session_pulse_freshness_v1)
 # ---------------------------------------------------------------------------
 
+
 class TestSessionPulseStatus:
     def _fn(self):
         return _load_script_module()._build_session_pulse_status
@@ -1772,7 +1784,8 @@ class TestSessionPulseStatus:
         assert "receiver_note" in result
 
     def test_fresh_when_recent_timestamp(self, tmp_path: Path) -> None:
-        from datetime import datetime, timezone, timedelta
+        from datetime import datetime, timedelta, timezone
+
         module = _load_script_module()
         module._REPO_ROOT = tmp_path
         pulse_path = tmp_path / "memory" / "session_pulse_latest.json"
@@ -1790,7 +1803,8 @@ class TestSessionPulseStatus:
         assert result["last_branch"] == "main"
 
     def test_stale_when_old_timestamp(self, tmp_path: Path) -> None:
-        from datetime import datetime, timezone, timedelta
+        from datetime import datetime, timedelta, timezone
+
         module = _load_script_module()
         module._REPO_ROOT = tmp_path
         pulse_path = tmp_path / "memory" / "session_pulse_latest.json"
@@ -1814,24 +1828,49 @@ class TestSessionPulseStatus:
         assert result["present"] is False
         assert result["freshness"] == "absent"
 
-    def test_tier0_includes_session_pulse_status(
-        self, capsys, monkeypatch, tmp_path: Path
-    ) -> None:
-        from datetime import datetime, timezone, timedelta
+    def test_tier0_includes_session_pulse_status(self, capsys, monkeypatch, tmp_path: Path) -> None:
+        from datetime import datetime, timedelta, timezone
+
         module = _load_script_module()
         state_path = tmp_path / "governance_state.json"
         traces_path = tmp_path / "session_traces.jsonl"
-        state_path.write_text(json.dumps({"version": "0.1.0", "last_updated": "2026-01-01T00:00:00+00:00", "soul_integral": 0.7, "tension_history": [], "vows": [], "aegis_vetoes": []}), encoding="utf-8")
+        state_path.write_text(
+            json.dumps(
+                {
+                    "version": "0.1.0",
+                    "last_updated": "2026-01-01T00:00:00+00:00",
+                    "soul_integral": 0.7,
+                    "tension_history": [],
+                    "vows": [],
+                    "aegis_vetoes": [],
+                }
+            ),
+            encoding="utf-8",
+        )
         pulse_path = tmp_path / "memory" / "session_pulse_latest.json"
         pulse_path.parent.mkdir(parents=True, exist_ok=True)
         ts = (datetime.now(timezone.utc) - timedelta(minutes=10)).isoformat()
-        pulse_path.write_text(json.dumps({"timestamp": ts, "agent": "t-agent", "git": {"branch": "main"}}), encoding="utf-8")
+        pulse_path.write_text(
+            json.dumps({"timestamp": ts, "agent": "t-agent", "git": {"branch": "main"}}),
+            encoding="utf-8",
+        )
         saved_root = module._REPO_ROOT
         module._REPO_ROOT = tmp_path
         monkeypatch.setattr(
             sys,
             "argv",
-            ["start_agent_session.py", "--state-path", str(state_path), "--traces-path", str(traces_path), "--agent", "t-agent", "--tier", "0", "--no-ack"],
+            [
+                "start_agent_session.py",
+                "--state-path",
+                str(state_path),
+                "--traces-path",
+                str(traces_path),
+                "--agent",
+                "t-agent",
+                "--tier",
+                "0",
+                "--no-ack",
+            ],
         )
         try:
             module.main()

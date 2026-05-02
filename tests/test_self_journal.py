@@ -4,11 +4,8 @@ import uuid
 from pathlib import Path
 from types import SimpleNamespace
 
-import pytest
-
 from tonesoul.council import PreOutputCouncil
 from tonesoul.council.self_journal import (
-    _build_self_statement,
     _compute_intent_match,
     _compute_risk_level,
     _label_for_verdict,
@@ -127,8 +124,7 @@ class TestComputeIntentMatch:
 
     def test_declare_stance_with_intent_is_not_matched(self):
         assert (
-            _compute_intent_match({"user_intent": "Do X"}, self._verdict("DECLARE_STANCE"))
-            is False
+            _compute_intent_match({"user_intent": "Do X"}, self._verdict("DECLARE_STANCE")) is False
         )
 
 

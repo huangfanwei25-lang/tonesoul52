@@ -23,9 +23,7 @@ from enum import Enum
 from typing import Any, Dict, Optional
 
 __ts_layer__ = "infrastructure"
-__ts_purpose__ = (
-    "LLM router: select and dispatch to the appropriate model backend for a request."
-)
+__ts_purpose__ = "LLM router: select and dispatch to the appropriate model backend for a request."
 
 
 class ThinkingTier(str, Enum):
@@ -164,11 +162,13 @@ class LLMRouter:
         return client
 
     def _resolve_client_for_tier(self, tier: ThinkingTier) -> tuple[Any, Optional[str]]:
-        # Respect manually injected clients when no backend metadata is available.
-        # This keeps tests and explicit dependency injection from reaching out to
-        # live backends unexpectedly.
-        if self._cached_client is not None and self._cached_backend is None:
-            return self._cached_client, None
+        # Respect manually injected or already resolved clients when their backend
+        # metadata matches the requested tier. This keeps tests and explicit
+        # dependency injection from reaching out to live backends unexpectedly.
+        if self._cached_client is not None:
+            cached_tier = self._tier_from_backend(self._cached_backend)
+            if self._cached_backend is None or cached_tier is tier:
+                return self._cached_client, self._cached_backend
 
         if tier is ThinkingTier.LOCAL:
             if self._local_client is not None:

@@ -2,13 +2,11 @@ import json
 import sys
 from pathlib import Path
 
-import pytest
-
 from tonesoul.tech_trace import capture as capture_mod
 from tonesoul.tech_trace.capture import _prune_none, stable_hash, utc_now
 
-
 # ── utc_now ───────────────────────────────────────────────────────────────────
+
 
 class TestUtcNow:
     def test_returns_string(self):
@@ -19,6 +17,7 @@ class TestUtcNow:
 
 
 # ── stable_hash ───────────────────────────────────────────────────────────────
+
 
 class TestStableHash:
     def test_returns_12_chars(self):
@@ -36,6 +35,7 @@ class TestStableHash:
 
 
 # ── _prune_none ───────────────────────────────────────────────────────────────
+
 
 class TestPruneNone:
     def test_removes_none_dict_values(self):

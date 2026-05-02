@@ -1,20 +1,19 @@
 """Tests for tonesoul.market.analyzer — dataclasses, templates, SixStepAnalyzer."""
+
 from __future__ import annotations
 
 import pytest
 
 from tonesoul.market.analyzer import (
-    AnalysisResult,
     CyclicalTemplate,
-    InvestmentScenario,
     QuarterlySnapshot,
     SixStepAnalyzer,
     TechGrowthTemplate,
     TensionSignal,
 )
 
-
 # ── Helper factories ───────────────────────────────────────────────────────────
+
 
 def _snap(**kw) -> QuarterlySnapshot:
     defaults = {
@@ -37,6 +36,7 @@ def _snap(**kw) -> QuarterlySnapshot:
 
 
 # ── TechGrowthTemplate.find_tension_signals ───────────────────────────────────
+
 
 class TestTechGrowthTemplateTensionSignals:
     def setup_method(self):
@@ -93,6 +93,7 @@ class TestTechGrowthTemplateTensionSignals:
 
 # ── TechGrowthTemplate.analyze_trends ────────────────────────────────────────
 
+
 class TestTechGrowthTemplateAnalyzeTrends:
     def setup_method(self):
         self.tpl = TechGrowthTemplate()
@@ -134,6 +135,7 @@ class TestTechGrowthTemplateAnalyzeTrends:
 
 # ── TechGrowthTemplate.build_scenarios ───────────────────────────────────────
 
+
 class TestTechGrowthTemplateBuildScenarios:
     def setup_method(self):
         self.tpl = TechGrowthTemplate()
@@ -169,6 +171,7 @@ class TestTechGrowthTemplateBuildScenarios:
 
 
 # ── CyclicalTemplate.find_tension_signals ─────────────────────────────────────
+
 
 class TestCyclicalTemplateTensionSignals:
     def setup_method(self):
@@ -211,6 +214,7 @@ class TestCyclicalTemplateTensionSignals:
 
 # ── CyclicalTemplate.analyze_trends ──────────────────────────────────────────
 
+
 class TestCyclicalTemplateAnalyzeTrends:
     def setup_method(self):
         self.tpl = CyclicalTemplate()
@@ -240,6 +244,7 @@ class TestCyclicalTemplateAnalyzeTrends:
 
 # ── CyclicalTemplate.build_scenarios ──────────────────────────────────────────
 
+
 class TestCyclicalTemplateBuildScenarios:
     def setup_method(self):
         self.tpl = CyclicalTemplate(book_value_per_share=50.0)
@@ -267,6 +272,7 @@ class TestCyclicalTemplateBuildScenarios:
 
 
 # ── SixStepAnalyzer.compute_friction ─────────────────────────────────────────
+
 
 class TestComputeFriction:
     def setup_method(self):
@@ -315,6 +321,7 @@ class TestComputeFriction:
 
 
 # ── SixStepAnalyzer template delegation ──────────────────────────────────────
+
 
 class TestSixStepAnalyzerDelegation:
     def test_default_template_is_tech_growth(self):

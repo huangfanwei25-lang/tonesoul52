@@ -7,7 +7,6 @@ import copy
 import pytest
 
 from tonesoul.aegis_shield import (
-    ContentCheck,
     _validate_agent_id,
     build_chain_entry,
     compute_hash,

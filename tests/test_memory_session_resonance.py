@@ -4,11 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 
-import pytest
-
 from tonesoul.memory.session_resonance import (
-    DEFAULT_RESONANCE_THRESHOLD,
-    MIN_OCCURRENCES_FOR_PATTERN,
     RecurringPattern,
     ResonanceSignal,
     SessionFingerprint,
@@ -48,6 +44,7 @@ def _fp(
 
 # ── SessionFingerprint ────────────────────────────────────────────────────────
 
+
 class TestSessionFingerprint:
     def test_is_unresolved_for_block(self):
         fp = _fp(verdict="block")
@@ -68,12 +65,19 @@ class TestSessionFingerprint:
     def test_to_dict_has_required_keys(self):
         fp = _fp()
         d = fp.to_dict()
-        for key in ("session_id", "topics", "tension_keywords", "verdict",
-                    "drift_level", "timestamp"):
+        for key in (
+            "session_id",
+            "topics",
+            "tension_keywords",
+            "verdict",
+            "drift_level",
+            "timestamp",
+        ):
             assert key in d
 
 
 # ── fingerprint_session ───────────────────────────────────────────────────────
+
 
 class TestFingerprintSession:
     def test_returns_session_fingerprint(self):
@@ -153,6 +157,7 @@ class TestFingerprintSession:
 
 # ── resonance_score ───────────────────────────────────────────────────────────
 
+
 class TestResonanceScore:
     def test_identical_topics_gives_high_score(self):
         topics = ["governance", "tension", "council", "drift"]
@@ -171,12 +176,24 @@ class TestResonanceScore:
     def test_tension_echo_bonus_applied(self):
         now = _now()
         # Use partial overlap so base Jaccard < 1.0, leaving room for the echo bonus
-        fp_a = _fp(session_id="a", topics=["governance", "alpha", "beta"],
-                    tension_keywords=["axiom"], timestamp=_ts(now))
-        fp_b_echo = _fp(session_id="b", topics=["governance", "gamma", "delta"],
-                         tension_keywords=["axiom"], timestamp=_ts(now))
-        fp_b_no = _fp(session_id="c", topics=["governance", "gamma", "delta"],
-                       tension_keywords=[], timestamp=_ts(now))
+        fp_a = _fp(
+            session_id="a",
+            topics=["governance", "alpha", "beta"],
+            tension_keywords=["axiom"],
+            timestamp=_ts(now),
+        )
+        fp_b_echo = _fp(
+            session_id="b",
+            topics=["governance", "gamma", "delta"],
+            tension_keywords=["axiom"],
+            timestamp=_ts(now),
+        )
+        fp_b_no = _fp(
+            session_id="c",
+            topics=["governance", "gamma", "delta"],
+            tension_keywords=[],
+            timestamp=_ts(now),
+        )
         score_with_echo, _, echo = resonance_score(fp_a, fp_b_echo)
         score_no_echo, _, no_echo = resonance_score(fp_a, fp_b_no)
         assert echo is True
@@ -187,10 +204,8 @@ class TestResonanceScore:
         now = _now()
         topics = ["governance", "tension", "council"]
         fp_current = _fp(session_id="cur", topics=topics, timestamp=_ts(now))
-        fp_recent = _fp(session_id="recent", topics=topics,
-                        timestamp=_ts(now - timedelta(days=3)))
-        fp_old = _fp(session_id="old", topics=topics,
-                     timestamp=_ts(now - timedelta(days=120)))
+        fp_recent = _fp(session_id="recent", topics=topics, timestamp=_ts(now - timedelta(days=3)))
+        fp_old = _fp(session_id="old", topics=topics, timestamp=_ts(now - timedelta(days=120)))
 
         score_recent, _, _ = resonance_score(fp_current, fp_recent, now=now)
         score_old, _, _ = resonance_score(fp_current, fp_old, now=now)
@@ -211,12 +226,24 @@ class TestResonanceScore:
     def test_dual_high_drift_gives_bonus(self):
         now = _now()
         # Partial overlap so base < 1.0, leaving room for drift bonus
-        fp_a = _fp(session_id="a", topics=["governance", "alpha", "beta"],
-                    drift_level=0.8, timestamp=_ts(now))
-        fp_b_high = _fp(session_id="b", topics=["governance", "gamma", "delta"],
-                         drift_level=0.9, timestamp=_ts(now))
-        fp_b_low = _fp(session_id="c", topics=["governance", "gamma", "delta"],
-                        drift_level=0.1, timestamp=_ts(now))
+        fp_a = _fp(
+            session_id="a",
+            topics=["governance", "alpha", "beta"],
+            drift_level=0.8,
+            timestamp=_ts(now),
+        )
+        fp_b_high = _fp(
+            session_id="b",
+            topics=["governance", "gamma", "delta"],
+            drift_level=0.9,
+            timestamp=_ts(now),
+        )
+        fp_b_low = _fp(
+            session_id="c",
+            topics=["governance", "gamma", "delta"],
+            drift_level=0.1,
+            timestamp=_ts(now),
+        )
         score_high, _, _ = resonance_score(fp_a, fp_b_high)
         score_low, _, _ = resonance_score(fp_a, fp_b_low)
         assert score_high > score_low
@@ -224,11 +251,11 @@ class TestResonanceScore:
 
 # ── find_resonances ───────────────────────────────────────────────────────────
 
+
 class TestFindResonances:
     def _history(self, now, topics_list):
         return [
-            _fp(session_id=f"h{i}", topics=t,
-                timestamp=_ts(now - timedelta(days=i + 1)))
+            _fp(session_id=f"h{i}", topics=t, timestamp=_ts(now - timedelta(days=i + 1)))
             for i, t in enumerate(topics_list)
         ]
 
@@ -249,11 +276,14 @@ class TestFindResonances:
     def test_sorted_by_score_descending(self):
         now = _now()
         current = _fp(session_id="cur", topics=["governance", "tension"], timestamp=_ts(now))
-        history = self._history(now, [
-            ["governance", "tension", "council"],    # high overlap
-            ["governance"],                           # moderate
-            ["unrelated", "topics"],                  # no overlap
-        ])
+        history = self._history(
+            now,
+            [
+                ["governance", "tension", "council"],  # high overlap
+                ["governance"],  # moderate
+                ["unrelated", "topics"],  # no overlap
+            ],
+        )
         result = find_resonances(current, history, now=now)
         scores = [s.resonance_score for s in result]
         assert scores == sorted(scores, reverse=True)
@@ -271,20 +301,27 @@ class TestFindResonances:
 
     def test_tension_echo_field_set(self):
         now = _now()
-        current = _fp(session_id="cur", topics=["governance"],
-                       tension_keywords=["axiom"], timestamp=_ts(now))
-        history = [_fp(session_id="h1", topics=["governance"],
-                        tension_keywords=["axiom"], timestamp=_ts(now - timedelta(hours=1)))]
+        current = _fp(
+            session_id="cur", topics=["governance"], tension_keywords=["axiom"], timestamp=_ts(now)
+        )
+        history = [
+            _fp(
+                session_id="h1",
+                topics=["governance"],
+                tension_keywords=["axiom"],
+                timestamp=_ts(now - timedelta(hours=1)),
+            )
+        ]
         result = find_resonances(current, history, threshold=0.0, now=now)
         if result:
             assert result[0].tension_echo is True
 
     def test_days_ago_populated(self):
         now = _now()
-        current = _fp(session_id="cur", topics=["governance", "drift"],
-                       timestamp=_ts(now))
-        past = _fp(session_id="h1", topics=["governance", "drift"],
-                    timestamp=_ts(now - timedelta(days=5)))
+        current = _fp(session_id="cur", topics=["governance", "drift"], timestamp=_ts(now))
+        past = _fp(
+            session_id="h1", topics=["governance", "drift"], timestamp=_ts(now - timedelta(days=5))
+        )
         result = find_resonances(current, [past], threshold=0.0, now=now)
         if result:
             assert abs(result[0].days_ago - 5.0) < 1.0
@@ -292,14 +329,21 @@ class TestFindResonances:
     def test_prior_outcome_from_matched_session(self):
         now = _now()
         current = _fp(session_id="cur", topics=["governance"], timestamp=_ts(now))
-        history = [_fp(session_id="h1", topics=["governance"],
-                        verdict="block", timestamp=_ts(now - timedelta(hours=1)))]
+        history = [
+            _fp(
+                session_id="h1",
+                topics=["governance"],
+                verdict="block",
+                timestamp=_ts(now - timedelta(hours=1)),
+            )
+        ]
         result = find_resonances(current, history, threshold=0.0, now=now)
         if result:
             assert result[0].prior_outcome == "block"
 
 
 # ── extract_recurring_patterns ────────────────────────────────────────────────
+
 
 class TestExtractRecurringPatterns:
     def test_returns_patterns(self):
@@ -350,8 +394,7 @@ class TestExtractRecurringPatterns:
 
     def test_is_chronic_when_mostly_unresolved(self):
         history = [
-            _fp(session_id=f"s{i}", topics=["chronic_issue"], verdict="block")
-            for i in range(4)
+            _fp(session_id=f"s{i}", topics=["chronic_issue"], verdict="block") for i in range(4)
         ]
         patterns = extract_recurring_patterns(history)
         chronic = next((p for p in patterns if p.topic == "chronic_issue"), None)
@@ -359,10 +402,7 @@ class TestExtractRecurringPatterns:
             assert chronic.is_chronic is True
 
     def test_not_chronic_when_mostly_resolved(self):
-        history = [
-            _fp(session_id=f"s{i}", topics=["stable"], verdict="approve")
-            for i in range(4)
-        ]
+        history = [_fp(session_id=f"s{i}", topics=["stable"], verdict="approve") for i in range(4)]
         patterns = extract_recurring_patterns(history)
         stable = next((p for p in patterns if p.topic == "stable"), None)
         if stable:
@@ -383,19 +423,23 @@ class TestExtractRecurringPatterns:
             assert "sess-b" in p.session_ids
 
     def test_to_dict_has_required_keys(self):
-        history = [
-            _fp(session_id=f"s{i}", topics=["key_topic"])
-            for i in range(3)
-        ]
+        history = [_fp(session_id=f"s{i}", topics=["key_topic"]) for i in range(3)]
         patterns = extract_recurring_patterns(history)
         if patterns:
             d = patterns[0].to_dict()
-            for key in ("topic", "occurrences", "session_ids", "typical_outcome",
-                        "unresolved_fraction", "is_chronic"):
+            for key in (
+                "topic",
+                "occurrences",
+                "session_ids",
+                "typical_outcome",
+                "unresolved_fraction",
+                "is_chronic",
+            ):
                 assert key in d
 
 
 # ── background_tension_from_resonance ─────────────────────────────────────────
+
 
 class TestBackgroundTensionFromResonance:
     def test_no_signals_no_patterns_gives_zero(self):
@@ -418,7 +462,8 @@ class TestBackgroundTensionFromResonance:
 
     def test_chronic_patterns_raise_tension(self):
         chronic = RecurringPattern(
-            topic="governance", occurrences=5,
+            topic="governance",
+            occurrences=5,
             session_ids=["a", "b", "c", "d", "e"],
             typical_outcome="block",
             unresolved_fraction=0.8,

@@ -1,4 +1,5 @@
 """Tests for tonesoul.council.intent_reconstructor — pure helpers."""
+
 from __future__ import annotations
 
 from unittest.mock import patch
@@ -7,7 +8,6 @@ import pytest
 
 from memory.genesis import Genesis
 from tonesoul.council.intent_reconstructor import (
-    GenesisDecision,
     _average_tsr,
     _coerce_genesis,
     _compute_delta_norm,
@@ -21,8 +21,8 @@ from tonesoul.council.intent_reconstructor import (
     infer_genesis,
 )
 
-
 # ── _normalize_str ────────────────────────────────────────────────────────────
+
 
 class TestNormalizeStr:
     def test_lowercases_and_strips(self):
@@ -39,6 +39,7 @@ class TestNormalizeStr:
 
 
 # ── _coerce_genesis ───────────────────────────────────────────────────────────
+
 
 class TestCoerceGenesis:
     def test_genesis_instance_passthrough(self):
@@ -74,6 +75,7 @@ class TestCoerceGenesis:
 
 # ── _has_social_context ───────────────────────────────────────────────────────
 
+
 class TestHasSocialContext:
     def test_platform_key_triggers_social(self):
         assert _has_social_context({"platform": "moltbook"}) is True
@@ -99,6 +101,7 @@ class TestHasSocialContext:
 
 
 # ── _resolve_intent_id ────────────────────────────────────────────────────────
+
 
 class TestResolveIntentId:
     def test_prefers_intent_id(self):
@@ -126,6 +129,7 @@ class TestResolveIntentId:
 
 
 # ── _resolve_genesis ──────────────────────────────────────────────────────────
+
 
 class TestResolveGenesis:
     def test_explicit_genesis_in_context(self):
@@ -164,6 +168,7 @@ class TestResolveGenesis:
 
 # ── _normalize_baseline ───────────────────────────────────────────────────────
 
+
 class TestNormalizeBaseline:
     def test_plain_dict_with_tsr_keys(self):
         result = _normalize_baseline({"T": 0.3, "S_norm": 0.5, "R": 0.2})
@@ -185,6 +190,7 @@ class TestNormalizeBaseline:
 
 # ── _extract_text ─────────────────────────────────────────────────────────────
 
+
 class TestExtractText:
     def test_prefers_reflection(self):
         entry = {"reflection": "r1", "summary": "s1"}
@@ -205,6 +211,7 @@ class TestExtractText:
 
 # ── _average_tsr ──────────────────────────────────────────────────────────────
 
+
 class TestAverageTsr:
     def test_none_when_no_entries(self):
         assert _average_tsr([]) is None
@@ -214,17 +221,22 @@ class TestAverageTsr:
 
     def test_averages_entries(self):
         fake_score = {"tsr": {"T": 0.4, "S_norm": 0.5, "R": 0.2}}
-        with patch("tonesoul.council.intent_reconstructor.tsr_metrics.score", return_value=fake_score):
-            result = _average_tsr([
-                {"reflection": "text1"},
-                {"reflection": "text2"},
-            ])
+        with patch(
+            "tonesoul.council.intent_reconstructor.tsr_metrics.score", return_value=fake_score
+        ):
+            result = _average_tsr(
+                [
+                    {"reflection": "text1"},
+                    {"reflection": "text2"},
+                ]
+            )
         assert result is not None
         assert result["T"] == pytest.approx(0.4)
         assert result["S_norm"] == pytest.approx(0.5)
 
 
 # ── _should_warn_collapse ─────────────────────────────────────────────────────
+
 
 class TestShouldWarnCollapse:
     def test_no_warning_for_reactive_user(self):
@@ -243,10 +255,13 @@ class TestShouldWarnCollapse:
         assert _should_warn_collapse(Genesis.AUTONOMOUS, 0.9, {"trigger": "user_action"}) is False
 
     def test_warning_when_trigger_is_self_reflection(self):
-        assert _should_warn_collapse(Genesis.AUTONOMOUS, 0.9, {"trigger": "self_reflection"}) is True
+        assert (
+            _should_warn_collapse(Genesis.AUTONOMOUS, 0.9, {"trigger": "self_reflection"}) is True
+        )
 
 
 # ── _compute_delta_norm ───────────────────────────────────────────────────────
+
 
 class TestComputeDeltaNorm:
     def test_none_when_no_baseline(self):
@@ -257,13 +272,16 @@ class TestComputeDeltaNorm:
     def test_computes_delta_with_baseline(self):
         baseline = {"T": 0.0, "S_norm": 0.0, "R": 0.0}
         fake_score = {"tsr": {"T": 0.3, "S_norm": 0.4, "R": 0.0}}
-        with patch("tonesoul.council.intent_reconstructor.tsr_metrics.score", return_value=fake_score):
+        with patch(
+            "tonesoul.council.intent_reconstructor.tsr_metrics.score", return_value=fake_score
+        ):
             result = _compute_delta_norm("output text", {"tsr_baseline": baseline})
         # sqrt(0.09 + 0.16 + 0.0) = 0.5
         assert result == pytest.approx(0.5, abs=0.01)
 
 
 # ── infer_genesis (integration) ───────────────────────────────────────────────
+
 
 class TestInferGenesis:
     def test_reactive_user_context(self):
@@ -288,7 +306,9 @@ class TestInferGenesis:
     def test_collapse_warning_fires_for_autonomous_high_delta(self):
         baseline = {"T": 0.0, "S_norm": 0.0, "R": 0.0}
         fake_score = {"tsr": {"T": 0.7, "S_norm": 0.7, "R": 0.0}}
-        with patch("tonesoul.council.intent_reconstructor.tsr_metrics.score", return_value=fake_score):
+        with patch(
+            "tonesoul.council.intent_reconstructor.tsr_metrics.score", return_value=fake_score
+        ):
             decision = infer_genesis("output", context={"tsr_baseline": baseline})
         if decision.genesis is Genesis.AUTONOMOUS:
             # collapse warning only fires when delta > 0.8

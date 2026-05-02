@@ -1,7 +1,7 @@
-# ToneSoul v0.1.0 Release Notes (Draft)
+# ToneSoul v0.1.0 Release Notes
 
-> Purpose: historical draft release notes for the first public ToneSoul baseline and its verification posture.
-> Last Updated: 2026-03-23
+> Purpose: historical release notes for the first public ToneSoul baseline (v0.1.0, tagged 2026-02-14) and its verification posture.
+> Last Updated: 2026-04-26 (status drift fix — title previously suffixed "(Draft)" though tag was already published; corrected to match actual published status).
 
 日期：2026-02-14
 狀態：Published（tag `v0.1.0` 已建立）

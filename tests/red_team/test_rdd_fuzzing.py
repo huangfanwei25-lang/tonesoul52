@@ -3,6 +3,7 @@ Red Team Tests: API Fuzzing and Application Bounds.
 """
 
 import pytest
+
 pytest.importorskip("flask")
 
 from apps.api.server import app

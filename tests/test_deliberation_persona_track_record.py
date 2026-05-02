@@ -1,4 +1,5 @@
 """Tests for tonesoul.deliberation.persona_track_record — pure helpers and PersonaTrackRecord."""
+
 from __future__ import annotations
 
 import json
@@ -10,12 +11,10 @@ from tonesoul.deliberation.persona_track_record import (
     _default_stat,
     _utc_iso,
     _verdict_score,
-    create_persona_track_record,
-    default_track_record_path,
 )
 
-
 # ── _utc_iso ──────────────────────────────────────────────────────────────────
+
 
 class TestUtcIso:
     def test_returns_string(self):
@@ -26,6 +25,7 @@ class TestUtcIso:
 
 
 # ── _default_stat ─────────────────────────────────────────────────────────────
+
 
 class TestDefaultStat:
     def test_has_total(self):
@@ -42,6 +42,7 @@ class TestDefaultStat:
 
 
 # ── _verdict_score ────────────────────────────────────────────────────────────
+
 
 class TestVerdictScore:
     def test_approve_is_one(self):
@@ -71,6 +72,7 @@ class TestVerdictScore:
 
 # ── PersonaTrackRecord.create ─────────────────────────────────────────────────
 
+
 class TestPersonaTrackRecordCreate:
     def test_creates_with_three_perspectives(self, tmp_path):
         ptr = PersonaTrackRecord.create(tmp_path / "ptr.json")
@@ -86,6 +88,7 @@ class TestPersonaTrackRecordCreate:
 
 # ── PersonaTrackRecord.load_or_create ────────────────────────────────────────
 
+
 class TestPersonaTrackRecordLoadOrCreate:
     def test_creates_when_file_missing(self, tmp_path):
         ptr = PersonaTrackRecord.load_or_create(tmp_path / "ptr.json")
@@ -94,8 +97,17 @@ class TestPersonaTrackRecordLoadOrCreate:
     def test_loads_existing_file(self, tmp_path):
         path = tmp_path / "ptr.json"
         data = {
-            "global_stats": {"muse": {"total": 5, "success_sum": 4.0, "approve": 5, "refine": 0,
-                                       "declare_stance": 0, "block": 0, "unknown": 0}},
+            "global_stats": {
+                "muse": {
+                    "total": 5,
+                    "success_sum": 4.0,
+                    "approve": 5,
+                    "refine": 0,
+                    "declare_stance": 0,
+                    "block": 0,
+                    "unknown": 0,
+                }
+            },
             "resonance_stats": {},
         }
         path.write_text(json.dumps(data), encoding="utf-8")
@@ -110,6 +122,7 @@ class TestPersonaTrackRecordLoadOrCreate:
 
 
 # ── PersonaTrackRecord.save ───────────────────────────────────────────────────
+
 
 class TestPersonaTrackRecordSave:
     def test_save_writes_file(self, tmp_path):
@@ -134,6 +147,7 @@ class TestPersonaTrackRecordSave:
 
 
 # ── PersonaTrackRecord static helpers ─────────────────────────────────────────
+
 
 class TestNormalizePerspective:
     def test_valid_perspectives(self):
@@ -213,6 +227,7 @@ class TestScore:
 
 # ── PersonaTrackRecord.record_outcome ─────────────────────────────────────────
 
+
 class TestRecordOutcome:
     def test_records_approve(self, tmp_path):
         ptr = PersonaTrackRecord.create(tmp_path / "ptr.json")
@@ -240,6 +255,7 @@ class TestRecordOutcome:
 
 
 # ── PersonaTrackRecord.get_multiplier ─────────────────────────────────────────
+
 
 class TestGetMultiplier:
     def test_no_history_returns_1(self, tmp_path):
@@ -274,6 +290,7 @@ class TestGetMultiplier:
 
 
 # ── PersonaTrackRecord.summary ────────────────────────────────────────────────
+
 
 class TestSummary:
     def test_all_three_perspectives_present(self, tmp_path):

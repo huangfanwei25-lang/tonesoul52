@@ -5,8 +5,6 @@ from __future__ import annotations
 import json
 import math
 
-import pytest
-
 from tonesoul.tsr_metrics import (
     _count_hits,
     _safe_scale,
@@ -86,6 +84,7 @@ class TestResolveTsrPolicy:
     def test_invalid_lexicon_type_falls_back_to_default(self):
         resolved = resolve_tsr_policy({"lexicon": {"positive": "not_a_list"}})
         from tonesoul.tsr_metrics import DEFAULT_LEXICON
+
         assert resolved["lexicon"]["positive"] == set(DEFAULT_LEXICON["positive"])
 
 

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import builtins
+
 import pytest
 
 from tonesoul.market.data_ingest import (
@@ -9,7 +11,20 @@ from tonesoul.market.data_ingest import (
 )
 
 
+@pytest.fixture()
+def no_finmind(monkeypatch):
+    real_import = builtins.__import__
+
+    def blocked_import(name, *args, **kwargs):
+        if name == "FinMind.data" or name.startswith("FinMind."):
+            raise ImportError("FinMind blocked for no-FinMind tests")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", blocked_import)
+
+
 # ─── MarketStimulus ───────────────────────────────────────────────────────────
+
 
 class TestMarketStimulus:
     def test_required_fields(self):
@@ -43,10 +58,17 @@ class TestMarketStimulus:
 
 # ─── FINMIND_DATASETS ────────────────────────────────────────────────────────
 
+
 class TestFinmindDatasets:
     def test_contains_expected_keys(self):
-        for key in ("monthly_revenue", "income_statement", "balance_sheet",
-                    "cash_flow", "institutional", "price"):
+        for key in (
+            "monthly_revenue",
+            "income_statement",
+            "balance_sheet",
+            "cash_flow",
+            "institutional",
+            "price",
+        ):
             assert key in FINMIND_DATASETS
 
     def test_values_are_strings(self):
@@ -56,7 +78,10 @@ class TestFinmindDatasets:
 
 # ─── MarketDataIngestor (FinMind not installed) ───────────────────────────────
 
+
 class TestMarketDataIngestorNoFinMind:
+    pytestmark = pytest.mark.usefixtures("no_finmind")
+
     def test_is_available_false_when_no_finmind(self):
         ingestor = MarketDataIngestor()
         assert ingestor.is_available is False
@@ -99,6 +124,13 @@ class TestMarketDataIngestorNoFinMind:
     def test_fetch_full_profile_has_all_keys(self):
         ingestor = MarketDataIngestor()
         profile = ingestor.fetch_full_profile("2330")
-        for key in ("monthly_revenue", "income_statement", "balance_sheet",
-                    "cash_flow", "price", "per_pbr", "institutional"):
+        for key in (
+            "monthly_revenue",
+            "income_statement",
+            "balance_sheet",
+            "cash_flow",
+            "price",
+            "per_pbr",
+            "institutional",
+        ):
             assert key in profile

@@ -15,8 +15,8 @@ from tonesoul.mcp_server import (
     _require_string_list,
 )
 
-
 # ── _normalize_mode ───────────────────────────────────────────────────────────
+
 
 class TestNormalizeMode:
     def test_rules_passthrough(self):
@@ -43,6 +43,7 @@ class TestNormalizeMode:
 
 # ── _require_string_list ──────────────────────────────────────────────────────
 
+
 class TestRequireStringList:
     def test_returns_empty_when_missing(self):
         assert _require_string_list({}, "key") == []
@@ -65,6 +66,7 @@ class TestRequireStringList:
 
 # ── _require_object_list ──────────────────────────────────────────────────────
 
+
 class TestRequireObjectList:
     def test_returns_empty_when_missing(self):
         assert _require_object_list({}, "key") == []
@@ -84,6 +86,7 @@ class TestRequireObjectList:
 
 # ── _require_duration_minutes ─────────────────────────────────────────────────
 
+
 class TestRequireDurationMinutes:
     def test_zero_default(self):
         assert _require_duration_minutes({}) == pytest.approx(0.0)
@@ -101,6 +104,7 @@ class TestRequireDurationMinutes:
 
 
 # ── _claim_blocked_reasons ────────────────────────────────────────────────────
+
 
 class TestClaimBlockedReasons:
     def test_production_ready_blocked(self):
@@ -123,15 +127,14 @@ class TestClaimBlockedReasons:
 
 # ── _claim_evidence_level ─────────────────────────────────────────────────────
 
+
 class TestClaimEvidenceLevel:
     def test_blocked_reasons_returns_blocked_overclaim(self):
         level = _claim_evidence_level("anything", ["some_block"])
         assert level == "blocked_overclaim"
 
     def test_safe_pattern_returns_bounded_current_truth(self):
-        level = _claim_evidence_level(
-            "governance state is computed and persisted", []
-        )
+        level = _claim_evidence_level("governance state is computed and persisted", [])
         assert level == "bounded_current_truth"
 
     def test_unknown_returns_needs_human_review(self):
