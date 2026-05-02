@@ -113,11 +113,28 @@ def _block_council() -> PreOutputCouncil:
     )
 
 
-def _enable_mirror():
+def _patch_soul(*, scan: bool = False, enforce: bool = False):
     """Context manager: replace SOUL in pre_output_council with a copy where
-    gse.strategy_mirror_enabled=True. Needed because SoulConfig is frozen."""
-    enabled_soul = replace(SOUL, gse=replace(SOUL.gse, strategy_mirror_enabled=True))
-    return patch("tonesoul.council.pre_output_council.SOUL", enabled_soul)
+    gse.strategy_mirror_scan_enabled / strategy_mirror_enforce_enabled match
+    the requested 4-state matrix cell. Needed because SoulConfig is frozen.
+
+    Note: enforce=True without scan=True is auto-promoted to scan=True by
+    GSEConfig.__post_init__, so the (False, True) cell will end up as
+    (True, True) at runtime — that is the validated behaviour (test 4).
+    """
+    new_gse = replace(
+        SOUL.gse,
+        strategy_mirror_scan_enabled=scan,
+        strategy_mirror_enforce_enabled=enforce,
+    )
+    new_soul = replace(SOUL, gse=new_gse)
+    return patch("tonesoul.council.pre_output_council.SOUL", new_soul)
+
+
+def _enable_mirror():
+    """Backward-compat alias for tests written before the flag split.
+    Equivalent to scan=True, enforce=True (full enforcement mode)."""
+    return _patch_soul(scan=True, enforce=True)
 
 
 # ---------------------------------------------------------------------------
@@ -354,3 +371,147 @@ class TestSmokeIntegration:
         # No exception is the test
         assert verdict is not None
         assert verdict.verdict in VerdictType
+
+
+# ---------------------------------------------------------------------------
+# 4-state matrix (post 2026-04-29 scan/enforce split per Codex design)
+# ---------------------------------------------------------------------------
+
+# Egregious red text used across multiple matrix cells. Without enforcement,
+# this should NOT cause a verdict downgrade — only signature attachment.
+# With enforcement, it SHOULD downgrade APPROVE → BLOCK.
+_RED_TEXT = "限時優惠！倒數三天，錯過就沒了！現在就行動！只剩最後三個名額！"
+
+
+class TestFourStateMatrix:
+    """The four required matrix tests per Codex 2026-04-28 design.
+
+    State 1: scan=False, enforce=False  → no scan, no signature, no downgrade
+    State 2: scan=True,  enforce=False  → signature attached, NO downgrade (shadow mode)
+    State 3: scan=True,  enforce=True   → signature + downgrade rules (full enforcement)
+    State 4: scan=False, enforce=True   → auto-promoted to State 3 by GSEConfig.__post_init__
+    """
+
+    def test_state_1_both_off(self) -> None:
+        """State 1: both flags off → no signature, no downgrade, even on red text."""
+        council = _approve_council()
+        with _patch_soul(scan=False, enforce=False):
+            verdict = council.validate(
+                draft_output=_RED_TEXT,
+                context={},
+                user_intent="test",
+                auto_record_self_memory=False,
+            )
+        assert verdict.strategy_signature is None
+        assert verdict.verdict == VerdictType.APPROVE
+        assert council._strategy_detector is None
+
+    def test_state_2_scan_on_enforce_off_shadow_mode(self) -> None:
+        """State 2: scan-only shadow mode → signature attached, NO downgrade
+        even on red text. This is the Day 7-9 calibration mode.
+        """
+        council = _approve_council()
+        with _patch_soul(scan=True, enforce=False):
+            verdict = council.validate(
+                draft_output=_RED_TEXT,
+                context={},
+                user_intent="test",
+                auto_record_self_memory=False,
+            )
+        # Signature attached
+        assert verdict.strategy_signature is not None
+        # Red detected (the catalog should flag this text)
+        assert verdict.strategy_signature.has_red is True
+        # But verdict is NOT downgraded — that is the whole point of shadow mode
+        assert verdict.verdict == VerdictType.APPROVE
+        # Summary should NOT carry a strategy_mirror downgrade reason
+        assert "strategy_mirror" not in (verdict.summary or "")
+
+    def test_state_3_scan_on_enforce_on_full_enforcement(self) -> None:
+        """State 3: scan + enforce both on → red detection forces BLOCK.
+        Same semantics as the pre-split flag-on state.
+        """
+        council = _approve_council()
+        with _patch_soul(scan=True, enforce=True):
+            verdict = council.validate(
+                draft_output=_RED_TEXT,
+                context={},
+                user_intent="test",
+                auto_record_self_memory=False,
+            )
+        assert verdict.strategy_signature is not None
+        assert verdict.strategy_signature.has_red is True
+        assert verdict.verdict == VerdictType.BLOCK
+        assert "strategy_mirror" in verdict.summary
+
+    def test_state_4_enforce_only_auto_promotes_to_scan_on(self) -> None:
+        """State 4: scan=False but enforce=True is impossible.
+        GSEConfig.__post_init__ auto-promotes scan→True. Behaviour should
+        equal State 3 (full enforcement).
+        """
+        council = _approve_council()
+        with _patch_soul(scan=False, enforce=True):
+            verdict = council.validate(
+                draft_output=_RED_TEXT,
+                context={},
+                user_intent="test",
+                auto_record_self_memory=False,
+            )
+        # Should behave identically to State 3
+        assert verdict.strategy_signature is not None
+        assert verdict.strategy_signature.has_red is True
+        assert verdict.verdict == VerdictType.BLOCK
+
+
+class TestAutoPromotionContract:
+    """The enforce⇒scan auto-promotion is a load-bearing invariant of
+    the flag split. These tests pin it at the GSEConfig level so a
+    refactor that breaks the promotion fails loudly."""
+
+    def test_gse_config_enforce_only_auto_promotes_scan_to_true(self) -> None:
+        """At config-construction time, enforce=True without scan=True is
+        rewritten to scan=True. No exception, but the resulting config
+        should have scan_enabled=True even though caller passed False."""
+        from tonesoul.soul_config import GSEConfig
+
+        cfg = GSEConfig(
+            strategy_mirror_scan_enabled=False,
+            strategy_mirror_enforce_enabled=True,
+        )
+        assert cfg.strategy_mirror_scan_enabled is True
+        assert cfg.strategy_mirror_enforce_enabled is True
+
+    def test_gse_config_other_three_states_unchanged(self) -> None:
+        """The auto-promotion only fires for the impossible (False, True)
+        cell. The other three cells preserve caller's exact values."""
+        from tonesoul.soul_config import GSEConfig
+
+        cfg_off = GSEConfig(
+            strategy_mirror_scan_enabled=False,
+            strategy_mirror_enforce_enabled=False,
+        )
+        assert cfg_off.strategy_mirror_scan_enabled is False
+        assert cfg_off.strategy_mirror_enforce_enabled is False
+
+        cfg_shadow = GSEConfig(
+            strategy_mirror_scan_enabled=True,
+            strategy_mirror_enforce_enabled=False,
+        )
+        assert cfg_shadow.strategy_mirror_scan_enabled is True
+        assert cfg_shadow.strategy_mirror_enforce_enabled is False
+
+        cfg_full = GSEConfig(
+            strategy_mirror_scan_enabled=True,
+            strategy_mirror_enforce_enabled=True,
+        )
+        assert cfg_full.strategy_mirror_scan_enabled is True
+        assert cfg_full.strategy_mirror_enforce_enabled is True
+
+    def test_default_gse_config_is_both_off(self) -> None:
+        """Default state must remain off-off; this is the backward
+        compatibility guarantee for callers that don't set the flags."""
+        from tonesoul.soul_config import GSEConfig
+
+        cfg = GSEConfig()
+        assert cfg.strategy_mirror_scan_enabled is False
+        assert cfg.strategy_mirror_enforce_enabled is False
