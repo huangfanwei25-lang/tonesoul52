@@ -1,7 +1,23 @@
 # NLnet Grant Proposal Draft: ToneSoul (NGI0 Commons Fund)
 
 > Purpose: draft the NLnet grant narrative for positioning ToneSoul as a local-first public-good governance engine.
-> Last Updated: 2026-03-23
+> Last Updated: 2026-04-26 (status: DEFERRED — see block below).
+>
+> **⚠️ Status (2026-04-26): DEFERRED — submission held**
+>
+> Decision made 2026-04-26 through ToneSoul-framework review:
+> - **launch posture conflict**: collaborator-beta is currently CONDITIONAL GO and public launch is DEFERRED. Submitting an NLnet grant publicly claims "ready to be funded for adoption / scale", which directly contradicts ToneSoul's own self-declared launch posture
+> - **mid-flight architecture**: GSE Phase 864 three-layer design is in flight (Phase 864c council perspective work uncommitted; strategy_mirror Phase 2 spec just drafted 2026-04-26). The proposal would be sent during the steepest part of the maturation curve, when claims would necessarily overstate runtime presence
+> - **Axiom 1 honesty check**: §1 abstract describes the local-first SLM council, 3-layer security boundary, and tension-tensor as if they are runtime-ready. Some are spec-only (Phase 864b/c, strategy_mirror Phase 2). Sending now = overstating maturity to reviewers
+>
+> **Re-evaluate after**:
+> - Phase 864c merges to master AND
+> - strategy_mirror Phase 2 catalog (period 1) lands AND
+> - at least 1 month of real runtime data is collected (per the `baseline_regime` discipline established in addendum 2026-04-20)
+>
+> NLnet has recurring open calls — there will be a future deadline. Deferral is not abandonment.
+>
+> Tracking: see memory `project_followup_nlnet_grant_2026-04-26.md` for re-evaluation criteria.
 
 > **📝 申請建議策略 (Strategy Note)**
 > NLnet 偏好「具體、開源、保護隱私、去中心化且不依賴特定大廠」的基礎建設專案。我們應該主打 ToneSoul 作為一個 **「Local-First 的 AI 治理與認知分歧引擎 (Local-First Cognitive Divergence Engine for AI Governance)」**，強調我們藉由本地模型 (Ollama + Qwen3) 建立三視角議會，打破專有大語言模型 (Proprietary LLMs) 的同溫層與價值觀壟斷，把真正的決策思考權（Meaningful Divergence）還給開源社群與使用者。
