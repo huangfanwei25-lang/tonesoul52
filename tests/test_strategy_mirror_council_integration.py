@@ -444,6 +444,29 @@ class TestFourStateMatrix:
         assert verdict.verdict == VerdictType.BLOCK
         assert "strategy_mirror" in verdict.summary
 
+    def test_enforced_downgrade_rebuilds_user_and_audit_surfaces(self) -> None:
+        """When strategy_mirror changes APPROVE→BLOCK, downstream surfaces
+        must reflect the final verdict, not the pre-enforcement APPROVE."""
+        council = _approve_council()
+        red_text = "\u9650\u6642\u512a\u60e0\uff0c\u5012\u6578\u4e09\u5929\uff0c\u932f\u904e\u5c31\u6c92\u6709\uff0c\u6700\u5f8c\u6a5f\u6703\u3002"
+        with _patch_soul(scan=True, enforce=True):
+            verdict = council.validate(
+                draft_output=red_text,
+                context={},
+                user_intent="test",
+                auto_record_self_memory=False,
+            )
+
+        assert verdict.verdict == VerdictType.BLOCK
+        assert verdict.strategy_signature is not None
+        assert verdict.strategy_signature.has_red is True
+        assert (
+            verdict.human_summary == "Safety risks were raised, so this content should not be used."
+        )
+        assert verdict.transcript is not None
+        assert verdict.transcript["verdict"]["verdict"] == "block"
+        assert "strategy_mirror" in verdict.transcript["verdict"]["summary"]
+
     def test_state_4_enforce_only_auto_promotes_to_scan_on(self) -> None:
         """State 4: scan=False but enforce=True is impossible.
         GSEConfig.__post_init__ auto-promotes scan→True. Behaviour should

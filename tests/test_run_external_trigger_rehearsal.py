@@ -79,7 +79,7 @@ def test_unknown_ci_failure_blocks_even_if_prs_are_merged() -> None:
     )
 
     assert "ci:new_lint_failure" in payload["blocked_by"]
-    assert _status_by_id(payload)["day1_start"] == "ready"
+    assert _status_by_id(payload)["day1_start"] == "blocked"
 
 
 def test_load_events_accepts_jsonl(tmp_path: Path) -> None:

@@ -135,7 +135,16 @@ def reduce_events(events: list[dict[str, Any]], *, memory_threshold: int = 3) ->
     elif ci_debt_events:
         no_op_reasons.append("ci_red_is_known_master_lint_debt_only")
 
-    if pr_stack_ready:
+    if ci_blockers:
+        next_actions.append(
+            {
+                "id": "day1_start",
+                "status": "blocked",
+                "action": "do not start Day 1 until unknown CI failures are resolved",
+                "rationale": "PR #32/#33 readiness cannot override active CI blockers.",
+            }
+        )
+    elif pr_stack_ready:
         next_actions.append(
             {
                 "id": "day1_start",

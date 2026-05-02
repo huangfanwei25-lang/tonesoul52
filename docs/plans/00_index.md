@@ -22,7 +22,7 @@ Top-level (no prefix) = **legacy uncategorized**. Files older than this index we
 
 Files driving live work as of 2026-04-29:
 
-- `tonesoul_beta_wave_14day_2026-04-28.md` — parent 14-day collaborator-beta wave plan (Codex-authored, 2026-04-28)
+- `01_active/tonesoul_beta_wave_14day_2026-04-28.md` — parent 14-day collaborator-beta wave plan (Codex-authored, 2026-04-28)
 - `tonesoul_beta_wave_day1_2_execution_pack_2026-04-28.md` — Day 1-2 setup pack (3 task shapes + evidence schema)
 - `tonesoul_beta_wave_participant_note_template_2026-04-28.md` — session note template for participants
 - `tonesoul_beta_wave_operator_note_template_2026-04-28.md` — session note template for operators
@@ -97,7 +97,7 @@ The numbered-prefix taxonomy is borrowed from **shadowMAS** (`https://github.com
 This is the only ToneSoul subdirectory currently using the numbered prefix. Whether to extend it to other directories (`docs/architecture/`, `docs/status/`, `docs/runtime/`, etc.) is an open question — current bias is **don't extend without evidence the cold-reader problem also exists in those directories**.
 
 See:
-- `tonesoul_runtime_decomposition_2026-04-29.md` (in `docs/runtime/`) for the broader "explicit boundary contracts" theme this fits into
+- Runtime decomposition notes exist in session history but are not committed to master yet; do not cite `docs/runtime/tonesoul_runtime_decomposition_2026-04-29.md` until that file lands.
 - The shadowMAS analysis (in conversation history, not yet a file) for the specific learning chain
 
 ---

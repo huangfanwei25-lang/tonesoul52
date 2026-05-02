@@ -2,13 +2,13 @@
 
 > Purpose: define the architecture, contracts, and admission rules for the Strategy Mirror sub-layer of GSE — a per-output self-observation surface that lets the AI name the rhetorical/strategic moves it used to compose its response, rather than letting them stay implicit.
 >
-> Status: **planning aid only.** No runtime behavior described here is wired in master yet. Authority posture: AXIOMS.json, current `tonesoul/` code, and existing tests outrank this spec for present-tense behavior claims.
+> Status: **implemented default-off in master** after PR #32/#33. Runtime integration is wired through `PreOutputCouncil` behind `SOUL.gse.strategy_mirror_scan_enabled` and `SOUL.gse.strategy_mirror_enforce_enabled`; AXIOMS.json, current `tonesoul/` code, and tests still outrank this spec for present-tense behavior claims.
 >
 > Depends on: [docs/gse/plan.md](plan.md) (Phase 1, shipped 2026-04-25, commit `5c2db35`).
 >
 > Aligns with: [docs/plans/tonesoul_safe_extraction_spec_2026-04-15.md](../plans/tonesoul_safe_extraction_spec_2026-04-15.md) §3 layer placement rules and §6 anti-poison checks.
 >
-> Last updated: 2026-04-26.
+> Last updated: 2026-05-02 (status drift fix after #32/#33 merge).
 
 ---
 
