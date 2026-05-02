@@ -86,16 +86,6 @@ class PreOutputCouncil:
         language = resolve_language(context)
         divergence = build_divergence_analysis(votes, context=context)
         verdict.divergence_analysis = divergence
-        verdict.human_summary = generate_human_summary(verdict, language=language)
-        verdict.transcript = build_transcript(
-            draft_output=draft_output,
-            context=context,
-            user_intent=user_intent,
-            votes=votes,
-            coherence=coherence,
-            verdict=verdict,
-            divergence=divergence,
-        )
         # Phase 864a Layer 1: attach epistemic metadata to every verdict.
         # Runs unconditionally — null labels would force every consumer
         # (verifier, audit, future calibration) to handle absence cases.
@@ -118,6 +108,20 @@ class PreOutputCouncil:
                 draft_output=draft_output,
                 context=context,
             )
+
+        # Build human-facing and audit-facing surfaces only after optional
+        # strategy_mirror enforcement, otherwise APPROVE→BLOCK downgrades can
+        # leave stale "safe/helpful" summaries and APPROVE transcripts.
+        verdict.human_summary = generate_human_summary(verdict, language=language)
+        verdict.transcript = build_transcript(
+            draft_output=draft_output,
+            context=context,
+            user_intent=user_intent,
+            votes=votes,
+            coherence=coherence,
+            verdict=verdict,
+            divergence=divergence,
+        )
 
         # Selective self-memory: auto-record for meaningful decisions
         record_option = context.get("record_self_memory")

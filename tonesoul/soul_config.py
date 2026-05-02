@@ -14,6 +14,7 @@ Each section references the Axiom(s) it derives from.
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from typing import List
 
@@ -21,6 +22,32 @@ __ts_layer__ = "shared"
 __ts_purpose__ = (
     "Soul config: ToneSoul-specific runtime configuration — agent identity and session parameters."
 )
+
+
+def _read_bool_env(name: str, *, default: bool = False) -> bool:
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    normalized = value.strip().lower()
+    if normalized in {"1", "true", "yes", "y", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "n", "off", ""}:
+        return False
+    return default
+
+
+def _read_float_env(name: str, *, default: float) -> float:
+    value = os.environ.get(name)
+    if value is None or not value.strip():
+        return default
+    try:
+        parsed = float(value)
+    except ValueError:
+        return default
+    if 0.0 <= parsed <= 1.0:
+        return parsed
+    return default
+
 
 # ---------------------------------------------------------------------------
 # Core Values — weights for governance scoring
@@ -160,12 +187,34 @@ class GSEConfig:
     # The auto-promotion is by design (Codex 2026-04-28): enforce cannot
     # logically exist without scan — enforce operates on scan output.
     # The split makes that relationship explicit at config-load time.
-    strategy_mirror_scan_enabled: bool = False
-    strategy_mirror_enforce_enabled: bool = False
+    # Operator/runtime entry points:
+    #   TONESOUL_GSE_STRATEGY_MIRROR_SCAN_ENABLED=1
+    #   TONESOUL_GSE_STRATEGY_MIRROR_ENFORCE_ENABLED=1
+    #   TONESOUL_GSE_STRATEGY_MIRROR_CONFIDENCE_THRESHOLD=0.45
+    # Defaults remain off/off so importing SOUL without env preserves
+    # existing behaviour; Day 1 can still start scan-only shadow mode
+    # without patching Python objects in-process.
+    strategy_mirror_scan_enabled: bool = field(
+        default_factory=lambda: _read_bool_env(
+            "TONESOUL_GSE_STRATEGY_MIRROR_SCAN_ENABLED",
+            default=False,
+        )
+    )
+    strategy_mirror_enforce_enabled: bool = field(
+        default_factory=lambda: _read_bool_env(
+            "TONESOUL_GSE_STRATEGY_MIRROR_ENFORCE_ENABLED",
+            default=False,
+        )
+    )
     # Phase 2 spec §5 confidence threshold for detector. Default matches
     # the spec's CONFIDENCE_THRESHOLD constant; exposed here so beta
     # operators can lower it during calibration without code changes.
-    strategy_mirror_confidence_threshold: float = 0.5
+    strategy_mirror_confidence_threshold: float = field(
+        default_factory=lambda: _read_float_env(
+            "TONESOUL_GSE_STRATEGY_MIRROR_CONFIDENCE_THRESHOLD",
+            default=0.5,
+        )
+    )
 
     def __post_init__(self) -> None:
         # enforce ⇒ scan auto-promotion. Frozen dataclass requires

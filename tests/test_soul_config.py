@@ -7,6 +7,7 @@ from tonesoul.soul_config import (
     SOUL,
     CoreValues,
     CouncilConfig,
+    GSEConfig,
     MemoryConfig,
     RiskConfig,
     SoulConfig,
@@ -81,6 +82,41 @@ class TestMemoryConfig:
 
     def test_transfer_requires_consent_by_default(self):
         assert MemoryConfig().transfer_requires_consent is True
+
+
+class TestGSEConfig:
+    def test_strategy_mirror_defaults_off(self, monkeypatch):
+        monkeypatch.delenv("TONESOUL_GSE_STRATEGY_MIRROR_SCAN_ENABLED", raising=False)
+        monkeypatch.delenv("TONESOUL_GSE_STRATEGY_MIRROR_ENFORCE_ENABLED", raising=False)
+        cfg = GSEConfig()
+        assert cfg.strategy_mirror_scan_enabled is False
+        assert cfg.strategy_mirror_enforce_enabled is False
+
+    def test_strategy_mirror_env_enables_shadow_mode(self, monkeypatch):
+        monkeypatch.setenv("TONESOUL_GSE_STRATEGY_MIRROR_SCAN_ENABLED", "1")
+        monkeypatch.setenv("TONESOUL_GSE_STRATEGY_MIRROR_ENFORCE_ENABLED", "0")
+        cfg = GSEConfig()
+        assert cfg.strategy_mirror_scan_enabled is True
+        assert cfg.strategy_mirror_enforce_enabled is False
+
+    def test_strategy_mirror_env_enforce_auto_promotes_scan(self, monkeypatch):
+        monkeypatch.setenv("TONESOUL_GSE_STRATEGY_MIRROR_SCAN_ENABLED", "0")
+        monkeypatch.setenv("TONESOUL_GSE_STRATEGY_MIRROR_ENFORCE_ENABLED", "true")
+        cfg = GSEConfig()
+        assert cfg.strategy_mirror_scan_enabled is True
+        assert cfg.strategy_mirror_enforce_enabled is True
+
+    def test_strategy_mirror_threshold_reads_env(self, monkeypatch):
+        monkeypatch.setenv("TONESOUL_GSE_STRATEGY_MIRROR_CONFIDENCE_THRESHOLD", "0.45")
+        assert GSEConfig().strategy_mirror_confidence_threshold == 0.45
+
+    def test_strategy_mirror_bad_threshold_keeps_default(self, monkeypatch):
+        monkeypatch.setenv("TONESOUL_GSE_STRATEGY_MIRROR_CONFIDENCE_THRESHOLD", "bad")
+        assert GSEConfig().strategy_mirror_confidence_threshold == 0.5
+
+    def test_strategy_mirror_out_of_range_threshold_keeps_default(self, monkeypatch):
+        monkeypatch.setenv("TONESOUL_GSE_STRATEGY_MIRROR_CONFIDENCE_THRESHOLD", "1.5")
+        assert GSEConfig().strategy_mirror_confidence_threshold == 0.5
 
 
 class TestForbiddenActions:

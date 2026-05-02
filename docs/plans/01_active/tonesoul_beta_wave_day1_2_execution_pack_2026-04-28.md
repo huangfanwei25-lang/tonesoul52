@@ -12,7 +12,7 @@ Read these before starting the Day 1-2 setup:
 
 1. [task.md](../../task.md)
 2. [README.md](../../README.md)
-3. [docs/plans/tonesoul_beta_wave_14day_2026-04-28.md](tonesoul_beta_wave_14day_2026-04-28.md)
+3. [tonesoul_beta_wave_14day_2026-04-28.md](tonesoul_beta_wave_14day_2026-04-28.md)
 4. latest collaborator-beta preflight under `docs/status/collaborator_beta_preflight_latest.{md,json}`
 5. latest go/no-go review under `docs/status/phase726_go_nogo_*.md`
 6. latest current-truth handoff under `docs/status/codex_handoff_*.md`
@@ -150,6 +150,9 @@ This is the one Day 1 architecture coordination decision that must be made befor
 ### Option A: `scan=True / enforce=False` (preferred)
 
 - prerequisite: land the shadow-flag follow-up (`strategy_mirror_scan_enabled`, `strategy_mirror_enforce_enabled`, with `enforce => scan`)
+- operator env for runtime sessions:
+  - `TONESOUL_GSE_STRATEGY_MIRROR_SCAN_ENABLED=1`
+  - `TONESOUL_GSE_STRATEGY_MIRROR_ENFORCE_ENABLED=0`
 - session-time result:
   - signatures are attached
   - no APPROVE-to-BLOCK downgrade happens
