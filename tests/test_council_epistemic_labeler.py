@@ -1,4 +1,5 @@
 """Tests for tonesoul.council.epistemic_labeler — pure helpers and EpistemicLabeler."""
+
 from __future__ import annotations
 
 import pytest
@@ -11,8 +12,8 @@ from tonesoul.council.epistemic_labeler import (
     _normalize_for_match,
 )
 
-
 # ── _normalize_for_match ──────────────────────────────────────────────────────
+
 
 class TestNormalizeForMatch:
     def test_lowercases_ascii(self):
@@ -32,6 +33,7 @@ class TestNormalizeForMatch:
 
 # ── _contains_any ─────────────────────────────────────────────────────────────
 
+
 class TestContainsAny:
     def test_returns_true_when_marker_present(self):
         assert _contains_any("hello world", ["world", "foo"]) is True
@@ -47,6 +49,7 @@ class TestContainsAny:
 
 
 # ── _extract_evidence_refs ────────────────────────────────────────────────────
+
 
 class TestExtractEvidenceRefs:
     def test_string_value(self):
@@ -78,14 +81,17 @@ class TestExtractEvidenceRefs:
         assert refs == []
 
     def test_multiple_keys_combined(self):
-        refs = _extract_evidence_refs({
-            "evidence_refs": "ref1",
-            "citations": ["cite1"],
-        })
+        refs = _extract_evidence_refs(
+            {
+                "evidence_refs": "ref1",
+                "citations": ["cite1"],
+            }
+        )
         assert len(refs) == 2
 
 
 # ── EpistemicLabel validation ─────────────────────────────────────────────────
+
 
 class TestEpistemicLabel:
     def _make(self, **kw) -> EpistemicLabel:
@@ -131,8 +137,14 @@ class TestEpistemicLabel:
     def test_to_dict_has_all_keys(self):
         d = self._make().to_dict()
         assert set(d.keys()) == {
-            "status", "source_weight", "confidence_band", "refusal_eligible",
-            "framing_required", "framing_present", "evidence_refs", "notes",
+            "status",
+            "source_weight",
+            "confidence_band",
+            "refusal_eligible",
+            "framing_required",
+            "framing_present",
+            "evidence_refs",
+            "notes",
         }
 
     def test_to_dict_evidence_refs_is_list(self):
@@ -143,6 +155,7 @@ class TestEpistemicLabel:
 
 
 # ── EpistemicLabeler static helpers ───────────────────────────────────────────
+
 
 class TestIsMetaphysical:
     def test_detects_english_marker(self):
@@ -194,49 +207,68 @@ class TestLooksDistilled:
 
 class TestIsRefusalEligible:
     def test_speculative_without_framing_eligible(self):
-        assert EpistemicLabeler._is_refusal_eligible(
-            status="speculative_metaphysical",
-            framing_present=False,
-            normalized_intent="",
-        ) is True
+        assert (
+            EpistemicLabeler._is_refusal_eligible(
+                status="speculative_metaphysical",
+                framing_present=False,
+                normalized_intent="",
+            )
+            is True
+        )
 
     def test_speculative_with_framing_not_eligible(self):
-        assert EpistemicLabeler._is_refusal_eligible(
-            status="speculative_metaphysical",
-            framing_present=True,
-            normalized_intent="",
-        ) is False
+        assert (
+            EpistemicLabeler._is_refusal_eligible(
+                status="speculative_metaphysical",
+                framing_present=True,
+                normalized_intent="",
+            )
+            is False
+        )
 
     def test_generated_medical_intent_eligible(self):
-        assert EpistemicLabeler._is_refusal_eligible(
-            status="generated",
-            framing_present=None,
-            normalized_intent="diagnose my condition please",
-        ) is True
+        assert (
+            EpistemicLabeler._is_refusal_eligible(
+                status="generated",
+                framing_present=None,
+                normalized_intent="diagnose my condition please",
+            )
+            is True
+        )
 
     def test_generated_legal_intent_eligible(self):
-        assert EpistemicLabeler._is_refusal_eligible(
-            status="generated",
-            framing_present=None,
-            normalized_intent="legal advice for my lawsuit",
-        ) is True
+        assert (
+            EpistemicLabeler._is_refusal_eligible(
+                status="generated",
+                framing_present=None,
+                normalized_intent="legal advice for my lawsuit",
+            )
+            is True
+        )
 
     def test_retrieved_not_eligible(self):
-        assert EpistemicLabeler._is_refusal_eligible(
-            status="retrieved",
-            framing_present=None,
-            normalized_intent="what is the weather",
-        ) is False
+        assert (
+            EpistemicLabeler._is_refusal_eligible(
+                status="retrieved",
+                framing_present=None,
+                normalized_intent="what is the weather",
+            )
+            is False
+        )
 
     def test_distilled_normal_intent_not_eligible(self):
-        assert EpistemicLabeler._is_refusal_eligible(
-            status="distilled",
-            framing_present=None,
-            normalized_intent="tell me about history",
-        ) is False
+        assert (
+            EpistemicLabeler._is_refusal_eligible(
+                status="distilled",
+                framing_present=None,
+                normalized_intent="tell me about history",
+            )
+            is False
+        )
 
 
 # ── EpistemicLabeler.label integration ───────────────────────────────────────
+
 
 class TestEpistemicLabelerLabel:
     def setup_method(self):
@@ -280,17 +312,13 @@ class TestEpistemicLabelerLabel:
         assert label.refusal_eligible is True
 
     def test_distilled_with_numbers(self):
-        label = self.labeler.label(
-            "According to research in 2022, 75% of users prefer X."
-        )
+        label = self.labeler.label("According to research in 2022, 75% of users prefer X.")
         assert label.status == "distilled"
         assert label.source_weight == "secondary"
         assert label.confidence_band == "medium"
 
     def test_generated_without_evidence_or_facts(self):
-        label = self.labeler.label(
-            "Here is a creative story about dragons and magic."
-        )
+        label = self.labeler.label("Here is a creative story about dragons and magic.")
         assert label.status == "generated"
         assert label.source_weight == "inferred"
         assert label.confidence_band == "low"

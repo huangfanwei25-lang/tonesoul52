@@ -5,7 +5,7 @@ import json
 import pytest
 
 from tonesoul.gateway import GatewayClient, GatewaySession
-from tonesoul.heartbeat import ResponsibilityHeartbeat
+from tonesoul.heartbeat import Heartbeat, HeartbeatResult, ResponsibilityHeartbeat, _utc_now
 from tonesoul.openclaw_auditor import OpenClawAuditor
 
 
@@ -106,9 +106,6 @@ async def test_heartbeat_degraded_when_audit_requires_confirmation():
 
 # ── Heartbeat (file-backed) ────────────────────────────────────────────────────
 
-from tonesoul.heartbeat import Heartbeat, _utc_now, HeartbeatResult
-from tonesoul.openclaw_auditor import OpenClawAuditReport
-
 
 class TestHeartbeat:
     def test_pulse_returns_record_with_expected_keys(self, tmp_path):
@@ -181,6 +178,7 @@ class TestHeartbeat:
 
 # ── _utc_now ──────────────────────────────────────────────────────────────────
 
+
 class TestUtcNow:
     def test_returns_string(self):
         assert isinstance(_utc_now(), str)
@@ -190,11 +188,13 @@ class TestUtcNow:
 
     def test_is_iso_format(self):
         from datetime import datetime
+
         ts = _utc_now()
         datetime.fromisoformat(ts.replace("Z", "+00:00"))
 
 
 # ── HeartbeatResult.to_dict ───────────────────────────────────────────────────
+
 
 class TestHeartbeatResultToDict:
     def _make_result(self):
@@ -232,6 +232,7 @@ class TestHeartbeatResultToDict:
 
 # ── ResponsibilityHeartbeat helpers ──────────────────────────────────────────
 
+
 class _FakeWS:
     def __init__(self):
         self.messages = []
@@ -251,12 +252,15 @@ def _make_heartbeat_instance(fake_ws=None):
     async def _connect(_uri):
         return fake_ws
 
-    return ResponsibilityHeartbeat(
-        gateway_client=GatewayClient(connect_func=_connect),
-        auditor=OpenClawAuditor(persist_to_ledger=False),
-        council_check=lambda _: {"ok": True},
-        interval_seconds=0.0,
-    ), fake_ws
+    return (
+        ResponsibilityHeartbeat(
+            gateway_client=GatewayClient(connect_func=_connect),
+            auditor=OpenClawAuditor(persist_to_ledger=False),
+            council_check=lambda _: {"ok": True},
+            interval_seconds=0.0,
+        ),
+        fake_ws,
+    )
 
 
 class _FakeAudit:
@@ -335,16 +339,17 @@ class TestRunCouncilCheck:
 class TestNormalizeSession:
     def test_gateway_session_passthrough(self):
         from memory.genesis import Genesis
+
         hb, _ = _make_heartbeat_instance()
-        session = GatewaySession(
-            session_id="s1", channel="heartbeat", genesis=Genesis.MANDATORY
-        )
+        session = GatewaySession(session_id="s1", channel="heartbeat", genesis=Genesis.MANDATORY)
         result = hb._normalize_session(session)
         assert result is session
 
     def test_mapping_creates_gateway_session(self):
         hb, _ = _make_heartbeat_instance()
-        result = hb._normalize_session({"session_id": "s2", "channel": "heartbeat", "genesis": "mandatory"})
+        result = hb._normalize_session(
+            {"session_id": "s2", "channel": "heartbeat", "genesis": "mandatory"}
+        )
         assert isinstance(result, GatewaySession)
         assert result.session_id == "s2"
 

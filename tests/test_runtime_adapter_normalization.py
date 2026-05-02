@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-import pytest
-
 from tonesoul.runtime_adapter_normalization import (
     build_council_dossier_summary,
     clean_string_list,
     clean_text_list,
-    derive_council_realism_note,
     derive_council_realism_note_from_normalized,
     find_recycled_carry_forward_hazard,
     looks_like_stop_action,
@@ -14,8 +11,8 @@ from tonesoul.runtime_adapter_normalization import (
     normalize_council_dossier,
 )
 
-
 # ─── clean_text_list ─────────────────────────────────────────────────────────
+
 
 class TestCleanTextList:
     def test_none_returns_empty(self):
@@ -36,6 +33,7 @@ class TestCleanTextList:
 
 # ─── clean_string_list ───────────────────────────────────────────────────────
 
+
 class TestCleanStringList:
     def test_none_returns_empty(self):
         assert clean_string_list(None) == []
@@ -52,6 +50,7 @@ class TestCleanStringList:
 
 
 # ─── looks_like_stop_action ──────────────────────────────────────────────────
+
 
 class TestLooksLikeStopAction:
     def test_stop_colon_prefix_true(self):
@@ -74,6 +73,7 @@ class TestLooksLikeStopAction:
 
 
 # ─── normalize_closeout_payload ──────────────────────────────────────────────
+
 
 class TestNormalizeCloseoutPayload:
     def test_empty_call_returns_complete(self):
@@ -153,10 +153,13 @@ class TestNormalizeCloseoutPayload:
         )
         assert payload["status"] == "blocked"
         assert payload["stop_reason"] == ""
-        assert payload["note"] == "Closeout is blocked; do not treat this handoff as completed work."
+        assert (
+            payload["note"] == "Closeout is blocked; do not treat this handoff as completed work."
+        )
 
 
 # ─── find_recycled_carry_forward_hazard ──────────────────────────────────────
+
 
 class TestFindRecycledCarryForwardHazard:
     def test_no_newer_compactions_returns_empty(self):
@@ -224,6 +227,7 @@ class TestFindRecycledCarryForwardHazard:
 
 # ─── normalize_council_dossier ───────────────────────────────────────────────
 
+
 class TestNormalizeCouncilDossier:
     def test_non_dict_returns_empty(self):
         assert normalize_council_dossier(None) == {}
@@ -235,11 +239,13 @@ class TestNormalizeCouncilDossier:
         assert result["vote_summary"] == []
 
     def test_string_fields_extracted(self):
-        result = normalize_council_dossier({
-            "dossier_version": "1.0",
-            "final_verdict": "APPROVE",
-            "deliberation_mode": "standard",
-        })
+        result = normalize_council_dossier(
+            {
+                "dossier_version": "1.0",
+                "final_verdict": "APPROVE",
+                "deliberation_mode": "standard",
+            }
+        )
         assert result["dossier_version"] == "1.0"
         assert result["final_verdict"] == "APPROVE"
         assert result["deliberation_mode"] == "standard"
@@ -257,28 +263,32 @@ class TestNormalizeCouncilDossier:
         assert "coherence_score" not in result
 
     def test_minority_report_filtered(self):
-        result = normalize_council_dossier({
-            "minority_report": [
-                {"perspective": "guardian", "decision": "block", "reasoning": "risk"},
-                {"perspective": "", "decision": "block", "reasoning": "missing perspective"},
-            ]
-        })
+        result = normalize_council_dossier(
+            {
+                "minority_report": [
+                    {"perspective": "guardian", "decision": "block", "reasoning": "risk"},
+                    {"perspective": "", "decision": "block", "reasoning": "missing perspective"},
+                ]
+            }
+        )
         assert len(result["minority_report"]) == 1
         assert result["minority_report"][0]["perspective"] == "guardian"
 
     def test_vote_summary_filtered(self):
-        result = normalize_council_dossier({
-            "vote_summary": [
-                {"perspective": "analyst", "decision": "approve"},
-                {"perspective": "", "decision": "approve"},
-            ]
-        })
+        result = normalize_council_dossier(
+            {
+                "vote_summary": [
+                    {"perspective": "analyst", "decision": "approve"},
+                    {"perspective": "", "decision": "approve"},
+                ]
+            }
+        )
         assert len(result["vote_summary"]) == 1
 
     def test_grounding_summary_normalized(self):
-        result = normalize_council_dossier({
-            "grounding_summary": {"has_ungrounded_claims": True, "total_evidence_sources": 3}
-        })
+        result = normalize_council_dossier(
+            {"grounding_summary": {"has_ungrounded_claims": True, "total_evidence_sources": 3}}
+        )
         gs = result["grounding_summary"]
         assert gs["has_ungrounded_claims"] is True
         assert gs["total_evidence_sources"] == 3
@@ -289,6 +299,7 @@ class TestNormalizeCouncilDossier:
 
 
 # ─── derive_council_realism_note_from_normalized ─────────────────────────────
+
 
 class TestDeriveCouncilRealismNote:
     def test_empty_dossier_returns_empty(self):
@@ -321,14 +332,20 @@ class TestDeriveCouncilRealismNote:
 
 # ─── build_council_dossier_summary ───────────────────────────────────────────
 
+
 class TestBuildCouncilDossierSummary:
     def test_none_payload_returns_empty(self):
         assert build_council_dossier_summary(None) == {}
 
     def test_required_keys_present(self):
         result = build_council_dossier_summary({"final_verdict": "APPROVE"})
-        for key in ("final_verdict", "confidence_posture", "coherence_score",
-                    "dissent_ratio", "has_minority_report"):
+        for key in (
+            "final_verdict",
+            "confidence_posture",
+            "coherence_score",
+            "dissent_ratio",
+            "has_minority_report",
+        ):
             assert key in result
 
     def test_has_minority_report_false_when_empty(self):
@@ -337,32 +354,32 @@ class TestBuildCouncilDossierSummary:
 
     def test_has_minority_report_true_when_present(self):
         payload = {
-            "minority_report": [
-                {"perspective": "critic", "decision": "block", "reasoning": "risk"}
-            ]
+            "minority_report": [{"perspective": "critic", "decision": "block", "reasoning": "risk"}]
         }
         result = build_council_dossier_summary(payload)
         assert result["has_minority_report"] is True
 
     def test_surfaces_realism_note(self):
-        summary = build_council_dossier_summary({
-            "final_verdict": "approve",
-            "confidence_posture": "descriptive_only",
-            "coherence_score": 0.81,
-            "dissent_ratio": 0.2,
-            "minority_report": [
-                {
-                    "perspective": "critic",
-                    "decision": "concern",
-                    "confidence": 0.61,
-                    "reasoning": "Grounding remains thin.",
-                    "evidence": ["docs/MATH_FOUNDATIONS.md"],
-                }
-            ],
-            "confidence_decomposition": {
-                "calibration_status": "descriptive_only",
-                "adversarial_posture": "survived_dissent",
-            },
-        })
+        summary = build_council_dossier_summary(
+            {
+                "final_verdict": "approve",
+                "confidence_posture": "descriptive_only",
+                "coherence_score": 0.81,
+                "dissent_ratio": 0.2,
+                "minority_report": [
+                    {
+                        "perspective": "critic",
+                        "decision": "concern",
+                        "confidence": 0.61,
+                        "reasoning": "Grounding remains thin.",
+                        "evidence": ["docs/MATH_FOUNDATIONS.md"],
+                    }
+                ],
+                "confidence_decomposition": {
+                    "calibration_status": "descriptive_only",
+                    "adversarial_posture": "survived_dissent",
+                },
+            }
+        )
         assert summary["has_minority_report"] is True
         assert "Descriptive agreement record only" in summary["realism_note"]

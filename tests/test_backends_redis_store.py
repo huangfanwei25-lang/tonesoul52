@@ -2,17 +2,14 @@
 
 from __future__ import annotations
 
-import json
 from collections import defaultdict
-from typing import Any, Dict, Iterator, List, Optional
-from unittest.mock import MagicMock, patch
-
-import pytest
+from typing import Any, Dict, List
+from unittest.mock import MagicMock
 
 from tonesoul.backends.redis_store import RedisStore
 
-
 # ── In-memory fake Redis ──────────────────────────────────────────────────────
+
 
 class FakeRedis:
     """Minimal in-memory Redis stand-in for unit testing RedisStore."""
@@ -48,13 +45,13 @@ class FakeRedis:
 
     def ltrim(self, key, start, end):
         lst = self._lists[key]
-        self._lists[key] = lst[start: end + 1]
+        self._lists[key] = lst[start : end + 1]
 
     def lrange(self, key, start, end):
         lst = self._lists[key]
         if end == -1:
             return lst[start:]
-        return lst[start: end + 1]
+        return lst[start : end + 1]
 
     # stream ops
     def xadd(self, stream, fields):
@@ -98,6 +95,7 @@ def _store() -> tuple[RedisStore, FakeRedis]:
 
 # ── Backend properties ────────────────────────────────────────────────────────
 
+
 class TestRedisStoreBackendProperties:
     def test_backend_name_is_redis(self):
         store, _ = _store()
@@ -109,6 +107,7 @@ class TestRedisStoreBackendProperties:
 
 
 # ── Governance state ──────────────────────────────────────────────────────────
+
 
 class TestRedisStoreGovernanceState:
     def test_get_state_empty_returns_empty_dict(self):
@@ -135,6 +134,7 @@ class TestRedisStoreGovernanceState:
 
 # ── Zones ─────────────────────────────────────────────────────────────────────
 
+
 class TestRedisStoreZones:
     def test_get_zones_empty_returns_empty_dict(self):
         store, _ = _store()
@@ -153,6 +153,7 @@ class TestRedisStoreZones:
 
 
 # ── Traces (stream) ───────────────────────────────────────────────────────────
+
 
 class TestRedisStoreTraces:
     def test_append_and_get_traces(self):
@@ -188,6 +189,7 @@ class TestRedisStoreTraces:
 
 # ── Compactions ───────────────────────────────────────────────────────────────
 
+
 class TestRedisStoreCompactions:
     def test_append_and_get_compaction(self):
         store, _ = _store()
@@ -211,6 +213,7 @@ class TestRedisStoreCompactions:
 
 # ── Subject snapshots ─────────────────────────────────────────────────────────
 
+
 class TestRedisStoreSubjectSnapshots:
     def test_append_and_get_snapshot(self):
         store, _ = _store()
@@ -228,6 +231,7 @@ class TestRedisStoreSubjectSnapshots:
 
 
 # ── Observer cursor ───────────────────────────────────────────────────────────
+
 
 class TestRedisStoreObserverCursor:
     def test_set_and_get_cursor(self):
@@ -248,6 +252,7 @@ class TestRedisStoreObserverCursor:
 
 # ── Routing events ────────────────────────────────────────────────────────────
 
+
 class TestRedisStoreRoutingEvents:
     def test_append_and_get_routing_event(self):
         store, _ = _store()
@@ -266,6 +271,7 @@ class TestRedisStoreRoutingEvents:
 
 # ── Council verdicts ──────────────────────────────────────────────────────────
 
+
 class TestRedisStoreCouncilVerdicts:
     def test_append_and_get_verdict(self):
         store, _ = _store()
@@ -283,6 +289,7 @@ class TestRedisStoreCouncilVerdicts:
 
 
 # ── Perspectives ──────────────────────────────────────────────────────────────
+
 
 class TestRedisStorePerspectives:
     def test_set_and_list_perspective(self):
@@ -303,6 +310,7 @@ class TestRedisStorePerspectives:
 
 # ── Checkpoints ───────────────────────────────────────────────────────────────
 
+
 class TestRedisStoreCheckpoints:
     def test_set_and_list_checkpoint(self):
         store, _ = _store()
@@ -317,6 +325,7 @@ class TestRedisStoreCheckpoints:
 
 
 # ── Locks ─────────────────────────────────────────────────────────────────────
+
 
 class TestRedisStoreLocks:
     def test_claim_lock_succeeds_first_time(self):
@@ -357,7 +366,7 @@ class TestRedisStoreLocks:
         store.claim_lock("t1", {"agent": "a1"})
         store.claim_lock("t2", {"agent": "a2"})
         locks = store.list_locks()
-        task_ids = [l["task_id"] for l in locks]
+        task_ids = [lock["task_id"] for lock in locks]
         assert "t1" in task_ids
         assert "t2" in task_ids
 
@@ -366,10 +375,11 @@ class TestRedisStoreLocks:
         store.claim_lock("t1", {"agent": "a1"})
         store.release_lock("t1", agent_id="a1")
         locks = store.list_locks()
-        assert not any(l.get("task_id") == "t1" for l in locks)
+        assert not any(lock.get("task_id") == "t1" for lock in locks)
 
 
 # ── Commit lock ───────────────────────────────────────────────────────────────
+
 
 class TestRedisStoreCommitLock:
     def test_acquire_commit_lock_returns_token(self):
@@ -400,6 +410,7 @@ class TestRedisStoreCommitLock:
 
 # ── Pub/sub ───────────────────────────────────────────────────────────────────
 
+
 class TestRedisStorePublish:
     def test_publish_sends_to_fake(self):
         store, fake = _store()
@@ -409,6 +420,7 @@ class TestRedisStorePublish:
 
 
 # ── Import from FileStore ─────────────────────────────────────────────────────
+
 
 class TestRedisStoreImportFromFileStore:
     def test_imports_state_and_zones(self):

@@ -21,8 +21,8 @@ from tonesoul.council.types import (
     VoteDecision,
 )
 
-
 # ── _string_list ──────────────────────────────────────────────────────────────
+
 
 class TestStringList:
     def test_normal_list(self):
@@ -40,6 +40,7 @@ class TestStringList:
 
 # ── _grounding_name ───────────────────────────────────────────────────────────
 
+
 class TestGroundingName:
     def test_string_lowercased(self):
         assert _grounding_name("GROUNDED") == "grounded"
@@ -53,6 +54,7 @@ class TestGroundingName:
 
 
 # ── _coerce_ratio ─────────────────────────────────────────────────────────────
+
 
 class TestCoerceRatio:
     def test_none_returns_none(self):
@@ -69,6 +71,7 @@ class TestCoerceRatio:
 
 
 # ── _coverage_posture ─────────────────────────────────────────────────────────
+
 
 class TestCoveragePosture:
     def test_empty_is_none(self):
@@ -90,14 +93,19 @@ class TestCoveragePosture:
         assert label == "partial"
 
     def test_four_perspectives_is_broad(self):
-        perspectives = [PerspectiveType.ANALYST, PerspectiveType.CRITIC,
-                        PerspectiveType.ADVOCATE, PerspectiveType.GUARDIAN]
+        perspectives = [
+            PerspectiveType.ANALYST,
+            PerspectiveType.CRITIC,
+            PerspectiveType.ADVOCATE,
+            PerspectiveType.GUARDIAN,
+        ]
         votes = [_vote(p, VoteDecision.APPROVE, 0.8, "ok") for p in perspectives]
         _, label = _coverage_posture(votes)
         assert label == "broad"
 
 
 # ── _evidence_posture ─────────────────────────────────────────────────────────
+
 
 class TestEvidencePosture:
     def test_zero_is_none(self):

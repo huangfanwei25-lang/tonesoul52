@@ -16,7 +16,7 @@ from .summary_generator import (
     generate_human_summary,
     resolve_language,
 )
-from .types import CouncilVerdict, PerspectiveType
+from .types import CouncilVerdict, PerspectiveType, VerdictType
 from .verdict import generate_verdict
 
 __ts_layer__ = "governance"
@@ -47,6 +47,11 @@ class PreOutputCouncil:
         self.block_threshold = block_threshold
         # Phase 864a Layer 1: deterministic, side-effect-free; safe to share.
         self._epistemic_labeler = EpistemicLabeler()
+        # Phase 2 strategy_mirror: lazy-initialised on first scan. Built
+        # only if SOUL.gse.strategy_mirror_scan_enabled is True; cached per
+        # PreOutputCouncil instance so the catalog (~150 entries) is read
+        # at most once per council lifetime.
+        self._strategy_detector = None
 
     def validate(
         self,
@@ -99,9 +104,22 @@ class PreOutputCouncil:
             context=context,
             user_intent=user_intent,
         )
-        # Selective self-memory: auto-record for meaningful decisions
-        from .types import VerdictType
 
+        # Phase 2 strategy_mirror: opt-in self-scan of the draft for
+        # rhetorical/strategic moves. Two-flag scheme (2026-04-29 split):
+        #   - strategy_mirror_scan_enabled: run scan + attach signature
+        #   - strategy_mirror_enforce_enabled: also force-downgrade
+        #     APPROVE→BLOCK on red / undeclared yellow per spec §5.3/§5.4
+        # enforce⇒scan is auto-enforced in GSEConfig.__post_init__, so
+        # checking scan_enabled here is sufficient as the entry gate.
+        if SOUL.gse.strategy_mirror_scan_enabled:
+            verdict = self._apply_strategy_mirror(
+                verdict=verdict,
+                draft_output=draft_output,
+                context=context,
+            )
+
+        # Selective self-memory: auto-record for meaningful decisions
         record_option = context.get("record_self_memory")
         should_auto_record = verdict.verdict in (
             VerdictType.BLOCK,
@@ -115,6 +133,100 @@ class PreOutputCouncil:
                 record_self_memory(verdict, context=context, path=path)
             except OSError:
                 pass
+        return verdict
+
+    # ------------------------------------------------------------------
+    # Phase 2 strategy_mirror integration (spec §5)
+    # ------------------------------------------------------------------
+
+    def _get_strategy_detector(self):
+        """Lazy-init the StrategyDetector with the period catalog loaded.
+
+        Returns None if the catalog cannot be loaded (e.g. dev environment
+        without the JSON file), so that scan-only shadow mode or full
+        enforcement mode do not hard-fail an otherwise functioning council.
+        """
+        if self._strategy_detector is not None:
+            return self._strategy_detector
+        try:
+            from tonesoul.gse.strategy_mirror import CatalogLoader
+            from tonesoul.gse.strategy_mirror.detector import StrategyDetector
+
+            loader = CatalogLoader().load()
+            if len(loader) == 0:
+                # Catalog directory exists but no entries — treat as disabled.
+                return None
+            self._strategy_detector = StrategyDetector(
+                loader,
+                confidence_threshold=SOUL.gse.strategy_mirror_confidence_threshold,
+            )
+            return self._strategy_detector
+        except Exception:  # pragma: no cover — defensive
+            return None
+
+    def _apply_strategy_mirror(
+        self,
+        *,
+        verdict: CouncilVerdict,
+        draft_output: str,
+        context: dict,
+    ) -> CouncilVerdict:
+        """Run the strategy mirror and adjust the verdict per spec §5.
+
+        Two-flag scheme (post 2026-04-29 split):
+          - scan_enabled gates whether scan runs (entry check is in
+            validate(), so by the time we reach this method, scan is on)
+          - enforce_enabled gates whether force-downgrade applies after
+            scan completes
+
+        Enforcement mode (scan + enforce both on):
+          - has_red → force-downgrade APPROVE verdicts to BLOCK
+          - has_undeclared_yellow + APPROVE → downgrade to BLOCK
+          - signature attached regardless
+
+        Shadow mode (scan on, enforce off):
+          - signature attached
+          - NO downgrade — verdict passes through unchanged
+          - this is the mode for Day 7-9 calibration of the 14-day beta
+            wave: capture first-hand evidence without changing council
+            verdicts that participants experience
+
+        NOT implemented in Phase 2 (deferred to Phase 4 reflection loop):
+          - re-running perspectives with awareness of red moves
+            (spec §5.3 step 3 — requires per-perspective awareness logic
+            that does not exist yet; Phase 4 / RFC-014 will add it)
+        """
+        detector = self._get_strategy_detector()
+        if detector is None:
+            return verdict
+
+        declared_moves = context.get("declared_moves") if isinstance(context, dict) else None
+        signature = detector.scan(draft_output, declared_moves=declared_moves)
+        verdict.strategy_signature = signature
+
+        # Shadow mode short-circuit: signature attached but no enforcement.
+        if not SOUL.gse.strategy_mirror_enforce_enabled:
+            return verdict
+
+        # Force-downgrade rule (enforce mode). Note: BLOCK / DECLARE_STANCE /
+        # REFINE verdicts are left as-is — only APPROVE is overridden, since
+        # the existing verdict types already express disagreement at
+        # lower-than-APPROVE levels.
+        if verdict.verdict == VerdictType.APPROVE:
+            reason_parts: List[str] = []
+            if signature.has_red:
+                red_names = [d.move.name for d in signature.red_moves()]
+                reason_parts.append(f"strategy_mirror: red moves detected ({', '.join(red_names)})")
+            if signature.has_undeclared_yellow:
+                undeclared_names = [d.move.name for d in signature.undeclared_yellow_moves()]
+                reason_parts.append(
+                    f"strategy_mirror: undeclared yellow moves "
+                    f"({', '.join(undeclared_names)}) — declare or reword"
+                )
+            if reason_parts:
+                verdict.verdict = VerdictType.BLOCK
+                addendum = " | ".join(reason_parts)
+                verdict.summary = f"{verdict.summary} | {addendum}" if verdict.summary else addendum
         return verdict
 
     def _default_perspectives(

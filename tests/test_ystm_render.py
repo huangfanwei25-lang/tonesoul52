@@ -3,14 +3,12 @@
 from __future__ import annotations
 
 from types import SimpleNamespace
-from typing import Any, Dict, List, Optional, Tuple
-
-import pytest
+from typing import Any, Dict, List, Tuple
 
 from tonesoul.ystm.render import render_html, render_svg, xml_escape
 
-
 # ── Helpers ───────────────────────────────────────────────────────────────────
+
 
 def _make_node(node_id: str = "n1", text: str = "hello") -> Any:
     """Create a minimal mock Node for render tests."""
@@ -49,6 +47,7 @@ def _minimal_render_args(
 
 # ── xml_escape ────────────────────────────────────────────────────────────────
 
+
 class TestXmlEscape:
     def test_ampersand_escaped(self):
         assert xml_escape("a & b") == "a &amp; b"
@@ -82,6 +81,7 @@ class TestXmlEscape:
 
 
 # ── render_svg ────────────────────────────────────────────────────────────────
+
 
 class TestRenderSvg:
     def test_returns_string(self):
@@ -205,6 +205,7 @@ class TestRenderSvg:
 
 # ── render_html ───────────────────────────────────────────────────────────────
 
+
 class TestRenderHtml:
     def _make_svg(self) -> str:
         return render_svg(**_minimal_render_args())
@@ -281,9 +282,11 @@ class TestRenderHtml:
 
 # ── render_png (PIL optional) ─────────────────────────────────────────────────
 
+
 class TestRenderPng:
     def test_returns_none_without_pil(self, monkeypatch):
         import builtins
+
         original_import = builtins.__import__
 
         def no_pil(name, *args, **kwargs):
@@ -293,6 +296,7 @@ class TestRenderPng:
 
         monkeypatch.setattr(builtins, "__import__", no_pil)
         from tonesoul.ystm import render as render_mod
+
         args = _minimal_render_args()
         result = render_mod.render_png(**args)
         assert result is None

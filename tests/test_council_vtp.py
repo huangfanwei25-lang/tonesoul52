@@ -1,13 +1,23 @@
 """Tests for tonesoul/council/vtp.py"""
+
 from __future__ import annotations
 
 import pytest
 
+from tonesoul.council.types import (
+    CoherenceScore,
+    CouncilVerdict,
+    GroundingStatus,
+    PerspectiveType,
+    PerspectiveVote,
+    VerdictType,
+    VoteDecision,
+)
 from tonesoul.council.vtp import (
-    VTPDecision,
     VTP_STATUS_CONTINUE,
     VTP_STATUS_DEFER,
     VTP_STATUS_TERMINATE,
+    VTPDecision,
     _append_unique,
     _clamp01,
     _compute_rel_score,
@@ -18,20 +28,11 @@ from tonesoul.council.vtp import (
     _truthy,
     evaluate_vtp,
 )
-from tonesoul.council.types import (
-    CoherenceScore,
-    CouncilVerdict,
-    GroundingStatus,
-    PerspectiveType,
-    PerspectiveVote,
-    VerdictType,
-    VoteDecision,
-)
-
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _verdict(
     verdict_type=VerdictType.APPROVE,
@@ -79,6 +80,7 @@ def _equal_weights():
 # ---------------------------------------------------------------------------
 # TestNormalizedRelWeights
 # ---------------------------------------------------------------------------
+
 
 class TestNormalizedRelWeights:
     def test_normal_weights_sum_to_one(self):
@@ -132,6 +134,7 @@ class TestNormalizedRelWeights:
 # TestResolveTier
 # ---------------------------------------------------------------------------
 
+
 class TestResolveTier:
     def test_tier_1_uppercase(self):
         assert _resolve_tier("TIER_1") == "TIER_1"
@@ -158,6 +161,7 @@ class TestResolveTier:
 # ---------------------------------------------------------------------------
 # TestResolveContextProfile
 # ---------------------------------------------------------------------------
+
 
 class TestResolveContextProfile:
     def _v(self):
@@ -199,6 +203,7 @@ class TestResolveContextProfile:
 # TestResolveRelWeights
 # ---------------------------------------------------------------------------
 
+
 class TestResolveRelWeights:
     def test_returns_required_keys(self):
         result = _resolve_rel_weights("tier_2", {}, _verdict())
@@ -208,9 +213,7 @@ class TestResolveRelWeights:
 
     def test_high_impact_short_lower_than_base(self):
         base_result = _resolve_rel_weights("TIER_2", {}, _verdict())
-        high_impact_result = _resolve_rel_weights(
-            "TIER_2", {"domain": "medical"}, _verdict()
-        )
+        high_impact_result = _resolve_rel_weights("TIER_2", {"domain": "medical"}, _verdict())
         assert high_impact_result["weights"]["short"] < base_result["weights"]["short"]
 
     def test_weights_sum_to_one(self):
@@ -247,6 +250,7 @@ class TestResolveRelWeights:
 # TestClamp01
 # ---------------------------------------------------------------------------
 
+
 class TestClamp01:
     def test_midpoint_unchanged(self):
         assert _clamp01(0.5) == pytest.approx(0.5)
@@ -273,6 +277,7 @@ class TestClamp01:
 # ---------------------------------------------------------------------------
 # TestComputeRelScore
 # ---------------------------------------------------------------------------
+
 
 class TestComputeRelScore:
     def _weights(self):
@@ -384,6 +389,7 @@ class TestComputeRelScore:
 # TestAppendUnique
 # ---------------------------------------------------------------------------
 
+
 class TestAppendUnique:
     def test_appends_when_not_present(self):
         items = ["a", "b"]
@@ -419,6 +425,7 @@ class TestAppendUnique:
 # TestTruthy
 # ---------------------------------------------------------------------------
 
+
 class TestTruthy:
     def test_truthy_key_returns_true(self):
         assert _truthy({"flag": True}, "flag") is True
@@ -442,6 +449,7 @@ class TestTruthy:
 # ---------------------------------------------------------------------------
 # TestVTPDecisionToDict
 # ---------------------------------------------------------------------------
+
 
 class TestVTPDecisionToDict:
     def test_basic_fields_always_present(self):
@@ -537,9 +545,11 @@ class TestVTPDecisionToDict:
 # TestEvaluateVtp (integration)
 # ---------------------------------------------------------------------------
 
+
 class TestEvaluateVtp:
     def test_no_triggers_with_complete_genesis_is_continue(self):
         from memory.genesis import Genesis
+
         v = _verdict(genesis=Genesis.REACTIVE_USER)
         result = evaluate_vtp(v, {})
         assert result.status == VTP_STATUS_CONTINUE
@@ -554,6 +564,7 @@ class TestEvaluateVtp:
 
     def test_force_trigger_with_confirmation_and_complete_genesis_is_terminate(self):
         from memory.genesis import Genesis
+
         v = _verdict(genesis=Genesis.REACTIVE_USER)
         result = evaluate_vtp(
             v,
@@ -568,6 +579,7 @@ class TestEvaluateVtp:
 
     def test_verdict_block_adds_verdict_block_to_evidence(self):
         from memory.genesis import Genesis
+
         v = _verdict(verdict_type=VerdictType.BLOCK, genesis=Genesis.REACTIVE_USER)
         result = evaluate_vtp(v, {})
         assert "verdict_block" in result.evidence
@@ -580,6 +592,7 @@ class TestEvaluateVtp:
 
     def test_result_includes_rel_payload(self):
         from memory.genesis import Genesis
+
         v = _verdict(genesis=Genesis.REACTIVE_USER)
         result = evaluate_vtp(v, {})
         assert result.rel is not None
@@ -609,6 +622,7 @@ class TestEvaluateVtp:
 
     def test_continue_has_no_confession(self):
         from memory.genesis import Genesis
+
         v = _verdict(genesis=Genesis.REACTIVE_USER)
         result = evaluate_vtp(v, {})
         assert result.status == VTP_STATUS_CONTINUE
@@ -622,12 +636,14 @@ class TestEvaluateVtp:
 
     def test_none_context_treated_as_empty(self):
         from memory.genesis import Genesis
+
         v = _verdict(genesis=Genesis.REACTIVE_USER)
         result = evaluate_vtp(v, None)
         assert result.status == VTP_STATUS_CONTINUE
 
     def test_rel_includes_threshold_and_high_flag(self):
         from memory.genesis import Genesis
+
         v = _verdict(genesis=Genesis.REACTIVE_USER)
         result = evaluate_vtp(v, {})
         assert "threshold_high" in result.rel

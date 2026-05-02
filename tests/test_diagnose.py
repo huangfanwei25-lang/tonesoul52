@@ -3,8 +3,6 @@ from __future__ import annotations
 import sys
 from io import BytesIO, StringIO
 
-import pytest
-
 from tonesoul.diagnose import (
     _clip,
     _emit_text,
@@ -14,8 +12,8 @@ from tonesoul.diagnose import (
 )
 from tonesoul.runtime_adapter import GovernancePosture
 
-
 # ── _clip ─────────────────────────────────────────────────────────────────────
+
 
 class TestClip:
     def test_short_text_unchanged(self):
@@ -38,6 +36,7 @@ class TestClip:
 
 # ── _emit_text ────────────────────────────────────────────────────────────────
 
+
 class TestEmitText:
     def test_writes_utf8_to_buffer(self, monkeypatch):
         buf = BytesIO()
@@ -48,7 +47,11 @@ class TestEmitText:
 
     def test_falls_back_when_no_buffer(self, monkeypatch):
         captured = StringIO()
-        fake_stdout = type("FakeStdout", (), {"encoding": "utf-8", "write": captured.write, "flush": lambda self: None})()
+        fake_stdout = type(
+            "FakeStdout",
+            (),
+            {"encoding": "utf-8", "write": captured.write, "flush": lambda self: None},
+        )()
         monkeypatch.setattr(sys, "stdout", fake_stdout)
         _emit_text("hello fallback")
         assert "hello fallback" in captured.getvalue()
@@ -70,25 +73,20 @@ class TestEmitText:
 
 # ── _latest_council_dossier_summary ──────────────────────────────────────────
 
+
 class TestLatestCouncilDossierSummary:
     def test_returns_empty_dict_for_empty_packet(self):
         assert _latest_council_dossier_summary({}) == {}
 
     def test_returns_dossier_from_trace(self):
-        packet = {
-            "recent_traces": [
-                {"council_dossier_summary": {"confidence_posture": "stable"}}
-            ]
-        }
+        packet = {"recent_traces": [{"council_dossier_summary": {"confidence_posture": "stable"}}]}
         result = _latest_council_dossier_summary(packet)
         assert result["confidence_posture"] == "stable"
 
     def test_returns_dossier_from_compaction_when_no_trace_has_one(self):
         packet = {
             "recent_traces": [{}],
-            "recent_compactions": [
-                {"council_dossier": {"confidence_posture": "from_compaction"}}
-            ],
+            "recent_compactions": [{"council_dossier": {"confidence_posture": "from_compaction"}}],
         }
         result = _latest_council_dossier_summary(packet)
         assert result["confidence_posture"] == "from_compaction"
@@ -100,8 +98,11 @@ class TestLatestCouncilDossierSummary:
 
 # ── compact_diagnostic error path ─────────────────────────────────────────────
 
+
 def test_compact_diagnostic_returns_error_string_when_store_unavailable(monkeypatch):
-    monkeypatch.setattr("tonesoul.store.get_store", lambda: (_ for _ in ()).throw(RuntimeError("no store")))
+    monkeypatch.setattr(
+        "tonesoul.store.get_store", lambda: (_ for _ in ()).throw(RuntimeError("no store"))
+    )
     result = compact_diagnostic(agent_id="test")
     assert result.startswith("[ToneSoul] Diagnostic error:")
 

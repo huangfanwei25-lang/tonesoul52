@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from tonesoul.yuhun.sleep_bridge import candidate_to_stimulus
 from tonesoul.yuhun.world_sense import DreamCandidate
 
@@ -22,7 +20,8 @@ def _make_candidate(
         reason=reason,
         drift_at_moment=drift,
         tension_at_moment=tension,
-        jump_signal=jump_signal or {"triggered": False, "self_reference": 0.1, "chain_integrity": 0.95},
+        jump_signal=jump_signal
+        or {"triggered": False, "self_reference": 0.1, "chain_integrity": 0.95},
         priority=priority,
         type=type_,
     )

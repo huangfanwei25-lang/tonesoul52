@@ -1,4 +1,5 @@
 """Tests for tonesoul.evolution.context_distiller — pure helpers and ContextDistiller."""
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -17,8 +18,8 @@ from tonesoul.evolution.context_distiller import (
     _utc_now,
 )
 
-
 # ── _utc_now ──────────────────────────────────────────────────────────────────
+
 
 class TestUtcNow:
     def test_returns_string(self):
@@ -29,6 +30,7 @@ class TestUtcNow:
 
 
 # ── _to_float ─────────────────────────────────────────────────────────────────
+
 
 class TestToFloat:
     def test_integer_converted(self):
@@ -48,6 +50,7 @@ class TestToFloat:
 
 
 # ── _parse_timestamp ──────────────────────────────────────────────────────────
+
 
 class TestParseTimestamp:
     def test_z_suffix_parsed(self):
@@ -75,6 +78,7 @@ class TestParseTimestamp:
 
 # ── _normalize_string_list ────────────────────────────────────────────────────
 
+
 class TestNormalizeStringList:
     def test_list_of_strings(self):
         assert _normalize_string_list(["a", "b"]) == ["a", "b"]
@@ -92,6 +96,7 @@ class TestNormalizeStringList:
 
 # ── _unique_preserve_order ────────────────────────────────────────────────────
 
+
 class TestUniquePreserveOrder:
     def test_deduplicates(self):
         assert _unique_preserve_order(["a", "b", "a"]) == ["a", "b"]
@@ -107,6 +112,7 @@ class TestUniquePreserveOrder:
 
 
 # ── _tone_score ───────────────────────────────────────────────────────────────
+
 
 class TestToneScore:
     def test_positive_tokens_increase_score(self):
@@ -127,6 +133,7 @@ class TestToneScore:
 
 # ── ContextPattern.to_dict ────────────────────────────────────────────────────
 
+
 class TestContextPattern:
     def test_to_dict_keys(self):
         pattern = ContextPattern(
@@ -137,8 +144,14 @@ class TestContextPattern:
             extracted_at="2026-01-01Z",
         )
         d = pattern.to_dict()
-        for k in ("pattern_type", "description", "evidence", "confidence",
-                  "extracted_at", "metadata"):
+        for k in (
+            "pattern_type",
+            "description",
+            "evidence",
+            "confidence",
+            "extracted_at",
+            "metadata",
+        ):
             assert k in d
 
     def test_confidence_as_float(self):
@@ -147,6 +160,7 @@ class TestContextPattern:
 
 
 # ── DistillationResult.to_dict ────────────────────────────────────────────────
+
 
 class TestDistillationResult:
     def test_to_dict_keys(self):
@@ -169,12 +183,16 @@ class TestDistillationResult:
 
 # ── ContextDistiller helpers ──────────────────────────────────────────────────
 
+
 class _FakePersistence:
     """Stub persistence that returns no data."""
+
     def list_conversations(self, limit, offset):
         return {"conversations": []}
+
     def get_conversation(self, id):
         return {}
+
     def list_audit_logs(self, limit, offset):
         return {"logs": []}
 

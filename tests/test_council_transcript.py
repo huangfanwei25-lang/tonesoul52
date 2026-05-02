@@ -18,8 +18,8 @@ from tonesoul.council.transcript import (
     VoteRecord,
 )
 
-
 # ── Helpers ───────────────────────────────────────────────────────────────────
+
 
 @dataclass
 class _MockVote:
@@ -36,6 +36,7 @@ class _MockVote:
 @dataclass
 class _MockDecision:
     name: str
+
     def __str__(self):
         return self.name
 
@@ -82,6 +83,7 @@ def _make_transcript(logger=None, draft="The system processed your request."):
 
 # ── VoteRecord ────────────────────────────────────────────────────────────────
 
+
 class TestVoteRecord:
     def test_fields_set(self):
         r = VoteRecord(
@@ -101,15 +103,18 @@ class TestVoteRecord:
 
 # ── CoherenceRecord ───────────────────────────────────────────────────────────
 
+
 class TestCoherenceRecord:
     def test_fields_set(self):
-        r = CoherenceRecord(c_inter=0.8, approval_rate=0.75, min_confidence=0.7,
-                            has_strong_objection=False)
+        r = CoherenceRecord(
+            c_inter=0.8, approval_rate=0.75, min_confidence=0.7, has_strong_objection=False
+        )
         assert r.c_inter == 0.8
         assert r.has_strong_objection is False
 
 
 # ── VerdictRecord ─────────────────────────────────────────────────────────────
+
 
 class TestVerdictRecord:
     def test_fields_set(self):
@@ -120,6 +125,7 @@ class TestVerdictRecord:
 
 
 # ── CouncilTranscript.to_json ─────────────────────────────────────────────────
+
 
 class TestCouncilTranscriptToJson:
     def test_returns_valid_json(self):
@@ -177,6 +183,7 @@ class TestCouncilTranscriptToJson:
 
 # ── CouncilTranscript.to_markdown ─────────────────────────────────────────────
 
+
 class TestCouncilTranscriptToMarkdown:
     def test_returns_string(self):
         t = _make_transcript()
@@ -231,6 +238,7 @@ class TestCouncilTranscriptToMarkdown:
 
 # ── CouncilTranscriptLogger.create_transcript ─────────────────────────────────
 
+
 class TestCouncilTranscriptLoggerCreate:
     def test_returns_council_transcript(self):
         t = _make_transcript()
@@ -244,8 +252,9 @@ class TestCouncilTranscriptLoggerCreate:
 
     def test_vote_count_matches_input(self):
         lg = _logger()
-        t = lg.create_transcript("draft", {}, None,
-                                  [_MockVote(), _MockVote(), _MockVote()], None, None)
+        t = lg.create_transcript(
+            "draft", {}, None, [_MockVote(), _MockVote(), _MockVote()], None, None
+        )
         assert len(t.votes) == 3
 
     def test_no_votes_gives_empty_list(self):
@@ -270,12 +279,15 @@ class TestCouncilTranscriptLoggerCreate:
 
     def test_context_keys_extracted(self):
         lg = _logger()
-        t = lg.create_transcript("draft", {"intent_id": "x", "evidence": [1, 2]}, None, [], None, None)
+        t = lg.create_transcript(
+            "draft", {"intent_id": "x", "evidence": [1, 2]}, None, [], None, None
+        )
         assert "intent_id" in t.context_keys
         assert "evidence" in t.context_keys
 
     def test_perspective_type_enum_converted_to_string(self):
-        from tonesoul.council.types import PerspectiveType, VoteDecision, PerspectiveVote
+        from tonesoul.council.types import PerspectiveType, PerspectiveVote, VoteDecision
+
         vote = PerspectiveVote(
             perspective=PerspectiveType.GUARDIAN,
             decision=VoteDecision.APPROVE,
@@ -287,7 +299,8 @@ class TestCouncilTranscriptLoggerCreate:
         assert t.votes[0].perspective_name == "guardian"
 
     def test_decision_enum_converted_to_string(self):
-        from tonesoul.council.types import PerspectiveType, VoteDecision, PerspectiveVote
+        from tonesoul.council.types import PerspectiveType, PerspectiveVote, VoteDecision
+
         vote = PerspectiveVote(
             perspective=PerspectiveType.ANALYST,
             decision=VoteDecision.CONCERN,
@@ -300,6 +313,7 @@ class TestCouncilTranscriptLoggerCreate:
 
 
 # ── CouncilTranscriptLogger.save_transcript ───────────────────────────────────
+
 
 class TestCouncilTranscriptLoggerSave:
     def test_save_json_creates_file(self, tmp_path):
@@ -333,5 +347,5 @@ class TestCouncilTranscriptLoggerSave:
 
     def test_log_dir_created_automatically(self, tmp_path):
         new_dir = tmp_path / "nested" / "logs"
-        lg = CouncilTranscriptLogger(log_dir=new_dir)
+        CouncilTranscriptLogger(log_dir=new_dir)
         assert new_dir.exists()

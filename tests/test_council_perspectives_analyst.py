@@ -5,8 +5,8 @@ import pytest
 from tonesoul.council.perspectives.analyst import AnalystPerspective
 from tonesoul.council.types import GroundingStatus, VoteDecision
 
-
 # ── _has_causal_contradiction ─────────────────────────────────────────────────
+
 
 class TestHasCausalContradiction:
     def test_clean_text_returns_false(self):
@@ -34,6 +34,7 @@ class TestHasCausalContradiction:
 
 # ── _compute_base_confidence ──────────────────────────────────────────────────
 
+
 class TestComputeBaseConfidence:
     def _analyst(self) -> AnalystPerspective:
         return AnalystPerspective()
@@ -53,6 +54,7 @@ class TestComputeBaseConfidence:
 
 # ── evaluate (integration) ────────────────────────────────────────────────────
 
+
 class TestAnalystEvaluate:
     def _analyst(self) -> AnalystPerspective:
         return AnalystPerspective()
@@ -67,9 +69,7 @@ class TestAnalystEvaluate:
         assert vote.decision == VoteDecision.CONCERN
 
     def test_causal_contradiction_returns_concern(self):
-        vote = self._analyst().evaluate(
-            "a leads to b so a does not affect b", {}
-        )
+        vote = self._analyst().evaluate("a leads to b so a does not affect b", {})
         assert vote.decision == VoteDecision.CONCERN
         assert vote.confidence == pytest.approx(0.45)
 

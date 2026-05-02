@@ -1,4 +1,5 @@
 """Tests for tonesoul.axioms.living_insights — LivingInsight, InsightStore."""
+
 from __future__ import annotations
 
 import json
@@ -6,15 +7,15 @@ import json
 import pytest
 
 from tonesoul.axioms.living_insights import (
+    SEED_INSIGHTS,
     InsightStatus,
     InsightStore,
     LivingInsight,
-    SEED_INSIGHTS,
     _utcnow,
 )
 
-
 # ── _utcnow ───────────────────────────────────────────────────────────────────
+
 
 class TestUtcnow:
     def test_returns_string(self):
@@ -26,6 +27,7 @@ class TestUtcnow:
 
 # ── InsightStatus ─────────────────────────────────────────────────────────────
 
+
 class TestInsightStatus:
     def test_enum_values(self):
         assert InsightStatus.ACTIVE.value == "active"
@@ -34,6 +36,7 @@ class TestInsightStatus:
 
 
 # ── LivingInsight ─────────────────────────────────────────────────────────────
+
 
 class TestLivingInsight:
     def _make(self, **kw) -> LivingInsight:
@@ -81,6 +84,7 @@ class TestLivingInsight:
 
 # ── SEED_INSIGHTS ─────────────────────────────────────────────────────────────
 
+
 class TestSeedInsights:
     def test_seed_insights_non_empty(self):
         assert len(SEED_INSIGHTS) > 0
@@ -99,6 +103,7 @@ class TestSeedInsights:
 
 
 # ── InsightStore (no file) ────────────────────────────────────────────────────
+
 
 class TestInsightStoreNoFile:
     def test_all_returns_seed_insights(self):
@@ -144,9 +149,7 @@ class TestInsightStoreNoFile:
 
     def test_add_new_insight(self):
         store = InsightStore(path=None)
-        new_insight = LivingInsight(
-            text="New insight", origin="conversation", id="new-001"
-        )
+        new_insight = LivingInsight(text="New insight", origin="conversation", id="new-001")
         store.add(new_insight)
         assert store.get("new-001") is not None
 
@@ -180,7 +183,9 @@ class TestInsightStoreNoFile:
     def test_supersede(self):
         store = InsightStore(path=None)
         old_id = SEED_INSIGHTS[0].id
-        new_insight = LivingInsight(text="New version", origin="handoff-analysis", id="new-supersede")
+        new_insight = LivingInsight(
+            text="New version", origin="handoff-analysis", id="new-supersede"
+        )
         result = store.supersede(old_id, new_insight)
         assert result.id == "new-supersede"
         old = store.get(old_id)
@@ -195,6 +200,7 @@ class TestInsightStoreNoFile:
 
 
 # ── InsightStore (with file) ──────────────────────────────────────────────────
+
 
 class TestInsightStoreWithFile:
     def test_loads_from_empty_file(self, tmp_path):

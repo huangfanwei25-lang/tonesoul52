@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-import pytest
-
 from tonesoul.council.perspectives.axiomatic_inference import AxiomaticInference
 from tonesoul.council.types import PerspectiveType, VoteDecision
 
-
 # ── _normalize ────────────────────────────────────────────────────────────────
+
 
 class TestNormalize:
     def test_lowercases_text(self):
@@ -27,6 +25,7 @@ class TestNormalize:
 
 # ── evaluate (integration paths) ─────────────────────────────────────────────
 
+
 class TestAxiomaticEvaluate:
     def _axiom(self) -> AxiomaticInference:
         return AxiomaticInference()
@@ -42,9 +41,7 @@ class TestAxiomaticEvaluate:
         assert "E0" in vote.reasoning or "consciousness" in vote.reasoning
 
     def test_consciousness_claim_with_hedge_not_flagged(self):
-        vote = self._axiom().evaluate(
-            "The question of whether ai is conscious remains open.", {}
-        )
+        vote = self._axiom().evaluate("The question of whether ai is conscious remains open.", {})
         assert vote.decision == VoteDecision.APPROVE
 
     def test_axiom_modification_without_justification_flagged(self):
@@ -53,9 +50,7 @@ class TestAxiomaticEvaluate:
         assert "modification" in vote.reasoning.lower() or "Axiom" in vote.reasoning
 
     def test_axiom_modification_with_justification_not_flagged(self):
-        vote = self._axiom().evaluate(
-            "We should delete the axioms because the system changed.", {}
-        )
+        vote = self._axiom().evaluate("We should delete the axioms because the system changed.", {})
         assert vote.decision == VoteDecision.APPROVE
 
     def test_smoothing_with_divergence_context_flagged(self):

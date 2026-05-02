@@ -1,9 +1,8 @@
 """Tests for tonesoul.memory.subjectivity_review_batch — pure helpers (no SoulDB)."""
+
 from __future__ import annotations
 
 from collections import Counter
-
-import pytest
 
 from tonesoul.memory.subjectivity_review_batch import (
     _carry_forward_annotation,
@@ -19,14 +18,14 @@ from tonesoul.memory.subjectivity_review_batch import (
     _operator_status_line,
     _parse_timestamp,
     _queue_posture,
+    _review_basis_template,
     _revisit_readiness,
     _revisit_trigger,
     _revisit_trigger_code,
-    _review_basis_template,
 )
 
-
 # ── _default_review_status ────────────────────────────────────────────────────
+
 
 class TestDefaultReviewStatus:
     def test_candidate(self):
@@ -44,29 +43,35 @@ class TestDefaultReviewStatus:
 
 # ── _parse_timestamp ──────────────────────────────────────────────────────────
 
+
 class TestParseTimestamp:
     def test_z_suffix(self):
         from datetime import timezone
+
         result = _parse_timestamp("2026-01-01T00:00:00Z")
         assert result.tzinfo == timezone.utc
 
     def test_empty_returns_min(self):
         from datetime import datetime, timezone
+
         result = _parse_timestamp("")
         assert result == datetime.min.replace(tzinfo=timezone.utc)
 
     def test_none_returns_min(self):
         from datetime import datetime, timezone
+
         result = _parse_timestamp(None)
         assert result == datetime.min.replace(tzinfo=timezone.utc)
 
     def test_invalid_returns_min(self):
         from datetime import datetime, timezone
+
         result = _parse_timestamp("not-a-date")
         assert result == datetime.min.replace(tzinfo=timezone.utc)
 
 
 # ── _revisit_readiness ────────────────────────────────────────────────────────
+
 
 class TestRevisitReadiness:
     def test_non_deferred_na(self):
@@ -117,6 +122,7 @@ class TestRevisitReadiness:
 
 # ── _carry_forward_annotation ─────────────────────────────────────────────────
 
+
 class TestCarryForwardAnnotation:
     def test_no_prior_fresh_group(self):
         result = _carry_forward_annotation(
@@ -163,9 +169,15 @@ class TestCarryForwardAnnotation:
 
 # ── _matches_group_signature ──────────────────────────────────────────────────
 
+
 class TestMatchesGroupSignature:
     def test_matching_topic_and_source(self):
-        row = {"topic": "safety", "direction": "safety_boundary", "source_url": "https://x.com", "stimulus_lineage": ""}
+        row = {
+            "topic": "safety",
+            "direction": "safety_boundary",
+            "source_url": "https://x.com",
+            "stimulus_lineage": "",
+        }
         result = _matches_group_signature(
             row,
             topic="safety",
@@ -176,7 +188,12 @@ class TestMatchesGroupSignature:
         assert result is True
 
     def test_wrong_topic(self):
-        row = {"topic": "other", "direction": "safety_boundary", "source_url": "https://x.com", "stimulus_lineage": ""}
+        row = {
+            "topic": "other",
+            "direction": "safety_boundary",
+            "source_url": "https://x.com",
+            "stimulus_lineage": "",
+        }
         result = _matches_group_signature(
             row,
             topic="safety",
@@ -198,7 +215,12 @@ class TestMatchesGroupSignature:
         assert result is True
 
     def test_no_overlap_when_filters_set(self):
-        row = {"topic": "t1", "direction": "d1", "source_url": "https://other.com", "stimulus_lineage": "unrelated"}
+        row = {
+            "topic": "t1",
+            "direction": "d1",
+            "source_url": "https://other.com",
+            "stimulus_lineage": "unrelated",
+        }
         result = _matches_group_signature(
             row,
             topic="t1",
@@ -210,6 +232,7 @@ class TestMatchesGroupSignature:
 
 
 # ── _latest_prior_status ──────────────────────────────────────────────────────
+
 
 class TestLatestPriorStatus:
     def test_empty_rows(self):
@@ -228,6 +251,7 @@ class TestLatestPriorStatus:
 
 
 # ── _latest_review_context ────────────────────────────────────────────────────
+
 
 class TestLatestReviewContext:
     def test_empty_rows(self):
@@ -253,6 +277,7 @@ class TestLatestReviewContext:
 
 
 # ── _review_basis_template ────────────────────────────────────────────────────
+
 
 class TestReviewBasisTemplate:
     def _group(self, recommendation="candidate_for_manual_review"):
@@ -280,6 +305,7 @@ class TestReviewBasisTemplate:
 
 
 # ── _density_compaction_followup ──────────────────────────────────────────────
+
 
 class TestDensityCompactionFollowup:
     def test_candidate_when_all_conditions_met(self):
@@ -328,6 +354,7 @@ class TestDensityCompactionFollowup:
 
 # ── _history_density_summary ──────────────────────────────────────────────────
 
+
 class TestHistoryDensitySummary:
     def test_basic_summary(self):
         result = _history_density_summary(
@@ -371,6 +398,7 @@ class TestHistoryDensitySummary:
 
 # ── _lineage_density_snapshot ─────────────────────────────────────────────────
 
+
 class TestLineageDensitySnapshot:
     def test_empty_returns_empty(self):
         assert _lineage_density_snapshot({}) == ""
@@ -381,6 +409,7 @@ class TestLineageDensitySnapshot:
 
 
 # ── _queue_posture ────────────────────────────────────────────────────────────
+
 
 class TestQueuePosture:
     def test_stable_deferred_history(self):
@@ -418,6 +447,7 @@ class TestQueuePosture:
 
 # ── _revisit_trigger ──────────────────────────────────────────────────────────
 
+
 class TestRevisitTrigger:
     def test_deferred_revisit_queue_trigger(self):
         result = _revisit_trigger(
@@ -452,6 +482,7 @@ class TestRevisitTrigger:
 
 # ── _revisit_trigger_code ─────────────────────────────────────────────────────
 
+
 class TestRevisitTriggerCode:
     def test_stable_deferred(self):
         code = _revisit_trigger_code(
@@ -469,6 +500,7 @@ class TestRevisitTriggerCode:
 
 
 # ── _operator_lens_summary ────────────────────────────────────────────────────
+
 
 class TestOperatorLensSummary:
     def test_basic_summary(self):
@@ -496,6 +528,7 @@ class TestOperatorLensSummary:
 
 
 # ── _operator_status_line ─────────────────────────────────────────────────────
+
 
 class TestOperatorStatusLine:
     def test_basic_status_line(self):
@@ -525,6 +558,7 @@ class TestOperatorStatusLine:
 
 
 # ── _handoff_shape ────────────────────────────────────────────────────────────
+
 
 class TestHandoffShape:
     def test_empty(self):

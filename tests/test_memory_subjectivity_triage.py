@@ -1,4 +1,5 @@
 """Tests for tonesoul.memory.subjectivity_triage — pure helpers (no SoulDB)."""
+
 from __future__ import annotations
 
 import pytest
@@ -25,8 +26,8 @@ from tonesoul.memory.subjectivity_triage import (
     _stimulus_lineage,
 )
 
-
 # ── _normalize_text ───────────────────────────────────────────────────────────
+
 
 class TestNormalizeText:
     def test_strips_whitespace(self):
@@ -43,6 +44,7 @@ class TestNormalizeText:
 
 
 # ── _normalize_string_list ────────────────────────────────────────────────────
+
 
 class TestNormalizeStringList:
     def test_list_of_strings(self):
@@ -62,6 +64,7 @@ class TestNormalizeStringList:
 
 
 # ── _normalize_topic ──────────────────────────────────────────────────────────
+
 
 class TestNormalizeTopic:
     def test_uses_topic_key(self):
@@ -96,6 +99,7 @@ class TestNormalizeTopic:
 
 # ── _extract_friction_score ───────────────────────────────────────────────────
 
+
 class TestExtractFrictionScore:
     def test_from_friction_score_key(self):
         assert _extract_friction_score({"friction_score": 0.7}, {}) == pytest.approx(0.7)
@@ -115,6 +119,7 @@ class TestExtractFrictionScore:
 
 
 # ── _friction_band ────────────────────────────────────────────────────────────
+
 
 class TestFrictionBand:
     def test_low_below_0_3(self):
@@ -137,6 +142,7 @@ class TestFrictionBand:
 
 
 # ── _infer_direction ──────────────────────────────────────────────────────────
+
 
 class TestInferDirection:
     def test_provenance_discipline(self):
@@ -166,6 +172,7 @@ class TestInferDirection:
 
 # ── _dream_cycle_id ───────────────────────────────────────────────────────────
 
+
 class TestDreamCycleId:
     def test_direct_field(self):
         assert _dream_cycle_id({"dream_cycle_id": "d123"}) == "d123"
@@ -180,6 +187,7 @@ class TestDreamCycleId:
 
 # ── _source_url ───────────────────────────────────────────────────────────────
 
+
 class TestSourceUrl:
     def test_direct_field(self):
         assert _source_url({"source_url": "https://x.com"}) == "https://x.com"
@@ -193,6 +201,7 @@ class TestSourceUrl:
 
 
 # ── _stimulus_lineage ──────────────────────────────────────────────────────────
+
 
 class TestStimulusLineage:
     def test_stimulus_record_id_direct(self):
@@ -217,6 +226,7 @@ class TestStimulusLineage:
 
 # ── _semantic_group_key ───────────────────────────────────────────────────────
 
+
 class TestSemanticGroupKey:
     def test_returns_tuple(self):
         row = {"topic": "t", "direction": "d", "friction_band": "low"}
@@ -232,6 +242,7 @@ class TestSemanticGroupKey:
 
 # ── _lineage_group_key ─────────────────────────────────────────────────────────
 
+
 class TestLineageGroupKey:
     def test_returns_tuple_of_two(self):
         row = {"stimulus_lineage": "s1", "topic": "t1"}
@@ -242,14 +253,17 @@ class TestLineageGroupKey:
 
 # ── _recommend_semantic_group ─────────────────────────────────────────────────
 
+
 class TestRecommendSemanticGroup:
     def _call(self, direction, source_url_count=0, lineage_count=0, cycle_count=0):
-        return _recommend_semantic_group({
-            "direction": direction,
-            "source_url_count": source_url_count,
-            "lineage_count": lineage_count,
-            "cycle_count": cycle_count,
-        })
+        return _recommend_semantic_group(
+            {
+                "direction": direction,
+                "source_url_count": source_url_count,
+                "lineage_count": lineage_count,
+                "cycle_count": cycle_count,
+            }
+        )
 
     def test_undifferentiated_reject(self):
         rec, _ = self._call("undifferentiated_tension")
@@ -264,26 +278,31 @@ class TestRecommendSemanticGroup:
         assert rec == "defer_review"
 
     def test_boundary_with_diversity_candidate(self):
-        rec, _ = self._call("boundary_discipline",
-                             source_url_count=2, lineage_count=2, cycle_count=2)
+        rec, _ = self._call(
+            "boundary_discipline", source_url_count=2, lineage_count=2, cycle_count=2
+        )
         assert rec == "candidate_for_manual_review"
 
     def test_boundary_insufficient_diversity_defer(self):
-        rec, _ = self._call("boundary_discipline",
-                             source_url_count=1, lineage_count=1, cycle_count=1)
+        rec, _ = self._call(
+            "boundary_discipline", source_url_count=1, lineage_count=1, cycle_count=1
+        )
         assert rec == "defer_review"
 
 
 # ── _duplicate_pressure_profile ───────────────────────────────────────────────
 
+
 class TestDuplicatePressureProfile:
     def _call(self, source_url_count=2, record_count=2, lineage_count=2, cycle_count=2):
-        return _duplicate_pressure_profile({
-            "source_url_count": source_url_count,
-            "record_count": record_count,
-            "lineage_count": lineage_count,
-            "cycle_count": cycle_count,
-        })
+        return _duplicate_pressure_profile(
+            {
+                "source_url_count": source_url_count,
+                "record_count": record_count,
+                "lineage_count": lineage_count,
+                "cycle_count": cycle_count,
+            }
+        )
 
     def test_multi_source_low_pressure(self):
         result = self._call(source_url_count=3, record_count=4, lineage_count=3, cycle_count=3)
@@ -303,12 +322,19 @@ class TestDuplicatePressureProfile:
 
     def test_keys_present(self):
         result = self._call()
-        for k in ("same_source_loop", "rows_per_lineage", "rows_per_cycle",
-                  "duplicate_pressure", "duplicate_pressure_reason", "producer_followup"):
+        for k in (
+            "same_source_loop",
+            "rows_per_lineage",
+            "rows_per_cycle",
+            "duplicate_pressure",
+            "duplicate_pressure_reason",
+            "producer_followup",
+        ):
             assert k in result
 
 
 # ── _lineage_density_profile ──────────────────────────────────────────────────
+
 
 class TestLineageDensityProfile:
     def test_empty_groups(self):
@@ -334,6 +360,7 @@ class TestLineageDensityProfile:
 
 # ── _lineage_density_snapshot ─────────────────────────────────────────────────
 
+
 class TestLineageDensitySnapshot:
     def test_empty_returns_empty(self):
         assert _lineage_density_snapshot({}) == ""
@@ -350,31 +377,38 @@ class TestLineageDensitySnapshot:
 
 # ── _semantic_group_shape ─────────────────────────────────────────────────────
 
+
 class TestSemanticGroupShape:
     def test_candidate_for_manual_review(self):
         shape = _semantic_group_shape({"triage_recommendation": "candidate_for_manual_review"})
         assert shape == "manual_review_candidate"
 
     def test_high_duplicate_same_source(self):
-        shape = _semantic_group_shape({
-            "triage_recommendation": "defer_review",
-            "same_source_loop": True,
-            "duplicate_pressure": "high",
-        })
+        shape = _semantic_group_shape(
+            {
+                "triage_recommendation": "defer_review",
+                "same_source_loop": True,
+                "duplicate_pressure": "high",
+            }
+        )
         assert shape == "high_duplicate_same_source_loop"
 
     def test_same_source_monitor(self):
-        shape = _semantic_group_shape({
-            "same_source_loop": True,
-            "duplicate_pressure": "low",
-        })
+        shape = _semantic_group_shape(
+            {
+                "same_source_loop": True,
+                "duplicate_pressure": "low",
+            }
+        )
         assert shape == "same_source_loop_monitor"
 
     def test_cross_context(self):
-        shape = _semantic_group_shape({
-            "source_url_count": 3,
-            "lineage_count": 3,
-        })
+        shape = _semantic_group_shape(
+            {
+                "source_url_count": 3,
+                "lineage_count": 3,
+            }
+        )
         assert shape == "cross_context_group"
 
     def test_unresolved_default(self):
@@ -383,6 +417,7 @@ class TestSemanticGroupShape:
 
 
 # ── _semantic_group_status_line ───────────────────────────────────────────────
+
 
 class TestSemanticGroupStatusLine:
     def test_basic_status_line(self):
@@ -414,35 +449,50 @@ class TestSemanticGroupStatusLine:
 
 # ── _handoff_shape ────────────────────────────────────────────────────────────
 
+
 class TestHandoffShape:
     def test_empty_queue(self):
         assert _handoff_shape(semantic_groups=[], multi_direction_topic_count=0) == "empty_queue"
 
     def test_action_required_when_candidate(self):
         groups = [{"triage_recommendation": "candidate_for_manual_review"}]
-        assert _handoff_shape(semantic_groups=groups, multi_direction_topic_count=0) == "action_required"
+        assert (
+            _handoff_shape(semantic_groups=groups, multi_direction_topic_count=0)
+            == "action_required"
+        )
 
     def test_action_required_when_multi_direction(self):
         groups = [{"triage_recommendation": "defer_review"}]
-        assert _handoff_shape(semantic_groups=groups, multi_direction_topic_count=1) == "action_required"
+        assert (
+            _handoff_shape(semantic_groups=groups, multi_direction_topic_count=1)
+            == "action_required"
+        )
 
     def test_monitoring_queue_single_same_source(self):
         groups = [{"triage_recommendation": "defer_review", "same_source_loop": True}]
-        assert _handoff_shape(semantic_groups=groups, multi_direction_topic_count=0) == "monitoring_queue"
+        assert (
+            _handoff_shape(semantic_groups=groups, multi_direction_topic_count=0)
+            == "monitoring_queue"
+        )
 
     def test_single_group(self):
         groups = [{"triage_recommendation": "defer_review", "same_source_loop": False}]
-        assert _handoff_shape(semantic_groups=groups, multi_direction_topic_count=0) == "single_group"
+        assert (
+            _handoff_shape(semantic_groups=groups, multi_direction_topic_count=0) == "single_group"
+        )
 
     def test_multi_group(self):
         groups = [
             {"triage_recommendation": "defer_review"},
             {"triage_recommendation": "defer_review"},
         ]
-        assert _handoff_shape(semantic_groups=groups, multi_direction_topic_count=0) == "multi_group"
+        assert (
+            _handoff_shape(semantic_groups=groups, multi_direction_topic_count=0) == "multi_group"
+        )
 
 
 # ── _build_multi_direction_topics ─────────────────────────────────────────────
+
 
 class TestBuildMultiDirectionTopics:
     def test_single_direction_topic_not_included(self):

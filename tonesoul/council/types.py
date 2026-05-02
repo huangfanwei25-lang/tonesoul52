@@ -9,15 +9,17 @@ from typing import TYPE_CHECKING, List, Optional, Union
 from memory.genesis import Genesis
 
 if TYPE_CHECKING:
+    from tonesoul.gse.strategy_mirror import StrategySignature
+
     from .epistemic_labeler import EpistemicLabel
     from .persona_audit import AuditResult
-
 
 
 __ts_layer__ = "shared"
 __ts_purpose__ = (
     "Shared type primitives (PerspectiveType, VoteDecision, verdicts) for the council subsystem."
 )
+
 
 class PerspectiveType(Enum):
     GUARDIAN = "guardian"
@@ -107,6 +109,14 @@ class CouncilVerdict:
     # build CouncilVerdict directly (tests, persisted fixtures); the runtime
     # PreOutputCouncil.validate() always populates it.
     epistemic_label: Optional["EpistemicLabel"] = None
+    # Phase 2 strategy_mirror — attached only when
+    # SOUL.gse.strategy_mirror_scan_enabled is True (default off). When present,
+    # downstream consumers can read green/yellow/red counts and the
+    # requires_block / requires_council_re_review flags. In scan-only shadow
+    # mode these flags are observational; in enforce mode they explain why an
+    # APPROVE verdict may have been forced to BLOCK.
+    # See docs/gse/phase_2_strategy_mirror_spec.md §5 for the integration contract.
+    strategy_signature: Optional["StrategySignature"] = None
 
     def to_dict(self) -> dict:
         """
@@ -172,5 +182,8 @@ class CouncilVerdict:
             "divergence_analysis": self.divergence_analysis or {},
             "epistemic_label": (
                 self.epistemic_label.to_dict() if self.epistemic_label is not None else None
+            ),
+            "strategy_signature": (
+                self.strategy_signature.to_dict() if self.strategy_signature is not None else None
             ),
         }

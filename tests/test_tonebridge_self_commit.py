@@ -1,4 +1,5 @@
 """Tests for tonesoul.tonebridge.self_commit — pure helpers and SelfCommitStack."""
+
 from __future__ import annotations
 
 import pytest
@@ -10,12 +11,13 @@ from tonesoul.tonebridge.self_commit import (
     SelfCommitStack,
 )
 
-
 # ── SelfCommit.to_dict / from_dict ────────────────────────────────────────────
+
 
 class TestSelfCommitRoundtrip:
     def _make(self, **kw):
         from datetime import datetime
+
         defaults = dict(
             id="c1",
             timestamp=datetime(2026, 1, 1, 0, 0, 0),
@@ -30,9 +32,16 @@ class TestSelfCommitRoundtrip:
     def test_to_dict_keys(self):
         d = self._make().to_dict()
         for key in (
-            "id", "timestamp", "assertion_type", "content",
-            "irreversible_weight", "context_hash", "persona_mode",
-            "turn_index", "user_context", "reasoning",
+            "id",
+            "timestamp",
+            "assertion_type",
+            "content",
+            "irreversible_weight",
+            "context_hash",
+            "persona_mode",
+            "turn_index",
+            "user_context",
+            "reasoning",
         ):
             assert key in d
 
@@ -56,6 +65,7 @@ class TestSelfCommitRoundtrip:
 
     def test_from_dict_optional_fields_default(self):
         from datetime import datetime
+
         d = dict(
             id="c1",
             timestamp=datetime(2026, 1, 1).isoformat(),
@@ -71,6 +81,7 @@ class TestSelfCommitRoundtrip:
 
 
 # ── SelfCommitExtractor._compute_context_hash ─────────────────────────────────
+
 
 class TestComputeContextHash:
     def setup_method(self):
@@ -92,6 +103,7 @@ class TestComputeContextHash:
 
 
 # ── SelfCommitExtractor._detect_assertion_type ────────────────────────────────
+
 
 class TestDetectAssertionType:
     def setup_method(self):
@@ -135,6 +147,7 @@ class TestDetectAssertionType:
 
 # ── SelfCommitExtractor._calculate_irreversibility ────────────────────────────
 
+
 class TestCalculateIrreversibility:
     def setup_method(self):
         self.ex = SelfCommitExtractor()
@@ -162,6 +175,7 @@ class TestCalculateIrreversibility:
 
 # ── SelfCommitExtractor._extract_core_assertion ───────────────────────────────
 
+
 class TestExtractCoreAssertion:
     def setup_method(self):
         self.ex = SelfCommitExtractor()
@@ -182,6 +196,7 @@ class TestExtractCoreAssertion:
 
 
 # ── SelfCommitExtractor.extract ───────────────────────────────────────────────
+
 
 class TestSelfCommitExtractorExtract:
     def setup_method(self):
@@ -205,12 +220,16 @@ class TestSelfCommitExtractorExtract:
         assert result is None
 
     def test_turn_index_preserved(self):
-        result = self.ex.extract("我不會做任何對使用者有害的事情，這是我的核心原則。", "user", turn_index=5)
+        result = self.ex.extract(
+            "我不會做任何對使用者有害的事情，這是我的核心原則。", "user", turn_index=5
+        )
         assert result is not None
         assert result.turn_index == 5
 
     def test_persona_mode_preserved(self):
-        result = self.ex.extract("我不會做任何對使用者有害的事情，這是我的核心原則。", "user", persona_mode="guardian")
+        result = self.ex.extract(
+            "我不會做任何對使用者有害的事情，這是我的核心原則。", "user", persona_mode="guardian"
+        )
         assert result is not None
         assert result.persona_mode == "guardian"
 
@@ -223,9 +242,11 @@ class TestSelfCommitExtractorExtract:
 
 # ── SelfCommitStack ───────────────────────────────────────────────────────────
 
+
 class TestSelfCommitStack:
     def _make_commit(self, weight=0.7, turn=0):
         from datetime import datetime
+
         return SelfCommit(
             id=f"c{turn}",
             timestamp=datetime(2026, 1, 1),

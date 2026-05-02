@@ -21,8 +21,8 @@ from tonesoul.dream_observability import (
     render_html,
 )
 
-
 # ── _iso_now ──────────────────────────────────────────────────────────────────
+
 
 class TestIsoNow:
     def test_returns_string(self):
@@ -33,6 +33,7 @@ class TestIsoNow:
 
 
 # ── _to_float ─────────────────────────────────────────────────────────────────
+
 
 class TestToFloat:
     def test_int_converted(self):
@@ -52,6 +53,7 @@ class TestToFloat:
 
 
 # ── _to_int ───────────────────────────────────────────────────────────────────
+
 
 class TestToInt:
     def test_int_passthrough(self):
@@ -75,6 +77,7 @@ class TestToInt:
 
 # ── _round_or_none ────────────────────────────────────────────────────────────
 
+
 class TestRoundOrNone:
     def test_rounds_to_digits(self):
         assert _round_or_none(3.14159, 2) == pytest.approx(3.14)
@@ -90,6 +93,7 @@ class TestRoundOrNone:
 
 
 # ── _compact_timestamp ────────────────────────────────────────────────────────
+
 
 class TestCompactTimestamp:
     def test_iso_format_compacted(self):
@@ -108,6 +112,7 @@ class TestCompactTimestamp:
 
 
 # ── _path_get ─────────────────────────────────────────────────────────────────
+
 
 class TestPathGet:
     def test_single_key(self):
@@ -129,6 +134,7 @@ class TestPathGet:
 
 # ── _entry_payload ────────────────────────────────────────────────────────────
 
+
 class TestEntryPayload:
     def test_extracts_payload_key(self):
         row = {"payload": {"k": "v"}, "other": "x"}
@@ -144,6 +150,7 @@ class TestEntryPayload:
 
 
 # ── _truncate_points ──────────────────────────────────────────────────────────
+
 
 class TestTruncatePoints:
     def _pts(self, values):
@@ -168,6 +175,7 @@ class TestTruncatePoints:
 
 
 # ── _metric_trend ─────────────────────────────────────────────────────────────
+
 
 class TestMetricTrend:
     def _pts(self, values):
@@ -194,26 +202,34 @@ class TestMetricTrend:
 
 # ── _count_convergence_events ─────────────────────────────────────────────────
 
+
 class TestCountConvergenceEvents:
     def _pts(self, values):
         return [{"value": v} for v in values]
 
     def test_no_convergence(self):
         pts = self._pts([0.3, 0.3, 0.3])
-        count = _count_convergence_events(pts, high_threshold=0.8, settle_threshold=0.4, min_drop=0.2)
+        count = _count_convergence_events(
+            pts, high_threshold=0.8, settle_threshold=0.4, min_drop=0.2
+        )
         assert count == 0
 
     def test_single_convergence(self):
         pts = self._pts([0.9, 0.3, 0.3])
-        count = _count_convergence_events(pts, high_threshold=0.8, settle_threshold=0.4, min_drop=0.2)
+        count = _count_convergence_events(
+            pts, high_threshold=0.8, settle_threshold=0.4, min_drop=0.2
+        )
         assert count == 1
 
     def test_empty_no_convergence(self):
-        count = _count_convergence_events([], high_threshold=0.8, settle_threshold=0.4, min_drop=0.2)
+        count = _count_convergence_events(
+            [], high_threshold=0.8, settle_threshold=0.4, min_drop=0.2
+        )
         assert count == 0
 
 
 # ── _summarize_metric ─────────────────────────────────────────────────────────
+
 
 class TestSummarizeMetric:
     def _pts(self, values):

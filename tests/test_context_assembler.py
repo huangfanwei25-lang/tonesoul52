@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 import pytest
 
@@ -150,7 +149,14 @@ class TestContextAssembler:
 
     def test_fast_path_axioms_loaded_from_file(self, tmp_path):
         (tmp_path / "AXIOMS.json").write_text(
-            json.dumps({"axioms": [{"id": 1, "one_line": "Be honest"}, {"id": 2, "one_line": "Maintain continuity"}]}),
+            json.dumps(
+                {
+                    "axioms": [
+                        {"id": 1, "one_line": "Be honest"},
+                        {"id": 2, "one_line": "Maintain continuity"},
+                    ]
+                }
+            ),
             encoding="utf-8",
         )
         assembler = ContextAssembler(repo_root=tmp_path)
@@ -164,9 +170,7 @@ class TestContextAssembler:
         assert pkg.axioms_content == ""
 
     def test_council_path_includes_council_frame(self, tmp_path):
-        (tmp_path / "AXIOMS.json").write_text(
-            json.dumps({"axioms": []}), encoding="utf-8"
-        )
+        (tmp_path / "AXIOMS.json").write_text(json.dumps({"axioms": []}), encoding="utf-8")
         assembler = ContextAssembler(repo_root=tmp_path)
         pkg = assembler.assemble(_council_dpr(), "complex question", include_anchor_memory=False)
 

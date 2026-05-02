@@ -1,25 +1,24 @@
 """Tests for tonesoul.governance.reflex — pure helpers and ReflexEvaluator."""
+
 from __future__ import annotations
 
 import pytest
 
 from tonesoul.governance.reflex import (
+    _ACTION_SEVERITY,
     ConvictionSignal,
-    DriftSignal,
     GovernanceSnapshot,
     ReflexAction,
     ReflexDecision,
     ReflexEvaluator,
-    SoulBand,
     SoulBandLevel,
-    _ACTION_SEVERITY,
     classify_soul_band,
     evaluate_conviction_decay,
     evaluate_drift,
 )
 
-
 # ── classify_soul_band ────────────────────────────────────────────────────────
+
 
 class TestClassifySoulBand:
     def test_serene_below_0_3(self):
@@ -76,7 +75,9 @@ class TestClassifySoulBand:
 
     def test_custom_thresholds(self):
         # Override strained to start at 0.4
-        band = classify_soul_band(0.45, thresholds={"alert": 0.20, "strained": 0.40, "critical": 0.80})
+        band = classify_soul_band(
+            0.45, thresholds={"alert": 0.20, "strained": 0.40, "critical": 0.80}
+        )
         assert band.level == SoulBandLevel.STRAINED
 
     def test_to_dict_keys(self):
@@ -86,6 +87,7 @@ class TestClassifySoulBand:
 
 
 # ── evaluate_drift ────────────────────────────────────────────────────────────
+
 
 class TestEvaluateDrift:
     def _drift(self, caution=0.5, innovation=0.6, autonomy=0.35) -> dict:
@@ -132,6 +134,7 @@ class TestEvaluateDrift:
 
 # ── evaluate_conviction_decay ─────────────────────────────────────────────────
 
+
 class TestEvaluateConvictionDecay:
     def test_empty_vows_no_decay(self):
         signal = evaluate_conviction_decay([])
@@ -174,6 +177,7 @@ class TestEvaluateConvictionDecay:
     def test_object_with_vows_attribute(self):
         class _VowState:
             vows = [{"id": "v1", "conviction": 0.3, "trajectory": "decaying"}]
+
         signal = evaluate_conviction_decay(_VowState())
         assert signal.trigger_self_assessment is True
 
@@ -186,6 +190,7 @@ class TestEvaluateConvictionDecay:
 
 
 # ── ReflexDecision.to_dict ────────────────────────────────────────────────────
+
 
 class TestReflexDecisionToDict:
     def test_required_keys(self):
@@ -218,6 +223,7 @@ class TestReflexDecisionToDict:
 
 # ── _ACTION_SEVERITY ordering ─────────────────────────────────────────────────
 
+
 class TestActionSeverity:
     def test_pass_lowest(self):
         assert _ACTION_SEVERITY[ReflexAction.PASS] == 0
@@ -231,11 +237,17 @@ class TestActionSeverity:
 
 # ── GovernanceSnapshot.from_posture ───────────────────────────────────────────
 
+
 class TestGovernanceSnapshotFromPosture:
     def _posture(self, si=0.2, drift=None, vows=None):
         class _P:
             soul_integral = si
-            baseline_drift = drift or {"caution_bias": 0.5, "innovation_bias": 0.6, "autonomy_level": 0.35}
+            baseline_drift = drift or {
+                "caution_bias": 0.5,
+                "innovation_bias": 0.6,
+                "autonomy_level": 0.35,
+            }
+
         if vows is not None:
             _P.vows = vows
         return _P()
@@ -245,7 +257,9 @@ class TestGovernanceSnapshotFromPosture:
         assert snap.soul_integral == pytest.approx(0.4)
 
     def test_drift_extracted(self):
-        p = self._posture(drift={"caution_bias": 0.7, "innovation_bias": 0.5, "autonomy_level": 0.3})
+        p = self._posture(
+            drift={"caution_bias": 0.7, "innovation_bias": 0.5, "autonomy_level": 0.3}
+        )
         snap = GovernanceSnapshot.from_posture(p)
         assert snap.baseline_drift["caution_bias"] == pytest.approx(0.7)
 
@@ -274,8 +288,16 @@ class TestGovernanceSnapshotFromPosture:
 
 # ── ReflexEvaluator.evaluate ──────────────────────────────────────────────────
 
-def _snap(si=0.1, tension=0.0, vow_blocked=False, vow_repair=False,
-          vow_flags=None, council_verdict=None, conviction=None):
+
+def _snap(
+    si=0.1,
+    tension=0.0,
+    vow_blocked=False,
+    vow_repair=False,
+    vow_flags=None,
+    council_verdict=None,
+    conviction=None,
+):
     return GovernanceSnapshot(
         soul_integral=si,
         baseline_drift={"caution_bias": 0.5, "innovation_bias": 0.6, "autonomy_level": 0.35},
@@ -292,6 +314,7 @@ class TestReflexEvaluatorDisabled:
     def test_disabled_returns_pass(self):
         class _Cfg:
             enabled = False
+
         ev = ReflexEvaluator(config=_Cfg())
         decision = ev.evaluate(_snap())
         assert decision.action == ReflexAction.PASS
@@ -356,6 +379,7 @@ class TestReflexEvaluatorCritical:
         class _Cfg:
             enabled = True
             vow_enforcement_mode = "hard"
+
         ev = ReflexEvaluator(config=_Cfg())
         decision = ev.evaluate(_snap(si=0.85))
         assert decision.action == ReflexAction.BLOCK
@@ -372,6 +396,7 @@ class TestReflexEvaluatorVows:
         class _Cfg:
             enabled = True
             vow_enforcement_mode = "hard"
+
         ev = ReflexEvaluator(config=_Cfg())
         decision = ev.evaluate(_snap(si=0.1, vow_blocked=True, vow_flags=["flag1"]))
         assert decision.action == ReflexAction.BLOCK
@@ -392,6 +417,7 @@ class TestReflexEvaluatorCouncil:
         class _Cfg:
             enabled = True
             vow_enforcement_mode = "hard"
+
         ev = ReflexEvaluator(config=_Cfg())
         decision = ev.evaluate(_snap(si=0.1, council_verdict="BLOCK"))
         assert decision.action == ReflexAction.BLOCK

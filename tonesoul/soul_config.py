@@ -18,7 +18,9 @@ from dataclasses import dataclass, field
 from typing import List
 
 __ts_layer__ = "shared"
-__ts_purpose__ = "Soul config: ToneSoul-specific runtime configuration — agent identity and session parameters."
+__ts_purpose__ = (
+    "Soul config: ToneSoul-specific runtime configuration — agent identity and session parameters."
+)
 
 # ---------------------------------------------------------------------------
 # Core Values — weights for governance scoring
@@ -131,6 +133,51 @@ class MemoryConfig:
 
 
 # ---------------------------------------------------------------------------
+# GSE — Governance Semantic Engine
+# Derived from: Phase 1 (governance elements) + Phase 2 (strategy_mirror)
+# Default-off: strategy_mirror integration is opt-in until catalog calibrated
+# against real traffic (per Phase 2 spec §5.1, §10 step 7).
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class GSEConfig:
+    # Phase 2 strategy_mirror — split into two flags (2026-04-29) so the
+    # 14-day beta wave Day 7-9 calibration can run "scan-only shadow"
+    # mode: capture StrategySignature on every verdict without forcing
+    # APPROVE→BLOCK downgrade. Three valid states + one auto-promoted
+    # state:
+    #
+    #   scan=False, enforce=False  → no scan, no signature, no downgrade
+    #                                (Phase 2 default; existing behaviour)
+    #   scan=True,  enforce=False  → scan + attach signature, NO downgrade
+    #                                (shadow mode — for Day 7-9 calibration)
+    #   scan=True,  enforce=True   → scan + signature + downgrade rules
+    #                                (full enforcement — Day 10+ if approved)
+    #   scan=False, enforce=True   → IMPOSSIBLE STATE; auto-promoted to
+    #                                scan=True via __post_init__
+    #
+    # The auto-promotion is by design (Codex 2026-04-28): enforce cannot
+    # logically exist without scan — enforce operates on scan output.
+    # The split makes that relationship explicit at config-load time.
+    strategy_mirror_scan_enabled: bool = False
+    strategy_mirror_enforce_enabled: bool = False
+    # Phase 2 spec §5 confidence threshold for detector. Default matches
+    # the spec's CONFIDENCE_THRESHOLD constant; exposed here so beta
+    # operators can lower it during calibration without code changes.
+    strategy_mirror_confidence_threshold: float = 0.5
+
+    def __post_init__(self) -> None:
+        # enforce ⇒ scan auto-promotion. Frozen dataclass requires
+        # object.__setattr__ since direct assignment would raise. The
+        # promotion is silent-with-rationale: any caller that sets
+        # enforce=True implicitly states "I want scan output to act on";
+        # we honour that by ensuring scan is on too.
+        if self.strategy_mirror_enforce_enabled and not self.strategy_mirror_scan_enabled:
+            object.__setattr__(self, "strategy_mirror_scan_enabled", True)
+
+
+# ---------------------------------------------------------------------------
 # Composite — all soul config in one object
 # ---------------------------------------------------------------------------
 
@@ -144,6 +191,7 @@ class SoulConfig:
     vow: VowConfig = field(default_factory=VowConfig)
     risk: RiskConfig = field(default_factory=RiskConfig)
     memory: MemoryConfig = field(default_factory=MemoryConfig)
+    gse: GSEConfig = field(default_factory=GSEConfig)
     forbidden_actions: List[str] = field(default_factory=lambda: list(FORBIDDEN_ACTIONS))
 
 
@@ -160,5 +208,6 @@ __all__ = [
     "VowConfig",
     "RiskConfig",
     "MemoryConfig",
+    "GSEConfig",
     "FORBIDDEN_ACTIONS",
 ]

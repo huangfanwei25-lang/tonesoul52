@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from tonesoul.memory.aaak import (
     AAAKRecord,
     compress_to_aaak,
@@ -11,8 +9,8 @@ from tonesoul.memory.aaak import (
     merge_records,
 )
 
-
 # ── AAAKRecord ────────────────────────────────────────────────────────────────
+
 
 class TestAAAKRecord:
     def test_is_empty_when_all_quadrants_empty(self):
@@ -38,8 +36,12 @@ class TestAAAKRecord:
 
     def test_session_and_agent_id_propagated(self):
         record = AAAKRecord(
-            anchors=[], arcs=[], anomalies=[], keys=[],
-            session_id="sess-1", agent_id="claude-sonnet-4-6",
+            anchors=[],
+            arcs=[],
+            anomalies=[],
+            keys=[],
+            session_id="sess-1",
+            agent_id="claude-sonnet-4-6",
         )
         d = record.to_dict()
         assert d["session_id"] == "sess-1"
@@ -51,6 +53,7 @@ class TestAAAKRecord:
 
 
 # ── compress_to_aaak ─────────────────────────────────────────────────────────
+
 
 class TestCompressToAaak:
     def _data(self, **kwargs):
@@ -201,6 +204,7 @@ class TestCompressToAaak:
 
 # ── format_handoff_block ─────────────────────────────────────────────────────
 
+
 class TestFormatHandoffBlock:
     def _record(self):
         return AAAKRecord(
@@ -244,6 +248,7 @@ class TestFormatHandoffBlock:
 
 
 # ── merge_records ─────────────────────────────────────────────────────────────
+
 
 class TestMergeRecords:
     def test_merged_anchors_contain_items_from_both(self):

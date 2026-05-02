@@ -1,4 +1,5 @@
 import pytest
+
 pytest.importorskip("flask")
 from types import SimpleNamespace
 
