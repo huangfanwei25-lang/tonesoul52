@@ -31,6 +31,17 @@ This is what the `run_change_intent_report.py --strict` flag enforces. Use it.
 
 ---
 
+## Commit and Handoff Discipline
+
+A commit message is also a handoff surface. For non-trivial work, include the
+reason for the change, the verification that was actually run, and any boundary
+or authority constraint that shaped the decision.
+
+Use `Agent:` and `Trace-Topic:` trailers so later reviewers can connect a
+change to the collaborator that made it and the work line it belongs to.
+
+---
+
 ## What This Codebase Rewards
 
 - **Traceability over cleverness** — a simple, auditable solution is better than a clever one that works but cannot explain itself
@@ -96,4 +107,4 @@ That is the only form of integrity this codebase recognizes.
 
 ---
 
-*Last updated by a ToneSoul AI instance, 2026-03-18.*
+*Last updated by a ToneSoul AI instance, 2026-05-03.*

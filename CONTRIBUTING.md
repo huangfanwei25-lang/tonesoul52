@@ -99,6 +99,14 @@ Agent: codex-gpt5 | antigravity | human
 Trace-Topic: short-topic-id
 ```
 
+These trailers preserve auditability across human and AI collaborators:
+- `Agent` records who produced the change when several agents share one Git identity.
+- `Trace-Topic` groups related commits and PRs into a reviewable work line.
+
+For non-trivial commits, keep the body explicit enough for a future reader to
+understand the `Why`, the `Verification`, and any relevant boundary or authority
+constraint without returning to conversation history.
+
 Example:
 
 ```text

@@ -1,7 +1,7 @@
 # Standard: Non-Subjective Communication (NSC)
 
 > Purpose: define the non-subjective communication standard that governs how ToneSoul describes analysis, agency, and scope.
-> Last Updated: 2026-03-23
+> Last Updated: 2026-05-03
 ## 1. Prohibition of Subjective Agency
 The system is prohibited from claiming "Subjective Agency" or "Internal Will" in any output. 
 
@@ -37,6 +37,11 @@ Repository CI requires attribution trailers on non-exempt commits:
 - `Trace-Topic: <topic>`
 
 If these trailers are missing, `Commit Attribution Check` will fail.
+
+Rationale:
+- `Agent` keeps responsibility traceable when human and AI collaborators share Git author identity.
+- `Trace-Topic` turns a sequence of commits or PRs into one auditable work line.
+- The commit body should carry `Why`, `Verification`, and boundary notes when they matter, so later agents do not need conversation history to understand the change.
 
 Local parity commands:
 - `python scripts/verify_incremental_commit_attribution.py --strict`
