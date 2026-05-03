@@ -97,7 +97,7 @@ The numbered-prefix taxonomy is borrowed from **shadowMAS** (`https://github.com
 This is the only ToneSoul subdirectory currently using the numbered prefix. Whether to extend it to other directories (`docs/architecture/`, `docs/status/`, `docs/runtime/`, etc.) is an open question — current bias is **don't extend without evidence the cold-reader problem also exists in those directories**.
 
 See:
-- Runtime decomposition notes exist in session history but are not committed to master yet; do not cite `docs/runtime/tonesoul_runtime_decomposition_2026-04-29.md` until that file lands.
+- [Runtime decomposition map](../runtime/tonesoul_runtime_decomposition_2026-04-29.md) for the broader "explicit boundary contracts" theme this structure fits into. It is a planning aid only; code, tests, `task.md`, and current status docs remain higher authority.
 - The shadowMAS analysis (in conversation history, not yet a file) for the specific learning chain
 
 ---

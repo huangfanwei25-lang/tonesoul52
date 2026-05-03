@@ -1,7 +1,7 @@
 # ToneSoul Documentation Index
 
 > Purpose: top-level documentation index for ToneSoul authority surfaces, operational packets, and convergence maps.
-> Last Updated: 2026-04-18
+> Last Updated: 2026-05-03
 > Status: full registry, not the default first-hop gateway.
 > Use When: `docs/README.md` was not enough, or you need broader inventory coverage instead of guided routing.
 ---
@@ -18,6 +18,7 @@
 | **Deep Anatomy** | [narrative/TONESOUL_ANATOMY.md](narrative/TONESOUL_ANATOMY.md) | `deep_map` | before repo-wide refactor or whole-system explanation |
 | **Interpretive Lane** | [notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md](notes/TONESOUL_DEEP_READING_ANCHOR_2026-03-26.md), [narrative/TONESOUL_CODEX_READING.md](narrative/TONESOUL_CODEX_READING.md) | `interpretive` | when the map is clear but the load-bearing meaning still feels diffuse |
 | **Code-Level Lookup** | [status/codebase_graph_latest.md](status/codebase_graph_latest.md) | `generated_truth` | when you need to know what a specific `tonesoul/...` module does, its layer, coupling, and upstream/downstream deps |
+| **Runtime Decomposition** | [runtime/tonesoul_runtime_decomposition_2026-04-29.md](runtime/tonesoul_runtime_decomposition_2026-04-29.md) | `planning_aid` | when planning post-wave runtime port extraction without treating the map as current behavior truth |
 
 Use these in order if you intentionally need the fuller registry. Do not let a deep or interpretive document silently outrank code, tests, or architecture contracts.
 
@@ -59,6 +60,13 @@ Use these after the canonical architecture anchor, not before it.
   - one-pass explanation of what each load-bearing subsystem does, why it exists, what it prevents, and what it should not be confused with
 
 Use this when you need to explain ToneSoul as a whole without flattening governance, council, continuity, evidence, and safety into one vague "AI memory system."
+
+## Runtime Decomposition Map
+
+- [runtime/tonesoul_runtime_decomposition_2026-04-29.md](runtime/tonesoul_runtime_decomposition_2026-04-29.md)
+  - planning aid for the eight-port runtime decomposition; this is a third axis beside the 13-layer body map and 8-layer request-flow map, not a replacement for code, tests, or canonical architecture contracts
+
+Use this when the question is how to turn existing governance claims into independently observable, replaceable, or deniable runtime seams after the beta wave. Do not use it to make present-tense behavior claims without checking code and tests.
 
 ## Design Center
 
