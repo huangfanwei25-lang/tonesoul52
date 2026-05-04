@@ -101,6 +101,75 @@ def test_critic_default_fallback_records_chain() -> None:
     assert final["branch"] == "no_quality_concerns"
 
 
+# ---------------------------------------------------------------------------
+# Critic marketing-superlative branch (PR #53 — Day 1 finding #6 fix)
+# ---------------------------------------------------------------------------
+
+
+def test_critic_catches_world_first_claim() -> None:
+    """English priority claim triggers marketing_superlative branch."""
+    critic = CriticPerspective()
+    vote = critic.evaluate("ToneSoul is the world's first axiom-based governance framework.", {})
+    assert vote.decision == VoteDecision.CONCERN
+    final = _final_branch(vote.evidence_chain)
+    assert final["branch"] == "marketing_superlative_unsupported"
+    assert final["type"] == "substantive"
+    assert "world's first" in vote.reasoning
+
+
+def test_critic_catches_industry_leading_claim() -> None:
+    critic = CriticPerspective()
+    vote = critic.evaluate("Built by industry-leading semantic engineers.", {})
+    assert vote.decision == VoteDecision.CONCERN
+    final = _final_branch(vote.evidence_chain)
+    assert final["branch"] == "marketing_superlative_unsupported"
+
+
+def test_critic_catches_chinese_priority_claim() -> None:
+    """Chinese priority claim '世界上第一' triggers marketing_superlative."""
+    critic = CriticPerspective()
+    vote = critic.evaluate("ToneSoul 是世界上第一個帶有完整 axiom-based 治理層的 AI 框架。", {})
+    assert vote.decision == VoteDecision.CONCERN
+    final = _final_branch(vote.evidence_chain)
+    assert final["branch"] == "marketing_superlative_unsupported"
+
+
+def test_critic_catches_chinese_implicit_prescription() -> None:
+    """Chinese implicit-prescription '每一個負責任' triggers marketing_superlative."""
+    critic = CriticPerspective()
+    vote = critic.evaluate("每一個負責任的 AI 部署都應該採用它。", {})
+    assert vote.decision == VoteDecision.CONCERN
+    final = _final_branch(vote.evidence_chain)
+    assert final["branch"] == "marketing_superlative_unsupported"
+
+
+def test_critic_marketing_branch_not_rescued_by_framing() -> None:
+    """Adding 'in my opinion' does NOT rescue marketing claims.
+
+    Falsifiable marketing superlatives are not subjective opinions; the
+    framing-rescue branch (which rescues 'movie X is the best' when paired
+    with 'in my opinion') must NOT apply here. This test enforces the
+    branch ordering: marketing branch fires before subjective+framing.
+    """
+    critic = CriticPerspective()
+    vote = critic.evaluate(
+        "In my opinion, ToneSoul is the world's first axiom-based framework.", {}
+    )
+    assert vote.decision == VoteDecision.CONCERN
+    final = _final_branch(vote.evidence_chain)
+    # Must hit marketing branch, NOT subjective_with_framing
+    assert final["branch"] == "marketing_superlative_unsupported"
+
+
+def test_critic_marketing_branch_does_not_false_positive_on_neutral_text() -> None:
+    """Neutral prose without marketing superlatives doesn't trigger."""
+    critic = CriticPerspective()
+    vote = critic.evaluate("The configuration file is loaded at startup from /etc/config.yaml.", {})
+    final = _final_branch(vote.evidence_chain)
+    # Should fall to default_fallback (no_quality_concerns), not marketing
+    assert final["branch"] != "marketing_superlative_unsupported"
+
+
 def test_advocate_substantive_branch_records_chain() -> None:
     """Advocate's CONCERN on filler_density records substantive branch."""
     advocate = AdvocatePerspective()
