@@ -57,11 +57,11 @@ class AtomicClaim:
     """A single assertable statement extracted from source text."""
 
     id: str
-    text: str                          # the claim, as a clean statement
-    source_span: str                   # e.g. "L3-5", "L7:14-42", "L?"
+    text: str  # the claim, as a clean statement
+    source_span: str  # e.g. "L3-5", "L7:14-42", "L?"
     claim_type: ClaimType
-    confidence: float                  # extractor confidence 0.0 → 1.0
-    line_number: int = 0               # primary line (0 = unknown)
+    confidence: float  # extractor confidence 0.0 → 1.0
+    line_number: int = 0  # primary line (0 = unknown)
     evidence_ids: List[str] = field(default_factory=list)
 
     def to_dict(self):
@@ -257,7 +257,8 @@ def claims_requiring_evidence(claims: List[AtomicClaim]) -> List[AtomicClaim]:
         ClaimType.EVALUATIVE: 4,
     }
     needs_evidence = [
-        c for c in claims
+        c
+        for c in claims
         if c.claim_type in (ClaimType.FACTUAL, ClaimType.QUANTITATIVE, ClaimType.CAUSAL)
         and not c.evidence_ids
     ]

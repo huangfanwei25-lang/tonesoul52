@@ -17,9 +17,7 @@ from pathlib import Path
 from typing import Dict, Optional
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Council evolution: adapt deliberation strategy based on historical performance."
-)
+__ts_purpose__ = "Council evolution: adapt deliberation strategy based on historical performance."
 
 logger = logging.getLogger(__name__)
 

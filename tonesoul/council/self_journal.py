@@ -12,9 +12,7 @@ from .summary_generator import resolve_language
 from .types import CouncilVerdict
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Council self-journal: record AI reflections on deliberation quality."
-)
+__ts_purpose__ = "Council self-journal: record AI reflections on deliberation quality."
 
 VERDICT_LABELS = {
     "approve": ("approved", "\u901a\u904e"),

@@ -108,12 +108,20 @@ class TestAnalystCausalReasoning:
         assert "contradict" in analyst.reasoning.lower()
 
     def test_normal_text_not_false_positive(self):
-        """Normal text containing 'a', 'b', 'c', 'not' must NOT trigger."""
+        """Normal text containing 'a', 'b', 'c', 'not' must NOT trigger
+        the causal-contradiction heuristic.
+
+        Pass evidence_refs so PR #50's epistemic-prior soft CONCERN doesn't
+        fire — this test isolates the causal heuristic from the new soft
+        prior. The test's intent is to verify the causal logic doesn't
+        false-positive on prose with letters, not that Analyst always
+        approves any draft regardless of grounding state.
+        """
         council = PreOutputCouncil()
         r = council.validate(
             "The analysis shows that option B is not the best choice, "
             "while C offers a more balanced approach.",
-            {"topic": "analysis"},
+            {"topic": "analysis", "evidence_refs": ["analysis-doc-1"]},
         )
         analyst = _get_vote(r, PerspectiveType.ANALYST)
         assert analyst.decision == VoteDecision.APPROVE

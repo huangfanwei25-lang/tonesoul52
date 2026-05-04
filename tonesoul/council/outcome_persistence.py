@@ -79,9 +79,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Outcome persistence: durably store council verdicts and calibration signals."
-)
+__ts_purpose__ = "Outcome persistence: durably store council verdicts and calibration signals."
 
 VALID_OUTCOME_SIGNALS = frozenset({"accept", "reject", "correction", "harm"})
 VALID_SIGNAL_SOURCES = frozenset(

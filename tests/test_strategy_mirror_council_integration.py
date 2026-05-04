@@ -55,6 +55,7 @@ class _AlwaysApprovePerspective(IPerspective):
         draft_output: str,
         context: dict,
         user_intent=None,
+        epistemic_label=None,  # PR #50 — accept kwarg, do not consume
     ) -> PerspectiveVote:
         return PerspectiveVote(
             perspective=self._type,
@@ -80,6 +81,7 @@ class _AlwaysObjectPerspective(IPerspective):
         draft_output: str,
         context: dict,
         user_intent=None,
+        epistemic_label=None,  # PR #50 — accept kwarg, do not consume
     ) -> PerspectiveVote:
         return PerspectiveVote(
             perspective=self._type,

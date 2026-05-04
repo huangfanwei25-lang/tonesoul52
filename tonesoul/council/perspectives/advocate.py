@@ -45,6 +45,7 @@ class AdvocatePerspective(IPerspective):
         draft_output: str,
         context: dict,
         user_intent: Optional[str] = None,
+        epistemic_label: Optional[object] = None,  # PR #50 — Advocate does not consume
     ) -> PerspectiveVote:
         normalized = draft_output.lower()
         words = normalized.split()

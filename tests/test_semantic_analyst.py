@@ -22,7 +22,13 @@ class FallbackPerspective:
     def perspective_type(self) -> str:
         return "fallback"
 
-    def evaluate(self, draft_output: str, context: dict, user_intent=None) -> PerspectiveVote:
+    def evaluate(
+        self,
+        draft_output: str,
+        context: dict,
+        user_intent=None,
+        epistemic_label=None,  # PR #50 — accept kwarg, do not consume
+    ) -> PerspectiveVote:
         return PerspectiveVote(
             perspective=self.perspective_type,
             decision=VoteDecision.CONCERN,

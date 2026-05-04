@@ -12,9 +12,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, Iterable, Sequence
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Swarm framework: coordinate multiple council instances for high-stakes decisions."
-)
+__ts_purpose__ = "Swarm framework: coordinate multiple council instances for high-stakes decisions."
 
 SWARM_DECISIONS = frozenset({"approve", "block", "revise", "defer"})
 

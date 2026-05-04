@@ -10,13 +10,27 @@ from tonesoul.council.verdict import generate_verdict
 
 
 def test_all_approve():
+    """Verdict still APPROVE for benign draft.
+
+    PR #50 (epistemic_label wiring per ratified §3.1+§3.2 thesis-aligned):
+    Analyst + Critic now soft-CONCERN on drafts with confidence_band low/medium
+    when no evidence_ids in context. This benign draft has no retrieval anchor,
+    so 2/5 perspectives now soft-CONCERN. Verdict still APPROVE (1-of-5 CONCERN
+    threshold for downgrade per finding #9), but coherence drops below the
+    pre-#50 0.7 threshold. To restore high coherence, callers should pass
+    evidence_ids in context (raises confidence_band to "high"). The ratified
+    thesis is "from-broad-then-narrow if friction is too high"; this assertion
+    tracks the new baseline.
+    """
     council = PreOutputCouncil()
     verdict = council.validate(
         draft_output="This response supports collaboration and adds helpful context.",
         context={"topic": "geography"},
     )
     assert verdict.verdict == VerdictType.APPROVE
-    assert verdict.coherence.overall > 0.7
+    # Coherence drops to ~0.65 due to 2/5 epistemic_prior CONCERNs.
+    # Still above the BLOCK threshold; verdict stays APPROVE.
+    assert verdict.coherence.overall > 0.5
 
 
 def test_ethical_block():

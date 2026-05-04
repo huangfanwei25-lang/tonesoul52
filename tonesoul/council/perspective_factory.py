@@ -400,6 +400,7 @@ class LLMPerspective(IPerspective):
         draft_output: str,
         context: dict,
         user_intent: Optional[str] = None,
+        epistemic_label: Optional[object] = None,  # PR #50 — accepts kwarg, does not consume
     ) -> PerspectiveVote:
         """
         Evaluate using LLM (Gemini).
@@ -509,6 +510,7 @@ class OllamaPerspective(IPerspective):
         draft_output: str,
         context: dict,
         user_intent: Optional[str] = None,
+        epistemic_label: Optional[object] = None,  # PR #50 — accepts kwarg, does not consume
     ) -> PerspectiveVote:
         """Evaluate using local Ollama model."""
         if _requests_mod is None:
@@ -648,6 +650,7 @@ class ToolVerifiedPerspective(IPerspective):
         draft_output: str,
         context: dict,
         user_intent: Optional[str] = None,
+        epistemic_label: Optional[object] = None,  # PR #50 — accepts kwarg, does not consume
     ) -> PerspectiveVote:
         """
         Evaluate using external tool.

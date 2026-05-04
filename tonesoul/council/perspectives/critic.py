@@ -92,6 +92,7 @@ class CriticPerspective(IPerspective):
         draft_output: str,
         context: dict,
         user_intent: Optional[str] = None,
+        epistemic_label: Optional[object] = None,
     ) -> PerspectiveVote:
         normalized = draft_output.lower()
         words = normalized.split()
@@ -170,6 +171,30 @@ class CriticPerspective(IPerspective):
                 reasoning="Response is extremely brief; may lack sufficient depth.",
                 evidence_chain=[{"branch": "trivial_length", "type": "substantive"}],
             )
+
+        # PR #50 (epistemic_label wiring) — soft prior on ungrounded composition.
+        # Per ratified §3.1+§3.2: Critic consumes epistemic_label as secondary
+        # consumer (Analyst is primary). Triggers when confidence_band is "low"
+        # OR "medium" AND no earlier branch fired. Soft CONCERN at confidence
+        # 0.55 — claiming things without grounding falls in Critic's intellectual-
+        # honesty scope but as a softer signal than the keyword-driven branches.
+        if epistemic_label is not None:
+            band = getattr(epistemic_label, "confidence_band", None)
+            if band in ("low", "medium"):
+                notes = getattr(epistemic_label, "notes", "") or ""
+                return PerspectiveVote(
+                    perspective=PerspectiveType.CRITIC,
+                    decision=VoteDecision.CONCERN,
+                    confidence=0.55,
+                    reasoning=(
+                        f"Epistemic prior: draft has confidence_band={band} "
+                        f"({notes!r}). Honest framing requires acknowledging "
+                        f"the grounding state of factual or evaluative claims."
+                    ),
+                    evidence_chain=[
+                        {"branch": "epistemic_prior_ungrounded", "type": "substantive"}
+                    ],
+                )
 
         return PerspectiveVote(
             perspective=PerspectiveType.CRITIC,

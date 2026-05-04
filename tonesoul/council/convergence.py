@@ -33,9 +33,9 @@ __ts_purpose__ = (
     "into stable agreement and recommend additional deliberation if not."
 )
 
-CONVERGENCE_THRESHOLD: float = 0.75   # score above this → converged
+CONVERGENCE_THRESHOLD: float = 0.75  # score above this → converged
 HIGH_VARIANCE_THRESHOLD: float = 0.04  # variance above this → unstable
-MAX_RECOMMENDED_ROUNDS: int = 2        # never recommend more than this
+MAX_RECOMMENDED_ROUNDS: int = 2  # never recommend more than this
 
 
 @dataclass
@@ -43,11 +43,11 @@ class ConvergenceResult:
     """Result of a convergence check across a set of perspective votes."""
 
     converged: bool
-    score: float                        # 0.0 (chaos) → 1.0 (fully settled)
-    variance: float                     # variance of confidence values
+    score: float  # 0.0 (chaos) → 1.0 (fully settled)
+    variance: float  # variance of confidence values
     mean_confidence: float
-    recommendation: str                 # plain-language note for logging
-    suggested_focus: List[str] = field(default_factory=list)   # perspectives to re-engage
+    recommendation: str  # plain-language note for logging
+    suggested_focus: List[str] = field(default_factory=list)  # perspectives to re-engage
     additional_rounds_recommended: int = 0
 
     def to_dict(self):
@@ -141,7 +141,9 @@ def check_convergence(
     converged = score >= threshold
 
     # Objecting perspectives always prevent convergence
-    objectors = [_perspective_label(v.perspective) for v in votes if v.decision == VoteDecision.OBJECT]
+    objectors = [
+        _perspective_label(v.perspective) for v in votes if v.decision == VoteDecision.OBJECT
+    ]
     if objectors:
         converged = False
 
