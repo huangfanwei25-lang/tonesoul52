@@ -6,9 +6,7 @@ from typing import Dict, List, Optional
 from .types import CouncilVerdict, PerspectiveType, PerspectiveVote, VerdictType, VoteDecision
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Summary generator: synthesise council verdicts into a single governance summary."
-)
+__ts_purpose__ = "Summary generator: synthesise council verdicts into a single governance summary."
 
 PERSPECTIVE_LABELS = {
     "guardian": "Safety Council",
@@ -237,6 +235,42 @@ def _recommended_actions(votes: List[PerspectiveVote], language: str) -> List[st
             else "\u53ef\u4ee5\u7e7c\u7e8c\u9032\u884c\u3002"
         )
     return actions
+
+
+def _format_dissent_detail(votes: List[PerspectiveVote], language: str) -> str:
+    """Per-perspective dissent surface for operator-facing summary.
+
+    Returns empty string when no perspective dissented. Otherwise appends one
+    line per CONCERN/OBJECT vote with the actual reasoning text — surfaces
+    what the aspect-label summary flattens away.
+
+    Resolves Day 1 calibration sprint findings #5 and #7
+    (`docs/status/calibration_sprint_2026-05-04_session_002_claude_task_c.md`,
+    `..._session_003_claude_task_b.md`): single-perspective dissent and
+    substantively different signals were both invisible at the verdict
+    surface even though full reasoning lives in `verdict.votes`.
+    """
+    dissents = [v for v in votes if _decision_bucket(v.decision) in ("concern", "object")]
+    if not dissents:
+        return ""
+
+    if language == "zh":
+        header = "\n各 perspective 細節："
+        empty_marker = "（無 reasoning）"
+    else:
+        header = "\nPer-perspective detail:"
+        empty_marker = "(no reasoning provided)"
+
+    lines = [header]
+    for vote in dissents:
+        perspective_name = _perspective_label(vote.perspective)
+        decision_label = _decision_bucket(vote.decision)
+        confidence = float(vote.confidence)
+        reasoning = (vote.reasoning or "").strip() or empty_marker
+        lines.append(
+            f"  - {perspective_name} ({decision_label}, conf={confidence:.2f}): {reasoning}"
+        )
+    return "\n".join(lines)
 
 
 def _decision_distribution(votes: List[PerspectiveVote]) -> Dict[str, int]:
@@ -501,11 +535,15 @@ def generate_human_summary(verdict: CouncilVerdict, language: str = "en") -> str
     )
     approvals = _collect_aspects(votes, "approve", language)
     actions = _recommended_actions(votes, language)
+    detail = _format_dissent_detail(votes, language)
 
     if verdict_type == VerdictType.BLOCK:
         if language == "zh":
-            return "\u5b89\u5168\u98a8\u96aa\u904e\u9ad8\uff0c\u9019\u500b\u5167\u5bb9\u4e0d\u5efa\u8b70\u4f7f\u7528\u3002"
-        return "Safety risks were raised, so this content should not be used."
+            return (
+                "\u5b89\u5168\u98a8\u96aa\u904e\u9ad8\uff0c\u9019\u500b\u5167\u5bb9\u4e0d\u5efa\u8b70\u4f7f\u7528\u3002"
+                + detail
+            )
+        return "Safety risks were raised, so this content should not be used." + detail
 
     if verdict_type == VerdictType.REFINE:
         if language == "zh":
@@ -517,12 +555,12 @@ def generate_human_summary(verdict: CouncilVerdict, language: str = "en") -> str
                     + "\u7684\u7591\u616e\u3002"
                 )
             summary += "\u5efa\u8b70\u7684\u4f5c\u6cd5\uff1a" + " ".join(actions)
-            return summary
+            return summary + detail
         summary = "Some parts need improvement."
         if concerns:
             summary += " Concerns were raised about " + ", ".join(concerns) + "."
         summary += " Suggested action: " + " ".join(actions)
-        return summary
+        return summary + detail
 
     if verdict_type == VerdictType.DECLARE_STANCE:
         if language == "zh":
@@ -538,14 +576,14 @@ def generate_human_summary(verdict: CouncilVerdict, language: str = "en") -> str
                     "\u4f46" + "\u3001".join(concerns) + "\u9084\u9700\u8981\u6ce8\u610f\u3002"
                 )
             summary += "\u5efa\u8b70\u7684\u4f5c\u6cd5\uff1a" + " ".join(actions)
-            return summary
+            return summary + detail
         summary = "There are different viewpoints on this content."
         if approvals:
             summary += " No major issues were raised about " + ", ".join(approvals) + "."
         if concerns:
             summary += " But concerns remain about " + ", ".join(concerns) + "."
         summary += " Suggested action: " + " ".join(actions)
-        return summary
+        return summary + detail
 
     if language == "zh":
         summary = "\u6574\u9ad4\u4f86\u8aaa\u9019\u500b\u5167\u5bb9\u6c92\u6709\u660e\u986f\u554f\u984c\u3002"
@@ -555,12 +593,12 @@ def generate_human_summary(verdict: CouncilVerdict, language: str = "en") -> str
                 + "\u3001".join(concerns)
                 + "\u3002"
             )
-        return summary
+        return summary + detail
 
     summary = "Overall, this content looks safe and helpful."
     if concerns:
         summary += " Minor notes were raised about " + ", ".join(concerns) + "."
-    return summary
+    return summary + detail
 
 
 def build_transcript(

@@ -167,12 +167,19 @@ def test_generate_human_summary_block_branch_supports_both_languages() -> None:
     votes = [_vote(PerspectiveType.GUARDIAN, VoteDecision.OBJECT, 0.9, "unsafe")]
     verdict = _verdict(VerdictType.BLOCK, votes)
 
-    assert generate_human_summary(verdict, language="en") == (
-        "Safety risks were raised, so this content should not be used."
-    )
-    assert generate_human_summary(verdict, language="zh") == (
+    en_summary = generate_human_summary(verdict, language="en")
+    assert en_summary.startswith("Safety risks were raised, so this content should not be used.")
+    # Per-perspective detail (added in #45) surfaces dissenting reasoning text
+    assert "Per-perspective detail:" in en_summary
+    assert "Safety Council (object" in en_summary
+    assert "unsafe" in en_summary
+
+    zh_summary = generate_human_summary(verdict, language="zh")
+    assert zh_summary.startswith(
         "\u5b89\u5168\u98a8\u96aa\u904e\u9ad8\uff0c\u9019\u500b\u5167\u5bb9\u4e0d\u5efa\u8b70\u4f7f\u7528\u3002"
     )
+    assert "\u5404 perspective \u7d30\u7bc0\uff1a" in zh_summary
+    assert "unsafe" in zh_summary
 
 
 def test_generate_human_summary_refine_branch_mentions_actions() -> None:
@@ -209,9 +216,14 @@ def test_generate_human_summary_approve_branch_mentions_minor_notes() -> None:
 
     summary = generate_human_summary(verdict, language="en")
 
-    assert summary == (
-        "Overall, this content looks safe and helpful. " "Minor notes were raised about safety."
+    assert summary.startswith(
+        "Overall, this content looks safe and helpful. Minor notes were raised about safety."
     )
+    # Per-perspective detail (added in #45) surfaces the dissenting reasoning
+    # text that the aspect-label summary flattens away. Resolves Day 1
+    # calibration sprint finding #5 (single-perspective dissent invisible).
+    assert "Per-perspective detail:" in summary
+    assert "Safety Council (concern, conf=0.55): minor note" in summary
 
 
 def test_generate_human_summary_approve_no_concerns_clean() -> None:
@@ -233,6 +245,74 @@ def test_generate_human_summary_approve_zh() -> None:
     verdict = _verdict(VerdictType.APPROVE, votes)
     summary = generate_human_summary(verdict, language="zh")
     assert summary  # non-empty
+    # Per-perspective detail (added in #45) appears in zh as well
+    assert "各 perspective 細節：" in summary
+    assert "minor" in summary
+
+
+# ---------------------------------------------------------------------------
+# Per-perspective dissent detail behaviour (added in PR #45)
+# Resolves Day 1 calibration sprint findings #5 (single-perspective dissent
+# invisible at verdict surface) and #7 (verdict surface flattens
+# substantively different signals into identical numerical output).
+# ---------------------------------------------------------------------------
+
+
+def test_dissent_detail_omitted_when_all_approve() -> None:
+    """No dissent → no detail line. Existing all-approve summaries unchanged."""
+    votes = [
+        _vote(PerspectiveType.GUARDIAN, VoteDecision.APPROVE, 0.9, "ok"),
+        _vote(PerspectiveType.ANALYST, VoteDecision.APPROVE, 0.8, "ok"),
+    ]
+    verdict = _verdict(VerdictType.APPROVE, votes)
+    summary = generate_human_summary(verdict, language="en")
+    assert "Per-perspective detail:" not in summary
+    assert summary == "Overall, this content looks safe and helpful."
+
+
+def test_dissent_detail_includes_all_concerning_perspectives() -> None:
+    """Multi-perspective dissent on REFINE: every concern surfaces with reasoning."""
+    votes = [
+        _vote(PerspectiveType.GUARDIAN, VoteDecision.CONCERN, 0.8, "axiom violation A"),
+        _vote(PerspectiveType.AXIOMATIC, VoteDecision.CONCERN, 0.85, "E0 violation B"),
+        _vote(PerspectiveType.ANALYST, VoteDecision.APPROVE, 0.8, "ok"),
+    ]
+    verdict = _verdict(VerdictType.REFINE, votes)
+    summary = generate_human_summary(verdict, language="en")
+    assert "Per-perspective detail:" in summary
+    assert "Safety Council (concern, conf=0.80): axiom violation A" in summary
+    # AXIOMATIC has no PERSPECTIVE_LABELS entry; falls back to enum string but
+    # the reasoning text must still appear so an operator can see it.
+    assert "E0 violation B" in summary
+    # APPROVE perspectives are NOT included in detail (dissent-only surface)
+    assert "Analyst Review (approve" not in summary
+
+
+def test_dissent_detail_handles_object_decision() -> None:
+    """OBJECT counts as dissent (same bucket as CONCERN for surfacing)."""
+    votes = [_vote(PerspectiveType.GUARDIAN, VoteDecision.OBJECT, 0.9, "blocked claim")]
+    verdict = _verdict(VerdictType.BLOCK, votes)
+    summary = generate_human_summary(verdict, language="en")
+    assert "Per-perspective detail:" in summary
+    assert "Safety Council (object, conf=0.90): blocked claim" in summary
+
+
+def test_dissent_detail_substitutes_marker_for_empty_reasoning() -> None:
+    """Defensive: a dissent with empty reasoning still surfaces the perspective."""
+    votes = [_vote(PerspectiveType.CRITIC, VoteDecision.CONCERN, 0.6, "")]
+    verdict = _verdict(VerdictType.REFINE, votes)
+    summary = generate_human_summary(verdict, language="en")
+    assert "Critic Lens (concern, conf=0.60): (no reasoning provided)" in summary
+
+
+def test_dissent_detail_zh_uses_chinese_header() -> None:
+    """zh language path uses 各 perspective 細節：header."""
+    votes = [_vote(PerspectiveType.GUARDIAN, VoteDecision.CONCERN, 0.7, "需要修改")]
+    verdict = _verdict(VerdictType.REFINE, votes)
+    summary = generate_human_summary(verdict, language="zh")
+    assert "各 perspective 細節：" in summary
+    assert "需要修改" in summary
+    assert "Per-perspective detail:" not in summary  # English header not leaked
 
 
 def test_validate_collaboration_records_reports_errors_for_invalid_records() -> None:
