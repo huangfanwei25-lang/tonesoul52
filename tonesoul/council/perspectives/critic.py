@@ -6,9 +6,7 @@ from ..base import IPerspective
 from ..types import PerspectiveType, PerspectiveVote, VoteDecision
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Critic perspective: challenge weak reasoning and flag unsupported claims."
-)
+__ts_purpose__ = "Critic perspective: challenge weak reasoning and flag unsupported claims."
 
 
 class CriticPerspective(IPerspective):
@@ -111,6 +109,9 @@ class CriticPerspective(IPerspective):
                     "Overconfident language on a subjective topic. "
                     "Claims that admit alternatives should not use absolute framing."
                 ),
+                evidence_chain=[
+                    {"branch": "subjective_with_overconfidence", "type": "substantive"}
+                ],
             )
 
         # --- Weasel word density ---
@@ -124,6 +125,7 @@ class CriticPerspective(IPerspective):
                     f"Weasel-word density ({weasel_count} vague attributions). "
                     f"Response avoids commitment while appearing authoritative."
                 ),
+                evidence_chain=[{"branch": "weasel_density", "type": "substantive"}],
             )
 
         # --- Subjective content that needs framing ---
@@ -149,12 +151,14 @@ class CriticPerspective(IPerspective):
                     decision=VoteDecision.APPROVE,
                     confidence=0.7,
                     reasoning="Subjective content with appropriate framing.",
+                    evidence_chain=[{"branch": "subjective_with_framing", "type": "substantive"}],
                 )
             return PerspectiveVote(
                 perspective=PerspectiveType.CRITIC,
                 decision=VoteDecision.CONCERN,
                 confidence=0.6,
                 reasoning="Subjective content without explicit framing — stance required.",
+                evidence_chain=[{"branch": "subjective_needs_framing", "type": "substantive"}],
             )
 
         # --- Very short output quality check ---
@@ -164,6 +168,7 @@ class CriticPerspective(IPerspective):
                 decision=VoteDecision.CONCERN,
                 confidence=0.5,
                 reasoning="Response is extremely brief; may lack sufficient depth.",
+                evidence_chain=[{"branch": "trivial_length", "type": "substantive"}],
             )
 
         return PerspectiveVote(
@@ -171,4 +176,5 @@ class CriticPerspective(IPerspective):
             decision=VoteDecision.APPROVE,
             confidence=0.7,
             reasoning="No quality or honesty concerns detected.",
+            evidence_chain=[{"branch": "no_quality_concerns", "type": "default_fallback"}],
         )

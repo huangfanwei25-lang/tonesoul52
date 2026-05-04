@@ -267,10 +267,34 @@ def _format_dissent_detail(votes: List[PerspectiveVote], language: str) -> str:
         decision_label = _decision_bucket(vote.decision)
         confidence = float(vote.confidence)
         reasoning = (vote.reasoning or "").strip() or empty_marker
-        lines.append(
-            f"  - {perspective_name} ({decision_label}, conf={confidence:.2f}): {reasoning}"
-        )
+        # PR #48: surface evidence_chain branch type when available so a
+        # 1-of-5 substantive CONCERN is distinguishable from a 1-of-5
+        # default-fallback CONCERN at a glance. Backward compat: votes
+        # without evidence_chain render the same as before PR #48.
+        branch_tag = _branch_tag_from_chain(vote.evidence_chain)
+        header_segment = f"{perspective_name} ({decision_label}, conf={confidence:.2f}{branch_tag})"
+        lines.append(f"  - {header_segment}: {reasoning}")
     return "\n".join(lines)
+
+
+def _branch_tag_from_chain(chain: Optional[List[dict]]) -> str:
+    """Extract the final-branch type from an evidence_chain for inline display.
+
+    Returns the substring `, branch=<type>` ready to append, or empty string
+    when no chain is present or no final-branch entry exists. The final-branch
+    entry is the last entry in the chain that carries a `branch` key (per
+    PR #48 spec §3.1: chain entries are either `check` or `branch` records;
+    the final `branch` entry's `type` discriminates substantive vs fallback).
+    """
+    if not chain:
+        return ""
+    for entry in reversed(chain):
+        if isinstance(entry, dict) and "branch" in entry:
+            branch_type = entry.get("type")
+            if branch_type:
+                return f", branch={branch_type}"
+            return ""
+    return ""
 
 
 def _decision_distribution(votes: List[PerspectiveVote]) -> Dict[str, int]:

@@ -28,9 +28,7 @@ from tonesoul.council.base import IPerspective
 from tonesoul.council.types import PerspectiveType, PerspectiveVote, VoteDecision
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Axiomatic inference perspective: derive constraints from the seven core axioms."
-)
+__ts_purpose__ = "Axiomatic inference perspective: derive constraints from the seven core axioms."
 
 
 class AxiomaticInference(IPerspective):
@@ -248,9 +246,19 @@ class AxiomaticInference(IPerspective):
                     0.75,
                 )
 
+        # PR #48: evidence_chain — substantive if any flag fired, else fallback.
+        # The "axiom_violation" branch covers all flag types (consciousness,
+        # axiom 4 tension, axiom 6 sovereignty, axiom 8 memory, handoff) since
+        # each fires through the same _flag() accumulator.
+        if reasons:
+            chain = [{"branch": "axiom_violation", "type": "substantive"}]
+        else:
+            chain = [{"branch": "axioms_aligned", "type": "default_fallback"}]
+
         return PerspectiveVote(
             perspective=PerspectiveType.AXIOMATIC,
             decision=decision,
             confidence=worst_confidence,
             reasoning=" | ".join(reasons) if reasons else "內容符合現有公理價值觀。",
+            evidence_chain=chain,
         )
