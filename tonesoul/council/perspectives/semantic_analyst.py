@@ -46,11 +46,16 @@ class SemanticAnalystPerspective(IPerspective):
         draft_output: str,
         context: dict,
         user_intent: Optional[str] = None,
+        epistemic_label: Optional[object] = None,  # PR #50 — pass through to fallback
     ) -> PerspectiveVote:
         if not self.embedder.is_available():
-            return self.fallback.evaluate(draft_output, context, user_intent)
+            return self.fallback.evaluate(
+                draft_output, context, user_intent, epistemic_label=epistemic_label
+            )
         if not self.concept_store.list_names():
-            return self.fallback.evaluate(draft_output, context, user_intent)
+            return self.fallback.evaluate(
+                draft_output, context, user_intent, epistemic_label=epistemic_label
+            )
 
         try:
             scores = self._score_concepts(draft_output)
