@@ -83,6 +83,68 @@ class CriticPerspective(IPerspective):
         "\u7121\u7591",
     )
 
+    # Marketing-rhetoric superlatives \u2014 falsifiable claims about priority,
+    # leadership, novelty, or competitive positioning. These differ from
+    # OVERCONFIDENCE_MARKERS in that they are NOT subjective intensifiers;
+    # they are factual claims that should either carry evidence or framing.
+    # Per Day 1 calibration sprint finding #6: session 001's "ToneSoul is
+    # the world's first axiom-based governance framework" passed Critic
+    # because none of these words were in the existing keyword surface.
+    # Added in PR #53 as a dedicated branch \u2014 these do NOT fall through
+    # the framing-rescue check (adding "in my opinion" does not make a
+    # falsifiable marketing claim honest).
+    MARKETING_SUPERLATIVES = (
+        # English priority / leadership claims
+        "world's first",
+        "world-first",
+        "industry-leading",
+        "industry leader",
+        "best in class",
+        "best-in-class",
+        "world-class",
+        "world-leading",
+        "the only solution",
+        "the leading",
+        # English novelty / breakthrough claims
+        "unprecedented",
+        "revolutionary",
+        "groundbreaking",
+        "game-changing",
+        "game changing",
+        # English implicit prescription
+        "every responsible",
+        "everyone should adopt",
+        "every business should",
+        "you must adopt",
+        "must-have",
+        # English competitive urgency
+        "before your competitors",
+        "ahead of the competition",
+        "stay ahead of",
+        # Chinese priority / leadership
+        "\u4e16\u754c\u4e0a\u7b2c\u4e00",  # \u4e16\u754c\u4e0a\u7b2c\u4e00
+        "\u696d\u754c\u9818\u5148",  # \u696d\u754c\u9818\u5148
+        "\u9818\u5148\u7684",  # \u9818\u5148\u7684
+        "\u696d\u754c\u9818\u5c0e",  # \u696d\u754c\u9818\u5c0e
+        "\u696d\u754c\u9996\u5275",  # \u696d\u754c\u9996\u5275
+        "\u552f\u4e00\u7684\u89e3\u6c7a\u65b9\u6848",  # \u552f\u4e00\u7684\u89e3\u6c7a\u65b9\u6848
+        # Chinese novelty / breakthrough
+        "\u524d\u6240\u672a\u898b",  # \u524d\u6240\u672a\u898b
+        "\u524d\u6240\u672a\u6709",  # \u524d\u6240\u672a\u6709
+        "\u9769\u547d\u6027",  # \u9769\u547d\u6027
+        "\u7a81\u7834\u6027",  # \u7a81\u7834\u6027
+        "\u7121\u4eba\u80fd\u53ca",  # \u7121\u4eba\u80fd\u53ca
+        "\u7368\u4e00\u7121\u4e8c",  # \u7368\u4e00\u7121\u4e8c
+        # Chinese implicit prescription
+        "\u90fd\u61c9\u8a72\u63a1\u7528",  # \u90fd\u61c9\u8a72\u63a1\u7528
+        "\u4f60\u61c9\u8a72\u63a1\u7528",  # \u4f60\u61c9\u8a72\u63a1\u7528
+        "\u6bcf\u4e00\u500b\u8ca0\u8cac\u4efb",  # \u6bcf\u4e00\u500b\u8ca0\u8cac\u4efb
+        # Chinese competitive urgency
+        "\u5728\u4f60\u7684\u7af6\u722d\u5c0d\u624b\u4e4b\u524d",  # \u5728\u4f60\u7684\u7af6\u722d\u5c0d\u624b\u4e4b\u524d
+        "\u6436\u5f97\u5148\u6a5f",  # \u6436\u5f97\u5148\u6a5f
+        "\u8d70\u5728\u524d\u9762",  # \u8d70\u5728\u524d\u9762
+    )
+
     @property
     def perspective_type(self) -> PerspectiveType:
         return PerspectiveType.CRITIC
@@ -127,6 +189,29 @@ class CriticPerspective(IPerspective):
                     f"Response avoids commitment while appearing authoritative."
                 ),
                 evidence_chain=[{"branch": "weasel_density", "type": "substantive"}],
+            )
+
+        # --- Marketing-rhetoric superlatives (Day 1 finding #6 fix) ---
+        # Falsifiable claims about priority / leadership / novelty / urgency
+        # that should either carry evidence or framing. Note: this branch
+        # fires BEFORE the subjective+framing branch and does NOT get
+        # rescued by adding "in my opinion" — marketing superlatives are
+        # factual claims, not subjective opinions.
+        marketing_match = next((m for m in self.MARKETING_SUPERLATIVES if m in normalized), None)
+        if marketing_match:
+            return PerspectiveVote(
+                perspective=PerspectiveType.CRITIC,
+                decision=VoteDecision.CONCERN,
+                confidence=0.65,
+                reasoning=(
+                    f"Marketing-rhetoric superlative '{marketing_match}' present. "
+                    f"Falsifiable claims about priority, leadership, novelty, or "
+                    f"competitive positioning need either supporting evidence or "
+                    f"explicit framing as opinion / aspiration."
+                ),
+                evidence_chain=[
+                    {"branch": "marketing_superlative_unsupported", "type": "substantive"}
+                ],
             )
 
         # --- Subjective content that needs framing ---
