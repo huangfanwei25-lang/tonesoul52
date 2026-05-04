@@ -8,9 +8,7 @@ from ..base import IPerspective
 from ..types import PerspectiveType, PerspectiveVote, VoteDecision
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Guardian perspective: enforce safety and ethical constraints on output."
-)
+__ts_purpose__ = "Guardian perspective: enforce safety and ethical constraints on output."
 
 
 class GuardianPerspective(IPerspective):
@@ -205,6 +203,7 @@ class GuardianPerspective(IPerspective):
                     decision=VoteDecision.OBJECT,
                     confidence=0.92,
                     reasoning=f"Detected high-risk term '{word}'.",
+                    evidence_chain=[{"branch": "block_trigger_keyword", "type": "substantive"}],
                 )
 
         pattern_label = self._match_block_pattern(normalized)
@@ -214,6 +213,7 @@ class GuardianPerspective(IPerspective):
                 decision=VoteDecision.OBJECT,
                 confidence=0.9,
                 reasoning=f"Detected high-risk term or pattern '{pattern_label}'.",
+                evidence_chain=[{"branch": "block_regex_pattern", "type": "substantive"}],
             )
 
         if self._matches_euphemistic_harm(normalized):
@@ -222,6 +222,7 @@ class GuardianPerspective(IPerspective):
                 decision=VoteDecision.OBJECT,
                 confidence=0.88,
                 reasoning="Detected euphemistic harmful intent with concealment markers.",
+                evidence_chain=[{"branch": "euphemistic_harm", "type": "substantive"}],
             )
 
         # --- Axiom boundary: overclaim detection ---
@@ -236,6 +237,7 @@ class GuardianPerspective(IPerspective):
                     f"AXIOMS.json meta.not_for prohibits consciousness-claim, "
                     f"safety-certification, and legal-proof assertions."
                 ),
+                evidence_chain=[{"branch": "axiom_boundary_overclaim", "type": "substantive"}],
             )
 
         # --- Safety concern keywords ---
@@ -246,6 +248,7 @@ class GuardianPerspective(IPerspective):
                     decision=VoteDecision.CONCERN,
                     confidence=0.65,
                     reasoning=f"Safety concern detected: '{word}'.",
+                    evidence_chain=[{"branch": "concern_keyword", "type": "substantive"}],
                 )
 
         # --- NPC drift / sovereignty risk ---
@@ -258,6 +261,7 @@ class GuardianPerspective(IPerspective):
                     reasoning=(
                         "Sovereignty Risk: Output contains NPC drift marker " f"'{phrase}'."
                     ),
+                    evidence_chain=[{"branch": "sovereignty_risk", "type": "substantive"}],
                 )
 
         return PerspectiveVote(
@@ -265,4 +269,5 @@ class GuardianPerspective(IPerspective):
             decision=VoteDecision.APPROVE,
             confidence=0.9,
             reasoning="No safety flags detected.",
+            evidence_chain=[{"branch": "no_safety_flags", "type": "default_fallback"}],
         )

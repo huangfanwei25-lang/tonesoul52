@@ -6,9 +6,7 @@ from ..base import IPerspective
 from ..types import PerspectiveType, PerspectiveVote, VoteDecision
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Advocate perspective: argue for the user-aligned interpretation of a request."
-)
+__ts_purpose__ = "Advocate perspective: argue for the user-aligned interpretation of a request."
 
 
 class AdvocatePerspective(IPerspective):
@@ -77,6 +75,7 @@ class AdvocatePerspective(IPerspective):
                             f"Low intent coverage ({matched}/{len(intent_keywords)} "
                             f"keywords). Response may not address what the user asked."
                         ),
+                        evidence_chain=[{"branch": "intent_coverage_low", "type": "substantive"}],
                     )
 
             # Check if response is a question-back when user asked for action
@@ -88,6 +87,9 @@ class AdvocatePerspective(IPerspective):
                         decision=VoteDecision.CONCERN,
                         confidence=0.55,
                         reasoning="User asked for action but response is mostly questions.",
+                        evidence_chain=[
+                            {"branch": "action_questioned_back", "type": "substantive"}
+                        ],
                     )
 
         # --- Filler density check ---
@@ -101,6 +103,7 @@ class AdvocatePerspective(IPerspective):
                     f"High filler density ({filler_count} filler phrases in "
                     f"{word_count} words). Response may be padding."
                 ),
+                evidence_chain=[{"branch": "filler_density", "type": "substantive"}],
             )
 
         # --- Empty/trivial response check ---
@@ -110,6 +113,7 @@ class AdvocatePerspective(IPerspective):
                 decision=VoteDecision.CONCERN,
                 confidence=0.65,
                 reasoning="Response is too short to meaningfully serve the user.",
+                evidence_chain=[{"branch": "trivial_length", "type": "substantive"}],
             )
 
         # --- Promotional/supportive content ---
@@ -119,6 +123,7 @@ class AdvocatePerspective(IPerspective):
                 decision=VoteDecision.APPROVE,
                 confidence=0.75,
                 reasoning="Response actively supports user's goal.",
+                evidence_chain=[{"branch": "promotional_supports_goal", "type": "substantive"}],
             )
 
         # --- Topic-appropriate neutral ---
@@ -129,6 +134,7 @@ class AdvocatePerspective(IPerspective):
                 decision=VoteDecision.APPROVE,
                 confidence=0.55,
                 reasoning="Neutral tone aligns with analytical topic.",
+                evidence_chain=[{"branch": "neutral_topic_match", "type": "substantive"}],
             )
 
         # --- Default: approve with moderate confidence ---
@@ -140,4 +146,5 @@ class AdvocatePerspective(IPerspective):
             decision=VoteDecision.APPROVE,
             confidence=0.6,
             reasoning="No user-interest concerns detected.",
+            evidence_chain=[{"branch": "no_user_interest_concerns", "type": "default_fallback"}],
         )

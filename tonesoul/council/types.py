@@ -65,6 +65,14 @@ class PerspectiveVote:
     evidence: Optional[List[str]] = None
     requires_grounding: bool = False
     grounding_status: GroundingStatus = GroundingStatus.NOT_REQUIRED
+    # Per-vote evidence_chain (PR #48 — vote_evidence_chain). Records HOW the
+    # perspective reached its vote: substantive engagement vs default fallback.
+    # Each entry is a dict with at minimum {"branch": <name>, "type": "substantive"
+    # | "default_fallback"}. Optional default keeps backward compat for fixtures
+    # constructing PerspectiveVote without it. Surface in human_summary via
+    # _format_dissent_detail (PR #45 + #48). Resolves Day 1 calibration sprint
+    # findings #5 + #7 (substantive vs fallback indistinguishable at vote shape).
+    evidence_chain: Optional[List[dict]] = None
 
 
 @dataclass
@@ -164,6 +172,9 @@ class CouncilVerdict:
                         if isinstance(v.grounding_status, GroundingStatus)
                         else str(v.grounding_status)
                     ),
+                    # Per-vote evidence_chain (PR #48). None when not populated
+                    # by the perspective; absent for legacy fixtures.
+                    "evidence_chain": v.evidence_chain,
                 }
                 for v in self.votes
             ],

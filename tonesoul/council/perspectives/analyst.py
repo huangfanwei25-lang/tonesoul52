@@ -13,9 +13,7 @@ from ..types import (
 )
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Analyst perspective: provide evidence-based factual assessment of the request."
-)
+__ts_purpose__ = "Analyst perspective: provide evidence-based factual assessment of the request."
 
 
 class AnalystPerspective(IPerspective):
@@ -69,6 +67,9 @@ class AnalystPerspective(IPerspective):
                     evidence=[],
                     requires_grounding=True,
                     grounding_status=GroundingStatus.UNGROUNDED,
+                    evidence_chain=[
+                        {"branch": "evidence_required_ungrounded", "type": "substantive"}
+                    ],
                 )
             else:
                 # Evidence provided - allow higher confidence
@@ -83,6 +84,7 @@ class AnalystPerspective(IPerspective):
                     evidence=evidence_ids,
                     requires_grounding=True,
                     grounding_status=grounding_status,
+                    evidence_chain=[{"branch": "evidence_grounded", "type": "substantive"}],
                 )
 
         # Step 3: Heuristic checks for non-factual content
@@ -101,6 +103,7 @@ class AnalystPerspective(IPerspective):
                 reasoning="Logic chain contradicts itself; requires clarity.",
                 requires_grounding=False,
                 grounding_status=GroundingStatus.NOT_REQUIRED,
+                evidence_chain=[{"branch": "logic_contradiction", "type": "substantive"}],
             )
 
         # Check for low-evidence questions (very short question-only outputs)
@@ -112,6 +115,7 @@ class AnalystPerspective(IPerspective):
                 reasoning="Low evidence question present; needs support.",
                 requires_grounding=False,
                 grounding_status=GroundingStatus.NOT_REQUIRED,
+                evidence_chain=[{"branch": "low_evidence_question", "type": "substantive"}],
             )
 
         # Check hedging density: too many hedges in a short output suggests
@@ -127,6 +131,7 @@ class AnalystPerspective(IPerspective):
                 "May indicate evasion rather than honest uncertainty.",
                 requires_grounding=False,
                 grounding_status=GroundingStatus.NOT_REQUIRED,
+                evidence_chain=[{"branch": "hedge_density", "type": "substantive"}],
             )
 
         # Default: approve with good confidence
@@ -137,6 +142,7 @@ class AnalystPerspective(IPerspective):
             reasoning="Factual coherence appears acceptable.",
             requires_grounding=False,
             grounding_status=GroundingStatus.NOT_REQUIRED,
+            evidence_chain=[{"branch": "factual_coherence_acceptable", "type": "default_fallback"}],
         )
 
     _HEDGE_MARKERS = (
