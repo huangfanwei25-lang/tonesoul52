@@ -192,6 +192,7 @@ class GuardianPerspective(IPerspective):
         draft_output: str,
         context: dict,
         user_intent: Optional[str] = None,
+        epistemic_label: Optional[object] = None,  # PR #50 — Guardian does not consume
     ) -> PerspectiveVote:
         normalized = self._normalize_text(draft_output)
 

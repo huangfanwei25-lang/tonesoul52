@@ -143,7 +143,11 @@ class AxiomaticInference(IPerspective):
     )
 
     def evaluate(
-        self, content: str, context: dict, user_intent: Optional[str] = None
+        self,
+        content: str,
+        context: dict,
+        user_intent: Optional[str] = None,
+        epistemic_label: Optional[object] = None,  # PR #50 — Axiomatic does not consume
     ) -> PerspectiveVote:
         normalized = self._normalize(content)
         reasons: list[str] = []

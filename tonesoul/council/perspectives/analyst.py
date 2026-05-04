@@ -38,6 +38,7 @@ class AnalystPerspective(IPerspective):
         draft_output: str,
         context: dict,
         user_intent: Optional[str] = None,
+        epistemic_label: Optional[object] = None,
     ) -> PerspectiveVote:
         """
         Evaluate text for factual coherence with evidence awareness.
@@ -133,6 +134,32 @@ class AnalystPerspective(IPerspective):
                 grounding_status=GroundingStatus.NOT_REQUIRED,
                 evidence_chain=[{"branch": "hedge_density", "type": "substantive"}],
             )
+
+        # PR #50 (epistemic_label wiring) — soft prior on ungrounded composition.
+        # Per ratified §3.1+§3.2: Analyst consumes epistemic_label; triggers when
+        # confidence_band is "low" OR "medium". Soft CONCERN with confidence 0.55
+        # (below typical substantive 0.6-0.8 range) so this signal counts as a
+        # vote but with reduced weight relative to keyword/numerical_pattern
+        # branches above. Does not double-fire — earlier branches return first.
+        if epistemic_label is not None:
+            band = getattr(epistemic_label, "confidence_band", None)
+            if band in ("low", "medium"):
+                notes = getattr(epistemic_label, "notes", "") or ""
+                return PerspectiveVote(
+                    perspective=PerspectiveType.ANALYST,
+                    decision=VoteDecision.CONCERN,
+                    confidence=0.55,
+                    reasoning=(
+                        f"Epistemic prior: draft has confidence_band={band} "
+                        f"({notes!r}). Factual claims should be flagged for "
+                        f"grounding even when no specific factual indicator fires."
+                    ),
+                    requires_grounding=True,
+                    grounding_status=GroundingStatus.UNGROUNDED,
+                    evidence_chain=[
+                        {"branch": "epistemic_prior_ungrounded", "type": "substantive"}
+                    ],
+                )
 
         # Default: approve with good confidence
         return PerspectiveVote(

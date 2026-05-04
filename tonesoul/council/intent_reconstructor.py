@@ -10,9 +10,7 @@ from memory.genesis import Genesis, resolve_responsibility_tier
 from memory.self_memory import load_recent_memory
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Intent reconstructor: recover and validate the original intent behind a request."
-)
+__ts_purpose__ = "Intent reconstructor: recover and validate the original intent behind a request."
 
 DELTA_WARNING_THRESHOLD = 0.8
 DEFAULT_BASELINE_SAMPLES = 10

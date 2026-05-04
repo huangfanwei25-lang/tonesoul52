@@ -60,8 +60,24 @@ class PreOutputCouncil:
         user_intent: Optional[str] = None,
         auto_record_self_memory: bool = True,
     ) -> CouncilVerdict:
+        # PR #50 (epistemic_label wiring): label the draft FIRST so consuming
+        # perspectives (Analyst, Critic per ratified §3.1) can use it as a
+        # soft prior in their evaluation. Other perspectives accept the kwarg
+        # without using it (regression-safe). Phase 864a's design of attaching
+        # the label to every verdict still holds — it now happens earlier so
+        # downstream perspectives can read it during evaluate.
+        epistemic_label = self._epistemic_labeler.label(
+            draft_output=draft_output,
+            context=context,
+            user_intent=user_intent,
+        )
         votes = [
-            perspective.evaluate(draft_output, context, user_intent)
+            perspective.evaluate(
+                draft_output,
+                context,
+                user_intent,
+                epistemic_label=epistemic_label,
+            )
             for perspective in self.perspectives
         ]
 
@@ -86,14 +102,9 @@ class PreOutputCouncil:
         language = resolve_language(context)
         divergence = build_divergence_analysis(votes, context=context)
         verdict.divergence_analysis = divergence
-        # Phase 864a Layer 1: attach epistemic metadata to every verdict.
-        # Runs unconditionally — null labels would force every consumer
-        # (verifier, audit, future calibration) to handle absence cases.
-        verdict.epistemic_label = self._epistemic_labeler.label(
-            draft_output=draft_output,
-            context=context,
-            user_intent=user_intent,
-        )
+        # Attach the epistemic label computed above to the verdict so
+        # downstream consumers (audit, calibration, transcript) see it.
+        verdict.epistemic_label = epistemic_label
 
         # Phase 2 strategy_mirror: opt-in self-scan of the draft for
         # rhetorical/strategic moves. Two-flag scheme (2026-04-29 split):

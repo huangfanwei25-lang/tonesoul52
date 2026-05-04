@@ -8,9 +8,7 @@ from typing import Dict, Iterable, List, Tuple
 from .types import PerspectiveVote
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Persona audit: verify that each perspective behaves within its declared role."
-)
+__ts_purpose__ = "Persona audit: verify that each perspective behaves within its declared role."
 
 
 def _tokenize(text: str) -> set[str]:
