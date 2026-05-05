@@ -25,7 +25,7 @@ drifting from ToneSoul's restraint-over-capability thesis.
 The fuller form lives in the canonical sources (read these first if you do
 not already have them in working context):
 
-- `AXIOMS.json` — 7 immutable principles, especially `meta.not_for` (claim
+- `AXIOMS.json` — 8 immutable laws plus `E0`, especially `meta.not_for` (claim
   boundary: consciousness-claim, safety-certification, legal-proof) and
   Axiom 4 (Non-Zero Tension)
 - `README.md` — public framing of "AI that does not just answer"

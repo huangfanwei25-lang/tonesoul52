@@ -18,6 +18,16 @@ For Day-1-of-current-sprint deep evidence, see `docs/status/calibration_sprint_2
 
 Calibration sprint phase: creator-team-internal sessions surfacing how Phase 2 `strategy_mirror` and the council perspective system behave under real conversational pressure, then shipping concrete code fixes for findings as they emerged.
 
+### 2026-05-05 (continued) — audit follow-up doc drift cleanup
+
+**Changed**
+
+- README thesis wording now distinguishes categorical refusal of forbidden claim classes from surfaced dissent for other ungrounded claims, so the public framing does not overclaim current runtime behavior.
+- README test guidance now says `test.sh` mirrors the core Python gates, not every CI job; CI-only web, architecture/docs, red-team, package, and memory gates remain separate.
+- CONTEXT.md and the thesis-defender skill now match `AXIOMS.json`'s current shape: 8 immutable laws plus the separate `E0` existential principle.
+- CONTEXT.md now reflects PR #50: Analyst and Critic consume low/medium `epistemic_label` bands as a soft prior.
+- README test-count wording now uses the latest collected suite size instead of the stale 5435-passed claim.
+
 ### 2026-05-05 (continued) — navigation-grammar-checker skill
 
 **Added**
@@ -36,7 +46,7 @@ This update lands the thesis articulation that emerged from the 2026-05-05 dialo
 
 **Added**
 
-- `test.sh` (top-level) — canonical local-dev test entry. Mirrors CI gates exactly: ruff check + bounded black gate (`scripts/run_black_gate.py --strict`, changed-files-only) + pytest. Four modes: full / lint / test / fast. Closes the navigation-grammar test-entry slot. (PR #54)
+- `test.sh` (top-level) — canonical local-dev core test entry. Mirrors the Python core gates: ruff check + bounded black gate (`scripts/run_black_gate.py --strict`, changed-files-only) + pytest. Four modes: full / lint / test / fast. CI still owns web quality, architecture/docs contracts, red-team, package integrity, and memory hygiene gates. Closes the navigation-grammar test-entry slot. (PR #54)
 - `ts validate <file>` CLI subcommand — first user-facing functional surface. Reads a draft file, runs `PreOutputCouncil.validate()`, prints verdict + per-perspective dissent (per PR #45/#49 surface). Exit codes map to verdict for git hooks / CI integration: 0=APPROVE, 1=REFINE/DECLARE_STANCE, 2=BLOCK, 3=file/argument error. Supports `--json`, `--quiet`, `--intent`, `--language` flags. UTF-8-safe stdout for Chinese summaries on Windows console. (PR #55)
 - `.claude/skills/tonesoul-thesis-defender/` — first Claude Code skill. SKILL.md + patterns.md articulating the 5 thesis-defense patterns that emerged from the 2026-04-26 to 2026-05-05 collaboration (capability-vs-restraint filter / cargo-cult check / audience filter / mirror+range / refuse-both-claims). Activates auto-pattern-match on design decisions, brainstorm sessions, external-influence evaluation. Closes the navigation-grammar `.claude/` slot — but with a specific use case (portable thesis-defense), not because slot-completion was the goal. (PR #56)
 - Critic `MARKETING_SUPERLATIVES` set + dedicated branch — catches commercial superlatives ("world's first", "industry-leading", "前所未有", "每一個... 都應該", competitive urgency) that the existing CRITIQUE_KEYWORDS (calibrated for academic/aesthetic content) missed. Resolves Day 1 calibration finding #6. (PR #53)

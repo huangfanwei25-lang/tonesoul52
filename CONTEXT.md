@@ -22,7 +22,7 @@ This file is intentionally short. If a term needs more than ~3 lines to define, 
 
 ## Architecture Core
 
-**Axiom** — One of 7 immutable principles in `AXIOMS.json`. Cannot be overridden by code, runtime config, or AI choice. Encoded as `E0` through `E6`. The most-cited at runtime are `E0` (Choice Before Identity), `Axiom 4` (Non-Zero Tension), and `meta.not_for` (the claim_boundary list).
+**Axiom** — One of 8 immutable laws in `AXIOMS.json`, plus the separate `E0` existential principle. Cannot be overridden by code, runtime config, or AI choice. The most-cited at runtime are `E0` (Choice Before Identity), `Axiom 4` (Non-Zero Tension), and `meta.not_for` (the claim_boundary list).
 
 **Council** — The pre-output deliberation system. Runs before AI output reaches the user. Entry point: `tonesoul/council/pre_output_council.py:PreOutputCouncil.validate()`. Produces a `CouncilVerdict` from a `draft_output`.
 
@@ -56,7 +56,7 @@ This file is intentionally short. If a term needs more than ~3 lines to define, 
 
 ## Epistemic System (Phase 864)
 
-**Epistemic label** — Meta-data on a draft's grounding state. Attached to every verdict by `tonesoul/council/epistemic_labeler.py`. Has `status`, `source_weight`, `confidence_band`, and `notes`. As of 2026-05-04 the label is captured but **not consumed by perspectives** (open Day 6 finding #3, spec at `docs/plans/02_proposals/wire_epistemic_label_into_perspectives_spec_2026-05-04.md`).
+**Epistemic label** — Meta-data on a draft's grounding state. Attached to every verdict by `tonesoul/council/epistemic_labeler.py`. Has `status`, `source_weight`, `confidence_band`, and `notes`. Since PR #50, Analyst and Critic consume low/medium confidence labels as a soft-prior CONCERN when no stronger branch fires.
 
 **Confidence band** — `low`, `medium`, `high`. The label's signal of how grounded the draft is. `low` = "novel composition without retrieval anchor".
 

@@ -10,7 +10,7 @@
 
 ## In one sentence
 
-**ToneSoul is epistemic defense for AI** — categorical refusal of unverifiable claims, plus architectural infrastructure that makes accountability possible after errors occur.
+**ToneSoul is epistemic defense for AI** — categorical refusal of forbidden claim classes (`AXIOMS.json` `meta.not_for`), plus surfaced dissent for other ungrounded claims and infrastructure that makes accountability possible after errors occur.
 
 This is different from **probabilistic optimization** (RAG, confidence scoring, calibration tuning), which tries to make errors statistically less likely. ToneSoul accepts errors will happen and focuses on three things instead:
 
@@ -124,9 +124,9 @@ pip install tonesoul52[dev]
 pytest tests/ -v
 ```
 
-Latest result: **5435 passed** (Python 3.11+, Ubuntu)
+Current suite size: **7646 tests collected** (latest local collection, Python 3.13 / Windows). CI currently runs the blocking Python test gate on pull requests.
 
-For local development, use `./test.sh` as the canonical pre-commit check — it mirrors what CI enforces (ruff + bounded black gate + pytest). Modes: `./test.sh` (full), `lint` (only lint+format), `test` (only tests), `fast` (lint + tests with -x).
+For local development, use `./test.sh` as the canonical core pre-commit check — it mirrors the core Python gates (ruff + bounded black gate + pytest), not every CI job. Modes: `./test.sh` (full), `lint` (only lint+format), `test` (only tests), `fast` (lint + tests with -x). CI also runs web quality, architecture/docs contracts, red-team, package integrity, and memory hygiene gates.
 
 ## Why It Feels Different
 
