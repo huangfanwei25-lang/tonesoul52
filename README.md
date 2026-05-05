@@ -112,6 +112,8 @@ pytest tests/ -v
 
 Latest result: **5435 passed** (Python 3.11+, Ubuntu)
 
+For local development, use `./test.sh` as the canonical pre-commit check — it mirrors what CI enforces (ruff + bounded black gate + pytest). Modes: `./test.sh` (full), `lint` (only lint+format), `test` (only tests), `fast` (lint + tests with -x).
+
 ## Why It Feels Different
 
 | | Traditional AI | Prompt Engineering | ToneSoul |
