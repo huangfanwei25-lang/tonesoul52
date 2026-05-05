@@ -13,6 +13,9 @@ def test_transcript_includes_votes_and_verdict():
     assert verdict.transcript["input_length"] == len(text)
     assert "votes" in verdict.transcript
     assert len(verdict.transcript["votes"]) == 5  # Includes Axiomatic Inference
+    for transcript_vote, source_vote in zip(verdict.transcript["votes"], verdict.votes):
+        assert "evidence_chain" in transcript_vote
+        assert transcript_vote["evidence_chain"] == source_vote.evidence_chain
     assert verdict.transcript["verdict"]["verdict"] == verdict.verdict.value
 
 
