@@ -57,7 +57,8 @@ def test_diagnose_subcommand():
 def test_subcommand_list_is_complete():
     from tonesoul.cli.main import _SUBCOMMANDS
 
-    expected = {"diagnose", "council", "context", "heartbeat", "ystm", "vows"}
+    # PR #55 added "validate" — operator-friendly file-validation subcommand.
+    expected = {"diagnose", "council", "validate", "context", "heartbeat", "ystm", "vows"}
     assert set(_SUBCOMMANDS.keys()) == expected
 
 
