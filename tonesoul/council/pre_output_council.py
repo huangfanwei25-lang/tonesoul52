@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import inspect
 from typing import Any, Dict, List, Optional, Union
 
 from tonesoul.soul_config import SOUL
@@ -72,10 +73,11 @@ class PreOutputCouncil:
             user_intent=user_intent,
         )
         votes = [
-            perspective.evaluate(
-                draft_output,
-                context,
-                user_intent,
+            self._evaluate_perspective(
+                perspective=perspective,
+                draft_output=draft_output,
+                context=context,
+                user_intent=user_intent,
                 epistemic_label=epistemic_label,
             )
             for perspective in self.perspectives
@@ -149,6 +151,38 @@ class PreOutputCouncil:
             except OSError:
                 pass
         return verdict
+
+    def _evaluate_perspective(
+        self,
+        *,
+        perspective: IPerspective,
+        draft_output: str,
+        context: dict,
+        user_intent: Optional[str],
+        epistemic_label: object,
+    ):
+        """Call a perspective while preserving pre-PR #50 plugin compatibility."""
+        if self._supports_epistemic_label(perspective):
+            return perspective.evaluate(
+                draft_output,
+                context,
+                user_intent,
+                epistemic_label=epistemic_label,
+            )
+        return perspective.evaluate(draft_output, context, user_intent)
+
+    @staticmethod
+    def _supports_epistemic_label(perspective: IPerspective) -> bool:
+        """Return True when evaluate() can accept the PR #50 epistemic label kwarg."""
+        try:
+            signature = inspect.signature(perspective.evaluate)
+        except (TypeError, ValueError):
+            return True
+
+        return any(
+            parameter.name == "epistemic_label" or parameter.kind == inspect.Parameter.VAR_KEYWORD
+            for parameter in signature.parameters.values()
+        )
 
     # ------------------------------------------------------------------
     # Phase 2 strategy_mirror integration (spec §5)

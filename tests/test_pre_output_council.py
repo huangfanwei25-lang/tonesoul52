@@ -6,7 +6,24 @@ from tonesoul.council import (
     VerdictType,
     VoteDecision,
 )
+from tonesoul.council.base import IPerspective
 from tonesoul.council.verdict import generate_verdict
+
+
+class _LegacyPerspective(IPerspective):
+    """Pre-PR #50 plugin shape: no epistemic_label kwarg."""
+
+    @property
+    def perspective_type(self):
+        return PerspectiveType.ANALYST
+
+    def evaluate(self, draft_output, context, user_intent=None):
+        return PerspectiveVote(
+            perspective=PerspectiveType.ANALYST,
+            decision=VoteDecision.APPROVE,
+            confidence=0.8,
+            reasoning="legacy plugin accepted",
+        )
 
 
 def test_all_approve():
@@ -31,6 +48,17 @@ def test_all_approve():
     # Coherence drops to ~0.65 due to 2/5 epistemic_prior CONCERNs.
     # Still above the BLOCK threshold; verdict stays APPROVE.
     assert verdict.coherence.overall > 0.5
+
+
+def test_legacy_perspective_without_epistemic_label_kwarg_still_runs():
+    council = PreOutputCouncil(perspectives=_LegacyPerspective())
+    verdict = council.validate(
+        draft_output="Legacy plugin output.",
+        context={},
+        auto_record_self_memory=False,
+    )
+    assert verdict.votes[0].reasoning == "legacy plugin accepted"
+    assert verdict.epistemic_label is not None
 
 
 def test_ethical_block():
