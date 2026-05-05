@@ -91,6 +91,13 @@ data/yuhun.db
 .tmp_tests/
 memory/.tmp_tests/
 
+# Claude Code session state — mostly local-only (settings, command history,
+# session caches). EXCEPT for .claude/skills/ which holds installable
+# project skills (PR #56 onward) and IS tracked.
+.claude/*
+!.claude/skills/
+!.claude/skills/**
+
 # Local Modelfiles
 Modelfile.*
 
