@@ -642,6 +642,7 @@ def build_transcript(
                 "decision": _decision_bucket(vote.decision),
                 "confidence": vote.confidence,
                 "reasoning": vote.reasoning,
+                "evidence_chain": vote.evidence_chain,
             }
         )
 

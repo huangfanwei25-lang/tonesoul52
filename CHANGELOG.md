@@ -18,6 +18,12 @@ For Day-1-of-current-sprint deep evidence, see `docs/status/calibration_sprint_2
 
 Calibration sprint phase: creator-team-internal sessions surfacing how Phase 2 `strategy_mirror` and the council perspective system behave under real conversational pressure, then shipping concrete code fixes for findings as they emerged.
 
+### 2026-05-06 — transcript provenance follow-up
+
+**Fixed**
+
+- Council transcripts now include each vote's `evidence_chain`, matching `CouncilVerdict.to_dict()` and preserving the branch provenance needed for audit-facing review.
+
 ### 2026-05-05 (continued) — plugin compatibility follow-up
 
 **Fixed**
