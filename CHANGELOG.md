@@ -18,6 +18,14 @@ For Day-1-of-current-sprint deep evidence, see `docs/status/calibration_sprint_2
 
 Calibration sprint phase: creator-team-internal sessions surfacing how Phase 2 `strategy_mirror` and the council perspective system behave under real conversational pressure, then shipping concrete code fixes for findings as they emerged.
 
+### 2026-05-05 (continued) — README thesis framing
+
+**Changed**
+
+- `README.md` opening — replaced buzzword paragraph ("AI governance, ethical memory systems, verifier-first agents...") with a sharp one-sentence thesis: **"ToneSoul is epistemic defense for AI."** Three mechanisms (hard limits / traceable evidence / externalized evaluation) named explicitly. Contrast against probabilistic optimization (RAG, calibration, confidence scoring like WFGY/CFV) and against orchestration framings (Karpathy's "ghost engineering") spelled out. Tagline + Axiom 4 hook preserved. SEO keywords from old paragraph already covered by `## Retrieval Keywords` section so no SEO loss. Slogan version: *most AI safety work optimizes; ToneSoul defends.* (PR #57)
+
+This update lands the thesis articulation that emerged from the 2026-05-05 dialogue with Fan-Wei after reviewing WFGY/CFV — captured in memory at `feedback_thesis_epistemic_defense_vs_probabilistic_optimization_2026-05-05`. Sharper than prior "AI accountability framework" framing because it specifies *what* (knowledge claims) and *how* (defense, not optimization).
+
 ### 2026-05-05 — User-facing surface + thesis-defense portability
 
 **Added**
