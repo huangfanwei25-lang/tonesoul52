@@ -2,11 +2,25 @@
 
 > AI that does not just answer. It catches semantic drift, remembers what matters, and audits itself.
 > If you want AI that won't make things up, start here.
->
-> ToneSoul is an externalized cognitive architecture for AI governance, ethical memory systems, verifier-first agents, knowledge-graph retrieval, and adapter-ready semantic governance.
 
 > Purpose: public repository entrypoint for ToneSoul's architecture, governance posture, and practical onboarding.
-> Last Updated: 2026-04-08
+> Last Updated: 2026-05-05
+
+---
+
+## In one sentence
+
+**ToneSoul is epistemic defense for AI** — categorical refusal of unverifiable claims, plus architectural infrastructure that makes accountability possible after errors occur.
+
+This is different from **probabilistic optimization** (RAG, confidence scoring, calibration tuning), which tries to make errors statistically less likely. ToneSoul accepts errors will happen and focuses on three things instead:
+
+- **Hard limits** — `AXIOMS.json`'s `meta.not_for` list (consciousness-claim, safety-certification, legal-proof) defines claims the system should never make regardless of confidence. Categorical, not probabilistic.
+- **Traceable evidence** — every council verdict carries per-perspective dissent and an `evidence_chain` distinguishing substantive engagement from default-fallback. Verdicts are auditable, not opaque.
+- **Externalized evaluation** — five council perspectives (Guardian, Analyst, Critic, Advocate, Axiomatic) evaluate drafts independently. The system does not trust the AI's self-reported confidence; it builds external machinery to assess.
+
+The slogan version: *most AI safety work optimizes; ToneSoul defends.*
+
+For a worked contrast against probabilistic-optimization tooling (e.g. Andrej Karpathy's "ghost engineering" framing, or prompt-level confidence-scoring projects like WFGY/CFV), see `docs/status/calibration_sprint_2026-05-04_synthesis.md` — it captures both what ToneSoul has been verified to do and what remains gated on external validity.
 
 ---
 
