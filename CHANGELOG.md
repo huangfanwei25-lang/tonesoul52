@@ -18,6 +18,12 @@ For Day-1-of-current-sprint deep evidence, see `docs/status/calibration_sprint_2
 
 Calibration sprint phase: creator-team-internal sessions surfacing how Phase 2 `strategy_mirror` and the council perspective system behave under real conversational pressure, then shipping concrete code fixes for findings as they emerged.
 
+### 2026-05-05 (continued) — plugin compatibility follow-up
+
+**Fixed**
+
+- `PreOutputCouncil` now preserves pre-PR #50 custom perspective compatibility by only passing `epistemic_label=` to perspectives that declare the kwarg or accept `**kwargs`. Legacy three-argument plugin perspectives continue to run while built-in Analyst/Critic still receive the soft-prior label.
+
 ### 2026-05-05 (continued) — audit follow-up doc drift cleanup
 
 **Changed**
