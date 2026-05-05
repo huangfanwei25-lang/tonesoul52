@@ -18,6 +18,28 @@ For Day-1-of-current-sprint deep evidence, see `docs/status/calibration_sprint_2
 
 Calibration sprint phase: creator-team-internal sessions surfacing how Phase 2 `strategy_mirror` and the council perspective system behave under real conversational pressure, then shipping concrete code fixes for findings as they emerged.
 
+### 2026-05-05 — User-facing surface + thesis-defense portability
+
+**Added**
+
+- `test.sh` (top-level) — canonical local-dev test entry. Mirrors CI gates exactly: ruff check + bounded black gate (`scripts/run_black_gate.py --strict`, changed-files-only) + pytest. Four modes: full / lint / test / fast. Closes the navigation-grammar test-entry slot. (PR #54)
+- `ts validate <file>` CLI subcommand — first user-facing functional surface. Reads a draft file, runs `PreOutputCouncil.validate()`, prints verdict + per-perspective dissent (per PR #45/#49 surface). Exit codes map to verdict for git hooks / CI integration: 0=APPROVE, 1=REFINE/DECLARE_STANCE, 2=BLOCK, 3=file/argument error. Supports `--json`, `--quiet`, `--intent`, `--language` flags. UTF-8-safe stdout for Chinese summaries on Windows console. (PR #55)
+- `.claude/skills/tonesoul-thesis-defender/` — first Claude Code skill. SKILL.md + patterns.md articulating the 5 thesis-defense patterns that emerged from the 2026-04-26 to 2026-05-05 collaboration (capability-vs-restraint filter / cargo-cult check / audience filter / mirror+range / refuse-both-claims). Activates auto-pattern-match on design decisions, brainstorm sessions, external-influence evaluation. Closes the navigation-grammar `.claude/` slot — but with a specific use case (portable thesis-defense), not because slot-completion was the goal. (PR #56)
+- Critic `MARKETING_SUPERLATIVES` set + dedicated branch — catches commercial superlatives ("world's first", "industry-leading", "前所未有", "每一個... 都應該", competitive urgency) that the existing CRITIQUE_KEYWORDS (calibrated for academic/aesthetic content) missed. Resolves Day 1 calibration finding #6. (PR #53)
+
+**Changed**
+
+- `IPerspective.evaluate` signature gained an optional `epistemic_label` kwarg — extended to all perspective implementations (`LLMPerspective`, `OllamaPerspective`, `ToolVerifiedPerspective`, `SemanticAnalystPerspective`, `FallbackPerspective` test fixture) for full backward compat after PR #50. (PR #50 hotfix)
+
+**Findings resolved this cycle**
+
+- #6 (Critic mistargeting / keyword-surface gap on marketing-rhetoric) → PR #53
+
+**Findings deferred to Phase 5+** (per Day 6 synthesis §5 + #6 added 2026-05-05)
+
+- #1, #2 (strategy_mirror non-structural detection / perspective scope expansion) — unchanged
+- NEW #6: **Decision-loop closure** — ToneSoul has first-order decision trace (commit history, verdict records) but no second-order "what surprised me / what would I do differently" loop. Memory-entry接力 partially fills this manually; full Phase 5+ requires retrospective journaling layer + pattern extraction + active retrieval at decision time. Surfaced from 2026-05-05 conversation about internalization requiring decision loops (memory: `feedback_internalization_requires_decision_loop_2026-05-05`).
+
 ### 2026-05-04 — Day 1 sprint cycle
 
 **Added**
