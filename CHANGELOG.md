@@ -18,6 +18,12 @@ For Day-1-of-current-sprint deep evidence, see `docs/status/calibration_sprint_2
 
 Calibration sprint phase: creator-team-internal sessions surfacing how Phase 2 `strategy_mirror` and the council perspective system behave under real conversational pressure, then shipping concrete code fixes for findings as they emerged.
 
+### 2026-05-05 (continued) — navigation-grammar-checker skill
+
+**Added**
+
+- `.claude/skills/navigation-grammar-checker/` — second Claude Code skill. Single-file SKILL.md articulating the 7-slot evaluation frame for AI-collaboration repository structure (Vocabulary / Operational / Change / Decision / Test entry / Agent settings / Module organization) extracted from 5 external samples (Pocock skills, shadowMAS, SwiftClip, methodology checklist, ToneSoul). Centers the **frame-not-checklist** rule that emerged from the 2026-05-05 `.claude/settings.json` audit (8 frictions listed → 0 solvable by the proposed surface → "do not add" was correct answer despite empty slot). Activates when proposing top-level files / structure / external pattern adoption. Provenance points to `reference_navigation_grammar_pattern.md` memory.
+
 ### 2026-05-05 (continued) — README thesis framing
 
 **Changed**
