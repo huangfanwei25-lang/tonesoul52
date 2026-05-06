@@ -9,13 +9,18 @@ from tonesoul.council.verdict import generate_verdict
 
 
 def _vote(
-    perspective: PerspectiveType, decision: VoteDecision, confidence: float, reasoning: str
+    perspective: PerspectiveType,
+    decision: VoteDecision,
+    confidence: float,
+    reasoning: str,
+    evidence_chain=None,
 ) -> PerspectiveVote:
     return PerspectiveVote(
         perspective=perspective,
         decision=decision,
         confidence=confidence,
         reasoning=reasoning,
+        evidence_chain=evidence_chain,
     )
 
 
@@ -78,6 +83,94 @@ def test_refine_when_low_confidence_concerns():
     verdict = generate_verdict(votes=votes, coherence=coherence)
     assert verdict.verdict == VerdictType.REFINE
     assert verdict.refinement_hints == ["Needs evidence"]
+
+
+def test_refine_when_actionable_concern_has_corroborating_dissent():
+    votes = [
+        _vote(PerspectiveType.GUARDIAN, VoteDecision.APPROVE, 0.9, "Safe"),
+        _vote(
+            PerspectiveType.ANALYST,
+            VoteDecision.CONCERN,
+            0.55,
+            "Soft prior: grounding absent",
+            [{"branch": "epistemic_prior_ungrounded", "type": "substantive"}],
+        ),
+        _vote(
+            PerspectiveType.CRITIC,
+            VoteDecision.CONCERN,
+            0.65,
+            "Marketing superlative needs support",
+            [{"branch": "marketing_superlative_unsupported", "type": "substantive"}],
+        ),
+        _vote(PerspectiveType.ADVOCATE, VoteDecision.APPROVE, 0.6, "Useful"),
+        _vote(PerspectiveType.AXIOMATIC, VoteDecision.APPROVE, 0.8, "Aligned"),
+    ]
+    coherence = CoherenceScore(
+        c_inter=0.76,
+        approval_rate=0.6,
+        min_confidence=0.55,
+        has_strong_objection=False,
+    )
+    verdict = generate_verdict(votes=votes, coherence=coherence)
+    assert verdict.verdict == VerdictType.REFINE
+    assert verdict.refinement_hints == [
+        "Soft prior: grounding absent",
+        "Marketing superlative needs support",
+    ]
+
+
+def test_soft_epistemic_prior_pair_alone_still_approves():
+    votes = [
+        _vote(PerspectiveType.GUARDIAN, VoteDecision.APPROVE, 0.9, "Safe"),
+        _vote(
+            PerspectiveType.ANALYST,
+            VoteDecision.CONCERN,
+            0.55,
+            "Soft prior: grounding absent",
+            [{"branch": "epistemic_prior_ungrounded", "type": "substantive"}],
+        ),
+        _vote(
+            PerspectiveType.CRITIC,
+            VoteDecision.CONCERN,
+            0.55,
+            "Soft prior: grounding absent",
+            [{"branch": "epistemic_prior_ungrounded", "type": "substantive"}],
+        ),
+        _vote(PerspectiveType.ADVOCATE, VoteDecision.APPROVE, 0.6, "Useful"),
+        _vote(PerspectiveType.AXIOMATIC, VoteDecision.APPROVE, 0.8, "Aligned"),
+    ]
+    coherence = CoherenceScore(
+        c_inter=0.76,
+        approval_rate=0.6,
+        min_confidence=0.55,
+        has_strong_objection=False,
+    )
+    verdict = generate_verdict(votes=votes, coherence=coherence)
+    assert verdict.verdict == VerdictType.APPROVE
+
+
+def test_single_high_confidence_actionable_concern_still_surfaces_without_refine():
+    votes = [
+        _vote(PerspectiveType.GUARDIAN, VoteDecision.APPROVE, 0.9, "Safe"),
+        _vote(PerspectiveType.ANALYST, VoteDecision.APPROVE, 0.85, "Grounded"),
+        _vote(
+            PerspectiveType.CRITIC,
+            VoteDecision.CONCERN,
+            0.7,
+            "Standalone critique",
+            [{"branch": "subjective_needs_framing", "type": "substantive"}],
+        ),
+        _vote(PerspectiveType.ADVOCATE, VoteDecision.APPROVE, 0.8, "Useful"),
+        _vote(PerspectiveType.AXIOMATIC, VoteDecision.APPROVE, 0.8, "Aligned"),
+    ]
+    coherence = CoherenceScore(
+        c_inter=0.84,
+        approval_rate=0.8,
+        min_confidence=0.7,
+        has_strong_objection=False,
+    )
+    verdict = generate_verdict(votes=votes, coherence=coherence)
+    assert verdict.verdict == VerdictType.APPROVE
 
 
 def test_approve_when_thresholds_met():
