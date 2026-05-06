@@ -18,6 +18,33 @@ For Day-1-of-current-sprint deep evidence, see `docs/status/calibration_sprint_2
 
 Calibration sprint phase: creator-team-internal sessions surfacing how Phase 2 `strategy_mirror` and the council perspective system behave under real conversational pressure, then shipping concrete code fixes for findings as they emerged.
 
+### 2026-05-06 — GitHub Pages site rebuilt on collaborator craft + thesis framing
+
+The framing-only update from earlier today (PR #63) brought the previous minimal `site/index.html` to parity with the README thesis. This second update **replaces the underlying page** with a craft from a human collaborator who built a multi-route SPA with horizontal-pillar scroll, glass-card cards, CSS 3D geometry stage, and full philosophy/getting-started/origin sub-pages. The collaborator made the visual layer; this PR applies the same thesis-framing changes that PR #63 applied to the previous index, on top of the new craft.
+
+**Changed**
+
+- `site/index.html` — full rewrite based on collaborator's v10 craft (multi-route SPA with horizontal pillar scroll, CSS 3D geometry, glass cards, philosophy/getting-started/origin tabs). All six legacy capability pillars (Tension Engine / Council / Self-Governance / Memory / Reflex Arc / Vow System) replaced with three thesis-aligned mechanism cards (Hard Limits / Traceable Evidence / Externalized Evaluation). Pillar-container height adjusted from `450vw` to `220vw` to match three-card width. Hero sub-tagline replaced from generic governance-framework wording to epistemic-defense wording. Slogan added: *Most AI safety optimizes; ToneSoul defends.*
+- `site/index.html` SEO + structured data — full SEO meta block, OG meta, canonical link, and two JSON-LD blocks (SoftwareSourceCode + FAQPage) added. The collaborator's v10 craft did not include these; previous `site/index.html` had them. This PR reconstructs them with thesis-aligned wording.
+- `site/index.html` "How It Differs" table — replaced "Prompt Engineering" comparison column with "Probabilistic Optimization (RAG / CFV / calibration)" and replaced capability axes with thesis-relevant axes (Stance toward error / Confidence handling / Trust in AI introspection / On unverifiable claims / Refusal style / Identity model).
+- `site/index.html` axioms references — "The 7 Axioms" / "The Seven Axioms" / "7 immutable axioms" all updated to 8 across home tab, philosophy tab, and origin tab. Axiom names aligned with `AXIOMS.json` canonical forms (Law of Continuity, Governance Gate (POAV), Non-Zero Tension Principle, User Sovereignty Constraint). E0 existential principle paragraph added.
+- `site/index.html` Philosophy route — added Axiom 8 (Memory Sovereignty) axiom-card to match the 8-axiom canonical structure; all formula and prose preserved from collaborator's craft for axioms 1-7.
+
+**Added**
+
+- `site/index.html` "Visible Deliberation" + "Other Components" sections — added between the three-mechanism pillars and the "How It Differs" table. "Visible Deliberation" articulates that refusal is not a black-box endpoint but a deliberative outcome with surfaced reasoning. "Other Components" moves the previously-pillar-status Tension Engine / Reflex Arc / Memory with Decay / Vow System into honest descriptive wording (heuristic signal, proxy metric, progressive responses) rather than capability promises.
+
+**Not changed in this PR** (deferred):
+
+- `site/concepts.html`, `site/story.html`, `site/getting-started.html` — these standalone pages from the previous multi-page structure still exist with legacy framing. The new SPA covers their content via routes inside `index.html`, but the standalone pages are not yet retired or updated. Follow-up PR.
+- `site/style.css` — the previous multi-page `style.css` is now unused by `index.html` (collaborator's craft uses inline styles), but still referenced by the standalone `concepts.html` etc. Leaving in place until the follow-up PR retires those pages.
+- `README.md` — already carries the sharpened thesis from PR #57 + Codex audit follow-up; this PR brings the new public landing page to parity, not the other direction.
+- Collaborator attribution — collaborator (visual craft author) chose not to be credited in the page itself for this iteration; their craft is preserved as the visual layer.
+
+**Why this is a separate PR rather than amending PR #63**:
+
+PR #63 was framing-only on the simpler previous `site/index.html`. The collaborator's v10 craft arrived as a separate parallel track and was decided to be merged in only after PR #63 had landed and the thesis-aligned wording was stable. This PR is the merge-in step. Keeping it separate preserves a clean diff for the framing decisions (PR #63) versus the visual/structural rewrite (this PR).
+
 ### 2026-05-06 — GitHub Pages site thesis alignment
 
 **Changed**
