@@ -18,6 +18,25 @@ For Day-1-of-current-sprint deep evidence, see `docs/status/calibration_sprint_2
 
 Calibration sprint phase: creator-team-internal sessions surfacing how Phase 2 `strategy_mirror` and the council perspective system behave under real conversational pressure, then shipping concrete code fixes for findings as they emerged.
 
+### 2026-05-06 — GitHub Pages site thesis alignment
+
+**Changed**
+
+- `site/index.html` — public landing page (deployed at `fan1234-1.github.io/tonesoul52/`) now aligns with the `README.md` thesis articulation that landed in PR #57. Title, meta description, og description, JSON-LD `SoftwareSourceCode` description, FAQ entries, and hero sub-tagline all replace the legacy "AI governance framework / auditable, traceable, trustworthy" wording with the sharper "epistemic defense / categorical refusal of forbidden claim classes / surfaced dissent for the rest" articulation. Slogan added: *most AI safety optimizes; ToneSoul defends.*
+- `site/index.html` main content — restructured "What ToneSoul Does" (six capability cards) into "Three Mechanisms of Epistemic Defense" (Hard Limits / Traceable Evidence / Externalized Evaluation), matching the README's three-mechanism breakdown. Tension Engine, Reflex Arc, Memory with Decay, and Vow System moved into a separate "Other Components" section with honest descriptive wording (heuristic signal, proxy metric, progressive responses) rather than capability promises.
+- `site/index.html` "How It Differs" table — replaced the prompt-engineering comparison column with a probabilistic-optimization column (RAG / CFV / calibration), and replaced capability axes (Memory / Consistency / Self-check / Enforcement / Identity) with thesis-relevant axes (Stance toward error / Confidence handling / Trust in AI introspection / On unverifiable claims / Refusal style / Identity model).
+- `site/index.html` axioms section — corrected "The 7 Axioms" to "The 8 Axioms" matching `AXIOMS.json`'s actual 8-law shape (added Memory Sovereignty as the eighth), aligned axiom names with their canonical forms, and added a brief E0 existential principle paragraph beneath the table.
+
+**Added**
+
+- `site/index.html` "Visible Deliberation" section — articulates that ToneSoul's refusal is not a black-box endpoint but a deliberative outcome with surfaced reasoning. Distinguishes deliberative epistemic defense from dogmatic rule-bound gatekeeping. This is the first place "visible deliberation" capability is documented; the articulation emerged from the 2026-05-06 dialogue with Fan-Wei and is intentionally surface-level here while sample size accumulates before promotion to the README.
+
+**Not changed in this PR** (deferred):
+
+- `site/concepts.html`, `site/story.html`, `site/getting-started.html` — still carry legacy framing; will be aligned in a follow-up PR.
+- `site/style.css` — visual layer is the human collaborator's craft territory; this PR is framing-only.
+- `README.md` — already carries the sharpened thesis (PR #57 + Codex audit follow-up); this PR brings the public landing page to parity, not the other direction.
+
 ### 2026-05-06 — verdict aggregation follow-up
 
 **Fixed**
