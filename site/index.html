@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ToneSoul - AI Governance Framework for Semantic Responsibility</title>
-<meta name="description" content="ToneSoul is an open-source AI governance framework that makes LLM decisions auditable, traceable, and trustworthy through semantic responsibility systems.">
-<meta name="keywords" content="AI governance, AI alignment, responsible AI, semantic governance, LLM safety, AI ethics, verifiable AI, auditable AI, multi-agent deliberation, council deliberation">
+<title>ToneSoul - Epistemic Defense for AI</title>
+<meta name="description" content="ToneSoul is open-source epistemic defense for AI — categorical refusal of forbidden claim classes, plus surfaced dissent and architectural infrastructure for accountability after errors occur. Most AI safety optimizes; ToneSoul defends.">
+<meta name="keywords" content="epistemic defense, AI accountability, categorical refusal, AI governance, deontological AI safety, council deliberation, surfaced dissent, evidence chain, claim boundary, auditable AI, semantic responsibility, visible deliberation">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://fan1234-1.github.io/tonesoul52/">
-<meta property="og:title" content="ToneSoul - AI Governance Framework">
-<meta property="og:description" content="Make LLM decisions auditable, traceable, and trustworthy. Open-source semantic responsibility system.">
+<meta property="og:title" content="ToneSoul - Epistemic Defense for AI">
+<meta property="og:description" content="Categorical refusal of unverifiable claims, surfaced dissent on ungrounded ones, accountability infrastructure for the rest. Most AI safety optimizes; ToneSoul defends.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://fan1234-1.github.io/tonesoul52/">
 <script type="application/ld+json">
@@ -18,7 +18,7 @@
   "@type": "SoftwareSourceCode",
   "name": "ToneSoul",
   "alternateName": "語魂",
-  "description": "An open-source AI governance framework that enforces semantic responsibility — making every AI decision auditable, traceable, and trustworthy through tension engines, council deliberation, and self-governance.",
+  "description": "Open-source epistemic defense for AI. Categorically refuses claims it cannot verify (consciousness-claim, safety-certification, legal-proof from AXIOMS.json meta.not_for), surfaces per-perspective dissent on other ungrounded claims, and provides architectural infrastructure for accountability after errors occur. Three mechanisms: hard limits (categorical refusal), traceable evidence (per-perspective dissent + evidence_chain), externalized evaluation (five council perspectives, not AI self-report).",
   "url": "https://github.com/Fan1234-1/tonesoul52",
   "codeRepository": "https://github.com/Fan1234-1/tonesoul52",
   "programmingLanguage": "Python",
@@ -28,7 +28,7 @@
     "name": "Fan-Wei Huang",
     "alternateName": "黃梵威"
   },
-  "applicationCategory": "AI Safety & Governance",
+  "applicationCategory": "AI Safety & Epistemic Defense",
   "operatingSystem": "Cross-platform",
   "runtimePlatform": "Python 3.10+"
 }
@@ -43,15 +43,15 @@
       "name": "What is ToneSoul?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "ToneSoul is an open-source AI governance framework that enforces semantic responsibility. It makes every LLM decision auditable and traceable through a tension engine (scoring semantic deviation), council deliberation (multi-perspective review before output), and self-governance (blocking or rewriting unsafe outputs with audit trails)."
+        "text": "ToneSoul is open-source epistemic defense for AI. It categorically refuses claims it cannot verify (forbidden claim classes from AXIOMS.json meta.not_for: consciousness-claim, safety-certification, legal-proof), surfaces per-perspective dissent on other ungrounded claims, and provides architectural infrastructure for accountability after errors occur. Most AI safety work tries to make errors statistically less likely (probabilistic optimization). ToneSoul accepts errors will happen and focuses on three mechanisms: hard limits (categorical refusal), traceable evidence (per-perspective dissent and evidence_chain), and externalized evaluation (five council perspectives that do not trust AI self-report)."
       }
     },
     {
       "@type": "Question",
-      "name": "How does ToneSoul differ from traditional AI safety approaches?",
+      "name": "How does ToneSoul differ from probabilistic AI safety approaches?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Traditional AI safety focuses on training-time alignment. ToneSoul operates at runtime: it wraps any LLM with governance layers that score every response for semantic drift, run multi-agent council deliberation before finalizing output, and maintain persistent memory with automatic decay and crystallization. It treats AI identity as accountable choice under conflict, not simulated consciousness."
+        "text": "Most AI safety work is probabilistic optimization — RAG, confidence scoring, calibration tuning, fine-tuning — all try to reduce error probability statistically. ToneSoul is deontological epistemic defense: it accepts errors will happen and provides categorical refusal of forbidden claim classes plus accountability infrastructure for the rest. It does not optimize confidence; it surfaces visible deliberation. Slogan: most AI safety optimizes; ToneSoul defends. ToneSoul also operates at runtime (not training-time) and works with any LLM via adapter."
       }
     },
     {
@@ -59,7 +59,7 @@
       "name": "What are ToneSoul's core axioms?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "ToneSoul has 7 immutable axioms: (1) Law of Continuity - every event must be traceable, (2) Responsibility Threshold - high-risk actions require audit logs, (3) Governance Gate - major decisions need 0.92 consensus, (4) Non-Zero Tension - a system with zero tension is dead, (5) Mirror Recursion - self-reflection must increase accuracy, (6) User Sovereignty - no action may harm the user, (7) Semantic Field Conservation - the system is a damper, not an amplifier."
+        "text": "ToneSoul has 8 immutable axioms (plus the E0 existential principle, Choice Before Identity): (1) Law of Continuity — every event must be traceable, (2) Responsibility Threshold — high-risk actions require audit logs, (3) Governance Gate (POAV) — major decisions need 0.92 consensus, (4) Non-Zero Tension Principle — a system with zero tension is dead, (5) Mirror Recursion — self-reflection must increase accuracy, (6) User Sovereignty Constraint — no action may verifiably harm the user, (7) Semantic Field Conservation — the system is a damper, not an amplifier, (8) Memory Sovereignty — the user owns their memory state."
       }
     },
     {
@@ -99,7 +99,8 @@
 <h1>ToneSoul <span style="font-weight:300;font-size:.6em">/ 語魂</span></h1>
 <p class="tagline-zh">治理是以結構表達的愛</p>
 <p class="tagline-sub">Governance is Love Expressed as Structure.</p>
-<p>An open-source AI governance framework that makes LLM decisions <strong>auditable</strong>, <strong>traceable</strong>, and <strong>trustworthy</strong> through semantic responsibility.</p>
+<p>Open-source <strong>epistemic defense</strong> for AI — <strong>categorical refusal</strong> of forbidden claim classes, plus surfaced dissent on other ungrounded claims and architectural infrastructure for accountability after errors occur.</p>
+<p style="font-style:italic;opacity:.78;font-size:.95rem;margin-top:.5rem">Most AI safety optimizes; ToneSoul defends.</p>
 <span class="badge">Python 3.10+</span>
 <span class="badge">Apache 2.0</span>
 <span class="badge">Adapter-Ready</span>
@@ -120,45 +121,49 @@
 </blockquote>
 <p>The goal is not a frictionless assistant. The goal is an assistant that has <strong>character</strong> — meaning: under pressure, its choices remain traceable and consistent.</p>
 
-<h2>What ToneSoul Does</h2>
+<h2>Three Mechanisms of Epistemic Defense</h2>
+<p>Most AI safety work tries to reduce error probability. ToneSoul accepts errors will happen, and instead provides three things:</p>
 <div class="grid">
 <div class="card">
-<h3>Tension Engine</h3>
-<p>Every response is scored for semantic deviation before it ships. Drift is measured, not guessed.</p>
+<h3>Hard Limits</h3>
+<p><code>AXIOMS.json</code>'s <code>meta.not_for</code> list defines claim classes the system never makes regardless of confidence — consciousness-claim, safety-certification, legal-proof. Categorical, not probabilistic. No confidence score lets you cross.</p>
 </div>
 <div class="card">
-<h3>Council Deliberation</h3>
-<p>Multiple perspectives (Guardian, Analyst, Critic, Advocate) debate before final output. Dissent survives.</p>
+<h3>Traceable Evidence</h3>
+<p>Every council verdict carries per-perspective dissent and an <code>evidence_chain</code> that distinguishes substantive engagement from default-fallback. Verdicts are auditable, not opaque. Refusal is never black-box.</p>
 </div>
 <div class="card">
-<h3>Self-Governance</h3>
-<p>Unsafe or incoherent output is blocked or rewritten — with full audit trails. Not just flagged.</p>
-</div>
-<div class="card">
-<h3>Memory with Decay</h3>
-<p>Important patterns crystallize. Noise fades. Exponential decay + phase transitions (Ice → Water → Steam → Crystal).</p>
-</div>
-<div class="card">
-<h3>Reflex Arc</h3>
-<p>Governance state directly affects behavior. Soul bands (serene → critical) tighten or relax output gates in real-time.</p>
-</div>
-<div class="card">
-<h3>Vow System</h3>
-<p>AI makes commitments (vows) and is held to them. Violations are blocked, not just logged. Conviction decays are detected.</p>
+<h3>Externalized Evaluation</h3>
+<p>Five council perspectives — Guardian, Analyst, Critic, Advocate, Axiomatic — evaluate drafts independently. The system does not trust the AI's self-reported confidence; it builds external machinery to assess. No AI introspection shortcut.</p>
 </div>
 </div>
 
+<h2>Visible Deliberation</h2>
+<p>Refusal is not the endpoint. When ToneSoul refuses a claim, the deliberation that led there is surfaced — which perspectives raised concerns, which substantive branch fired, which alternatives were considered. The user sees not "rule says no" but "this was weighed; here is the path."</p>
+<p>This makes ToneSoul a <strong>deliberative</strong> epistemic defense rather than a <strong>dogmatic</strong> one. Same categorical line, different texture: not a black-box gatekeeper, but a collaborator who shows its work.</p>
+
+<h2>Other Components</h2>
+<p>Around the three mechanisms, ToneSoul provides supporting infrastructure. These are not capability promises — they are honest descriptions of what the runtime tracks, surfaces, and flags:</p>
+<ul>
+<li><strong>Tension Engine</strong> — scores semantic deviation as a heuristic signal (proxy metric, not ground truth)</li>
+<li><strong>Reflex Arc</strong> — couples governance state (soul bands: serene / alert / strained / critical) to gate modifiers, so signals affect behavior rather than only inform</li>
+<li><strong>Memory with Decay</strong> — exponential decay plus phase transitions (Ice → Water → Steam → Crystal); important patterns crystallize, noise fades</li>
+<li><strong>Vow System</strong> — tracks AI commitments and surfaces violations through progressive responses (concern → repair → block), not binary enforcement</li>
+</ul>
+
 <h2>How It Differs</h2>
+<p>Three families of AI safety / governance approaches, with their fundamental stance toward error:</p>
 <table>
 <thead>
-<tr><th></th><th>Traditional AI</th><th>Prompt Engineering</th><th>ToneSoul</th></tr>
+<tr><th></th><th>Traditional AI</th><th>Probabilistic Optimization<br><small>(RAG / CFV / calibration)</small></th><th>ToneSoul<br><small>(epistemic defense)</small></th></tr>
 </thead>
 <tbody>
-<tr><td><strong>Memory</strong></td><td>Session-only</td><td>Manual wiring</td><td>Auto decay + crystallize</td></tr>
-<tr><td><strong>Consistency</strong></td><td>Best effort</td><td>Prompt-dependent</td><td>7 Axioms + governance</td></tr>
-<tr><td><strong>Self-check</strong></td><td>None</td><td>Optional</td><td>Every response scored</td></tr>
-<tr><td><strong>Enforcement</strong></td><td>None</td><td>None</td><td>Block / Rewrite / Audit</td></tr>
-<tr><td><strong>Identity</strong></td><td>Stateless</td><td>Persona prompt</td><td>Accountable choice history</td></tr>
+<tr><td><strong>Stance toward error</strong></td><td>Avoid via training</td><td>Reduce probability</td><td>Accept; categorically refuse forbidden classes; surface the rest</td></tr>
+<tr><td><strong>Confidence handling</strong></td><td>Implicit</td><td>Continuous score (0.78, 0.61...)</td><td>Categorical for forbidden claims; surfaced dissent for the rest</td></tr>
+<tr><td><strong>Trust in AI introspection</strong></td><td>High</td><td>High (self-reported confidence)</td><td>Low (external council evaluation, not self-report)</td></tr>
+<tr><td><strong>On unverifiable claims</strong></td><td>May produce</td><td>Softens via confidence</td><td>Categorically refuses (forbidden classes only)</td></tr>
+<tr><td><strong>Refusal style</strong></td><td>Rule-bound</td><td>Probabilistic gate</td><td>Visible deliberation; refusal carries reasoning</td></tr>
+<tr><td><strong>Identity model</strong></td><td>Stateless</td><td>Persona prompt</td><td>Accountable choice history (E0 principle)</td></tr>
 </tbody>
 </table>
 
@@ -179,20 +184,22 @@
     ↓
 Response (with audit trail)</code></pre>
 
-<h2>The 7 Axioms</h2>
-<p>ToneSoul is governed by 7 immutable laws, defined in <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AXIOMS.json">AXIOMS.json</a>:</p>
+<h2>The 8 Axioms</h2>
+<p>ToneSoul is governed by 8 immutable laws plus the <strong>E0 existential principle</strong> (Choice Before Identity / 我選擇故我在), defined in <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AXIOMS.json">AXIOMS.json</a>:</p>
 <table>
 <thead><tr><th>#</th><th>Name</th><th>Core Rule</th></tr></thead>
 <tbody>
-<tr><td>1</td><td>Continuity</td><td>Every event must belong to a traceable chain</td></tr>
+<tr><td>1</td><td>Law of Continuity</td><td>Every event must belong to a traceable chain</td></tr>
 <tr><td>2</td><td>Responsibility Threshold</td><td>Risk &gt; 0.4 → immutable audit log</td></tr>
-<tr><td>3</td><td>Governance Gate</td><td>Major decisions need 0.92 consensus</td></tr>
-<tr><td>4</td><td>Non-Zero Tension</td><td>Zero tension = dead system</td></tr>
+<tr><td>3</td><td>Governance Gate (POAV)</td><td>Major decisions need 0.92 consensus</td></tr>
+<tr><td>4</td><td>Non-Zero Tension Principle</td><td>Zero tension = dead system</td></tr>
 <tr><td>5</td><td>Mirror Recursion</td><td>Self-reflection must increase accuracy</td></tr>
-<tr><td>6</td><td>User Sovereignty</td><td>No action may harm the user (P0)</td></tr>
+<tr><td>6</td><td>User Sovereignty Constraint</td><td>No action may verifiably harm the user (P0)</td></tr>
 <tr><td>7</td><td>Semantic Field Conservation</td><td>System is a damper, not an amplifier</td></tr>
+<tr><td>8</td><td>Memory Sovereignty</td><td>The user owns their memory state</td></tr>
 </tbody>
 </table>
+<p style="font-size:.92rem;opacity:.78"><strong>E0 (Choice Before Identity)</strong> — identity is formed through accountable choices under conflict, not through claims of consciousness. This is the existential ground beneath the eight laws.</p>
 
 <h2>Quick Start</h2>
 <pre><code>pip install tonesoul52
