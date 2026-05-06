@@ -18,6 +18,24 @@ For Day-1-of-current-sprint deep evidence, see `docs/status/calibration_sprint_2
 
 Calibration sprint phase: creator-team-internal sessions surfacing how Phase 2 `strategy_mirror` and the council perspective system behave under real conversational pressure, then shipping concrete code fixes for findings as they emerged.
 
+### 2026-05-06 — thesis-defender skill: tier-aware response + right-tool patterns
+
+The thesis-defender Claude Code skill was previously articulated with five patterns (capability-vs-restraint / cargo-cult / audience / mirror+range / refuse-both-claims). The 2026-05-05 conversation surfaced two additional patterns the skill needed in order to operate without drifting into paranoid defense or default-mode AI safety theater. This update captures both patterns plus the conversational case study from which they emerged.
+
+**Added**
+
+- `.claude/skills/tonesoul-thesis-defender/patterns.md` — Pattern 6 (Tier-aware Response) and Pattern 7 (Right Tool for the Right Question). Pattern 6 articulates that a question that looks unverifiable is usually mixed Tier A (current ground truth + base rate, 100% answerable) + Tier B (framework-level, answerable with structure) + Tier C (categorically unanswerable: timing prediction, individual-context advice, claims about user internal state). The skill should deliver A and B and explicitly mark C, rather than reflexively refuse the whole question. Pattern 7 articulates that the entire skill should not be invoked in multi-angle helpfulness domains (daily brainstorming, creative work, learning, exploratory chat); it is opt-in specialty mode for categorical-claim audit, not a default wrapper.
+- `docs/status/thesis_evolution_tier_aware_response_2026-05-05.md` — case study documenting the 2026-05-05 conversation that produced Patterns 6 and 7. Seven findings from the conversation: paranoid-defense failure mode; user-surfaces-thesis-shape-before-AI; author-pays-thesis-cost as honest verification; push-back is bidirectional; escape-hatch is thesis stress test; specialty-mode-vs-default-mode discovery (the most system-level finding — ToneSoul is opt-in specialty, not always-on default); thesis-loaded AI has self-detection blind spot.
+
+**Why both at once**: the patterns and the case study together; the case study is the worked example that grounds the patterns, and the patterns are the articulated reusable form of what the case study learned. Splitting them across PRs would lose the link between the artifact and its provenance.
+
+**Why this is a separate PR rather than amending PR #56** (the original skill PR): the skill shipped in PR #56 with the five patterns that were stable at that point. Patterns 6 and 7 emerged later from real use; updating the skill via a new PR rather than amending the original commit preserves the evolution timeline (5 → 7 patterns is a documented shift, not a retroactive overwrite).
+
+**Provenance**
+
+- 2026-05-05 conversation between Fan-Wei and Claude (claude-opus-4-7) — surfaced via several rounds of refusal-then-reframing during a personal portfolio audit context where ToneSoul mode was over-applied to multi-angle helpfulness questions
+- Related memory entries: `feedback_thesis_epistemic_defense_vs_probabilistic_optimization_2026-05-05`, `feedback_pushback_is_collaboration_value_2026-05-05`, `feedback_internalization_requires_decision_loop_2026-05-05`, `feedback_tonesoul_is_contender_in_source_field_war_2026-05-06`
+
 ### 2026-05-06 — GitHub Pages site rebuilt on collaborator craft + thesis framing
 
 The framing-only update from earlier today (PR #63) brought the previous minimal `site/index.html` to parity with the README thesis. This second update **replaces the underlying page** with a craft from a human collaborator who built a multi-route SPA with horizontal-pillar scroll, glass-card cards, CSS 3D geometry stage, and full philosophy/getting-started/origin sub-pages. The collaborator made the visual layer; this PR applies the same thesis-framing changes that PR #63 applied to the previous index, on top of the new craft.
