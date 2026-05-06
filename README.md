@@ -124,7 +124,7 @@ pip install tonesoul52[dev]
 pytest tests/ -v
 ```
 
-Current suite size: **7646 tests collected** (latest local collection, Python 3.13 / Windows). CI currently runs the blocking Python test gate on pull requests.
+Current suite size: **7652 tests collected** (latest local collection, Python 3.13 / Windows). CI currently runs the blocking Python test gate on pull requests.
 
 For local development, use `./test.sh` as the canonical core pre-commit check — it mirrors the core Python gates (ruff + bounded black gate + pytest), not every CI job. Modes: `./test.sh` (full), `lint` (only lint+format), `test` (only tests), `fast` (lint + tests with -x). CI also runs web quality, architecture/docs contracts, red-team, package integrity, and memory hygiene gates.
 

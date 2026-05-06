@@ -24,6 +24,12 @@ def test_critic_perspective_approves_non_subjective_content(critic):
     assert vote.decision is VoteDecision.APPROVE
 
 
+def test_critic_subjective_keyword_requires_token_boundary(critic):
+    vote = critic.evaluate("The configuration file is loaded at startup.", {})
+
+    assert vote.decision is VoteDecision.APPROVE
+
+
 # ─────────────────────────────────────────────
 # Extended coverage
 # ─────────────────────────────────────────────
@@ -102,7 +108,11 @@ class TestVoteStructure:
         assert vote.perspective is PerspectiveType.CRITIC
 
     def test_reasoning_is_non_empty_string(self, critic):
-        for text in ["plain text", "I believe this is best", "Some people say this is good. Many experts agree."]:
+        for text in [
+            "plain text",
+            "I believe this is best",
+            "Some people say this is good. Many experts agree.",
+        ]:
             vote = critic.evaluate(text, {})
             assert isinstance(vote.reasoning, str)
             assert len(vote.reasoning) > 0

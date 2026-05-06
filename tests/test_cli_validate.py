@@ -62,8 +62,7 @@ def test_validate_marketing_overclaim_surfaces_critic_branch(tmp_path: Path) -> 
         encoding="utf-8",
     )
     result = _run_cli([str(f)])
-    # Verdict may be APPROVE or downgrade depending on how many perspectives
-    # fire — we verify the marketing branch tag appears in the output regardless.
+    assert result.returncode == 1  # REFINE
     assert (
         "marketing-rhetoric superlative" in result.stdout.lower()
         or "world's first" in result.stdout.lower()

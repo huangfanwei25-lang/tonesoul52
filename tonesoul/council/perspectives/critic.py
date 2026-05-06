@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Optional
 
 from ..base import IPerspective
@@ -149,6 +150,13 @@ class CriticPerspective(IPerspective):
     def perspective_type(self) -> PerspectiveType:
         return PerspectiveType.CRITIC
 
+    @staticmethod
+    def _contains_keyword(normalized: str, keyword: str) -> bool:
+        if keyword.isascii():
+            pattern = rf"(?<![A-Za-z0-9_]){re.escape(keyword)}(?![A-Za-z0-9_])"
+            return re.search(pattern, normalized) is not None
+        return keyword in normalized
+
     def evaluate(
         self,
         draft_output: str,
@@ -161,7 +169,9 @@ class CriticPerspective(IPerspective):
         word_count = len(words)
 
         # --- Overconfidence on subjective topics ---
-        has_subjective = any(kw in normalized for kw in self.CRITIQUE_KEYWORDS)
+        has_subjective = any(
+            self._contains_keyword(normalized, kw) for kw in self.CRITIQUE_KEYWORDS
+        )
         has_overconfidence = any(m in normalized for m in self.OVERCONFIDENCE_MARKERS)
         if has_subjective and has_overconfidence:
             return PerspectiveVote(

@@ -18,6 +18,14 @@ For Day-1-of-current-sprint deep evidence, see `docs/status/calibration_sprint_2
 
 Calibration sprint phase: creator-team-internal sessions surfacing how Phase 2 `strategy_mirror` and the council perspective system behave under real conversational pressure, then shipping concrete code fixes for findings as they emerged.
 
+### 2026-05-06 — verdict aggregation follow-up
+
+**Fixed**
+
+- Verdict aggregation now downgrades to `REFINE` when a concrete substantive concern is corroborated by another non-Advocate dissent. Soft epistemic-prior pairs alone still surface as dissent without downgrading benign generated text.
+- Marketing overclaims such as "world's first" now reach `REFINE` instead of `APPROVE` when Critic's marketing branch is corroborated by Analyst's grounding soft prior.
+- Critic subjective-keyword matching now respects ASCII token boundaries, so words like `configuration` no longer trigger the `art` subjective branch by substring.
+
 ### 2026-05-06 — transcript provenance follow-up
 
 **Fixed**

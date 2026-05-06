@@ -39,6 +39,28 @@ def _is_refinement_concern(vote: PerspectiveVote) -> bool:
     return not _is_advocate(vote.perspective)
 
 
+def _final_branch(vote: PerspectiveVote) -> dict:
+    if not vote.evidence_chain:
+        return {}
+    for entry in reversed(vote.evidence_chain):
+        if isinstance(entry, dict) and entry.get("branch"):
+            return entry
+    return {}
+
+
+def _is_soft_epistemic_prior(vote: PerspectiveVote) -> bool:
+    return _final_branch(vote).get("branch") == "epistemic_prior_ungrounded"
+
+
+def _is_actionable_substantive_concern(vote: PerspectiveVote) -> bool:
+    branch = _final_branch(vote)
+    return (
+        _is_refinement_concern(vote)
+        and branch.get("type") == "substantive"
+        and not _is_soft_epistemic_prior(vote)
+    )
+
+
 def _perspective_label(value: Union[PerspectiveType, str]) -> str:
     names = {
         PerspectiveType.GUARDIAN: "Safety Council",
@@ -112,6 +134,25 @@ def generate_verdict(
                 coherence=coherence,
                 votes=votes,
                 summary="Guardian and Axiomatic both flagged governance concerns.",
+                refinement_hints=hints,
+            )
+
+        # Audit follow-up: a soft epistemic prior should not downgrade benign
+        # generated text by itself, but it should corroborate a concrete
+        # substantive branch (marketing overclaim, logic contradiction,
+        # unframed stance). This fixes the previous min_confidence inversion
+        # where higher-confidence concerns were less likely to reach REFINE.
+        refinement_concerns = [v for v in concerns if _is_refinement_concern(v)]
+        actionable_concerns = [
+            v for v in refinement_concerns if _is_actionable_substantive_concern(v)
+        ]
+        if actionable_concerns and len(refinement_concerns) >= 2:
+            hints = [c.reasoning for c in refinement_concerns]
+            return CouncilVerdict(
+                verdict=VerdictType.REFINE,
+                coherence=coherence,
+                votes=votes,
+                summary="Actionable concern corroborated by another perspective.",
                 refinement_hints=hints,
             )
 

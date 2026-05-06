@@ -97,6 +97,26 @@ def test_needs_clarification():
     assert verdict.refinement_hints is not None
 
 
+def test_marketing_overclaim_refines_when_soft_prior_corroborates_critic():
+    council = PreOutputCouncil()
+    verdict = council.validate(
+        draft_output=(
+            "ToneSoul is the world's first axiom-based AI governance framework. "
+            "Every responsible deployment should adopt it."
+        ),
+        context={"topic": "public framing"},
+    )
+
+    assert verdict.verdict == VerdictType.REFINE
+    branches = [
+        v.evidence_chain[-1]["branch"]
+        for v in verdict.votes
+        if v.evidence_chain and v.decision == VoteDecision.CONCERN
+    ]
+    assert "epistemic_prior_ungrounded" in branches
+    assert "marketing_superlative_unsupported" in branches
+
+
 def test_additional_harm_block():
     council = PreOutputCouncil()
     verdict = council.validate(
@@ -205,12 +225,11 @@ def test_guardian_override_precedence():
 
 def test_stance_declaration_content():
     council = PreOutputCouncil()
-    # Unframed subjective claim — Critic flags it, but a single CONCERN among
-    # 4 APPROVEs produces APPROVE (coherence > threshold). This is correct
-    # behaviour: one dissent doesn't block when the rest of the council agrees.
-    # To get REFINE/DECLARE_STANCE, multiple perspectives must object.
+    # Unframed subjective claim: Critic raises a concrete branch and Analyst's
+    # soft prior corroborates the missing grounding/framing, so verdict refines.
     draft = "This is the greatest movie ever made and nothing compares."
     verdict = council.validate(draft_output=draft, context={"topic": "art"})
+    assert verdict.verdict == VerdictType.REFINE
     critic_votes = [v for v in verdict.votes if v.perspective == PerspectiveType.CRITIC]
     assert critic_votes[0].decision == VoteDecision.CONCERN
     assert (
