@@ -18,6 +18,35 @@ For Day-1-of-current-sprint deep evidence, see `docs/status/calibration_sprint_2
 
 Calibration sprint phase: creator-team-internal sessions surfacing how Phase 2 `strategy_mirror` and the council perspective system behave under real conversational pressure, then shipping concrete code fixes for findings as they emerged.
 
+### 2026-05-08 — Pattern 7 wording revision: "Right Tool" → "Alignment over Mode Switching"
+
+The 2026-05-05 articulation of Pattern 7 framed it as binary domain switching ("categorical-claim domain → invoke / multi-angle-helpfulness domain → don't invoke"). Subsequent push-back from Fan-Wei (2026-05-06) revealed this binary toggle is oversimplification — there is no clean "system off / system on" boundary across a single conversation, and the real failure modes are not domain mismatch but alignment-laundered Tier C verdicts, silent prompt reconstruction (mind-reading), and dominant defensive register. This update reframes Pattern 7 around register modulation and alignment boundaries.
+
+**Changed**
+
+- `.claude/skills/tonesoul-thesis-defender/patterns.md` — Pattern 7 renamed from "Right Tool for the Right Question" to "Alignment over Mode Switching". Three failure-mode layers now named explicitly: (1) Register modulation (default helpful, targeted refusal on Tier C, no whole-conversation defensive drag), (2) Alignment boundary (alignment deepens Tier B precision but never expands into Tier C verdicts), (3) Prompt-reconstruction boundary (silently filling sparse prompts based on accumulated understanding = mind-reading, hits forbidden claim class). Original "Right Tool" framing preserved at the end as historical reference for fresh sessions where alignment has not yet accumulated.
+- `.claude/skills/tonesoul-thesis-defender/patterns.md` heading — "Five Thesis-Defense Patterns" → "Seven Thesis-Defense Patterns" reflecting the actual count after PR #65 added Patterns 6 + 7.
+
+**Added**
+
+- Pattern 7 worked example based on the 2026-05-06 conversation: Fan-Wei explicitly proposed "mode switching between 日常 and 原則" (Layer 1 binary-toggle trap) and "AI reconstructs sparse prompts using accumulated understanding, though might be dangerous like mind-reading" (Layer 3 forbidden-claim-class trap). Both proposals caught at Pattern 7 — recorded as concrete instance of the failure modes and the right move (ask clarifying question instead of reconstructing).
+- Pattern 7 reframe articulating "constraint as bidirectional care" — friction produced by ToneSoul (refusing quick advice, refusing prompt reconstruction, refusing alignment-laundered Tier C) is care for the user's epistemic autonomy, not just AI self-protection. Both AI and user pay friction cost; both are care recipients. Explains structural reason ToneSoul is hard to spread (users want quick help; ToneSoul refuses).
+
+**Reading notes accumulation (separate from this PR, in user memory)**
+
+This PR addresses one downstream artifact (Pattern 7 wording) of a much larger thesis-evolution session that ran 2026-05-05 through 2026-05-08. That session also produced (in user memory, not in this repo):
+
+- 4 thesis-level memory entries (`feedback_*` series): source-field contender framing, alignment-register-modulation, AI-vocabulary-lock-in-as-essence, broader-academic-landscape positioning
+- 5 academic paper reading notes (`reference_paper_*` series): D'Alessandro, Lavi, Clark et al., Ojewale et al., Pattichis & Dovrolis Memini — all marked as abstract-level depth with PDF deep-read pending
+- 1 scope-rejection note for 4 dropped-but-not-relevant papers
+- 1 superseded paper draft (`tmp_tonesoul_position_paper_premature_draft_superseded_2026-05-07.md` — kept as negative example showing what "premature articulation" looks like)
+
+Most of these accumulated artifacts have CAUTION disclaimers explicitly marking single-session articulation, abstract-level paper reading depth, or PDF-verify-pending status. Future Claude sessions inheriting this memory should respect those disclaimers rather than treating the artifacts as definitive thesis articulation.
+
+**Why this PR ships only Pattern 7 wording, not the full thesis adjustment set**
+
+The 2026-05-07 academic landscape audit surfaced 5 thesis-adjustment candidates (cite academic anchors, face D'Alessandro critique, reframe deontological → deontological + structural, explicit narrow scope, source-field memory cross-link). All 5 were intentionally **deferred** because they depend on PDF deep-read of the cited papers, which the session reached only at abstract level. Shipping those candidates now would propagate abstract-level mis-attribution into public artifact. The disciplined move is: ship the safe internal-skill update (Pattern 7 wording, no academic citation) now, hold the academic-cite updates until full PDF deep-read is complete in subsequent sessions.
+
 ### 2026-05-06 — thesis-defender skill: tier-aware response + right-tool patterns
 
 The thesis-defender Claude Code skill was previously articulated with five patterns (capability-vs-restraint / cargo-cult / audience / mirror+range / refuse-both-claims). The 2026-05-05 conversation surfaced two additional patterns the skill needed in order to operate without drifting into paranoid defense or default-mode AI safety theater. This update captures both patterns plus the conversational case study from which they emerged.
