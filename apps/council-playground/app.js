@@ -6,6 +6,13 @@ const ENDPOINTS = {
 };
 
 const READ_TOKEN_STORAGE_KEY = "tonesoul_playground_read_token";
+const tokenStorage = (() => {
+    try {
+        return window.sessionStorage;
+    } catch (_err) {
+        return null;
+    }
+})();
 
 const state = {
     readToken: "",
@@ -61,7 +68,7 @@ function setStatusClass(node, status) {
 
 function getStoredReadToken() {
     try {
-        return localStorage.getItem(READ_TOKEN_STORAGE_KEY) || "";
+        return tokenStorage?.getItem(READ_TOKEN_STORAGE_KEY) || "";
     } catch (_err) {
         return "";
     }
@@ -70,30 +77,24 @@ function getStoredReadToken() {
 function setStoredReadToken(value) {
     try {
         if (value) {
-            localStorage.setItem(READ_TOKEN_STORAGE_KEY, value);
+            tokenStorage?.setItem(READ_TOKEN_STORAGE_KEY, value);
         } else {
-            localStorage.removeItem(READ_TOKEN_STORAGE_KEY);
+            tokenStorage?.removeItem(READ_TOKEN_STORAGE_KEY);
         }
     } catch (_err) {
-        // Ignore localStorage write failures in restricted contexts.
+        // Ignore sessionStorage write failures in restricted contexts.
     }
 }
 
 function renderAuthNote() {
     if (!nodes.authNote) return;
     nodes.authNote.textContent = state.readToken
-        ? "Read token 已儲存，讀取 API 會自動附帶 Authorization。"
-        : "未設定 token 也可使用；若讀取 API 回傳 401，再輸入 token。";
+        ? "Read token 只保留在本分頁的 sessionStorage，讀取 API 會自動附帶 Authorization。"
+        : "尚未設定 read token；若後端啟用讀取保護，部分 API 會回傳 401。";
 }
 
 function initializeToken() {
-    const queryToken = new URLSearchParams(window.location.search).get("read_token");
-    if (typeof queryToken === "string" && queryToken.trim()) {
-        state.readToken = queryToken.trim();
-        setStoredReadToken(state.readToken);
-    } else {
-        state.readToken = getStoredReadToken().trim();
-    }
+    state.readToken = getStoredReadToken().trim();
     if (nodes.readTokenInput) {
         nodes.readTokenInput.value = state.readToken;
     }
@@ -153,29 +154,53 @@ async function fetchHealthAndStatus() {
     nodes.statMemories.textContent = String(statusPayload.memory_count || 0);
 }
 
+function appendAuditLogItem(log) {
+    if (!nodes.auditList) return;
+
+    const article = document.createElement("article");
+    article.className = "list-item";
+
+    const head = document.createElement("div");
+    head.className = "list-item-head";
+
+    const title = document.createElement("p");
+    title.className = "list-item-title";
+    title.textContent = String(log.gate_decision || "unknown");
+    head.appendChild(title);
+
+    const meta = document.createElement("p");
+    meta.className = "list-item-meta";
+    meta.textContent = formatTime(log.created_at);
+    head.appendChild(meta);
+
+    article.appendChild(head);
+
+    const conversation = document.createElement("p");
+    conversation.className = "list-item-meta";
+    conversation.textContent = `conversation_id=${log.conversation_id || "n/a"}`;
+    article.appendChild(conversation);
+
+    const rationale = document.createElement("p");
+    rationale.className = "list-item-body";
+    rationale.textContent = String(log.rationale || "").slice(0, 240) || "no rationale";
+    article.appendChild(rationale);
+
+    nodes.auditList.appendChild(article);
+}
+
 function renderAuditLogs(logs) {
+    if (!nodes.auditList) return;
+    nodes.auditList.replaceChildren();
+
     if (!Array.isArray(logs) || logs.length === 0) {
-        nodes.auditList.innerHTML = '<article class="list-item">尚無審計日誌。</article>';
+        const empty = document.createElement("article");
+        empty.className = "list-item";
+        empty.textContent = "尚無審計日誌。";
+        nodes.auditList.appendChild(empty);
         return;
     }
-    nodes.auditList.innerHTML = logs
-        .map((log) => {
-            const createdAt = formatTime(log.created_at);
-            const title = String(log.gate_decision || "unknown");
-            const conversationId = log.conversation_id || "n/a";
-            const rationale = String(log.rationale || "").slice(0, 240) || "no rationale";
-            return `
-                <article class="list-item">
-                    <div class="list-item-head">
-                        <p class="list-item-title">${title}</p>
-                        <p class="list-item-meta">${createdAt}</p>
-                    </div>
-                    <p class="list-item-meta">conversation_id=${conversationId}</p>
-                    <p class="list-item-body">${rationale}</p>
-                </article>
-            `;
-        })
-        .join("");
+
+    logs.forEach((log) => appendAuditLogItem(log));
 }
 
 async function fetchAuditLogs() {
@@ -194,12 +219,12 @@ async function fetchEvolutionSummary() {
         nodes.evolutionPatterns.textContent = "0";
         nodes.evolutionAnalyzed.textContent = "0";
         nodes.evolutionLatest.textContent = "--";
-        nodes.evolutionSummary.textContent = `暫無資料: ${error.message}`;
+        nodes.evolutionSummary.textContent = `摘要讀取失敗: ${error.message}`;
     }
 }
 
 async function refreshAll() {
-    setBusy(nodes.refreshAllBtn, true, "載入中...");
+    setBusy(nodes.refreshAllBtn, true, "更新中...");
     try {
         await Promise.all([fetchHealthAndStatus(), fetchAuditLogs(), fetchEvolutionSummary()]);
         nodes.lastUpdated.textContent = `最後更新: ${formatTime(new Date().toISOString())}`;

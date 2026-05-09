@@ -46,10 +46,94 @@ def test_send_json_response_allows_write_token_cors_header() -> None:
     assert "X-ToneSoul-Write-Token" in allowed_headers
 
 
+def test_send_json_response_reflects_same_origin(monkeypatch) -> None:
+    monkeypatch.delenv("TONESOUL_CORS_ORIGINS", raising=False)
+    handler = _FakeHandler(
+        headers={
+            "Origin": "https://tonesoul52.vercel.app",
+            "Host": "tonesoul52.vercel.app",
+            "X-Forwarded-Proto": "https",
+        }
+    )
+
+    send_json_response(handler, {"ok": True}, 200)
+
+    assert handler.sent_headers["Access-Control-Allow-Origin"] == "https://tonesoul52.vercel.app"
+    assert handler.sent_headers["Vary"] == "Origin"
+
+
+def test_send_json_response_blocks_untrusted_cross_origin(monkeypatch) -> None:
+    monkeypatch.delenv("TONESOUL_CORS_ORIGINS", raising=False)
+    handler = _FakeHandler(
+        headers={
+            "Origin": "https://evil.example",
+            "Host": "tonesoul52.vercel.app",
+            "X-Forwarded-Proto": "https",
+        }
+    )
+
+    send_json_response(handler, {"ok": True}, 200)
+
+    assert "Access-Control-Allow-Origin" not in handler.sent_headers
+
+
+def test_send_json_response_does_not_trust_forwarded_host_over_host(monkeypatch) -> None:
+    monkeypatch.delenv("TONESOUL_CORS_ORIGINS", raising=False)
+    handler = _FakeHandler(
+        headers={
+            "Origin": "https://evil.example",
+            "Host": "tonesoul52.vercel.app",
+            "X-Forwarded-Host": "evil.example",
+            "X-Forwarded-Proto": "https",
+        }
+    )
+
+    send_json_response(handler, {"ok": True}, 200)
+
+    assert "Access-Control-Allow-Origin" not in handler.sent_headers
+
+
+def test_send_json_response_allows_configured_origin(monkeypatch) -> None:
+    monkeypatch.setenv("TONESOUL_CORS_ORIGINS", "https://app.example.com")
+    handler = _FakeHandler(headers={"Origin": "https://app.example.com"})
+
+    send_json_response(handler, {"ok": True}, 200)
+
+    assert handler.sent_headers["Access-Control-Allow-Origin"] == "https://app.example.com"
+
+
+def test_send_json_response_allows_explicit_wildcard_origin(monkeypatch) -> None:
+    monkeypatch.setenv("TONESOUL_CORS_ORIGINS", "*")
+    handler = _FakeHandler(headers={"Origin": "https://app.example.com"})
+
+    send_json_response(handler, {"ok": True}, 200)
+
+    assert handler.sent_headers["Access-Control-Allow-Origin"] == "*"
+
+
 def test_serverless_production_env_honors_flask_env(monkeypatch) -> None:
     monkeypatch.delenv("TONESOUL_PRODUCTION", raising=False)
     monkeypatch.delenv("TONESOUL_ENV", raising=False)
     monkeypatch.setenv("FLASK_ENV", "production")
+
+    assert shared_core._is_production_env() is True
+
+
+def test_serverless_production_env_honors_node_env(monkeypatch) -> None:
+    monkeypatch.delenv("TONESOUL_PRODUCTION", raising=False)
+    monkeypatch.delenv("TONESOUL_ENV", raising=False)
+    monkeypatch.delenv("FLASK_ENV", raising=False)
+    monkeypatch.setenv("NODE_ENV", "production")
+
+    assert shared_core._is_production_env() is True
+
+
+def test_serverless_production_env_honors_vercel_preview(monkeypatch) -> None:
+    monkeypatch.delenv("TONESOUL_PRODUCTION", raising=False)
+    monkeypatch.delenv("TONESOUL_ENV", raising=False)
+    monkeypatch.delenv("FLASK_ENV", raising=False)
+    monkeypatch.delenv("NODE_ENV", raising=False)
+    monkeypatch.setenv("VERCEL_ENV", "preview")
 
     assert shared_core._is_production_env() is True
 

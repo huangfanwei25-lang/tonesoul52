@@ -101,8 +101,15 @@ def _read_write_api_token() -> str:
 def _is_production_env() -> bool:
     if _env_flag("TONESOUL_PRODUCTION", default=False):
         return True
-    env_name = (os.environ.get("TONESOUL_ENV") or os.environ.get("FLASK_ENV") or "").strip().lower()
-    return env_name == "production"
+    for env_name in ("TONESOUL_ENV", "FLASK_ENV", "NODE_ENV"):
+        if (os.environ.get(env_name) or "").strip().lower() == "production":
+            return True
+    # Hosted preview/prod surfaces are public enough that auth and rate-limit
+    # should default to the stricter posture even if TONESOUL_ENV is absent.
+    vercel_env = (os.environ.get("VERCEL_ENV") or "").strip().lower()
+    if vercel_env in {"production", "preview"}:
+        return True
+    return _env_flag("VERCEL", default=False)
 
 
 def _read_positive_int_env(name: str, default: int) -> int:

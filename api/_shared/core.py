@@ -20,10 +20,10 @@ _api_root = Path(__file__).resolve().parents[2]
 if str(_api_root) not in sys.path:
     sys.path.insert(0, str(_api_root))
 
-from tonesoul.council import CouncilRuntime
-from tonesoul.evolution import ContextDistiller
-from tonesoul.memory.soul_db import JsonlSoulDB, SoulDB
-from tonesoul.supabase_persistence import SupabasePersistence
+from tonesoul.council import CouncilRuntime  # noqa: E402
+from tonesoul.evolution import ContextDistiller  # noqa: E402
+from tonesoul.memory.soul_db import JsonlSoulDB, SoulDB  # noqa: E402
+from tonesoul.supabase_persistence import SupabasePersistence  # noqa: E402
 
 
 # Provide a mock Flask app interface to make migration easier, since we are not using Flask in Vercel.
@@ -209,9 +209,8 @@ def _apply_execution_profile_defaults(
 
 
 def _build_deliberation_payload(result) -> dict:
-    from tonesoul.utils.payload_helpers import _as_dict, _coerce_float, _clamp01
+    from tonesoul.utils.payload_helpers import _as_dict, _clamp01, _coerce_float
 
-    verdict = _as_dict(getattr(result, "council_verdict", {}))
     tonebridge = _as_dict(getattr(result, "tonebridge_analysis", {}))
     tone_analysis = _as_dict(tonebridge.get("tone_analysis"))
     entropy_source = _as_dict(tonebridge.get("entropy_meter"))
@@ -301,8 +300,15 @@ def _read_write_api_token() -> str:
 def _is_production_env() -> bool:
     if _env_flag("TONESOUL_PRODUCTION", default=False):
         return True
-    env_name = (os.environ.get("TONESOUL_ENV") or os.environ.get("FLASK_ENV") or "").strip().lower()
-    return env_name == "production"
+    for env_name in ("TONESOUL_ENV", "FLASK_ENV", "NODE_ENV"):
+        if (os.environ.get(env_name) or "").strip().lower() == "production":
+            return True
+    # Hosted preview/prod surfaces are public enough that auth and rate-limit
+    # should default to the stricter posture even if TONESOUL_ENV is absent.
+    vercel_env = (os.environ.get("VERCEL_ENV") or "").strip().lower()
+    if vercel_env in {"production", "preview"}:
+        return True
+    return _env_flag("VERCEL", default=False)
 
 
 def _read_positive_int_env(name: str, default: int) -> int:
