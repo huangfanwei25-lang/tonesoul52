@@ -603,6 +603,12 @@ function drawPortrait(mood) {
 // ============================================================
 //  STATUS PANEL UPDATE
 // ============================================================
+function escapeHtml(value) {
+  const div = document.createElement('div');
+  div.textContent = String(value ?? '');
+  return div.innerHTML;
+}
+
 function updatePanel(gov, world) {
   if (!gov) return;
   const drift = gov.baseline_drift || {};
@@ -630,7 +636,7 @@ function updatePanel(gov, world) {
   (gov.active_vows || []).forEach(v => {
     const d = document.createElement('div');
     d.className = 'vow-item';
-    d.innerHTML = `<span class="vow-id">${v.id || '—'}</span>${v.content || ''}`;
+    d.innerHTML = `<span class="vow-id">${escapeHtml(v.id || '—')}</span>${escapeHtml(v.content || '')}`;
     vowsEl.appendChild(d);
   });
   if (!gov.active_vows?.length) {
@@ -647,7 +653,7 @@ function updatePanel(gov, world) {
     const d = document.createElement('div');
     d.className = 'tension-item';
     d.innerHTML = `<span class="tension-sev ${cls}">${sev.toFixed(1)}</span>
-                   <span class="tension-topic">${t.topic || '—'}</span>`;
+                   <span class="tension-topic">${escapeHtml(t.topic || '—')}</span>`;
     tensEl.appendChild(d);
   });
   if (!tensions.length) {
@@ -1070,8 +1076,8 @@ function updateVisitors() {
     const ts = (v.timestamp || '').substring(11, 16);
     const src = v.source ? ` [${v.source}]` : '';
     return `<div class="visitor-item">
-      <span class="visitor-agent">${v.agent || '?'}</span>
-      <span class="visitor-time">${ts}${src}</span>
+      <span class="visitor-agent">${escapeHtml(v.agent || '?')}</span>
+      <span class="visitor-time">${escapeHtml(`${ts}${src}`)}</span>
     </div>`;
   }).join('');
 }
@@ -1091,7 +1097,7 @@ function updateAegis() {
   el.innerHTML = `
     <div class="aegis-status">
       <span class="aegis-icon ${cls}">${icon}</span>
-      <span class="${cls}" style="font-weight:bold;letter-spacing:1px;">${label}</span>
+      <span class="${cls}" style="font-weight:bold;letter-spacing:1px;">${escapeHtml(label)}</span>
     </div>
     <div class="aegis-detail">
       Chain: ${a.chain_valid ? 'valid' : 'BROKEN'} |

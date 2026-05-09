@@ -1,9 +1,5 @@
 from __future__ import annotations
 
-import pytest
-
-pytest.importorskip("flask")
-
 from types import SimpleNamespace
 
 import apps.api.server as server
@@ -16,6 +12,21 @@ def _client(testing: bool = True):
 
 def test_read_auth_fail_closed_when_production_without_token(monkeypatch):
     monkeypatch.setenv("TONESOUL_ENV", "production")
+    monkeypatch.delenv("TONESOUL_READ_API_TOKEN", raising=False)
+    monkeypatch.delenv("TONESOUL_AUTH_FAIL_CLOSED", raising=False)
+
+    client = _client()
+    response = client.get("/api/conversations")
+    payload = response.get_json()
+
+    assert response.status_code == 503
+    assert payload["error"] == "Read API token not configured"
+
+
+def test_read_auth_fail_closed_when_node_env_production_without_token(monkeypatch):
+    monkeypatch.delenv("TONESOUL_ENV", raising=False)
+    monkeypatch.delenv("FLASK_ENV", raising=False)
+    monkeypatch.setenv("NODE_ENV", "production")
     monkeypatch.delenv("TONESOUL_READ_API_TOKEN", raising=False)
     monkeypatch.delenv("TONESOUL_AUTH_FAIL_CLOSED", raising=False)
 
@@ -40,6 +51,22 @@ def test_read_auth_can_opt_out_fail_closed(monkeypatch):
 
 def test_write_auth_fail_closed_when_production_without_token(monkeypatch):
     monkeypatch.setenv("TONESOUL_ENV", "production")
+    monkeypatch.delenv("TONESOUL_READ_API_TOKEN", raising=False)
+    monkeypatch.delenv("TONESOUL_WRITE_API_TOKEN", raising=False)
+    monkeypatch.delenv("TONESOUL_AUTH_FAIL_CLOSED", raising=False)
+
+    client = _client()
+    response = client.post("/api/conversation", json={})
+    payload = response.get_json()
+
+    assert response.status_code == 503
+    assert payload["error"] == "Write API token not configured"
+
+
+def test_write_auth_fail_closed_when_vercel_preview_without_token(monkeypatch):
+    monkeypatch.delenv("TONESOUL_ENV", raising=False)
+    monkeypatch.delenv("FLASK_ENV", raising=False)
+    monkeypatch.setenv("VERCEL_ENV", "preview")
     monkeypatch.delenv("TONESOUL_READ_API_TOKEN", raising=False)
     monkeypatch.delenv("TONESOUL_WRITE_API_TOKEN", raising=False)
     monkeypatch.delenv("TONESOUL_AUTH_FAIL_CLOSED", raising=False)
