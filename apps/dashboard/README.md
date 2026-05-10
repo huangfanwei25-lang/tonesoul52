@@ -5,6 +5,14 @@ ToneSoul Dashboard is the repo's operator-facing Streamlit shell.
 It is not the public/demo site, and it is not a second control plane.
 It sits on top of the same CLI/runtime truth used elsewhere in the repo.
 
+## Artifact Status
+
+| Path | Status | Notes |
+|---|---|---|
+| `frontend/` + `run_dashboard.py` | canonical | Current operator shell |
+| `index.html` | frozen legacy preview | Keep for lineage/reference only |
+| `world.html` | frozen legacy preview | Keep for lineage/reference only |
+
 ## Role Boundary
 
 Use `apps/dashboard` for:
