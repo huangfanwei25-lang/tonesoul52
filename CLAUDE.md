@@ -8,12 +8,17 @@
 ## Session 開始時必做
 
 ```bash
+# Step 0 — Layer 4 freshness sweep（會做結構性工作 / 推論 branch / PR / 倉庫 scope 時必跑）
+python scripts/run_freshness_sweep.py
+
+# Step 1-3 — existing ToneSoul entry
 python scripts/start_agent_session.py --agent claude-sonnet-4-6 --no-ack --tier 0
 python scripts/run_observer_window.py --agent claude-sonnet-4-6
 python -m tonesoul.diagnose --agent claude-sonnet-4-6
 ```
 
 最小正確順序是：
+- `run_freshness_sweep`（Step 0）：git fetch + branch drift + codebase_graph TTL + gh repo scope + open PR live state。把你會用的 stale state 一次掃出來。本 session 6 天踩 4 次 stale-reference family error 是這條的觸發源（per `docs/philosophy/substrate_stack_theory_2026-05-14.md` §6.1 / §7：Layer 5 memory 不夠、enforcement 推到 Layer 4）。`--skip-gh` / `--skip-fetch` for offline。
 - `start_agent_session --tier 0`：拿到 readiness / task_track_hint / deliberation_mode_hint（~6KB，快速進入）
 - `start_agent_session --tier 1`：加上 working_style + subsystem_parity + observer_shell（~35KB，需要更多 context 時）
 - `start_agent_session`（tier 2）：完整 full dump，含 import_posture / packet（~142KB，跨 agent 交接或紅隊用）
