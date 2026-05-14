@@ -70,6 +70,7 @@ python scripts/gateway.py --port 7700 --token YOUR_SECRET
 5. `DESIGN.md` — 系統為什麼這樣分層
 6. `docs/status/codex_handoff_2026-03-31.md` — 近期 handoff
 7. `task.md` — 現行短板與下一桶
+8. `docs/memory/STRATEGIC_CRYSTAL_FORMAT.md` — 策略性決策 closed-loop 5-field memory format
 
 ## 治理綁定（Governance Binding）
 
