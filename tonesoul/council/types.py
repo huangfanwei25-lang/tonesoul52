@@ -125,6 +125,7 @@ class CouncilVerdict:
     # APPROVE verdict may have been forced to BLOCK.
     # See docs/gse/phase_2_strategy_mirror_spec.md §5 for the integration contract.
     strategy_signature: Optional["StrategySignature"] = None
+    deliberation_trace: Optional[object] = None  # DeliberationTrace from 864c
 
     def to_dict(self) -> dict:
         """
@@ -196,5 +197,10 @@ class CouncilVerdict:
             ),
             "strategy_signature": (
                 self.strategy_signature.to_dict() if self.strategy_signature is not None else None
+            ),
+            "deliberation_trace": (
+                self.deliberation_trace.to_dict()
+                if self.deliberation_trace and hasattr(self.deliberation_trace, "to_dict")
+                else None
             ),
         }
