@@ -9,7 +9,6 @@ from tonesoul.council import PreOutputCouncil, VerdictType
 from tonesoul.council.deliberation_trace import AlternativePath, DeliberationTrace
 from tonesoul.council.types import (
     CoherenceScore,
-    CouncilVerdict,
     PerspectiveType,
     PerspectiveVote,
     VoteDecision,

@@ -3,6 +3,11 @@
     "version": "1.0.0",
     "description": "ToneSoul Architecture Engine",
     "scripts": {
+        "build": "npm run build:web",
+        "build:web": "npm --prefix apps/web run build",
+        "lint": "npm run lint:py && npm run lint:web",
+        "lint:py": "python -m ruff check tonesoul tests",
+        "lint:web": "npm --prefix apps/web run lint",
         "test": "python -m pytest tests/ -q"
     },
     "author": "黃梵威 (Fan-Wei Huang)",

@@ -110,11 +110,17 @@ print(f"Soul Integral: {posture.soul_integral}")
 print(f"Active Vows: {len(posture.active_vows)}")
 ```
 
-### 4) Run the dashboard (optional)
+### 4) Open an observability surface (optional)
 
 ```bash
 pip install tonesoul52[dashboard]
 python scripts/tension_dashboard.py --work-category research
+```
+
+Operator shell:
+
+```bash
+python apps/dashboard/run_dashboard.py
 ```
 
 ### 5) Run tests
@@ -185,6 +191,17 @@ If you need the smallest decision-affecting startup packet for consistent human/
 Open one owner surface first instead of the whole row at once.
 Use [docs/README.md](docs/README.md) as the curated docs gateway.
 Use [docs/INDEX.md](docs/INDEX.md) only when the curated path is not enough and you need the fuller registry.
+
+## Surface Authority
+
+| Surface | Role | Use it for | Do not confuse it with |
+|---|---|---|---|
+| `site/` | public static site | marketing, docs, SEO-facing pages | `apps/web/` |
+| `apps/web/` | interactive app | chat, navigator, browser app work | `site/` |
+| `apps/dashboard/` | operator shell | tiered operator workflow and workspace | `apps/council-playground/` |
+| `apps/council-playground/` | static observability playground | read-only demos and prototype observation | `apps/dashboard/` |
+| `scripts/tension_dashboard.py` | CLI observability dashboard | quick runtime inspection | `apps/dashboard/` |
+| `docs/design/tonesoul-reference/` | archived design reference | visual rebuild guidance | production code |
 
 ## Five System Areas
 
@@ -398,6 +415,8 @@ If formula status matters, prefer [docs/GLOSSARY.md](docs/GLOSSARY.md) and [docs
 - `scripts/run_self_play_resonance.py` — self-play signal generation
 - `scripts/run_swarm_resonance_roleplay.py` — multi-role swarm scenarios
 - `scripts/tension_dashboard.py` — CLI observability dashboard
+- `apps/dashboard/` — operator-facing Streamlit shell
+- `apps/council-playground/` — static observability playground
 - `tests/` — full regression and subsystem tests
 
 ## The Philosophy (for those who care)
