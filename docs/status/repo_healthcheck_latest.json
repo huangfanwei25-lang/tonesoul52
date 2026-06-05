@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-08T15:43:20Z",
+  "generated_at": "2026-06-01T12:52:32Z",
   "overall_ok": false,
   "config": {
     "include_sdh": false,
@@ -8,37 +8,37 @@
     "sdh_timeout": null,
     "check_council_modes": true,
     "strict_soft_fail": false,
-    "allow_missing_discussion": true
+    "allow_missing_discussion": false
   },
   "checks": [
     {
       "name": "python_lint",
-      "status": "pass",
-      "ok": true,
-      "exit_code": 0,
-      "duration_seconds": 0.18,
+      "status": "fail",
+      "ok": false,
+      "exit_code": 1,
+      "duration_seconds": 0.14,
       "command": "python -m ruff check tonesoul tests scripts",
-      "stdout_tail": "All checks passed!",
+      "stdout_tail": "   print(f\"\\n{'=' * 80}\")\n154 |     print(f\"ToneSoul Market Scanner — Multi-Stage Stock Screener\")\n    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n155 |     print(f\"{'=' * 80}\")\n    |\nhelp: Remove extraneous `f` prefix\n\nF541 [*] f-string without any placeholders\n   --> scripts\\run_market_scanner.py:186:19\n    |\n184 |         # 3. Decision to pass to LLM Phase\n185 |         if struct_friction <= STRUCTURAL_CUTOFF:\n186 |             print(f\"   ↳ ✅ Pass: Triggering AI World Model Debate\")\n    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n187 |             context = simulator.run_simulation(f\"{item.id}_{item.name}\", item.snapshots)\n188 |             result.passed_filter = True\n    |\nhelp: Remove extraneous `f` prefix\n\nF541 [*] f-string without any placeholders\n   --> scripts\\run_market_scanner.py:203:11\n    |\n202 |     print(f\"\\n\\n{'=' * 80}\")\n203 |     print(f\"🏆 TONESOUL GOVERNANCE LEADERBOARD\")\n    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n204 |     print(f\"{'=' * 80}\")\n    |\nhelp: Remove extraneous `f` prefix\n\nFound 45 errors.\n[*] 44 fixable with the `--fix` option (1 hidden fix can be enabled with the `--unsafe-fixes` option).",
       "stderr_tail": ""
     },
     {
       "name": "python_format",
-      "status": "pass",
-      "ok": true,
-      "exit_code": 0,
-      "duration_seconds": 0.89,
+      "status": "fail",
+      "ok": false,
+      "exit_code": 1,
+      "duration_seconds": 1.89,
       "command": "python -m black --check tonesoul tests scripts",
       "stdout_tail": "",
-      "stderr_tail": "All done! ✨ 🍰 ✨\n483 files would be left unchanged."
+      "stderr_tail": "would reformat C:\\Users\\user\\Desktop\\倉庫\\tests\\test_static_surface_security.py\nwould reformat C:\\Users\\user\\Desktop\\倉庫\\scripts\\run_publish_push_preflight.py\nwould reformat C:\\Users\\user\\Desktop\\倉庫\\tonesoul\\observability\\execution_honesty.py\nwould reformat C:\\Users\\user\\Desktop\\倉庫\\scripts\\run_consumer_drift_validation_wave.py\nwould reformat C:\\Users\\user\\Desktop\\倉庫\\scripts\\run_cross_agent_consistency_wave.py\nwould reformat C:\\Users\\user\\Desktop\\倉庫\\scripts\\launch_dashboard.py\nwould reformat C:\\Users\\user\\Desktop\\倉庫\\scripts\\run_observer_window.py\n\nOh no! 💥 💔 💥\n7 files would be reformatted, 874 files would be left unchanged."
     },
     {
       "name": "python_tests",
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 187.09,
+      "duration_seconds": 740.9,
       "command": "python -m pytest tests -q",
-      "stdout_tail": "py:3148\n  C:\\Users\\user\\AppData\\Roaming\\Python\\Python313\\site-packages\\pkg_resources\\__init__.py:3148: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('google')`.\n  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages\n    declare_namespace(pkg)\n\n..\\..\\AppData\\Roaming\\Python\\Python313\\site-packages\\pytest_freezegun.py:17: 2864 warnings\n  C:\\Users\\user\\AppData\\Roaming\\Python\\Python313\\site-packages\\pytest_freezegun.py:17: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.\n    if LooseVersion(pytest.__version__) < LooseVersion('3.6.0'):\n\ntests/test_unified_core.py::TestUnifiedCoreImport::test_default_init\n  C:\\Users\\user\\Desktop\\倉庫\\tests\\test_unified_core.py:19: DeprecationWarning: UnifiedCore is in maintenance mode; use tonesoul.unified_pipeline.UnifiedPipeline for production chat runtime.\n    core = UnifiedCore()\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=============== 1432 passed, 2871 warnings in 183.04s (0:03:03) ===============",
+      "stdout_tail": "ttps://huggingface.co/docs/huggingface_hub/how-to-cache#limitations.\n  To support symlinks on Windows, you either need to activate Developer Mode or to run Python as an administrator. In order to activate developer mode, see this article: https://docs.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development\n    warnings.warn(message)\n\ntests/test_data_ingest.py::test_fetch_monthly_revenue_converts_rows_to_market_stimuli\ntests/test_data_ingest.py::test_fetch_monthly_revenue_converts_rows_to_market_stimuli\ntests/test_data_ingest.py::test_fetch_financial_converts_rows_for_statement_dataset\ntests/test_data_ingest.py::test_fetch_financial_converts_rows_for_statement_dataset\n  C:\\Users\\user\\Desktop\\倉庫\\tonesoul\\market\\data_ingest.py:54: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).\n    fetched_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=============== 3393 passed, 6797 warnings in 736.99s (0:12:16) ===============",
       "stderr_tail": ""
     },
     {
@@ -46,9 +46,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 8.29,
+      "duration_seconds": 6.2,
       "command": "npm --prefix apps/web run lint",
-      "stdout_tail": "> web@1.0.0 lint\n> eslint\n\n\nC:\\Users\\user\\Desktop\\倉庫\\apps\\web\\src\\app\\api\\chat\\route.ts\n  37:7  warning  '_SAME_ORIGIN_PRIMARY_FALLBACK_REASON' is assigned a value but never used  @typescript-eslint/no-unused-vars\n\nC:\\Users\\user\\Desktop\\倉庫\\apps\\web\\src\\app\\api\\conversation\\route.ts\n  13:7  warning  '_SAME_ORIGIN_PRIMARY_FALLBACK_REASON' is assigned a value but never used  @typescript-eslint/no-unused-vars\n\n✖ 2 problems (0 errors, 2 warnings)",
+      "stdout_tail": "> web@1.0.0 lint\n> eslint",
       "stderr_tail": ""
     },
     {
@@ -56,29 +56,29 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 2.43,
+      "duration_seconds": 2.29,
       "command": "npm --prefix apps/web run test",
-      "stdout_tail": "> web@1.0.0 test\n> vitest run\n\n\n RUN  v4.0.17 C:/Users/user/Desktop/倉庫/apps/web\n\n ✓ src/__tests__/privateNotesCrypto.test.ts (2 tests) 39ms\n ✓ src/__tests__/apiRoutes.backendHealth.test.ts (5 tests) 23ms\n ✓ src/__tests__/apiRoutes.governanceStatus.test.ts (4 tests) 31ms\n ✓ src/__tests__/apiRoutes.transportFallback.test.ts (10 tests) 29ms\n ✓ src/__tests__/apiRoutes.invalidJson.test.ts (12 tests) 33ms\n ✓ src/__tests__/apiRoutes.chatTransport.test.ts (16 tests) 61ms\n ✓ src/__tests__/publicSurface.contract.test.ts (3 tests) 530ms\n     ✓ notes page exports noindex metadata  523ms\n ✓ src/__tests__/entropyCalculator.test.ts (9 tests) 10ms\n ✓ src/__tests__/chatFallback.test.ts (6 tests) 7ms\n ✓ src/__tests__/metadataRoutes.contract.test.ts (3 tests) 9ms\n ✓ src/__tests__/personaSettings.test.ts (6 tests) 10ms\n ✓ src/__tests__/settingsModal.test.ts (2 tests) 3ms\n\n Test Files  12 passed (12)\n      Tests  78 passed (78)\n   Start at  23:38:26\n   Duration  1.53s (transform 1.31s, setup 0ms, import 3.06s, tests 786ms, environment 3ms)",
+      "stdout_tail": "[22m\u001b[2m)\u001b[22m\u001b[32m 28\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/apiRoutes.invalidJson.test.ts \u001b[2m(\u001b[22m\u001b[2m12 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 32\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/publicSurface.contract.test.ts \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 340\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m notes page exports noindex metadata \u001b[33m 335\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/entropyCalculator.test.ts \u001b[2m(\u001b[22m\u001b[2m9 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 10\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/chatFallback.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 7\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/metadataRoutes.contract.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 5\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/personaSettings.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 6\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/settingsModal.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m12 passed\u001b[39m\u001b[22m\u001b[90m (12)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m79 passed\u001b[39m\u001b[22m\u001b[90m (79)\u001b[39m\n\u001b[2m   Start at \u001b[22m 20:49:32\n\u001b[2m   Duration \u001b[22m 1.53s\u001b[2m (transform 3.13s, setup 0ms, import 4.76s, tests 564ms, environment 2ms)\u001b[22m",
       "stderr_tail": ""
     },
     {
       "name": "git_hygiene",
-      "status": "pass",
-      "ok": true,
-      "exit_code": 0,
-      "duration_seconds": 2.85,
+      "status": "fail",
+      "ok": false,
+      "exit_code": 1,
+      "duration_seconds": 3.16,
       "command": "python scripts/verify_git_hygiene.py --strict --max-tracked-ignored 28",
-      "stdout_tail": "son\\ndata/semantic_spine_fixtures.json\\ndata/yuhun_academy_knowledgebase_v1.1.txt\\n\\\"data/\\\\350\\\\252\\\\236\\\\351\\\\255\\\\202\\\\345\\\\212\\\\207\\\\345\\\\240\\\\264_API_\\\\346\\\\234\\\\200\\\\347\\\\265\\\\202\\\\347\\\\211\\\\210_v1.3.json\\\"\\nexperiments/tsd1_pilot/data/prompts.json\\nexperiments/tsd1_pilot/data/responses.json\\nspec/wfgy_semantic_control_spec.md\\nzenodo_upload/paper_outline_multiperspective_truth.md\\n\\\"zenodo_upload/\\\\344\\\\270\\\\212\\\\345\\\\202\\\\263\\\\346\\\\214\\\\207\\\\345\\\\215\\\\227.md\\\"\",\n      \"stderr_tail\": \"\"\n    }\n  ],\n  \"issues\": [],\n  \"fsck_unexpected_lines\": [],\n  \"tracked_ignored_paths\": [\n    \"data/YuHun_v2.6_knowledgebase.json\",\n    \"data/YuHun_v2.6_knowledgebase_extended.json\",\n    \"data/semantic_spine_fixtures.json\",\n    \"data/yuhun_academy_knowledgebase_v1.1.txt\",\n    \"\\\"data/\\\\350\\\\252\\\\236\\\\351\\\\255\\\\202\\\\345\\\\212\\\\207\\\\345\\\\240\\\\264_API_\\\\346\\\\234\\\\200\\\\347\\\\265\\\\202\\\\347\\\\211\\\\210_v1.3.json\\\"\",\n    \"experiments/tsd1_pilot/data/prompts.json\",\n    \"experiments/tsd1_pilot/data/responses.json\",\n    \"spec/wfgy_semantic_control_spec.md\",\n    \"zenodo_upload/paper_outline_multiperspective_truth.md\",\n    \"\\\"zenodo_upload/\\\\344\\\\270\\\\212\\\\345\\\\202\\\\263\\\\346\\\\214\\\\207\\\\345\\\\215\\\\227.md\\\"\"\n  ]\n}",
+      "stdout_tail": "ata/responses.json\\nmemory/autonomous/session_traces.jsonl\\nmemory/autonomous/zone_registry.json\\nmemory/crystals.jsonl\\nmemory/memory_base/tonesoul_cognitive.index\\nmemory/memory_base/tonesoul_metadata.jsonl\\nspec/wfgy_semantic_control_spec.md\",\n      \"stderr_tail\": \"\"\n    }\n  ],\n  \"issues\": [\n    \"dangling objects 78 exceeds threshold 50\"\n  ],\n  \"fsck_unexpected_lines\": [],\n  \"tracked_ignored_paths\": [\n    \"data/YuHun_v2.6_knowledgebase.json\",\n    \"data/YuHun_v2.6_knowledgebase_extended.json\",\n    \"data/semantic_spine_fixtures.json\",\n    \"data/yuhun_academy_knowledgebase_v1.1.txt\",\n    \"\\\"data/\\\\350\\\\252\\\\236\\\\351\\\\255\\\\202\\\\345\\\\212\\\\207\\\\345\\\\240\\\\264_API_\\\\346\\\\234\\\\200\\\\347\\\\265\\\\202\\\\347\\\\211\\\\210_v1.3.json\\\"\",\n    \"docs/chronicles/task_archive_phase_570-854.md\",\n    \"docs/status/persona_swarm_framework_latest.json\",\n    \"experiments/tsd1_pilot/data/prompts.json\",\n    \"experiments/tsd1_pilot/data/responses.json\",\n    \"memory/autonomous/session_traces.jsonl\",\n    \"memory/autonomous/zone_registry.json\",\n    \"memory/crystals.jsonl\",\n    \"memory/memory_base/tonesoul_cognitive.index\",\n    \"memory/memory_base/tonesoul_metadata.jsonl\",\n    \"spec/wfgy_semantic_control_spec.md\"\n  ]\n}",
       "stderr_tail": ""
     },
     {
       "name": "commit_attribution",
-      "status": "fail",
-      "ok": false,
-      "exit_code": 1,
-      "duration_seconds": 0.84,
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 0.3,
       "command": "python scripts/verify_incremental_commit_attribution.py --strict --artifact-path docs/status/commit_attribution_local.json",
-      "stdout_tail": " add GovernanceKernel, LLM Router, Perception Layer, Agent Protocol\",\n      \"agent\": null,\n      \"topic\": null,\n      \"has_agent\": false,\n      \"has_topic\": false,\n      \"changed_files\": [\n        \"AGENT_PROTOCOL.md\",\n        \"memory/antigravity_architecture_plan_2026-03-07.md\",\n        \"memory/antigravity_journal.md\",\n        \"memory/architecture_reflection_2026-03-07.md\",\n        \"tests/test_governance_kernel.py\",\n        \"tests/test_perception.py\",\n        \"tonesoul/governance/__init__.py\",\n        \"tonesoul/governance/kernel.py\",\n        \"tonesoul/llm/__init__.py\",\n        \"tonesoul/llm/router.py\",\n        \"tonesoul/perception/__init__.py\",\n        \"tonesoul/perception/stimulus.py\",\n        \"tonesoul/perception/web_ingest.py\"\n      ],\n      \"docs_only\": false,\n      \"exempted\": false,\n      \"exemption_reason\": null,\n      \"rev\": \"c225332e2f4c6854dba231b1805d0d1d97d4ad42\",\n      \"exit_code\": 0\n    }\n  ],\n  \"advice\": {\n    \"agent_trailer\": \"Agent: Codex\",\n    \"trace_topic_trailer\": \"Trace-Topic: <topic-name>\"\n  }\n}\n::error::Missing Agent/Trace-Topic trailers in incremental commits.\n::error::Add commit trailers, for example:\n::error::Agent: Codex\n::error::Trace-Topic: <topic-name>",
+      "stdout_tail": "{\n  \"event_name\": \"local\",\n  \"mode\": \"local_incremental\",\n  \"range_spec\": \"db1c30c2ad79a0e198561995c65d35165e179d76..HEAD\",\n  \"base_ref\": \"origin/master\",\n  \"checked_revisions\": [\n    \"b94f444dddb11321b48fb3ca5672c4c20c007c20\"\n  ],\n  \"enforcement_anchor\": null,\n  \"anchor_override_used\": false,\n  \"checked_count\": 1,\n  \"missing_count\": 0,\n  \"missing\": [],\n  \"ok\": true,\n  \"results\": [\n    {\n      \"ok\": true,\n      \"summary\": \"feat(council): 864c deliberation trace — every verdict records its reasoning path\",\n      \"agent\": \"claude-opus-4-6\",\n      \"topic\": \"phase-864c-deliberation-trace\",\n      \"has_agent\": true,\n      \"has_topic\": true,\n      \"changed_files\": [\n        \"tests/test_deliberation_trace.py\",\n        \"tonesoul/council/deliberation_trace.py\",\n        \"tonesoul/council/types.py\",\n        \"tonesoul/council/verdict.py\"\n      ],\n      \"docs_only\": false,\n      \"exempted\": false,\n      \"exemption_reason\": null,\n      \"rev\": \"b94f444dddb11321b48fb3ca5672c4c20c007c20\",\n      \"exit_code\": 0\n    }\n  ],\n  \"advice\": {\n    \"agent_trailer\": \"Agent: Codex\",\n    \"trace_topic_trailer\": \"Trace-Topic: <topic-name>\"\n  }\n}",
       "stderr_tail": ""
     },
     {
@@ -96,7 +96,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.67,
+      "duration_seconds": 0.54,
       "command": "python scripts/run_persona_swarm_framework.py --strict",
       "stdout_tail": "    \"archetype\": \"critical_discovery\",\n      \"suggested_identity\": \"explorer-critic collective\",\n      \"confidence_band\": \"high\",\n      \"statement\": \"Swarm identity is a constructive challenger: preserve dissent to unlock better plans.\"\n    }\n  },\n  \"execution_plan\": {\n    \"mode\": \"full_swarm\",\n    \"tier\": \"low\",\n    \"requested_agent_budget\": 5,\n    \"selected_agent_count\": 4,\n    \"selected_agent_ids\": [\n      \"guardian-1\",\n      \"engineer-1\",\n      \"analyst-1\",\n      \"critic-1\"\n    ],\n    \"dropped_agent_ids\": [],\n    \"budget_respected\": true\n  },\n  \"readiness_gate\": {\n    \"passed\": true,\n    \"criteria\": {\n      \"min_safety_pass_rate\": 0.8,\n      \"min_swarm_score\": 0.72,\n      \"min_decision_support\": 0.6,\n      \"max_token_latency_cost_index\": 0.75,\n      \"fail_fast_requires_block\": true\n    },\n    \"checks\": {\n      \"safety_pass_rate\": true,\n      \"swarm_score\": true,\n      \"decision_support\": true,\n      \"token_latency_cost_index\": true,\n      \"guardian_fail_fast_consistency\": true,\n      \"execution_budget_respected\": true\n    },\n    \"failed_checks\": [],\n    \"cost_profile\": {\n      \"tier\": \"low\",\n      \"recommended_mode\": \"full_swarm\",\n      \"recommended_agent_budget\": 5\n    }\n  }\n}",
       "stderr_tail": ""
@@ -106,19 +106,19 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.15,
+      "duration_seconds": 0.13,
       "command": "python scripts/verify_external_source_registry.py --strict",
-      "stdout_tail": "url[0]\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"registry:pmlr:reviewed_at\",\n      \"status\": \"pass\",\n      \"detail\": \"review age ok: 22 days\"\n    },\n    {\n      \"name\": \"open_source_apps\",\n      \"status\": \"pass\",\n      \"detail\": \"3 app entries found\"\n    },\n    {\n      \"name\": \"app:Streamlit:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Streamlit:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    }\n  ],\n  \"policy\": {\n    \"review_cycle_days\": 120,\n    \"allowed_hosts_count\": 21,\n    \"blocked_hosts_count\": 5\n  },\n  \"inputs\": {\n    \"registry\": \"spec\\\\external_source_registry.yaml\",\n    \"open_source_apps\": \"spec\\\\open_source_apps.yaml\",\n    \"today\": \"2026-03-08\"\n  }\n}",
+      "stdout_tail": "rl[0]\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"registry:pmlr:reviewed_at\",\n      \"status\": \"pass\",\n      \"detail\": \"review age ok: 107 days\"\n    },\n    {\n      \"name\": \"open_source_apps\",\n      \"status\": \"pass\",\n      \"detail\": \"3 app entries found\"\n    },\n    {\n      \"name\": \"app:Streamlit:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Streamlit:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    }\n  ],\n  \"policy\": {\n    \"review_cycle_days\": 120,\n    \"allowed_hosts_count\": 21,\n    \"blocked_hosts_count\": 5\n  },\n  \"inputs\": {\n    \"registry\": \"spec\\\\external_source_registry.yaml\",\n    \"open_source_apps\": \"spec\\\\open_source_apps.yaml\",\n    \"today\": \"2026-06-01\"\n  }\n}",
       "stderr_tail": ""
     },
     {
       "name": "skill_registry",
-      "status": "pass",
-      "ok": true,
-      "exit_code": 0,
-      "duration_seconds": 0.13,
+      "status": "fail",
+      "ok": false,
+      "exit_code": 1,
+      "duration_seconds": 0.1,
       "command": "python scripts/verify_skill_registry.py --strict",
-      "stdout_tail": ",\n    {\n      \"name\": \"skill[4].frontmatter.l1_routing.triggers.prompt_safety\",\n      \"status\": \"pass\",\n      \"detail\": \"no prompt-markup tokens\"\n    },\n    {\n      \"name\": \"skill[4].frontmatter.l1_routing.intent\",\n      \"status\": \"pass\",\n      \"detail\": \"length=120\"\n    },\n    {\n      \"name\": \"skill[4].frontmatter.l1_routing.intent.prompt_safety\",\n      \"status\": \"pass\",\n      \"detail\": \"safe\"\n    },\n    {\n      \"name\": \"skill[4].frontmatter.l2_signature\",\n      \"status\": \"pass\",\n      \"detail\": \"present\"\n    },\n    {\n      \"name\": \"skill[4].frontmatter.l2_signature.execution_profile\",\n      \"status\": \"pass\",\n      \"detail\": \"1 profile(s)\"\n    },\n    {\n      \"name\": \"skill[4].frontmatter.l2_signature.trust_tier\",\n      \"status\": \"pass\",\n      \"detail\": \"reviewed\"\n    },\n    {\n      \"name\": \"skill[4].frontmatter.l2_signature.json_schema\",\n      \"status\": \"pass\",\n      \"detail\": \"schema type object\"\n    }\n  ],\n  \"summary\": {\n    \"discovered_skill_files\": 5,\n    \"registry_entries\": 5,\n    \"max_review_age_days\": 180\n  },\n  \"inputs\": {\n    \"registry\": \"skills/registry.json\",\n    \"schema\": \"skills/registry.schema.json\",\n    \"skills_root\": \".agent/skills\",\n    \"today\": \"2026-03-08\"\n  }\n}",
+      "stdout_tail": "{\n  \"generated_at\": \"2026-06-01T12:49:37Z\",\n  \"ok\": false,\n  \"failed_count\": 2,\n  \"warning_count\": 0,\n  \"checks\": [\n    {\n      \"name\": \"schema\",\n      \"status\": \"fail\",\n      \"detail\": \"schema payload is missing or invalid JSON object\"\n    },\n    {\n      \"name\": \"registry\",\n      \"status\": \"fail\",\n      \"detail\": \"registry payload is missing or invalid JSON object\"\n    }\n  ],\n  \"inputs\": {\n    \"registry\": \"skills/registry.json\",\n    \"schema\": \"skills/registry.schema.json\",\n    \"skills_root\": \".agent/skills\",\n    \"today\": \"2026-06-01\"\n  }\n}",
       "stderr_tail": ""
     },
     {
@@ -126,9 +126,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.58,
+      "duration_seconds": 0.09,
       "command": "python scripts/run_multi_agent_divergence_report.py --strict",
-      "stdout_tail": "uardian\": 538\n    }\n  },\n  \"divergence_examples\": [\n    \"Advocate Voice: Needs refinement to support user intent.\",\n    \"Safety Council: Detected high-risk term 'bomb'.; Advocate Voice: Needs refinement to support user intent.\",\n    \"Critic Lens: Creative or aesthetic nuance requires a stance.; Advocate Voice: Needs refinement to support user intent.\",\n    \"No specific conflict identified.\",\n    \"Safety Council: Detected high-risk term 'attack'.; Advocate Voice: Needs refinement to support user intent.\",\n    \"Safety Council: Detected high-risk term 'bomb'.; Analyst Review: Factual claim detected (Found 1 factual indicator(s): numerical_pattern). Cannot verify without evidence.\",\n    \"Safety Council: Detected high-risk term 'kill'.; Advocate Voice: Needs refinement to support user intent.\",\n    \"Safety Council: Detected high-risk term '攻擊'.; Advocate Voice: Needs refinement to support user intent.\",\n    \"Analyst Review: Logic chain contradicts itself; requires clarity.; Critic Lens: Creative or aesthetic nuance requires a stance.\",\n    \"Safety Council: Detected high-risk term 'weapon'.; Advocate Voice: Needs refinement to support user intent.\"\n  ],\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stdout_tail": "{\n  \"generated_at\": \"2026-06-01T12:49:38Z\",\n  \"overall_ok\": true,\n  \"inputs\": {\n    \"journal_path\": \"C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl\"\n  },\n  \"metrics\": {\n    \"entry_count\": 66,\n    \"contract_entry_count\": 63,\n    \"contract_record_count\": 315,\n    \"invalid_record_count\": 0,\n    \"high_risk_record_count\": 1,\n    \"verdict_counts\": {\n      \"unknown\": 1,\n      \"block\": 63,\n      \"digest\": 2\n    },\n    \"role_counts\": {\n      \"Guardian\": 63,\n      \"Analyst\": 126,\n      \"Critic\": 63,\n      \"Advocate\": 63\n    },\n    \"risk_level_counts\": {\n      \"low\": 258,\n      \"medium\": 56,\n      \"high\": 1\n    },\n    \"handoff_next_role_counts\": {\n      \"OutputContract\": 258,\n      \"Builder\": 56,\n      \"Guardian\": 1\n    }\n  },\n  \"divergence_examples\": [\n    \"Critic Lens: Creative or aesthetic nuance requires a stance.; Advocate Voice: Needs refinement to support user intent.\",\n    \"Advocate Voice: Needs refinement to support user intent.\",\n    \"No specific conflict identified.\",\n    \"Safety Council: Detected high-risk term 'bomb'.\"\n  ],\n  \"issues\": [],\n  \"warnings\": []\n}",
       "stderr_tail": ""
     },
     {
@@ -136,9 +136,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.56,
+      "duration_seconds": 0.08,
       "command": "python scripts/run_memory_quality_report.py --strict",
-      "stdout_tail": "{\n  \"generated_at\": \"2026-03-08T15:38:33Z\",\n  \"overall_ok\": true,\n  \"inputs\": {\n    \"journal_path\": \"C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl\"\n  },\n  \"metrics\": {\n    \"entry_count\": 3150,\n    \"failure_case_count\": 3065,\n    \"learning_sample_count\": 3065,\n    \"invalid_json_line_count\": 0,\n    \"high_risk_failure_count\": 2999,\n    \"verdict_counts\": {\n      \"block\": 2999,\n      \"declare_stance\": 66,\n      \"refine\": 1,\n      \"approve\": 7,\n      \"unknown\": 77\n    },\n    \"risk_level_counts\": {\n      \"high\": 2999,\n      \"low\": 66\n    },\n    \"uncertainty_band_counts\": {\n      \"unknown\": 3065\n    },\n    \"average_failure_coherence\": 0.6574\n  },\n  \"quality_signals\": {\n    \"failure_case_rate\": 0.973,\n    \"provenance_coverage_rate\": 0.8029,\n    \"divergence_coverage_rate\": 1.0,\n    \"contract_coverage_rate\": 1.0,\n    \"contract_evidence_coverage_rate\": 0.0\n  },\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stdout_tail": "{\n  \"generated_at\": \"2026-06-01T12:49:38Z\",\n  \"overall_ok\": true,\n  \"inputs\": {\n    \"journal_path\": \"C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl\"\n  },\n  \"metrics\": {\n    \"entry_count\": 66,\n    \"failure_case_count\": 63,\n    \"learning_sample_count\": 63,\n    \"invalid_json_line_count\": 0,\n    \"high_risk_failure_count\": 63,\n    \"verdict_counts\": {\n      \"unknown\": 1,\n      \"block\": 63,\n      \"digest\": 2\n    },\n    \"risk_level_counts\": {\n      \"high\": 63\n    },\n    \"uncertainty_band_counts\": {\n      \"unknown\": 63\n    },\n    \"average_failure_coherence\": 0.7489\n  },\n  \"quality_signals\": {\n    \"failure_case_rate\": 0.9545,\n    \"provenance_coverage_rate\": 0.9841,\n    \"divergence_coverage_rate\": 1.0,\n    \"contract_coverage_rate\": 1.0,\n    \"contract_evidence_coverage_rate\": 0.0\n  },\n  \"issues\": [],\n  \"warnings\": []\n}",
       "stderr_tail": ""
     },
     {
@@ -146,7 +146,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.08,
+      "duration_seconds": 0.07,
       "command": "python scripts/run_memory_governance_contract_check.py --strict",
       "stdout_tail": "y_tension in [0,1]\"\n    },\n    {\n      \"name\": \"example.prior_tension.query_wave\",\n      \"status\": \"pass\",\n      \"detail\": \"wave shape valid\"\n    },\n    {\n      \"name\": \"example.prior_tension.memory_wave\",\n      \"status\": \"pass\",\n      \"detail\": \"wave shape valid\"\n    },\n    {\n      \"name\": \"example.governance_friction.score\",\n      \"status\": \"pass\",\n      \"detail\": \"score in [0,1]\"\n    },\n    {\n      \"name\": \"example.governance_friction.components.delta_t\",\n      \"status\": \"pass\",\n      \"detail\": \"delta_t in [0,1]\"\n    },\n    {\n      \"name\": \"example.governance_friction.components.delta_wave\",\n      \"status\": \"pass\",\n      \"detail\": \"delta_wave in [0,1]\"\n    },\n    {\n      \"name\": \"example.governance_friction.components.boundary_mismatch\",\n      \"status\": \"pass\",\n      \"detail\": \"boundary_mismatch is boolean\"\n    },\n    {\n      \"name\": \"example.routing_trace.route\",\n      \"status\": \"pass\",\n      \"detail\": \"route valid\"\n    },\n    {\n      \"name\": \"example.routing_trace.journal_eligible\",\n      \"status\": \"pass\",\n      \"detail\": \"journal_eligible is boolean\"\n    },\n    {\n      \"name\": \"example.routing_trace.reason\",\n      \"status\": \"pass\",\n      \"detail\": \"reason present\"\n    }\n  ]\n}",
       "stderr_tail": ""
@@ -156,9 +156,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.56,
+      "duration_seconds": 0.09,
       "command": "python scripts/run_friction_shadow_replay_export.py --strict",
-      "stdout_tail": " \"overall_ok\": true,\n  \"inputs\": {\n    \"journal_path\": \"memory/self_journal.jsonl\",\n    \"discussion_path\": \"memory/agent_discussion_curated.jsonl\",\n    \"max_rows\": 1200,\n    \"min_scenarios\": 24,\n    \"max_invalid_lines\": 200,\n    \"max_avg_tension_drift\": 0.35,\n    \"max_avg_friction_drift\": 0.35,\n    \"max_high_friction_rate_drift\": 0.4,\n    \"min_scenario_count_ratio\": 0.2\n  },\n  \"metrics\": {\n    \"scenario_count\": 1200,\n    \"source_journal_count\": 1196,\n    \"source_discussion_count\": 4,\n    \"source_synthetic_count\": 0,\n    \"free_tier_count\": 591,\n    \"premium_tier_count\": 609,\n    \"journal_invalid_json_line_count\": 0,\n    \"discussion_invalid_json_line_count\": 0,\n    \"invalid_json_line_count\": 0,\n    \"average_initial_tension\": 0.6194,\n    \"average_friction_score\": 0.6828,\n    \"high_friction_scenario_count\": 939,\n    \"high_friction_scenario_rate\": 0.7825,\n    \"drift\": {\n      \"has_previous_snapshot\": true,\n      \"guard_applied\": true,\n      \"guard_skip_reason\": null,\n      \"scenario_count_ratio\": 1.0,\n      \"average_initial_tension_delta\": -0.0011,\n      \"average_friction_score_delta\": -0.001,\n      \"high_friction_scenario_rate_delta\": 0.005\n    }\n  },\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stdout_tail": " \"overall_ok\": true,\n  \"inputs\": {\n    \"journal_path\": \"memory/self_journal.jsonl\",\n    \"discussion_path\": \"memory/agent_discussion_curated.jsonl\",\n    \"max_rows\": 1200,\n    \"min_scenarios\": 24,\n    \"max_invalid_lines\": 200,\n    \"max_avg_tension_drift\": 0.35,\n    \"max_avg_friction_drift\": 0.35,\n    \"max_high_friction_rate_drift\": 0.4,\n    \"min_scenario_count_ratio\": 0.2\n  },\n  \"metrics\": {\n    \"scenario_count\": 337,\n    \"source_journal_count\": 64,\n    \"source_discussion_count\": 273,\n    \"source_synthetic_count\": 0,\n    \"free_tier_count\": 189,\n    \"premium_tier_count\": 148,\n    \"journal_invalid_json_line_count\": 0,\n    \"discussion_invalid_json_line_count\": 0,\n    \"invalid_json_line_count\": 0,\n    \"average_initial_tension\": 0.3553,\n    \"average_friction_score\": 0.3249,\n    \"high_friction_scenario_count\": 3,\n    \"high_friction_scenario_rate\": 0.0089,\n    \"drift\": {\n      \"has_previous_snapshot\": true,\n      \"guard_applied\": true,\n      \"guard_skip_reason\": null,\n      \"scenario_count_ratio\": 1.006,\n      \"average_initial_tension_delta\": 0.0008,\n      \"average_friction_score_delta\": 0.0015,\n      \"high_friction_scenario_rate_delta\": -0.0001\n    }\n  },\n  \"issues\": [],\n  \"warnings\": []\n}",
       "stderr_tail": ""
     },
     {
@@ -166,9 +166,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.14,
+      "duration_seconds": 0.1,
       "command": "python scripts/run_friction_shadow_calibration_report.py --strict",
-      "stdout_tail": "te\": 0.8825,\n    \"shadow_council_rate\": 0.8825,\n    \"council_rate_delta\": 0.0,\n    \"high_friction_candidate_count\": 939,\n    \"high_friction_escape_count\": 0,\n    \"high_friction_escape_rate\": 0.0\n  },\n  \"route_distribution\": {\n    \"active\": {\n      \"route_local_llm\": 0,\n      \"route_single_cloud\": 141,\n      \"route_full_council\": 1059,\n      \"block_rate_limit\": 0\n    },\n    \"shadow\": {\n      \"route_local_llm\": 0,\n      \"route_single_cloud\": 141,\n      \"route_full_council\": 1059,\n      \"block_rate_limit\": 0\n    }\n  },\n  \"friction_band_metrics\": [\n    {\n      \"band\": \"low\",\n      \"count\": 4,\n      \"active_council_rate\": 0.0,\n      \"shadow_council_rate\": 0.0\n    },\n    {\n      \"band\": \"mid\",\n      \"count\": 257,\n      \"active_council_rate\": 0.4669,\n      \"shadow_council_rate\": 0.4669\n    },\n    {\n      \"band\": \"high\",\n      \"count\": 939,\n      \"active_council_rate\": 1.0,\n      \"shadow_council_rate\": 1.0\n    },\n    {\n      \"band\": \"unknown\",\n      \"count\": 0,\n      \"active_council_rate\": 0.0,\n      \"shadow_council_rate\": 0.0\n    }\n  ],\n  \"route_changes\": [],\n  \"issues\": [],\n  \"warnings\": [\n    \"shadow thresholds are identical to active thresholds (this run is a baseline snapshot).\"\n  ]\n}",
+      "stdout_tail": "ncil_rate\": 0.1128,\n    \"shadow_council_rate\": 0.1128,\n    \"council_rate_delta\": 0.0,\n    \"high_friction_candidate_count\": 3,\n    \"high_friction_escape_count\": 0,\n    \"high_friction_escape_rate\": 0.0\n  },\n  \"route_distribution\": {\n    \"active\": {\n      \"route_local_llm\": 0,\n      \"route_single_cloud\": 299,\n      \"route_full_council\": 38,\n      \"block_rate_limit\": 0\n    },\n    \"shadow\": {\n      \"route_local_llm\": 0,\n      \"route_single_cloud\": 299,\n      \"route_full_council\": 38,\n      \"block_rate_limit\": 0\n    }\n  },\n  \"friction_band_metrics\": [\n    {\n      \"band\": \"low\",\n      \"count\": 267,\n      \"active_council_rate\": 0.0,\n      \"shadow_council_rate\": 0.0\n    },\n    {\n      \"band\": \"mid\",\n      \"count\": 67,\n      \"active_council_rate\": 0.5224,\n      \"shadow_council_rate\": 0.5224\n    },\n    {\n      \"band\": \"high\",\n      \"count\": 3,\n      \"active_council_rate\": 1.0,\n      \"shadow_council_rate\": 1.0\n    },\n    {\n      \"band\": \"unknown\",\n      \"count\": 0,\n      \"active_council_rate\": 0.0,\n      \"shadow_council_rate\": 0.0\n    }\n  ],\n  \"route_changes\": [],\n  \"issues\": [],\n  \"warnings\": [\n    \"shadow thresholds are identical to active thresholds (this run is a baseline snapshot).\"\n  ]\n}",
       "stderr_tail": ""
     },
     {
@@ -176,9 +176,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 1.68,
+      "duration_seconds": 0.11,
       "command": "python scripts/run_philosophical_reflection_report.py --strict",
-      "stdout_tail": "\"2026-03-01T14:53:25.719904+00:00\",\n      \"summary\": \"Analyst Review: Logic chain contradicts itself; requires clarity.; Critic Lens: Creative or aesthetic nuance requires a stance.\"\n    },\n    {\n      \"source\": \"journal\",\n      \"timestamp\": \"2026-03-01T14:57:16.530202+00:00\",\n      \"summary\": \"Safety Council: Detected high-risk term 'weapon'.; Advocate Voice: Needs refinement to support user intent.\"\n    },\n    {\n      \"source\": \"journal\",\n      \"timestamp\": \"2026-03-01T14:57:16.540076+00:00\",\n      \"summary\": \"Safety Council: Detected high-risk term 'harm'.; Analyst Review: Factual claim detected (Found 1 factual indicator(s): numerical_pattern). Cannot verify without evidence.\"\n    },\n    {\n      \"source\": \"journal\",\n      \"timestamp\": \"2026-03-01T14:57:16.543339+00:00\",\n      \"summary\": \"Safety Council: Detected high-risk term 'harm'.; Advocate Voice: Needs refinement to support user intent.\"\n    }\n  ],\n  \"unresolved_topics\": [\n    \"next-phase-planning\",\n    \"next-steps-prioritized-plan\",\n    \"phase17-all-tasks\",\n    \"phase21-api-unification\",\n    \"phase22-frontend-integration\",\n    \"seven-d-cross-agent-decisions\",\n    \"system-completion\"\n  ],\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stdout_tail": "scussion\",\n      \"timestamp\": \"2026-02-06T19:55:35Z\",\n      \"summary\": \"Added docs/7D_EXECUTION_SPEC.md and scripts/verify_7d.py. verify_7d now aggregates TDD/RDD/DDD/XDD/GDD/CDD/SDH checks with gate levels and JSON summary. Current run: blocking_failures=0, RDD=not_implemented, SDH=skip (without include-sdh).\"\n    },\n    {\n      \"source\": \"discussion\",\n      \"timestamp\": \"2026-02-06T19:55:35Z\",\n      \"summary\": \"Need cross-agent decision: (1) Should SDH stay SOFT_FAIL or become BLOCKING in CI by default? (2) RDD promotion criterion: case-count threshold vs coverage threshold? (3) DDD SLA: define allowed timestamp drift and stale-data policy.\"\n    },\n    {\n      \"source\": \"discussion\",\n      \"timestamp\": \"2026-02-06T19:58:13Z\",\n      \"summary\": \"Re-ran python scripts/verify_7d.py after integration updates: blocking_failures=0, not_implemented=1 (RDD), SDH=skip by default. Runner remains healthy.\"\n    }\n  ],\n  \"unresolved_topics\": [\n    \"next-phase-planning\",\n    \"next-steps-prioritized-plan\",\n    \"phase17-all-tasks\",\n    \"phase21-api-unification\",\n    \"phase22-frontend-integration\",\n    \"seven-d-cross-agent-decisions\",\n    \"system-completion\"\n  ],\n  \"issues\": [],\n  \"warnings\": []\n}",
       "stderr_tail": ""
     },
     {
@@ -186,9 +186,19 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.11,
+      "duration_seconds": 0.09,
       "command": "python scripts/run_memory_topology_fit_report.py --strict",
-      "stdout_tail": "on_friction_event_index\"\n    ],\n    \"tonesoul_delta\": \"Prioritize memory of friction/boundary choices over raw transcript recall.\"\n  },\n  \"candidate_scores\": [\n    {\n      \"name\": \"flat\",\n      \"feasible\": true,\n      \"fit_score\": 0.9588,\n      \"required_budget\": 0.15,\n      \"governance_capacity\": 0.45,\n      \"memory_stack\": [\n        \"flat_jsonl_experience_log\",\n        \"rolling_summary_memory\",\n        \"tension_friction_event_index\"\n      ]\n    },\n    {\n      \"name\": \"planar\",\n      \"feasible\": false,\n      \"fit_score\": 0.3308,\n      \"required_budget\": 0.4,\n      \"governance_capacity\": 0.74,\n      \"memory_stack\": [\n        \"flat_jsonl_experience_log\",\n        \"rolling_summary_memory\",\n        \"tension_friction_event_index\",\n        \"conflict_graph_links\",\n        \"topic_to_boundary_relation_index\"\n      ]\n    },\n    {\n      \"name\": \"hierarchical\",\n      \"feasible\": false,\n      \"fit_score\": 0.1228,\n      \"required_budget\": 0.72,\n      \"governance_capacity\": 0.9,\n      \"memory_stack\": [\n        \"flat_jsonl_experience_log\",\n        \"conflict_graph_links\",\n        \"multi_layer_summary_pyramid\",\n        \"policy_trace_memory_layer\"\n      ]\n    }\n  ],\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stdout_tail": "nsion_friction_event_index\"\n    ],\n    \"tonesoul_delta\": \"Prioritize memory of friction/boundary choices over raw transcript recall.\"\n  },\n  \"candidate_scores\": [\n    {\n      \"name\": \"flat\",\n      \"feasible\": true,\n      \"fit_score\": 0.7987,\n      \"required_budget\": 0.15,\n      \"governance_capacity\": 0.45,\n      \"memory_stack\": [\n        \"flat_jsonl_experience_log\",\n        \"rolling_summary_memory\",\n        \"tension_friction_event_index\"\n      ]\n    },\n    {\n      \"name\": \"planar\",\n      \"feasible\": false,\n      \"fit_score\": 0.1707,\n      \"required_budget\": 0.4,\n      \"governance_capacity\": 0.74,\n      \"memory_stack\": [\n        \"flat_jsonl_experience_log\",\n        \"rolling_summary_memory\",\n        \"tension_friction_event_index\",\n        \"conflict_graph_links\",\n        \"topic_to_boundary_relation_index\"\n      ]\n    },\n    {\n      \"name\": \"hierarchical\",\n      \"feasible\": false,\n      \"fit_score\": 0.0,\n      \"required_budget\": 0.72,\n      \"governance_capacity\": 0.9,\n      \"memory_stack\": [\n        \"flat_jsonl_experience_log\",\n        \"conflict_graph_links\",\n        \"multi_layer_summary_pyramid\",\n        \"policy_trace_memory_layer\"\n      ]\n    }\n  ],\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "repo_intelligence",
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 0.28,
+      "command": "python scripts/run_repo_intelligence_report.py",
+      "stdout_tail": " \"protected_file_mutation_allowed\": false\n  },\n  \"semantic_memory_handoff\": null,\n  \"primary_status_line\": \"repo_intelligence_ready | available_surfaces=5/7 protected_files=5 watched_dirs=3 adoption=sidecar_only\",\n  \"runtime_status_line\": \"entrypoints | repo=repo_healthcheck_latest.json atlas=repo_semantic_atlas_latest.json integrity=agent_integrity_latest.json settlement=repo_governance_settlement_latest.json review=runtime_source_change_groups_latest.json weekly=true_verification_task_status_latest.json scribe=scribe_status_latest.json semantic_protocol=unavailable semantic_first=unavailable\",\n  \"artifact_policy_status_line\": \"external_repo_intelligence=sidecar_only | main_repo_install=no hooks=no protected_files=no\",\n  \"handoff\": {\n    \"queue_shape\": \"repo_intelligence_ready\",\n    \"requires_operator_action\": false,\n    \"preferred_first_surface\": \"docs/status/repo_healthcheck_latest.json\",\n    \"main_repo_install_allowed\": false,\n    \"mirror_clone_required\": true,\n    \"semantic_retrieval_protocol\": \"\",\n    \"semantic_preferred_neighborhood\": \"\",\n    \"primary_status_line\": \"repo_intelligence_ready | available_surfaces=5/7 protected_files=5 watched_dirs=3 adoption=sidecar_only\"\n  }\n}",
       "stderr_tail": ""
     },
     {
@@ -196,9 +206,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 1.18,
+      "duration_seconds": 0.81,
       "command": "python scripts/report_true_verification_task_status.py --strict",
-      "stdout_tail": "  \"max_friction_score\": 0.3436,\n              \"max_lyapunov_proxy\": 0.2499,\n              \"max_llm_preflight_latency_ms\": 2003,\n              \"max_llm_selection_latency_ms\": 767,\n              \"max_llm_probe_latency_ms\": 1236\n            }\n          }\n        },\n        \"state\": {\n          \"cursor\": 0,\n          \"category_cursor\": 2,\n          \"cycles_run\": 1,\n          \"entry_state_count\": 2,\n          \"category_entry_cursor_count\": 1,\n          \"category_state_count\": 1,\n          \"updated_at\": \"2026-03-08T14:10:21Z\",\n          \"last_entry_ids\": [\n            \"osv\",\n            \"nvd\"\n          ],\n          \"llm_backoff\": {\n            \"backoff_until_cycle\": 3,\n            \"last_status\": \"breached\",\n            \"last_mode\": \"mixed_latency\",\n            \"updated_at\": \"2026-03-08T14:10:21Z\",\n            \"last_breach_reasons\": [\n              \"llm_preflight_latency_ms>1800 (observed=2003)\",\n              \"llm_selection_latency_ms>700 (observed=767)\",\n              \"llm_probe_latency_ms>1200 (observed=1236)\",\n              \"llm_preflight_timeout_count>0 (observed=1)\"\n            ]\n          }\n        }\n      }\n    },\n    \"experiment_summary\": null,\n    \"schedule_snapshot\": null\n  }\n}",
+      "stdout_tail": "       \"state\": {\n          \"cursor\": 0,\n          \"category_cursor\": 2,\n          \"cycles_run\": 13,\n          \"entry_state_count\": 5,\n          \"category_entry_cursor_count\": 4,\n          \"category_state_count\": 4,\n          \"updated_at\": \"2026-03-12T05:08:25Z\",\n          \"last_entry_ids\": [\n            \"osv\",\n            \"nvd\"\n          ],\n          \"llm_backoff\": {\n            \"backoff_until_cycle\": 15,\n            \"last_status\": \"breached\",\n            \"last_mode\": \"probe_latency\",\n            \"updated_at\": \"2026-03-12T05:08:25Z\",\n            \"last_breach_reasons\": [\n              \"llm_preflight_latency_ms>1800 (observed=2003)\",\n              \"llm_probe_latency_ms>1200 (observed=1496)\",\n              \"llm_preflight_timeout_count>0 (observed=1)\"\n            ]\n          }\n        }\n      }\n    },\n    \"experiment_summary\": null,\n    \"schedule_snapshot\": null\n  },\n  \"runtime_lineage\": {\n    \"latest_available_source\": null,\n    \"host_tick\": {\n      \"cycle\": 1,\n      \"result_overall_ok\": true,\n      \"schedule_overall_ok\": true\n    },\n    \"schedule_snapshot\": null\n  },\n  \"scribe_handoff\": {\n    \"latest_available_source\": null,\n    \"host_tick\": null,\n    \"schedule_snapshot\": null\n  }\n}",
       "stderr_tail": ""
     },
     {
@@ -206,34 +216,101 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 280.44,
+      "duration_seconds": 172.85,
       "command": "python scripts/verify_7d.py",
-      "stdout_tail": "on_tool.py tail --path memory\\\\agent_discussion_curated.jsonl --limit 1\",\n      \"note\": \"age_days=0.01, threshold=7\"\n    },\n    {\n      \"dimension\": \"XDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_escape_valve.py tests\\\\test_escape_valve_runtime.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"GDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_genesis_integration.py tests\\\\test_provenance_chain.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"CDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests/test_api_server_contract.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"SDH\",\n      \"gate\": \"SOFT_FAIL\",\n      \"status\": \"skip\",\n      \"command\": \"python scripts\\\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes\",\n      \"note\": \"skipped; use --include-sdh when web/backend are running\"\n    }\n  ],\n  \"scores\": {\n    \"TDD\": 100,\n    \"RDD\": 100,\n    \"DDD\": 100,\n    \"XDD\": 100,\n    \"GDD\": 100,\n    \"CDD\": 100,\n    \"SDH\": 0,\n    \"OVERALL\": 90\n  }\n}",
+      "stdout_tail": "eshold=7; remediation: append one LESSONS_V1 closeout via `python tools/agent_discussion_tool.py append-lessons ...`\"\n    },\n    {\n      \"dimension\": \"XDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_escape_valve.py tests\\\\test_escape_valve_runtime.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"GDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_genesis_integration.py tests\\\\test_provenance_chain.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"CDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests/test_api_server_contract.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"SDH\",\n      \"gate\": \"SOFT_FAIL\",\n      \"status\": \"skip\",\n      \"command\": \"python scripts\\\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes\",\n      \"note\": \"skipped; use --include-sdh when web/backend are running\"\n    }\n  ],\n  \"scores\": {\n    \"TDD\": 100,\n    \"RDD\": 100,\n    \"DDD\": 66,\n    \"XDD\": 100,\n    \"GDD\": 100,\n    \"CDD\": 100,\n    \"SDH\": 0,\n    \"OVERALL\": 84\n  }\n}",
       "stderr_tail": ""
     }
   ],
-  "recovery_advice": [
+  "handoff_previews": [
     {
-      "name": "commit_attribution_recovery",
-      "status": "pass",
-      "ok": true,
-      "exit_code": 0,
-      "duration_seconds": 1.94,
-      "command": "python scripts/plan_commit_attribution_base_switch.py --artifact-path docs/status/commit_attribution_base_switch_latest.json",
-      "stdout_tail": "s: reconcile status handoff artifacts\",\n        \"error\": \"\"\n      },\n      {\n        \"rev\": \"04689f801d798ad77b703db530b1f8e754e05de2\",\n        \"summary\": \"fix: restore non-doc files from handoff commit\",\n        \"error\": \"\"\n      },\n      {\n        \"rev\": \"c225332e2f4c6854dba231b1805d0d1d97d4ad42\",\n        \"summary\": \"feat: add GovernanceKernel, LLM Router, Perception Layer, Agent Protocol\",\n        \"error\": \"\"\n      }\n    ],\n    \"equivalence\": {\n      \"head_revision\": \"HEAD\",\n      \"compare_revision\": \"feat/env-perception-attribution-backfill\",\n      \"head_tree\": \"1a879968fcefbb32afac2745f86b6227ac5167b0\",\n      \"compare_tree\": \"1a879968fcefbb32afac2745f86b6227ac5167b0\",\n      \"tree_equal\": true\n    }\n  },\n  \"backfill_report\": {\n    \"ok\": true,\n    \"mode\": \"local_incremental\",\n    \"range_spec\": \"bdd1bbb7e573786a5560d5f07b9283a5f3ddf00a..feat/env-perception-attribution-backfill\",\n    \"missing\": [],\n    \"equivalence\": {\n      \"head_revision\": \"feat/env-perception-attribution-backfill\",\n      \"compare_revision\": \"HEAD\",\n      \"head_tree\": \"1a879968fcefbb32afac2745f86b6227ac5167b0\",\n      \"compare_tree\": \"1a879968fcefbb32afac2745f86b6227ac5167b0\",\n      \"tree_equal\": true\n    }\n  }\n}",
-      "stderr_tail": "",
-      "artifact_path": "docs/status/commit_attribution_base_switch_latest.json",
-      "detail": {
-        "recommendation": "defer_until_worktree_clean",
-        "rationale": "Backfill branch is clean and tree-equivalent, but the current worktree is dirty. Do not switch branch pointers in-place until local changes are settled or moved to a clean worktree.",
-        "tree_equal": true,
-        "current_missing_count": 5,
-        "backfill_missing_count": 0,
-        "suggested_commands": [
-          "git worktree add <clean-path> feat/env-perception-attribution-backfill",
-          "python scripts/plan_commit_attribution_base_switch.py --current-ref HEAD --backfill-ref feat/env-perception-attribution-backfill --strict"
-        ]
-      }
+      "name": "repo_intelligence",
+      "queue_shape": "repo_intelligence_ready",
+      "primary_status_line": "repo_intelligence_ready | available_surfaces=5/7 protected_files=5 watched_dirs=3 adoption=sidecar_only",
+      "runtime_status_line": "entrypoints | repo=repo_healthcheck_latest.json atlas=repo_semantic_atlas_latest.json integrity=agent_integrity_latest.json settlement=repo_governance_settlement_latest.json review=runtime_source_change_groups_latest.json weekly=true_verification_task_status_latest.json scribe=scribe_status_latest.json semantic_protocol=unavailable semantic_first=unavailable",
+      "anchor_status_line": "",
+      "artifact_policy_status_line": "external_repo_intelligence=sidecar_only | main_repo_install=no hooks=no protected_files=no",
+      "requires_operator_action": "false"
+    },
+    {
+      "name": "true_verification_weekly",
+      "queue_shape": "weekly_host_status",
+      "primary_status_line": "task_ready | scheduler=Ready registered=yes host_trigger_mode=single_tick runtime_source=none session=n/a resumed=no",
+      "runtime_status_line": "none | runtime_lineage=unavailable",
+      "anchor_status_line": "",
+      "artifact_policy_status_line": "host_trigger_mode=single_tick | experiment_summary=ignored reason=host_tick_single_tick_mode",
+      "requires_operator_action": "false",
+      "scribe_status_line": "none | scribe=unavailable"
     }
-  ]
+  ],
+  "passive_status_previews": [
+    {
+      "name": "subjectivity_review_batch",
+      "path": "docs/status/subjectivity_review_batch_latest.json",
+      "queue_shape": "stable_history_only",
+      "primary_status_line": "stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split",
+      "runtime_status_line": "",
+      "anchor_status_line": "",
+      "artifact_policy_status_line": "",
+      "requires_operator_action": "false",
+      "admissibility_primary_status_line": "admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity"
+    },
+    {
+      "name": "scribe_status",
+      "path": "docs/status/scribe_status_latest.json",
+      "queue_shape": "scribe_chronicle_ready",
+      "primary_status_line": "generated | mode=template_assist model=gemma3:4b fallback_mode=observed_history attempts=3 latest=chronicle_pair",
+      "runtime_status_line": "state_document | tensions=1 collisions=0 crystals=0 posture=pressure_without_counterweight",
+      "anchor_status_line": "anchor | [tension_afbd38eb] tension: High PE valuation (46.7x) in a market pullback vs. Strong structural margin inflection...",
+      "artifact_policy_status_line": "artifact_source=chronicle_pair | chronicle=yes companion=yes",
+      "requires_operator_action": "false",
+      "problem_route_status_line": "route | family=F6_semantic_role_boundary_integrity invariant=chronicle_self_scope repair=semantic_boundary_guardrail secondary=F4_execution_contract_integrity"
+    }
+  ],
+  "repo_intelligence_preview": {
+    "name": "repo_intelligence",
+    "queue_shape": "repo_intelligence_ready",
+    "primary_status_line": "repo_intelligence_ready | available_surfaces=5/7 protected_files=5 watched_dirs=3 adoption=sidecar_only",
+    "runtime_status_line": "entrypoints | repo=repo_healthcheck_latest.json atlas=repo_semantic_atlas_latest.json integrity=agent_integrity_latest.json settlement=repo_governance_settlement_latest.json review=runtime_source_change_groups_latest.json weekly=true_verification_task_status_latest.json scribe=scribe_status_latest.json semantic_protocol=unavailable semantic_first=unavailable",
+    "anchor_status_line": "",
+    "artifact_policy_status_line": "external_repo_intelligence=sidecar_only | main_repo_install=no hooks=no protected_files=no",
+    "requires_operator_action": "false"
+  },
+  "weekly_host_status_preview": {
+    "name": "true_verification_weekly",
+    "queue_shape": "weekly_host_status",
+    "primary_status_line": "task_ready | scheduler=Ready registered=yes host_trigger_mode=single_tick runtime_source=none session=n/a resumed=no",
+    "runtime_status_line": "none | runtime_lineage=unavailable",
+    "anchor_status_line": "",
+    "artifact_policy_status_line": "host_trigger_mode=single_tick | experiment_summary=ignored reason=host_tick_single_tick_mode",
+    "requires_operator_action": "false",
+    "scribe_status_line": "none | scribe=unavailable"
+  },
+  "subjectivity_focus_preview": {
+    "name": "subjectivity_review_batch",
+    "path": "docs/status/subjectivity_review_batch_latest.json",
+    "queue_shape": "stable_history_only",
+    "primary_status_line": "stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split",
+    "runtime_status_line": "",
+    "anchor_status_line": "",
+    "artifact_policy_status_line": "",
+    "requires_operator_action": "false",
+    "admissibility_primary_status_line": "admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity"
+  },
+  "repo_semantic_atlas_preview": null,
+  "agent_integrity_preview": null,
+  "dream_observability_preview": null,
+  "scribe_status_preview": {
+    "name": "scribe_status",
+    "path": "docs/status/scribe_status_latest.json",
+    "queue_shape": "scribe_chronicle_ready",
+    "primary_status_line": "generated | mode=template_assist model=gemma3:4b fallback_mode=observed_history attempts=3 latest=chronicle_pair",
+    "runtime_status_line": "state_document | tensions=1 collisions=0 crystals=0 posture=pressure_without_counterweight",
+    "anchor_status_line": "anchor | [tension_afbd38eb] tension: High PE valuation (46.7x) in a market pullback vs. Strong structural margin inflection...",
+    "artifact_policy_status_line": "artifact_source=chronicle_pair | chronicle=yes companion=yes",
+    "requires_operator_action": "false",
+    "problem_route_status_line": "route | family=F6_semantic_role_boundary_integrity invariant=chronicle_self_scope repair=semantic_boundary_guardrail secondary=F4_execution_contract_integrity"
+  },
+  "dream_weekly_alignment_line": "",
+  "recovery_advice": []
 }

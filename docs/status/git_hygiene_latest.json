@@ -1,23 +1,23 @@
 {
-  "generated_at": "2026-03-08T15:38:30Z",
-  "overall_ok": true,
+  "generated_at": "2026-06-01T12:49:36Z",
+  "overall_ok": false,
   "config": {
     "max_dangling": 50,
     "max_loose_count": 5000,
     "max_tracked_ignored": 28
   },
   "metrics": {
-    "loose_count": 912,
-    "in_pack": 6976,
-    "packs": 1,
-    "size": "16.65 MiB",
-    "size_pack": "100.53 MiB",
-    "dangling_count": 6,
+    "loose_count": 2304,
+    "in_pack": 14133,
+    "packs": 3,
+    "size": "12.93 MiB",
+    "size_pack": "116.27 MiB",
+    "dangling_count": 78,
     "fsck_prefix_counts": {
-      "dangling": 6
+      "dangling": 78
     },
     "fsck_unexpected_count": 0,
-    "tracked_ignored_count": 10
+    "tracked_ignored_count": 15
   },
   "checks": [
     {
@@ -25,19 +25,19 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.07,
+      "duration_seconds": 0.1,
       "command": "git count-objects -vH",
-      "stdout_tail": "count: 912\nsize: 16.65 MiB\nin-pack: 6976\npacks: 1\nsize-pack: 100.53 MiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
+      "stdout_tail": "count: 2304\nsize: 12.93 MiB\nin-pack: 14133\npacks: 3\nsize-pack: 116.27 MiB\nprune-packable: 82\ngarbage: 0\nsize-garbage: 0 bytes",
       "stderr_tail": ""
     },
     {
       "name": "fsck",
-      "status": "pass",
-      "ok": true,
+      "status": "fail",
+      "ok": false,
       "exit_code": 0,
-      "duration_seconds": 2.63,
+      "duration_seconds": 2.88,
       "command": "git fsck --no-reflogs",
-      "stdout_tail": "dangling commit f609f8ebce0639c95ce7dba029cbb3f50189fdc2\ndangling commit 15e59ad0191368298d852a0f396ef220ff1ae0ef\ndangling commit 1b270c49e12cee8ade2aa0712704844683bcd067\ndangling blob 55e99000f3ca3e78bbf1341190f465402d61927a\ndangling commit 762dc646d3aa5293b22ec3e8f3bd4f5910b9b281\ndangling commit a56d6877a8c690cb06e4b80e13084896e7815c48",
+      "stdout_tail": "73b6050790b7b229110c0b089\ndangling commit 23e5e82f9d0aaf18a134e0ad4d700528c82d606e\ndangling blob 3868598d61ae7d8df3b4d143b42206cce61e50fb\ndangling tree e569889c9d8aa11db4060914fe96f2f457f1c684\ndangling blob a56a7f91108e7e4bfb91150c7014bf3c592aebbd\ndangling commit c06b1acbbe983808f3b00a8bc9a975a37a773872\ndangling commit fdeca4bc0dcc6c79a0b91799932869aa1357ab80\ndangling blob 046e6aa800f2ffbb8928c4fafa79dd4889646963\ndangling commit 74ef4bb10056eee50fc705d7258994b2f4496fd4\ndangling commit bdefb2ae5d7fc28ff7b87c3ad199db7a127f1e12\ndangling commit 1770a37d35f549e46f79f62ea5fa5c6a3964821b\ndangling blob 2af0c86af35893bac8808eb9bcc51b9d50bc4312\ndangling blob 247114e385759df139a5330fee177a7cf6ef7fb8\ndangling commit 4a721ca3b495cc2754df6833b2df4aa6034d91f2\ndangling blob 6b720237d03dde120ec62122b6a183a153d9111d\ndangling tree 597420c9187b2ce0373930f4a984ea16920d7d16\ndangling tree a1f5614b76a336dc228e140e0532d62be154d354\ndangling commit 6bf7fd45f81c7b802ed9e6336cd27b18d35ac2c9\ndangling blob 56f852e160614d502390b5cffaf461d89bb6b9c3\ndangling commit e9fcf55efbeb77e51127d3e23604382fae0c6b62\ndangling tree 5cfe1282bf42abae88efe579a2970dd93d2ffdf4\ndangling commit f27fe8bb436237f09993d734ba7381c7dc5e79c5",
       "stderr_tail": ""
     },
     {
@@ -45,13 +45,15 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.07,
+      "duration_seconds": 0.11,
       "command": "git ls-files -ci --exclude-standard",
-      "stdout_tail": "data/YuHun_v2.6_knowledgebase.json\ndata/YuHun_v2.6_knowledgebase_extended.json\ndata/semantic_spine_fixtures.json\ndata/yuhun_academy_knowledgebase_v1.1.txt\n\"data/\\350\\252\\236\\351\\255\\202\\345\\212\\207\\345\\240\\264_API_\\346\\234\\200\\347\\265\\202\\347\\211\\210_v1.3.json\"\nexperiments/tsd1_pilot/data/prompts.json\nexperiments/tsd1_pilot/data/responses.json\nspec/wfgy_semantic_control_spec.md\nzenodo_upload/paper_outline_multiperspective_truth.md\n\"zenodo_upload/\\344\\270\\212\\345\\202\\263\\346\\214\\207\\345\\215\\227.md\"",
+      "stdout_tail": "data/YuHun_v2.6_knowledgebase.json\ndata/YuHun_v2.6_knowledgebase_extended.json\ndata/semantic_spine_fixtures.json\ndata/yuhun_academy_knowledgebase_v1.1.txt\n\"data/\\350\\252\\236\\351\\255\\202\\345\\212\\207\\345\\240\\264_API_\\346\\234\\200\\347\\265\\202\\347\\211\\210_v1.3.json\"\ndocs/chronicles/task_archive_phase_570-854.md\ndocs/status/persona_swarm_framework_latest.json\nexperiments/tsd1_pilot/data/prompts.json\nexperiments/tsd1_pilot/data/responses.json\nmemory/autonomous/session_traces.jsonl\nmemory/autonomous/zone_registry.json\nmemory/crystals.jsonl\nmemory/memory_base/tonesoul_cognitive.index\nmemory/memory_base/tonesoul_metadata.jsonl\nspec/wfgy_semantic_control_spec.md",
       "stderr_tail": ""
     }
   ],
-  "issues": [],
+  "issues": [
+    "dangling objects 78 exceeds threshold 50"
+  ],
   "fsck_unexpected_lines": [],
   "tracked_ignored_paths": [
     "data/YuHun_v2.6_knowledgebase.json",
@@ -59,10 +61,15 @@
     "data/semantic_spine_fixtures.json",
     "data/yuhun_academy_knowledgebase_v1.1.txt",
     "\"data/\\350\\252\\236\\351\\255\\202\\345\\212\\207\\345\\240\\264_API_\\346\\234\\200\\347\\265\\202\\347\\211\\210_v1.3.json\"",
+    "docs/chronicles/task_archive_phase_570-854.md",
+    "docs/status/persona_swarm_framework_latest.json",
     "experiments/tsd1_pilot/data/prompts.json",
     "experiments/tsd1_pilot/data/responses.json",
-    "spec/wfgy_semantic_control_spec.md",
-    "zenodo_upload/paper_outline_multiperspective_truth.md",
-    "\"zenodo_upload/\\344\\270\\212\\345\\202\\263\\346\\214\\207\\345\\215\\227.md\""
+    "memory/autonomous/session_traces.jsonl",
+    "memory/autonomous/zone_registry.json",
+    "memory/crystals.jsonl",
+    "memory/memory_base/tonesoul_cognitive.index",
+    "memory/memory_base/tonesoul_metadata.jsonl",
+    "spec/wfgy_semantic_control_spec.md"
   ]
 }

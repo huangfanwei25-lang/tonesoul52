@@ -1,6 +1,6 @@
 {
-  "agent": "claude-opus-4-6",
-  "timestamp": "2026-04-07T19:50:27.097903+00:00",
+  "agent": "antigravity",
+  "timestamp": "2026-06-01T12:59:44.027534+00:00",
   "wave": "cross_agent_consistency_v1",
   "all_ok": true,
   "checks_total": 7,
@@ -15,7 +15,7 @@
       "status": "ok",
       "detail": {
         "status": "ok",
-        "value": "- Phase 730: add one detailed 3-day execution program so the next agent can continue the current short board without reopening settled launch wording"
+        "value": "**Current short board:**"
       }
     },
     {
@@ -41,7 +41,7 @@
       "status": "ok",
       "detail": {
         "status": "ok",
-        "latest_handoff": "codex_handoff_2026-04-07.md",
+        "latest_handoff": "codex_handoff_2026-04-15.md",
         "has_branch_state": true,
         "has_next_move": true
       }
@@ -66,7 +66,7 @@
       "detail": {
         "status": "ok",
         "enabled": true,
-        "vow_enforcement_mode": "soft",
+        "vow_enforcement_mode": "hard",
         "soul_band_thresholds": {
           "alert": 0.3,
           "strained": 0.55,

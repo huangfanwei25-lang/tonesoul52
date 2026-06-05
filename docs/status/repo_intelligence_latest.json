@@ -1,0 +1,120 @@
+{
+  "generated_at": "2026-06-01T12:49:38Z",
+  "status": "ready",
+  "protected_files": [
+    {
+      "path": "AGENTS.md",
+      "exists": true
+    },
+    {
+      "path": "HANDOFF.md",
+      "exists": false
+    },
+    {
+      "path": ".env",
+      "exists": false
+    },
+    {
+      "path": ".gitignore",
+      "exists": true
+    },
+    {
+      "path": "MEMORY.md",
+      "exists": true
+    }
+  ],
+  "watched_directories": [
+    {
+      "path": "skills/",
+      "exists": false
+    },
+    {
+      "path": ".agent/",
+      "exists": true
+    },
+    {
+      "path": ".agents/",
+      "exists": false
+    }
+  ],
+  "recommended_surfaces": [
+    {
+      "name": "repo_healthcheck",
+      "path": "docs/status/repo_healthcheck_latest.json",
+      "role": "repo_governance",
+      "description": "Top repo-level blocking posture and compact runtime previews.",
+      "available": true
+    },
+    {
+      "name": "repo_semantic_atlas",
+      "path": "docs/status/repo_semantic_atlas_latest.json",
+      "role": "semantic_memory",
+      "description": "Human-rememberable aliases, semantic neighborhoods, and domain-level nerve map.",
+      "available": false
+    },
+    {
+      "name": "agent_integrity",
+      "path": "docs/status/agent_integrity_latest.json",
+      "role": "integrity_governance",
+      "description": "Protected-file hash contract, embedded metadata drift, and watched-directory posture.",
+      "available": false
+    },
+    {
+      "name": "repo_governance_settlement",
+      "path": "docs/status/repo_governance_settlement_latest.json",
+      "role": "branch_settlement",
+      "description": "Branch-movement and worktree settlement readback.",
+      "available": true
+    },
+    {
+      "name": "runtime_source_change_groups",
+      "path": "docs/status/runtime_source_change_groups_latest.json",
+      "role": "review_scope",
+      "description": "Dirty review lanes and recommended runtime grouping.",
+      "available": true
+    },
+    {
+      "name": "true_verification_weekly",
+      "path": "docs/status/true_verification_weekly/true_verification_task_status_latest.json",
+      "role": "weekly_runtime",
+      "description": "Host-facing weekly runtime posture and session lineage.",
+      "available": true
+    },
+    {
+      "name": "scribe_status",
+      "path": "docs/status/scribe_status_latest.json",
+      "role": "chronicle_runtime",
+      "description": "Latest Scribe chronicle/companion posture.",
+      "available": true
+    }
+  ],
+  "summary": {
+    "protected_file_count": 5,
+    "watched_directory_count": 3,
+    "recommended_surface_count": 7,
+    "available_surface_count": 5,
+    "missing_surface_count": 2,
+    "semantic_memory_connected": false
+  },
+  "external_tool_policy": {
+    "adoption_mode": "sidecar_only",
+    "main_repo_install_allowed": false,
+    "mirror_clone_required": true,
+    "hook_registration_allowed": false,
+    "protected_file_mutation_allowed": false
+  },
+  "semantic_memory_handoff": null,
+  "primary_status_line": "repo_intelligence_ready | available_surfaces=5/7 protected_files=5 watched_dirs=3 adoption=sidecar_only",
+  "runtime_status_line": "entrypoints | repo=repo_healthcheck_latest.json atlas=repo_semantic_atlas_latest.json integrity=agent_integrity_latest.json settlement=repo_governance_settlement_latest.json review=runtime_source_change_groups_latest.json weekly=true_verification_task_status_latest.json scribe=scribe_status_latest.json semantic_protocol=unavailable semantic_first=unavailable",
+  "artifact_policy_status_line": "external_repo_intelligence=sidecar_only | main_repo_install=no hooks=no protected_files=no",
+  "handoff": {
+    "queue_shape": "repo_intelligence_ready",
+    "requires_operator_action": false,
+    "preferred_first_surface": "docs/status/repo_healthcheck_latest.json",
+    "main_repo_install_allowed": false,
+    "mirror_clone_required": true,
+    "semantic_retrieval_protocol": "",
+    "semantic_preferred_neighborhood": "",
+    "primary_status_line": "repo_intelligence_ready | available_surfaces=5/7 protected_files=5 watched_dirs=3 adoption=sidecar_only"
+  }
+}

@@ -1,6 +1,6 @@
 # Memory Governance Contract Latest
 
-- generated_at: 2026-03-08T15:38:34Z
+- generated_at: 2026-06-01T12:49:38Z
 - ok: true
 - failed_count: 0
 - warning_count: 0

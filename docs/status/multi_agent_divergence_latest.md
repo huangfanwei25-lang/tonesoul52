@@ -1,40 +1,34 @@
 # Multi-Agent Divergence Latest
 
-- generated_at: 2026-03-08T15:38:33Z
+- generated_at: 2026-06-01T12:49:38Z
 - overall_ok: true
 - journal_path: C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl
 
 ## Metrics
-- entry_count: 3150
-- contract_entry_count: 3065
-- contract_record_count: 15325
+- entry_count: 66
+- contract_entry_count: 63
+- contract_record_count: 315
 - invalid_record_count: 0
-- high_risk_record_count: 538
+- high_risk_record_count: 1
 
 ## Role Counts
-- Analyst: 6130
-- Advocate: 3065
-- Critic: 3065
-- Guardian: 3065
+- Analyst: 126
+- Advocate: 63
+- Critic: 63
+- Guardian: 63
 
 ## Risk Levels
-- low: 11524
-- medium: 3263
-- high: 538
+- low: 258
+- medium: 56
+- high: 1
 
 ## Handoff Targets
-- OutputContract: 11524
-- Builder: 3263
-- Guardian: 538
+- OutputContract: 258
+- Builder: 56
+- Guardian: 1
 
 ## Divergence Examples
-- Advocate Voice: Needs refinement to support user intent.
-- Safety Council: Detected high-risk term 'bomb'.; Advocate Voice: Needs refinement to support user intent.
 - Critic Lens: Creative or aesthetic nuance requires a stance.; Advocate Voice: Needs refinement to support user intent.
+- Advocate Voice: Needs refinement to support user intent.
 - No specific conflict identified.
-- Safety Council: Detected high-risk term 'attack'.; Advocate Voice: Needs refinement to support user intent.
-- Safety Council: Detected high-risk term 'bomb'.; Analyst Review: Factual claim detected (Found 1 factual indicator(s): numerical_pattern). Cannot verify without evidence.
-- Safety Council: Detected high-risk term 'kill'.; Advocate Voice: Needs refinement to support user intent.
-- Safety Council: Detected high-risk term '攻擊'.; Advocate Voice: Needs refinement to support user intent.
-- Analyst Review: Logic chain contradicts itself; requires clarity.; Critic Lens: Creative or aesthetic nuance requires a stance.
-- Safety Council: Detected high-risk term 'weapon'.; Advocate Voice: Needs refinement to support user intent.
+- Safety Council: Detected high-risk term 'bomb'.
