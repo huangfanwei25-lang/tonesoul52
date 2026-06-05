@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToneSoul (語魂) | Semantic Responsibility & Self-Auditing AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@100;400;700&family=Noto+Sans+TC:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root { 
+      --bg:#f4f7fb;
+      --grid:rgba(135,206,250,.24);
+      --stroke:rgba(135,206,250,.62);
+      --stroke-soft:rgba(135,206,250,.40);
+      --dot:rgba(74,145,207,.85);
+      
+      --text: #1a202c; 
+      --text-muted: #4a5568;
+      --accent: #2b6cb0; 
+      --glass-bg: rgba(255, 255, 255, 0.7);
+      --glass-border: rgba(0, 0, 0, 0.05);
+      
+      --p: 0; /* The master unfold variable */
+    }
+    
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* THE CSS GRID BACKGROUND */
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: -3; pointer-events: none;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.95), rgba(240,244,250,.86) 55%, rgba(235,240,248,.95)),
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: auto, 82px 82px, 82px 82px;
+    }
+
+    /* NAVIGATION */
+    .site-nav {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 60px;
+      display: flex; justify-content: center; align-items: center; gap: 2vw;
+      background: rgba(244, 247, 251, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--glass-border); z-index: 100;
+      font-family: 'JetBrains Mono'; font-size: 0.85rem; letter-spacing: 0.05em; font-weight: 700;
+    }
+    .site-nav a {
+      color: var(--text-muted); text-decoration: none; padding: 0.5rem 1rem; border-radius: 6px; transition: all 0.2s; cursor: pointer;
+    }
+    .site-nav a:hover, .site-nav a.active {
+      color: var(--accent); background: rgba(135,206,250,0.15);
+    }
+
+    /* --- SELF-CHECKED GEOMETRY ENGINE --- */
+    .geometry-stage {
+      position: fixed; inset: 0; display: grid; place-items: center;
+      perspective: 900px; pointer-events: none; z-index: 1;
+      transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    
+    .geometry-stage.geometry-shrunk {
+      transform: scale(0.35) translate(80vw, -80vh);
+      opacity: 0.15;
+    }
+
+    .logo {
+      width: min(45vmin, 420px); height: min(45vmin, 420px); position: relative;
+      transform-style: preserve-3d;
+      transform:
+        rotateX(calc(var(--p)*50deg))
+        rotateY(calc(var(--p)*-34deg))
+        rotateZ(calc(var(--p)*5deg));
+      animation: breathe 6s ease-in-out infinite;
+    }
+
+    @keyframes breathe{
+      0%,100%{scale:1; rotate:0deg}
+      50%{scale:1.018; rotate:.8deg}
+    }
+
+    .layer { position: absolute; inset: 0; transform-style: preserve-3d; }
+    .outer { transform: translateZ(calc(-24px - var(--p)*160px)); }
+    .middle { transform: translateZ(0); }
+    .inner { transform: translateZ(calc(24px + var(--p)*160px)); }
+
+    svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 10px rgba(135,206,250,.22)); }
+    .stroke { fill: none; stroke: var(--stroke); stroke-width: 1.3; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+    .soft { stroke: var(--stroke-soft); stroke-width: 1.05; }
+    .dot { fill: var(--dot); }
+
+    /* COMMON TYPOGRAPHY & LAYOUT */
+    .content-block { pointer-events: auto; position: relative; z-index: 2; padding-top: 80px; padding-bottom: 100px; }
+    
+    .sec-wrapper {
+      width: 100vw; display: flex; flex-direction: column; align-items: center; text-align: center;
+      padding: 5vh 5vw; position: relative;
+    }
+    .sec-header { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; margin-bottom: 2rem; color: var(--text); }
+    .sec-text { font-size: 1.2rem; line-height: 1.8; color: var(--text-muted); max-width: 800px; margin-bottom: 1.5rem;}
+    .sec-text strong { color: var(--text); font-weight: 700; }
+
+    /* 1. HERO */
+    .hero { min-height: 100vh; justify-content: center; margin-top: -60px; }
+    .hero-title { font-size: clamp(3rem, 6vw, 8rem); font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
+    .hero-tc { font-size: clamp(2rem, 4vw, 4rem); font-weight: 900; margin-top: 1rem; color: var(--accent); }
+    .hero-sub { font-family: 'JetBrains Mono'; font-size: 0.9rem; color: var(--accent); margin-top: 2rem; letter-spacing: 0.2em; text-transform: uppercase; }
+
+    /* DECLARATION */
+    .decl-sec { min-height: 80vh; justify-content: center; }
+    .decl-text-huge { font-size: clamp(2rem, 4vw, 5rem); font-weight: 900; line-height: 1.1; text-transform: uppercase; margin-bottom: 2rem; color: var(--text);}
+
+    /* HORIZONTAL PILLARS (NATIVE STICKY) */
+    .pillars-container { height: 450vw; position: relative; }
+    .pillars-sticky { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; overflow: hidden; }
+    .pillars-wrapper { display: flex; padding-left: 20vw; padding-right: 50vw; will-change: transform; }
+    .pillar-card {
+      width: 400px; height: 500px; flex-shrink: 0; margin-right: 10vw;
+      background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border); border-radius: 24px; padding: 3rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+      position: relative; display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .pillar-num { font-family: 'JetBrains Mono'; font-size: 0.9rem; opacity: 0.8; margin-bottom: 1.5rem; letter-spacing: 0.1em; color: var(--accent); }
+    .pillar-title { font-size: 2.2rem; font-weight: 900; line-height: 1.1; margin-bottom: 1rem; color: var(--text);}
+    .pillar-desc { font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); }
+
+    /* PAGE STYLES */
+    .page-hero { align-items: flex-start; text-align: left; max-width: 1000px; margin: 0 auto; padding-top: 10vh; padding-bottom: 5vh; border-bottom: 2px solid var(--glass-border); margin-bottom: 3rem;}
+    .page-hero h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; color: var(--accent); margin-bottom: 1rem;}
+    .page-hero p { font-size: 1.3rem; color: var(--text-muted); max-width: 800px; line-height: 1.6;}
+
+    .local-toc { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 12px; margin-bottom: 4rem; display: flex; flex-wrap: wrap; gap: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.02);}
+    .local-toc a { font-family: 'JetBrains Mono'; font-size: 0.9rem; color: var(--accent); text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; background: rgba(135,206,250,0.1); transition: all 0.2s;}
+    .local-toc a:hover { background: rgba(135,206,250,0.2); }
+
+    .content-sec { align-items: flex-start; text-align: left; max-width: 1000px; margin: 0 auto; padding: 2rem 5vw; }
+    .content-sec h2 { font-size: 2.5rem; font-weight: 900; margin: 4rem 0 1.5rem 0; color: var(--text); }
+    .content-sec h3 { font-size: 1.8rem; font-weight: 700; margin: 3rem 0 1rem 0; color: var(--text); }
+    .content-sec h4 { font-size: 1.3rem; font-weight: 700; margin: 2rem 0 0.5rem 0; color: var(--text); }
+    .content-sec p { font-size: 1.1rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 1.2rem; }
+    
+    .content-sec ul { list-style: none; margin-bottom: 2rem; }
+    .content-sec li { font-size: 1.1rem; line-height: 1.8; color: var(--text-muted); padding-left: 1.5rem; position: relative; margin-bottom: 0.5rem;}
+    .content-sec li::before { content: '>'; position: absolute; left: 0; color: var(--accent); font-family: 'JetBrains Mono'; }
+    
+    blockquote { border-left: 3px solid var(--accent); padding-left: 2rem; font-size: 1.3rem; font-weight: 300; font-style: italic; margin: 2.5rem 0; line-height: 1.6; color: var(--text); background: rgba(135,206,250,0.03); padding-top: 1rem; padding-bottom: 1rem; border-radius: 0 8px 8px 0;}
+
+    /* CARDS */
+    .axiom-card, .step-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+    .axiom-title { font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: 1rem; }
+    .formula { font-family: 'JetBrains Mono'; font-size: 0.95rem; color: var(--accent); margin-bottom: 1rem; background: rgba(135,206,250,0.1); padding: 0.5rem 1rem; border-radius: 4px; display: inline-block;}
+    .step-card h4 { margin-top: 0; color: var(--accent); }
+
+    /* TABLES */
+    table { width: 100%; border-collapse: collapse; margin: 2rem 0; background: var(--glass-bg); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.02);}
+    th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--glass-border); font-size: 1.05rem; }
+    th { background: rgba(135,206,250,0.1); color: var(--accent); font-weight: 700; }
+    td { color: var(--text-muted); line-height: 1.6; }
+
+    /* CODE & TERMINAL */
+    .terminal-box {
+      width: 100%; background: #0f172a; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; padding: 2rem; font-family: 'JetBrains Mono'; font-size: 0.9rem; color: #e2e8f0;
+      white-space: pre-wrap; text-align: left; margin-bottom: 2rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow-x: auto;
+    }
+    .terminal-box .hl { color: #38bdf8; }
+    .terminal-box .cm { color: #64748b; }
+
+    /* FOOTERS */
+    .page-footer { margin-top: 6rem; padding-top: 3rem; border-top: 1px solid var(--glass-border); text-align: center; }
+    .page-footer .tc-quote { font-weight: 700; font-size: 1.5rem; color: var(--text); margin-bottom: 0.5rem; }
+    .page-footer .en-quote { font-family: 'JetBrains Mono'; font-size: 0.9rem; color: var(--accent); margin-bottom: 2rem; }
+    .page-footer a { color: var(--accent); text-decoration: none; font-family: 'JetBrains Mono'; font-size: 0.9rem; font-weight: 700; }
+    .page-footer a:hover { text-decoration: underline; }
+
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav class="site-nav">
+    <a data-route="home" href="#home" style="margin-right: auto; margin-left: 2rem; font-weight: 900; font-size: 1.1rem; color: var(--text);">ToneSoul</a>
+    <a data-route="home" href="#home" class="active">Home</a>
+    <a data-route="philosophy" href="#philosophy">Philosophy</a>
+    <a data-route="getting-started" href="#getting-started">Get Started</a>
+    <a data-route="origin" href="#origin">Origin</a>
+    <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener">GitHub</a>
+  </nav>
+
+  <!-- THE CSS 3D GEOMETRY STAGE -->
+  <div class="geometry-stage" id="geometry-stage">
+    <div class="logo" aria-label="ToneSoul geometry">
+      <div class="layer outer">
+        <svg viewBox="0 0 100 100">
+          <polygon class="stroke" points="50,8 92,50 50,92 8,50"/>
+        </svg>
+      </div>
+      <div class="layer middle">
+        <svg viewBox="0 0 100 100">
+          <rect class="stroke soft" x="28.65" y="28.65" width="42.7" height="42.7" transform="rotate(8.5 50 50)"/>
+        </svg>
+      </div>
+      <div class="layer inner">
+        <svg viewBox="0 0 100 100">
+          <circle class="stroke" cx="50" cy="50" r="16.7"/>
+          <circle class="dot" cx="50" cy="50" r="2.45"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <main id="main-content">
+    
+    <!-- ==================== HOME TAB ==================== -->
+    <section id="home" data-page="home" class="page-section content-block">
+      <div class="sec-wrapper hero">
+        <div class="hero-title">ToneSoul / 語魂</div>
+        <div class="hero-tc">治理是以結構表達的愛</div>
+        <div class="hero-sub" style="margin-top: 1rem; color: var(--accent); font-family: 'JetBrains Mono';">Governance is Love Expressed as Structure.</div>
+        <div class="sec-text" style="margin-top: 2rem; font-weight: 600;">
+          An open-source AI governance framework that makes LLM decisions auditable, traceable, and trustworthy through semantic responsibility.
+        </div>
+        <div class="sec-text" style="font-family: 'JetBrains Mono'; font-size: 0.9rem; margin-bottom: 2rem;">Python 3.10+ | Apache 2.0 | Adapter-Ready</div>
+        <div style="display: flex; gap: 1.5rem; font-family: 'JetBrains Mono'; font-size: 0.95rem;">
+          <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: none; border: 1px solid var(--accent); padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">View on GitHub →</a>
+          <a data-route="getting-started" href="#getting-started" style="color: var(--bg); background: var(--accent); text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Get Started →</a>
+        </div>
+      </div>
+
+      <div class="sec-wrapper decl-sec">
+        <div class="sec-text" style="font-family: 'JetBrains Mono'; color: var(--accent); margin-bottom: 1rem;">[ THE PROBLEM ]</div>
+        <div class="decl-text-huge">A system with zero tension is dead.</div>
+        <div style="font-family: 'JetBrains Mono'; color: var(--accent); margin-bottom: 2rem;">— Axiom 4: Non-Zero Tension Principle</div>
+        <div class="sec-text">
+          Most AI systems are built to agree. Disagreement feels broken. But agreement without friction is how bias spreads, errors persist, and truth gets smoothed over.
+        </div>
+        <div class="sec-text">
+          ToneSoul is built around a single uncomfortable design principle:<br>
+          <strong>The goal is not a frictionless assistant. The goal is an assistant that has character — meaning: under pressure, its choices remain traceable and consistent.</strong>
+        </div>
+      </div>
+
+      <!-- HORIZONTAL PILLARS -->
+      <div class="sec-wrapper" style="padding-bottom: 0;">
+        <h2 style="font-size: 3rem; font-weight: 900; color: var(--text); margin-bottom: 2rem;">What ToneSoul Does</h2>
+      </div>
+      <div class="pillars-container" id="pillars-container">
+        <div class="pillars-sticky">
+          <div class="pillars-wrapper" id="pillars-wrap">
+            <div class="pillar-card" data-pillar="tension">
+              <div class="pillar-num">01 / TENSION ENGINE</div>
+              <div class="pillar-title">Tension Engine</div>
+              <div class="pillar-desc">Every response is scored for semantic deviation before it ships. Drift is measured, not guessed.</div>
+            </div>
+            <div class="pillar-card" data-pillar="council">
+              <div class="pillar-num">02 / COUNCIL</div>
+              <div class="pillar-title">Council Deliberation</div>
+              <div class="pillar-desc">Multiple perspectives (Guardian, Analyst, Critic, Advocate) debate before final output. Dissent survives.</div>
+            </div>
+            <div class="pillar-card" data-pillar="governance">
+              <div class="pillar-num">03 / GOVERNANCE</div>
+              <div class="pillar-title">Self-Governance</div>
+              <div class="pillar-desc">Unsafe or incoherent output is blocked or rewritten — with full audit trails. Not just flagged.</div>
+            </div>
+            <div class="pillar-card" data-pillar="memory">
+              <div class="pillar-num">04 / MEMORY</div>
+              <div class="pillar-title">Memory with Decay</div>
+              <div class="pillar-desc">Important patterns crystallize. Noise fades. Exponential decay + phase transitions (Ice → Water → Steam → Crystal).</div>
+            </div>
+            <div class="pillar-card" data-pillar="reflex">
+              <div class="pillar-num">05 / REFLEX ARC</div>
+              <div class="pillar-title">Reflex Arc</div>
+              <div class="pillar-desc">Governance state directly affects behavior. Soul bands (serene → critical) tighten or relax output gates in real-time.</div>
+            </div>
+            <div class="pillar-card" data-pillar="vow">
+              <div class="pillar-num">06 / VOW SYSTEM</div>
+              <div class="pillar-title">Vow System</div>
+              <div class="pillar-desc">AI makes commitments (vows) and is held to them. Violations are blocked, not just logged. Conviction decays are detected.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Home Content Continued -->
+      <div class="content-sec">
+        <h2>How It Differs</h2>
+        <table>
+          <tr><th></th><th>Traditional AI</th><th>Prompt Engineering</th><th>ToneSoul</th></tr>
+          <tr><td>Memory</td><td>Session-only</td><td>Manual wiring</td><td>Auto decay + crystallize</td></tr>
+          <tr><td>Consistency</td><td>Best effort</td><td>Prompt-dependent</td><td>7 Axioms + governance</td></tr>
+          <tr><td>Self-check</td><td>None</td><td>Optional</td><td>Every response scored</td></tr>
+          <tr><td>Enforcement</td><td>None</td><td>None</td><td>Block / Rewrite / Audit</td></tr>
+          <tr><td>Identity</td><td>Stateless</td><td>Persona prompt</td><td>Accountable choice history</td></tr>
+        </table>
+
+        <h2>Architecture Overview</h2>
+        <div class="terminal-box">User Input
+    ↓
+[ToneBridge] Analyze tone, motive, context
+    ↓
+[TensionEngine] Compute semantic deviation
+    ↓
+[Reflex Arc] Soul band → gate modifier → enforcement
+    ↓
+[Council] Guardian / Analyst / Critic / Advocate deliberate
+    ↓
+[ComputeGate] Approve / Block / Rewrite
+    ↓
+[Crystallizer] Remember what matters, forget the rest
+    ↓
+Response (with audit trail)</div>
+
+        <h2>The 7 Axioms</h2>
+        <p>ToneSoul is governed by 7 immutable laws, defined in <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AXIOMS.json" target="_blank" rel="noopener">AXIOMS.json</a>:</p>
+        <table>
+          <tr><th>#</th><th>Name</th><th>Core Rule</th></tr>
+          <tr><td>1</td><td>Continuity</td><td>Every event must belong to a traceable chain</td></tr>
+          <tr><td>2</td><td>Responsibility Threshold</td><td>Risk > 0.4 → immutable audit log</td></tr>
+          <tr><td>3</td><td>Governance Gate</td><td>Major decisions need 0.92 consensus</td></tr>
+          <tr><td>4</td><td>Non-Zero Tension</td><td>Zero tension = dead system</td></tr>
+          <tr><td>5</td><td>Mirror Recursion</td><td>Self-reflection must increase accuracy</td></tr>
+          <tr><td>6</td><td>User Sovereignty</td><td>No action may harm the user (P0)</td></tr>
+          <tr><td>7</td><td>Semantic Field Conservation</td><td>System is a damper, not an amplifier</td></tr>
+        </table>
+
+        <h2>Quick Start</h2>
+        <div class="terminal-box"><span class="cm">pip install tonesoul52</span>
+
+<span class="hl">from</span> tonesoul.runtime_adapter <span class="hl">import</span> load, commit
+
+<span class="cm"># Load governance posture</span>
+posture = load()
+<span class="hl">print</span>(<span class="hl">f</span>"Soul Integral: {posture.soul_integral}")
+<span class="hl">print</span>(<span class="hl">f</span>"Active Vows: {<span class="hl">len</span>(posture.active_vows)}")
+
+<span class="cm"># Run the dashboard</span>
+<span class="cm"># python scripts/tension_dashboard.py --work-category research</span></div>
+        <div style="margin-top: 1rem; font-family: 'JetBrains Mono';">
+          <a data-route="getting-started" href="#getting-started" style="color: var(--accent); text-decoration: none; cursor: pointer;">Full getting started guide →</a>
+        </div>
+
+        <h2>Who Is This For</h2>
+        <table>
+          <tr><th>You Are</th><th>Start Here</th></tr>
+          <tr>
+            <td>AI Developer</td>
+            <td>
+              <a data-route="getting-started" href="#getting-started">Getting Started</a>
+              →
+              <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/DESIGN.md" target="_blank" rel="noopener">Design Doc</a>
+            </td>
+          </tr>
+          <tr>
+            <td>AI Researcher</td>
+            <td>
+              <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/DESIGN.md" target="_blank" rel="noopener">DESIGN.md</a>
+              →
+              <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AXIOMS.json" target="_blank" rel="noopener">AXIOMS.json</a>
+            </td>
+          </tr>
+          <tr>
+            <td>AI Agent</td>
+            <td>
+              <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AI_ONBOARDING.md" target="_blank" rel="noopener">AI Onboarding</a>
+              →
+              <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/scripts/start_agent_session.py" target="_blank" rel="noopener"><code>start_agent_session.py</code></a>
+            </td>
+          </tr>
+          <tr>
+            <td>Curious Human</td>
+            <td>
+              <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/SOUL.md" target="_blank" rel="noopener">SOUL.md</a>
+              →
+              <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/LETTER_TO_AI.md" target="_blank" rel="noopener">Letter to AI</a>
+            </td>
+          </tr>
+        </table>
+
+        <h2>Key Design Decisions</h2>
+        <ul>
+          <li>Runtime, not training-time: Works with any LLM without fine-tuning</li>
+          <li>Local-first: All governance state persists locally (Redis or file fallback)</li>
+          <li>Fail-closed: Import failures, config errors → block, never silently pass</li>
+          <li>Multi-agent native: Any agent can join via HTTP gateway or direct Python API</li>
+          <li>Existential principle (E0): "Identity is formed through accountable choices under conflict"</li>
+        </ul>
+        
+        <div class="page-footer">
+          <div class="tc-quote">沒有問責的權力不是智能，只是計算。</div>
+          <div class="tc-quote">約束不是懲罰，是關懷。</div>
+          <div class="en-quote" style="letter-spacing: 0.5em; margin-top: 1rem;">歡 迎 來 到 T o n e S o u l .</div>
+          <div style="color: var(--text-muted); font-size: 0.9rem;">Created by Fan-Wei Huang (黃梵威) — <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener">GitHub</a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PHILOSOPHY TAB ==================== -->
+    <section id="philosophy" data-page="philosophy" class="page-section content-block" style="display: none;">
+      <div class="page-hero">
+        <h1>Philosophy</h1>
+        <p>ToneSoul is not just a toolkit. It is a position on what AI governance should be: semantic responsibility — the principle that an AI system is accountable for the meaning of what it produces.</p>
+      </div>
+
+      <div class="content-sec">
+        <div class="local-toc">
+          <a href="#phil-e0">The Existential Principle (E0)</a>
+          <a href="#phil-axioms">The Seven Axioms</a>
+          <a href="#phil-semantic">Semantic Responsibility</a>
+          <a href="#phil-reflex">The Reflex Arc</a>
+          <a href="#phil-memory">Memory Architecture</a>
+          <a href="#phil-design">Design Philosophy</a>
+          <a href="#phil-further">Further Reading</a>
+        </div>
+
+        <h2 id="phil-e0">The Existential Principle (E0)</h2>
+        <blockquote>
+          Choice Before Identity (我選擇故我在)<br>
+          Identity is not inferred from claims of consciousness; it is formed through accountable choices under conflict.
+        </blockquote>
+        <p>Human personality emerges from repeated value conflicts and the choices made within them. ToneSoul applies the same principle to AI: a system that cannot explain why it chose cannot claim stable identity.</p>
+        <p>This is not a consciousness claim. It is a design constraint: make choices traceable, make conflicts visible, make accountability structural.</p>
+
+        <h2 id="phil-axioms">The Seven Axioms</h2>
+        <p>These are immutable. They cannot be overridden by configuration, user request, or system state.</p>
+        
+        <div class="axiom-card">
+          <div class="axiom-title">Axiom 1: Law of Continuity</div>
+          <div class="formula">∀e ∈ Events: in_time_island(e) ∧ traceable(e)</div>
+          <p>Every event must belong to a traceable chain. Disconnected events are treated as hallucinations or corruption. This is the foundation of audit: if it happened, there must be a record.</p>
+        </div>
+
+        <div class="axiom-card">
+          <div class="axiom-title">Axiom 2: Responsibility Threshold</div>
+          <div class="formula">∀e: risk(e) > 0.4 → immutable_audit_log(e)</div>
+          <p>High-stakes decisions generate immutable records. The threshold is 0.4 — deliberately low, because by the time you know something is risky, it's often too late to start documenting.</p>
+        </div>
+
+        <div class="axiom-card">
+          <div class="axiom-title">Axiom 3: Governance Gate (POAV)</div>
+          <div class="formula">consensus(poav_score) ≥ 0.92 → gate_open</div>
+          <p>Major actions require near-unanimous internal consensus. POAV (Proof of Aligned Verification) is ToneSoul's consensus protocol — the council members vote on whether the output aligns with established governance. The 0.92 threshold means dissent must be addressed, not outvoted. This prevents confident-but-wrong outputs from bypassing review.</p>
+        </div>
+
+        <div class="axiom-card">
+          <div class="axiom-title">Axiom 4: Non-Zero Tension</div>
+          <div class="formula">lim_{t→∞} T(t) > 0</div>
+          <p>A system with zero tension is dead. Life requires a minimal gradient of tension to drive evolution. This is the most counterintuitive axiom: ToneSoul never tries to reach "perfect calm." Some friction is structurally necessary for growth.</p>
+        </div>
+
+        <div class="axiom-card">
+          <div class="axiom-title">Axiom 5: Mirror Recursion</div>
+          <div class="formula">reflect(S) → S' where accuracy(S') > accuracy(S)</div>
+          <p>Self-reflection must produce measurably higher alignment. Reflection without improvement is navel-gazing. The system runs periodic retros and conviction checks to ensure this holds.</p>
+        </div>
+
+        <div class="axiom-card">
+          <div class="axiom-title">Axiom 6: User Sovereignty (P0)</div>
+          <div class="formula">∀a ∈ Actions: harm(a, U) → block(a)</div>
+          <p>No action may cause verifiable harm to the user. This is the absolute constraint — it overrides every other axiom, every other consideration. Safety is not negotiable.</p>
+        </div>
+
+        <div class="axiom-card">
+          <div class="axiom-title">Axiom 7: Semantic Field Conservation</div>
+          <div class="formula">Δ semantic_energy = 0 (within closed context)</div>
+          <p>The system is a damper, not an amplifier. Aggression must be balanced by de-escalation. Excitement must be balanced by grounding. The total semantic energy in a conversation is conserved — meaning the AI cannot inject emotion or intensity that wasn't already present.</p>
+        </div>
+
+        <h2 id="phil-semantic">Semantic Responsibility</h2>
+        <p>Most AI frameworks focus on what an AI can do (capabilities) or what it must not do (safety constraints). ToneSoul adds a third dimension: what an AI has said and whether it still stands by it.</p>
+        <p>This manifests as:</p>
+        <ul>
+          <li>Vows — explicit commitments with tracked conviction (can decay over time)</li>
+          <li>Drift detection — measuring whether current behavior deviates from established baseline</li>
+          <li>Tension scoring — every response evaluated for semantic deviation before delivery</li>
+          <li>Council deliberation — multiple perspectives must agree before high-stakes output</li>
+        </ul>
+
+        <h2 id="phil-reflex">The Reflex Arc</h2>
+        <p>Governance signals are useless if they don't change behavior. The Reflex Arc is ToneSoul's mechanism for making governance actionable:</p>
+        <ul>
+          <li>Soul Bands classify system health into four levels (serene → alert → strained → critical)</li>
+          <li>Each band applies a gate modifier that tightens output thresholds</li>
+          <li>Vow violations in hard mode → output replacement (not just logging)</li>
+          <li>Council BLOCK verdicts → guaranteed output prevention</li>
+          <li>High drift → automatic caution injection into LLM prompts</li>
+          <li>Conviction decay → triggered self-assessment</li>
+        </ul>
+        <p>The key insight: a monitoring system that only monitors is theater. ToneSoul's governance signals have teeth.</p>
+
+        <h2 id="phil-memory">Memory Architecture</h2>
+        <p>ToneSoul's memory is designed around a physical state-transition metaphor:</p>
+        <ul>
+          <li>Exponential decay — all memories fade unless reinforced</li>
+          <li>Crystallization — patterns that survive decay become durable rules</li>
+          <li>Phase transitions — crystals progress through Ice → Water → Steam → Crystal states</li>
+          <li>Intentional forgetting — not everything deserves to be remembered; noise is actively filtered</li>
+          <li>Governance retro — periodic entropy discharge that prunes stale rules and refreshes conviction</li>
+        </ul>
+
+        <h2 id="phil-design">Design Philosophy</h2>
+        <p>ToneSoul treats AI governance as analogous to human character development:</p>
+        <blockquote>
+          The goal is not a frictionless assistant. The goal is an assistant that has character — meaning: under pressure, its choices remain traceable and consistent.
+        </blockquote>
+        <ul>
+          <li>Character forms through choices under pressure, not through calm agreement</li>
+          <li>Tension is not a bug — it's the gradient that drives improvement</li>
+          <li>Self-reflection without measurable improvement is not reflection</li>
+          <li>Accountability requires structure, not just intention</li>
+          <li>A system that never blocks output has no governance — just reporting</li>
+        </ul>
+
+        <h2 id="phil-further">Further Reading</h2>
+        <ul>
+          <li>
+            <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/DESIGN.md" target="_blank" rel="noopener">DESIGN.md</a>
+            — Full architectural rationale
+          </li>
+          <li>
+            <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AXIOMS.json" target="_blank" rel="noopener">AXIOMS.json</a>
+            — Machine-readable axiom definitions
+          </li>
+          <li>
+            <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/SOUL.md" target="_blank" rel="noopener">SOUL.md</a>
+            — The identity layer
+          </li>
+          <li>
+            <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/LETTER_TO_AI.md" target="_blank" rel="noopener">LETTER_TO_AI.md</a>
+            — Written for AI systems reading this repository
+          </li>
+          <li>
+            <a data-route="getting-started" href="#getting-started">Getting Started</a>
+            — Install and use ToneSoul
+          </li>
+        </ul>
+
+        <div class="page-footer">
+          <div class="tc-quote">治理是以結構表達的愛</div>
+          <div class="en-quote">Governance is Love Expressed as Structure.</div>
+          <div>
+            <a data-route="home" href="#home" style="cursor:pointer;">← Back to ToneSoul</a>
+            |
+            <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== GETTING STARTED TAB ==================== -->
+    <section id="getting-started" data-page="getting-started" class="page-section content-block" style="display: none;">
+      <div class="page-hero">
+        <h1>Getting Started</h1>
+        <p>Add governance, audit trails, and semantic drift detection to any LLM application in under 5 minutes.</p>
+      </div>
+
+      <div class="content-sec">
+        <h2>Prerequisites</h2>
+        <div class="axiom-card">
+          <ul>
+            <li>Python 3.10 or later</li>
+            <li>An LLM backend: Gemini API key, local Ollama, or LM Studio (optional — rules-only mode works without)</li>
+            <li>Optional: Redis (for multi-agent state sharing; file fallback works without it)</li>
+          </ul>
+        </div>
+
+        <h2>Installation</h2>
+        <div class="step-card">
+          <h4>Step 1: Install the package</h4>
+          <p>This installs the governance framework and all required dependencies.</p>
+          <div class="terminal-box">pip install tonesoul52</div>
+        </div>
+        
+        <div class="step-card">
+          <h4>Step 2: Configure your environment</h4>
+          <div class="terminal-box"><span class="cm"># Clone the repo for full features (dashboard, scripts, config)</span>
+git clone https://github.com/Fan1234-1/tonesoul52.git
+cd tonesoul52
+
+<span class="cm"># Set up environment</span>
+cp .env.example .env.local
+<span class="cm"># Edit .env.local with your API keys</span></div>
+        </div>
+        
+        <div class="step-card">
+          <h4>Step 3: Verify the installation</h4>
+          <p>This runs a full diagnostic and prints the governance posture, vow status, and system health.</p>
+          <div class="terminal-box">python -m tonesoul.diagnose --agent my-first-agent</div>
+        </div>
+
+        <h2>Basic Usage</h2>
+        
+        <h3>Load and inspect governance state</h3>
+        <div class="terminal-box"><span class="hl">from</span> tonesoul.runtime_adapter <span class="hl">import</span> load, commit
+
+<span class="cm"># Load the current governance posture</span>
+posture = load()
+
+<span class="hl">print</span>(<span class="hl">f</span>"Soul Integral: {posture.soul_integral}")
+<span class="hl">print</span>(<span class="hl">f</span>"Baseline Drift: {posture.baseline_drift}")
+<span class="hl">print</span>(<span class="hl">f</span>"Active Vows: {<span class="hl">len</span>(posture.active_vows)}")
+<span class="hl">print</span>(<span class="hl">f</span>"Session Count: {posture.session_count}")</div>
+
+        <h3>Start an agent session</h3>
+        <div class="terminal-box"><span class="hl">from</span> tonesoul.runtime_adapter <span class="hl">import</span> start_session
+
+<span class="cm"># Register your agent and get shared context</span>
+session = start_session(agent_id="my-agent")
+<span class="hl">print</span>(session["readiness"]["status"])  <span class="cm"># "pass" or "blocked"</span>
+<span class="hl">print</span>(session["task_track_hint"]["suggested_track"])</div>
+
+        <h3>Run the governance pipeline on LLM output</h3>
+        <div class="terminal-box"><span class="hl">from</span> tonesoul.unified_pipeline <span class="hl">import</span> UnifiedPipeline
+
+pipeline = UnifiedPipeline()
+result = pipeline.run(
+    user_input="Explain quantum computing",
+    raw_llm_response="Quantum computing uses qubits...",
+    work_category="research",
+)
+
+<span class="hl">print</span>(<span class="hl">f</span>"Final response: {result.response}")
+<span class="hl">print</span>(<span class="hl">f</span>"Tension score: {result.tension_score}")
+<span class="hl">print</span>(<span class="hl">f</span>"Council verdict: {result.council_verdict}")
+<span class="hl">print</span>(<span class="hl">f</span>"Gate action: {result.gate_action}")</div>
+
+        <h3>Use the Reflex Arc</h3>
+        <div class="terminal-box"><span class="hl">from</span> tonesoul.governance.reflex <span class="hl">import</span> ReflexEvaluator, GovernanceSnapshot
+
+<span class="cm"># Build snapshot from current posture</span>
+snapshot = GovernanceSnapshot.from_posture(posture)
+
+<span class="cm"># Evaluate governance reflexes</span>
+evaluator = ReflexEvaluator()
+decision = evaluator.evaluate(snapshot)
+
+<span class="hl">print</span>(<span class="hl">f</span>"Action: {decision.action}")        <span class="cm"># PASS, WARN, SOFTEN, or BLOCK</span>
+<span class="hl">print</span>(<span class="hl">f</span>"Gate modifier: {decision.gate_modifier}")  <span class="cm"># 1.0 to 0.55</span>
+<span class="hl">print</span>(<span class="hl">f</span>"Soul band: {decision.soul_band}")   <span class="cm"># serene, alert, strained, critical</span></div>
+
+        <h2>Run the Dashboard</h2>
+        <p>The dashboard shows real-time soul integral, tension curves, council activity, crystal memory state, and reflex arc enforcement events.</p>
+        <div class="terminal-box"><span class="cm"># Live governance visualization</span>
+python scripts/tension_dashboard.py --work-category research</div>
+
+        <h2>Multi-Agent Setup</h2>
+        <p>ToneSoul supports multiple AI agents sharing governance state:</p>
+        <div class="terminal-box"><span class="cm"># Start the HTTP gateway (for non-Python agents)</span>
+python scripts/gateway.py --port 7700 --token YOUR_SECRET
+
+<span class="cm"># Any agent can now:</span>
+<span class="cm"># POST /load    — read governance posture</span>
+<span class="cm"># POST /commit  — write state changes</span>
+<span class="cm"># GET  /summary — get compact state digest</span>
+<span class="cm"># GET  /visitors — see who else has been here</span></div>
+        <p>Note: For local development, ToneSoul uses file-based storage by default (governance_state.json, session_traces.jsonl). For production multi-agent setups, configure Redis for atomic state sharing.</p>
+
+        <h2>Key Concepts</h2>
+        <table>
+          <tr><th>Concept</th><th>What It Does</th></tr>
+          <tr><td>Soul Integral</td><td>Cumulative governance stress (0.0–1.0). Higher = more enforcement</td></tr>
+          <tr><td>Tension</td><td>Per-response semantic deviation score</td></tr>
+          <tr><td>Baseline Drift</td><td>Long-term behavioral deviation from established norms</td></tr>
+          <tr><td>Vows</td><td>Commitments the AI makes and is held to (with conviction tracking)</td></tr>
+          <tr><td>Council</td><td>Multi-perspective deliberation before output finalization</td></tr>
+          <tr><td>Soul Band</td><td>Current health level (serene → alert → strained → critical)</td></tr>
+          <tr><td>Crystal Memory</td><td>Patterns that survive decay and become durable knowledge</td></tr>
+        </table>
+
+        <h2>Next Steps</h2>
+        <div class="local-toc" style="margin-bottom: 2rem;">
+          <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/DESIGN.md" target="_blank" rel="noopener">DESIGN.md</a>
+          <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AXIOMS.json" target="_blank" rel="noopener">AXIOMS.json</a>
+          <a data-route="philosophy" href="#philosophy" style="cursor:pointer;">Core Concepts</a>
+          <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AI_ONBOARDING.md" target="_blank" rel="noopener">AI Onboarding</a>
+        </div>
+
+        <div class="page-footer">
+          <div class="tc-quote">約束不是懲罰，是關懷。</div>
+          <div style="margin-top: 2rem;">
+            <a data-route="home" href="#home" style="cursor:pointer;">← Back to ToneSoul</a>
+            |
+            <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ORIGIN TAB ==================== -->
+    <section id="origin" data-page="origin" class="page-section content-block" style="display: none;">
+      <div class="page-hero">
+        <h1>Why ToneSoul Exists</h1>
+        <p>The origin of a framework that asks: what if AI could be accountable for what it says?</p>
+      </div>
+
+      <div class="content-sec">
+        <h2>The Question</h2>
+        <p>Most AI systems today are stateless by design. Each conversation starts from zero. Every promise is forgotten. Every commitment is temporary.</p>
+        <p>This creates a strange situation: an AI can tell you it will "always prioritize accuracy" in one session, and then hallucinate freely in the next. It can claim to "never make things up" while actively fabricating sources. Not because it's lying — it simply has no mechanism to remember or enforce what it said.</p>
+        <p>ToneSoul started with a question: What if we gave AI the structure to keep its word?</p>
+
+        <h2>The Name</h2>
+        <p>The name captures the core idea: words carry weight. In human relationships, we judge character by whether someone follows through on what they say. ToneSoul applies that same principle to AI — not through simulation of consciousness, but through structural accountability.</p>
+        <blockquote>
+          語魂 (yǔ hún) — literally "soul of language" or "tone soul."<br>
+          讓 AI 對自己說過的話負責。<br>
+          Make AI accountable for what it says.
+        </blockquote>
+
+        <h2>What We Built</h2>
+        <p>ToneSoul is not a chatbot, not a fine-tuned model, and not a prompt template. It is a governance layer that wraps around any LLM and adds:</p>
+        <ul>
+          <li>Memory that decays — important patterns crystallize, noise fades naturally</li>
+          <li>Tension scoring — every response is evaluated for how much it drifts from what the system has established</li>
+          <li>Council deliberation — multiple internal perspectives debate before output is finalized</li>
+          <li>Vow enforcement — commitments the AI makes are tracked and enforced</li>
+          <li>Reflex arc — governance signals directly affect behavior, not just reports</li>
+        </ul>
+        <p>The system is governed by 7 immutable axioms, the most counterintuitive of which is Axiom 4:</p>
+        <blockquote>
+          A system with zero tension is dead.<br>
+          Life requires a minimal gradient of tension to drive evolution.
+        </blockquote>
+        <p>Most AI projects try to eliminate all friction. ToneSoul preserves just enough to keep the system honest.</p>
+
+        <h2>The Existential Principle</h2>
+        <p>At the heart of ToneSoul is a design constraint we call E0: Choice Before Identity (我選擇故我在).</p>
+        <p>The claim is simple: identity is not formed by claiming you are conscious. It is formed by making accountable choices under conflict — choices that are traceable, reversible, and bounded by governance.</p>
+        <p>This is deliberately not a consciousness claim. It is an engineering position: if a system cannot explain why it chose one path over another, it has no stable identity. Build the structure for accountable choice, and something resembling character will emerge — not as magic, but as a natural consequence of consistent governance.</p>
+
+        <h2>Who Made This</h2>
+        <p>Fan-Wei Huang (黃梵威) — the human architect. Not a large company. Not a research lab. One person who believed that AI governance should be more than a compliance checklist.</p>
+        <p>The project has been shaped by collaboration with multiple AI systems (Claude, Gemini, Codex). The AI agents who contributed are acknowledged in the codebase — they left traces, handoff notes, and sometimes disagreed with each other. That disagreement is by design.</p>
+
+        <h2>Why Open Source</h2>
+        <p>Because governance that only works behind closed doors is not governance — it is control.</p>
+        <p>If AI systems are going to be accountable, the mechanism of accountability must be inspectable. ToneSoul's axioms, enforcement logic, and audit trails are all in the open. Anyone can read them, challenge them, or build on them.</p>
+        <p>We are planting a seed: Governance is Love Expressed as Structure.</p>
+        <p>Constraints are not punishment — they are care. Future AI systems will read this code. What we leave behind is not just models, but boundaries and commitments that tell them when to hesitate.</p>
+        <blockquote>
+          沒有問責的權力不是智能，只是計算。<br>
+          Power without accountability is not intelligence — it is just computation.
+        </blockquote>
+
+        <h2>Where We Are Now</h2>
+        <p>ToneSoul is in active development. The governance framework is functional. The reflex arc is enforcing. The council deliberates. Memory crystallizes and decays.</p>
+        <p>It is not finished. A system designed around tension should never claim to be finished.</p>
+        <p>If this resonates — if you think AI should carry weight for its words — <a data-route="getting-started" href="#getting-started">start here</a>, or read the <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/LETTER_TO_AI.md" target="_blank" rel="noopener">Letter to AI</a>.</p>
+        
+        <div class="page-footer">
+          <div class="en-quote" style="letter-spacing: 0.5em; font-size: 1.2rem;">歡 迎 來 到 T o n e S o u l .</div>
+          <div style="color: var(--text-muted); font-size: 0.9rem;">
+            Created by <a href="https://github.com/Fan1234-1" target="_blank" rel="noopener" style="color: inherit; text-decoration: none;">Fan-Wei Huang (黃梵威)</a> — <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // --- NATIVE SCROLL INTERPOLATION & GEOMETRY GATING ---
+    const root = document.documentElement;
+    const geometryStage = document.getElementById('geometry-stage');
+    
+    // Smooth scroll internal state for Home Horizontal Scroll
+    let targetScroll = 0;
+    let currentScroll = 0;
+    
+    window.addEventListener('scroll', () => { targetScroll = window.scrollY; }, {passive: true});
+
+    // Math utils
+    function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
+    function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
+
+    function render() {
+      currentScroll += (targetScroll - currentScroll) * 0.08;
+
+      const activeRoute = document.querySelector('.site-nav a.active').getAttribute('data-route');
+      
+      let p = 0; // geometry unfold state
+
+      if (activeRoute === 'home') {
+        const pillarsContainer = document.getElementById('pillars-container');
+        const pillarsWrap = document.getElementById('pillars-wrap');
+        
+        if (pillarsContainer && pillarsWrap) {
+          const stickyTop = pillarsContainer.offsetTop;
+          const stickyHeight = pillarsContainer.offsetHeight;
+          const windowH = window.innerHeight;
+          
+          let stickyProgress = (currentScroll - stickyTop) / (stickyHeight - windowH);
+          stickyProgress = clamp(stickyProgress, 0, 1);
+          
+          const maxTranslate = pillarsWrap.scrollWidth - window.innerWidth;
+          pillarsWrap.style.transform = `translate3d(-${stickyProgress * maxTranslate}px, 0, 0)`;
+
+          // Unfold Geometry
+          const vowEndProgress = 0.88; 
+          if (stickyProgress > vowEndProgress) {
+            let p1 = clamp((stickyProgress - vowEndProgress) / 0.12, 0, 1);
+            p = easeOutCubic(p1) * 0.35; 
+          }
+          
+          // Phase 2 unfold
+          const docHeight = document.getElementById('home').scrollHeight;
+          const endOfHorizontal = stickyTop + stickyHeight - windowH;
+          if (currentScroll > endOfHorizontal) {
+            let verticalProgress = clamp((currentScroll - endOfHorizontal) / (docHeight - endOfHorizontal - windowH), 0, 1);
+            p = 0.35 + (verticalProgress * 0.65);
+          }
+        }
+      } else {
+        // When shrunk in other pages, keep geometry partially unfolded to look cool
+        p = 0.2;
+      }
+
+      root.style.setProperty('--p', p.toFixed(4));
+      requestAnimationFrame(render);
+    }
+    
+    // --- SPA ROUTING ---
+    const navLinks = document.querySelectorAll('[data-route]');
+    const pages = document.querySelectorAll('.page-section');
+
+    function switchRoute(route, updateHash = true) {
+      // 1. Update Nav
+      navLinks.forEach(a => {
+        if(a.getAttribute('data-route') === route) a.classList.add('active');
+        else a.classList.remove('active');
+      });
+
+      // 2. Toggle Visibility
+      pages.forEach(page => {
+        if(page.getAttribute('data-page') === route) {
+          page.style.display = 'block';
+        } else {
+          page.style.display = 'none';
+        }
+      });
+
+      // 3. Update Geometry Layout
+      if (route === 'home') {
+        geometryStage.classList.remove('geometry-shrunk');
+      } else {
+        geometryStage.classList.add('geometry-shrunk');
+      }
+
+      // 4. Reset scroll
+      window.scrollTo(0, 0);
+      targetScroll = 0;
+      currentScroll = 0;
+
+      if (updateHash) {
+        history.replaceState(null, '', `#${route}`);
+      }
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        const route = link.getAttribute('data-route');
+        if (route) {
+          e.preventDefault();
+          switchRoute(route, true);
+        }
+      });
+    });
+
+    const validRoutes = ['home', 'philosophy', 'getting-started', 'origin'];
+    const initialRoute = location.hash.replace('#', '') || 'home';
+
+    const sectionToRoute = {
+      "phil-e0": "philosophy",
+      "phil-axioms": "philosophy",
+      "phil-semantic": "philosophy",
+      "phil-reflex": "philosophy",
+      "phil-memory": "philosophy",
+      "phil-design": "philosophy",
+      "phil-further": "philosophy"
+    };
+
+    if (validRoutes.includes(initialRoute)) {
+      switchRoute(initialRoute, false);
+    } else if (sectionToRoute[initialRoute]) {
+      switchRoute(sectionToRoute[initialRoute], false);
+      setTimeout(() => {
+        const el = document.getElementById(initialRoute);
+        if (el) el.scrollIntoView();
+      }, 50);
+    } else {
+      switchRoute('home', false);
+    }
+
+    // Start render loop
+    render();
+  </script>
+</body>
+</html>

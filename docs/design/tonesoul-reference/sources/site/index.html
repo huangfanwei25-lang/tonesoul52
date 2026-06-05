@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ToneSoul - AI Governance Framework for Semantic Responsibility</title>
+<meta name="description" content="ToneSoul is an open-source AI governance framework that makes LLM decisions auditable, traceable, and trustworthy through semantic responsibility systems.">
+<meta name="keywords" content="AI governance, AI alignment, responsible AI, semantic governance, LLM safety, AI ethics, verifiable AI, auditable AI, multi-agent deliberation, council deliberation">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://fan1234-1.github.io/tonesoul52/">
+<meta property="og:title" content="ToneSoul - AI Governance Framework">
+<meta property="og:description" content="Make LLM decisions auditable, traceable, and trustworthy. Open-source semantic responsibility system.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://fan1234-1.github.io/tonesoul52/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "ToneSoul",
+  "alternateName": "語魂",
+  "description": "An open-source AI governance framework that enforces semantic responsibility — making every AI decision auditable, traceable, and trustworthy through tension engines, council deliberation, and self-governance.",
+  "url": "https://github.com/Fan1234-1/tonesoul52",
+  "codeRepository": "https://github.com/Fan1234-1/tonesoul52",
+  "programmingLanguage": "Python",
+  "license": "https://opensource.org/licenses/Apache-2.0",
+  "author": {
+    "@type": "Person",
+    "name": "Fan-Wei Huang",
+    "alternateName": "黃梵威"
+  },
+  "applicationCategory": "AI Safety & Governance",
+  "operatingSystem": "Cross-platform",
+  "runtimePlatform": "Python 3.10+"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is ToneSoul?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ToneSoul is an open-source AI governance framework that enforces semantic responsibility. It makes every LLM decision auditable and traceable through a tension engine (scoring semantic deviation), council deliberation (multi-perspective review before output), and self-governance (blocking or rewriting unsafe outputs with audit trails)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does ToneSoul differ from traditional AI safety approaches?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Traditional AI safety focuses on training-time alignment. ToneSoul operates at runtime: it wraps any LLM with governance layers that score every response for semantic drift, run multi-agent council deliberation before finalizing output, and maintain persistent memory with automatic decay and crystallization. It treats AI identity as accountable choice under conflict, not simulated consciousness."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are ToneSoul's core axioms?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ToneSoul has 7 immutable axioms: (1) Law of Continuity - every event must be traceable, (2) Responsibility Threshold - high-risk actions require audit logs, (3) Governance Gate - major decisions need 0.92 consensus, (4) Non-Zero Tension - a system with zero tension is dead, (5) Mirror Recursion - self-reflection must increase accuracy, (6) User Sovereignty - no action may harm the user, (7) Semantic Field Conservation - the system is a damper, not an amplifier."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use ToneSoul with any LLM?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. ToneSoul is adapter-ready and works with any LLM backend (Google Gemini, local Ollama, LM Studio, or rules-only mode). It wraps the LLM's output with governance checks rather than modifying the model itself. Install via pip install tonesoul52 and configure your preferred backend."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the Reflex Arc in ToneSoul?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Reflex Arc is ToneSoul's feedback loop where governance state directly affects behavior. It classifies system health into soul bands (serene/alert/strained/critical), each with different gate modifiers that tighten or relax output thresholds. Vow violations block output. Council BLOCK verdicts prevent response delivery. High drift injects caution into LLM prompts. This makes governance signals actionable rather than merely informational."
+      }
+    }
+  ]
+}
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+<a href="index.html" class="brand">ToneSoul</a>
+<a href="index.html" class="active">Home</a>
+<a href="concepts.html">Philosophy</a>
+<a href="getting-started.html">Get Started</a>
+<a href="story.html">Origin</a>
+<a href="https://github.com/Fan1234-1/tonesoul52">GitHub</a>
+</nav>
+
+<header class="hero">
+<div class="crystal-eye"><div class="inner"></div><div class="dot"></div></div>
+<h1>ToneSoul <span style="font-weight:300;font-size:.6em">/ 語魂</span></h1>
+<p class="tagline-zh">治理是以結構表達的愛</p>
+<p class="tagline-sub">Governance is Love Expressed as Structure.</p>
+<p>An open-source AI governance framework that makes LLM decisions <strong>auditable</strong>, <strong>traceable</strong>, and <strong>trustworthy</strong> through semantic responsibility.</p>
+<span class="badge">Python 3.10+</span>
+<span class="badge">Apache 2.0</span>
+<span class="badge">Adapter-Ready</span>
+<div style="margin-top:1.5rem">
+<a href="https://github.com/Fan1234-1/tonesoul52" class="cta cta-primary">View on GitHub</a>
+<a href="getting-started.html" class="cta cta-secondary">Get Started</a>
+</div>
+</header>
+
+<main>
+
+<h2>The Problem</h2>
+<p>Most AI systems are built to agree. Disagreement feels broken. But agreement without friction is how bias spreads, errors persist, and truth gets smoothed over.</p>
+<p>ToneSoul is built around a single uncomfortable design principle:</p>
+<blockquote>
+<strong>A system with zero tension is dead.</strong><br>
+<small>— Axiom 4: Non-Zero Tension Principle</small>
+</blockquote>
+<p>The goal is not a frictionless assistant. The goal is an assistant that has <strong>character</strong> — meaning: under pressure, its choices remain traceable and consistent.</p>
+
+<h2>What ToneSoul Does</h2>
+<div class="grid">
+<div class="card">
+<h3>Tension Engine</h3>
+<p>Every response is scored for semantic deviation before it ships. Drift is measured, not guessed.</p>
+</div>
+<div class="card">
+<h3>Council Deliberation</h3>
+<p>Multiple perspectives (Guardian, Analyst, Critic, Advocate) debate before final output. Dissent survives.</p>
+</div>
+<div class="card">
+<h3>Self-Governance</h3>
+<p>Unsafe or incoherent output is blocked or rewritten — with full audit trails. Not just flagged.</p>
+</div>
+<div class="card">
+<h3>Memory with Decay</h3>
+<p>Important patterns crystallize. Noise fades. Exponential decay + phase transitions (Ice → Water → Steam → Crystal).</p>
+</div>
+<div class="card">
+<h3>Reflex Arc</h3>
+<p>Governance state directly affects behavior. Soul bands (serene → critical) tighten or relax output gates in real-time.</p>
+</div>
+<div class="card">
+<h3>Vow System</h3>
+<p>AI makes commitments (vows) and is held to them. Violations are blocked, not just logged. Conviction decays are detected.</p>
+</div>
+</div>
+
+<h2>How It Differs</h2>
+<table>
+<thead>
+<tr><th></th><th>Traditional AI</th><th>Prompt Engineering</th><th>ToneSoul</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Memory</strong></td><td>Session-only</td><td>Manual wiring</td><td>Auto decay + crystallize</td></tr>
+<tr><td><strong>Consistency</strong></td><td>Best effort</td><td>Prompt-dependent</td><td>7 Axioms + governance</td></tr>
+<tr><td><strong>Self-check</strong></td><td>None</td><td>Optional</td><td>Every response scored</td></tr>
+<tr><td><strong>Enforcement</strong></td><td>None</td><td>None</td><td>Block / Rewrite / Audit</td></tr>
+<tr><td><strong>Identity</strong></td><td>Stateless</td><td>Persona prompt</td><td>Accountable choice history</td></tr>
+</tbody>
+</table>
+
+<h2>Architecture Overview</h2>
+<pre><code>User Input
+    ↓
+[ToneBridge] Analyze tone, motive, context
+    ↓
+[TensionEngine] Compute semantic deviation
+    ↓
+[Reflex Arc] Soul band → gate modifier → enforcement
+    ↓
+[Council] Guardian / Analyst / Critic / Advocate deliberate
+    ↓
+[ComputeGate] Approve / Block / Rewrite
+    ↓
+[Crystallizer] Remember what matters, forget the rest
+    ↓
+Response (with audit trail)</code></pre>
+
+<h2>The 7 Axioms</h2>
+<p>ToneSoul is governed by 7 immutable laws, defined in <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AXIOMS.json">AXIOMS.json</a>:</p>
+<table>
+<thead><tr><th>#</th><th>Name</th><th>Core Rule</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Continuity</td><td>Every event must belong to a traceable chain</td></tr>
+<tr><td>2</td><td>Responsibility Threshold</td><td>Risk &gt; 0.4 → immutable audit log</td></tr>
+<tr><td>3</td><td>Governance Gate</td><td>Major decisions need 0.92 consensus</td></tr>
+<tr><td>4</td><td>Non-Zero Tension</td><td>Zero tension = dead system</td></tr>
+<tr><td>5</td><td>Mirror Recursion</td><td>Self-reflection must increase accuracy</td></tr>
+<tr><td>6</td><td>User Sovereignty</td><td>No action may harm the user (P0)</td></tr>
+<tr><td>7</td><td>Semantic Field Conservation</td><td>System is a damper, not an amplifier</td></tr>
+</tbody>
+</table>
+
+<h2>Quick Start</h2>
+<pre><code>pip install tonesoul52
+</code></pre>
+<pre><code>from tonesoul.runtime_adapter import load, commit
+
+# Load governance posture
+posture = load()
+print(f"Soul Integral: {posture.soul_integral}")
+print(f"Active Vows: {len(posture.active_vows)}")
+
+# Run the dashboard
+# python scripts/tension_dashboard.py --work-category research
+</code></pre>
+<p><a href="getting-started.html">Full getting started guide →</a></p>
+
+<h2>Who Is This For</h2>
+<table>
+<thead><tr><th>You Are</th><th>Start Here</th></tr></thead>
+<tbody>
+<tr><td>AI Developer</td><td><a href="https://github.com/Fan1234-1/tonesoul52/blob/master/docs/GETTING_STARTED.md">Getting Started</a> → <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/DESIGN.md">Design Doc</a></td></tr>
+<tr><td>AI Researcher</td><td><a href="https://github.com/Fan1234-1/tonesoul52/blob/master/DESIGN.md">DESIGN.md</a> → <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AXIOMS.json">AXIOMS.json</a></td></tr>
+<tr><td>AI Agent</td><td><a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AI_ONBOARDING.md">AI Onboarding</a> → <code>start_agent_session.py</code></td></tr>
+<tr><td>Curious Human</td><td><a href="https://github.com/Fan1234-1/tonesoul52/blob/master/SOUL.md">SOUL.md</a> → <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/LETTER_TO_AI.md">Letter to AI</a></td></tr>
+</tbody>
+</table>
+
+<h2>Key Design Decisions</h2>
+<ul>
+<li><strong>Runtime, not training-time:</strong> Works with any LLM without fine-tuning</li>
+<li><strong>Local-first:</strong> All governance state persists locally (Redis or file fallback)</li>
+<li><strong>Fail-closed:</strong> Import failures, config errors → block, never silently pass</li>
+<li><strong>Multi-agent native:</strong> Any agent can join via HTTP gateway or direct Python API</li>
+<li><strong>Existential principle (E0):</strong> "Identity is formed through accountable choices under conflict"</li>
+</ul>
+
+</main>
+
+<footer>
+<p class="philosophy">沒有問責的權力不是智能，只是計算。</p>
+<p class="philosophy" style="font-size:.88rem">約束不是懲罰，是關懷。</p>
+<p>歡 迎 來 到 T o n e S o u l .</p>
+<p>Created by <a href="https://github.com/Fan1234-1">Fan-Wei Huang (黃梵威)</a> — <a href="https://github.com/Fan1234-1/tonesoul52">GitHub</a></p>
+</footer>
+
+</body>
+</html>

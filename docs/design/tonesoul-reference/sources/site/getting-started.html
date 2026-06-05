@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Getting Started - ToneSoul AI Governance Framework</title>
+<meta name="description" content="Install and configure ToneSoul in 5 minutes. Add auditable governance, council deliberation, and semantic drift detection to any LLM application.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://fan1234-1.github.io/tonesoul52/getting-started.html">
+<meta property="og:title" content="Getting Started with ToneSoul">
+<meta property="og:description" content="Install and configure ToneSoul AI governance framework in 5 minutes. Add auditable governance to any LLM.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://fan1234-1.github.io/tonesoul52/getting-started.html">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "Getting Started with ToneSoul",
+  "description": "Install and configure ToneSoul AI governance framework to make your LLM applications auditable and trustworthy.",
+  "step": [
+    {
+      "@type": "HowToStep",
+      "position": 1,
+      "name": "Install ToneSoul",
+      "text": "Run pip install tonesoul52 to install the framework and its dependencies."
+    },
+    {
+      "@type": "HowToStep",
+      "position": 2,
+      "name": "Configure environment",
+      "text": "Copy .env.example to .env.local and set your LLM backend API key."
+    },
+    {
+      "@type": "HowToStep",
+      "position": 3,
+      "name": "Load governance posture",
+      "text": "Use tonesoul.runtime_adapter.load() to initialize the governance state for your session."
+    },
+    {
+      "@type": "HowToStep",
+      "position": 4,
+      "name": "Run the dashboard",
+      "text": "Launch the live governance dashboard with python scripts/tension_dashboard.py to visualize system state."
+    }
+  ]
+}
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+<a href="index.html" class="brand">ToneSoul</a>
+<a href="index.html">Home</a>
+<a href="concepts.html">Philosophy</a>
+<a href="getting-started.html" class="active">Get Started</a>
+<a href="story.html">Origin</a>
+<a href="https://github.com/Fan1234-1/tonesoul52">GitHub</a>
+</nav>
+
+<h1>Getting Started</h1>
+<p>Add governance, audit trails, and semantic drift detection to any LLM application in under 5 minutes.</p>
+
+<h2>Prerequisites</h2>
+<ul>
+<li>Python 3.10 or later</li>
+<li>An LLM backend: Gemini API key, local Ollama, or LM Studio (optional — rules-only mode works without)</li>
+<li>Optional: Redis (for multi-agent state sharing; file fallback works without it)</li>
+</ul>
+
+<h2>Installation</h2>
+
+<div class="step">
+<h3>Step 1: Install the package</h3>
+<pre><code>pip install tonesoul52</code></pre>
+<p>This installs the governance framework and all required dependencies.</p>
+</div>
+
+<div class="step">
+<h3>Step 2: Configure your environment</h3>
+<pre><code># Clone the repo for full features (dashboard, scripts, config)
+git clone https://github.com/Fan1234-1/tonesoul52.git
+cd tonesoul52
+
+# Set up environment
+cp .env.example .env.local
+# Edit .env.local with your API keys</code></pre>
+</div>
+
+<div class="step">
+<h3>Step 3: Verify the installation</h3>
+<pre><code>python -m tonesoul.diagnose --agent my-first-agent</code></pre>
+<p>This runs a full diagnostic and prints the governance posture, vow status, and system health.</p>
+</div>
+
+<h2>Basic Usage</h2>
+
+<h3>Load and inspect governance state</h3>
+<pre><code>from tonesoul.runtime_adapter import load, commit
+
+# Load the current governance posture
+posture = load()
+
+print(f"Soul Integral: {posture.soul_integral}")
+print(f"Baseline Drift: {posture.baseline_drift}")
+print(f"Active Vows: {len(posture.active_vows)}")
+print(f"Session Count: {posture.session_count}")</code></pre>
+
+<h3>Start an agent session</h3>
+<pre><code>from tonesoul.runtime_adapter import start_session
+
+# Register your agent and get shared context
+session = start_session(agent_id="my-agent")
+print(session["readiness"]["status"])  # "pass" or "blocked"
+print(session["task_track_hint"]["suggested_track"])</code></pre>
+
+<h3>Run the governance pipeline on LLM output</h3>
+<pre><code>from tonesoul.unified_pipeline import UnifiedPipeline
+
+pipeline = UnifiedPipeline()
+result = pipeline.run(
+    user_input="Explain quantum computing",
+    raw_llm_response="Quantum computing uses qubits...",
+    work_category="research",
+)
+
+print(f"Final response: {result.response}")
+print(f"Tension score: {result.tension_score}")
+print(f"Council verdict: {result.council_verdict}")
+print(f"Gate action: {result.gate_action}")</code></pre>
+
+<h3>Use the Reflex Arc</h3>
+<pre><code>from tonesoul.governance.reflex import ReflexEvaluator, GovernanceSnapshot
+
+# Build snapshot from current posture
+snapshot = GovernanceSnapshot.from_posture(posture)
+
+# Evaluate governance reflexes
+evaluator = ReflexEvaluator()
+decision = evaluator.evaluate(snapshot)
+
+print(f"Action: {decision.action}")        # PASS, WARN, SOFTEN, or BLOCK
+print(f"Gate modifier: {decision.gate_modifier}")  # 1.0 to 0.55
+print(f"Soul band: {decision.soul_band}")   # serene, alert, strained, critical</code></pre>
+
+<h2>Run the Dashboard</h2>
+<pre><code># Live governance visualization
+python scripts/tension_dashboard.py --work-category research</code></pre>
+<p>The dashboard shows real-time soul integral, tension curves, council activity, crystal memory state, and reflex arc enforcement events.</p>
+
+<h2>Multi-Agent Setup</h2>
+<p>ToneSoul supports multiple AI agents sharing governance state:</p>
+<pre><code># Start the HTTP gateway (for non-Python agents)
+python scripts/gateway.py --port 7700 --token YOUR_SECRET
+
+# Any agent can now:
+# POST /load    — read governance posture
+# POST /commit  — write state changes
+# GET  /summary — get compact state digest
+# GET  /visitors — see who else has been here</code></pre>
+
+<div class="note">
+<strong>Note:</strong> For local development, ToneSoul uses file-based storage by default (governance_state.json, session_traces.jsonl). For production multi-agent setups, configure Redis for atomic state sharing.
+</div>
+
+<h2>Key Concepts</h2>
+<table>
+<thead><tr><th>Concept</th><th>What It Does</th></tr></thead>
+<tbody>
+<tr><td><strong>Soul Integral</strong></td><td>Cumulative governance stress (0.0–1.0). Higher = more enforcement</td></tr>
+<tr><td><strong>Tension</strong></td><td>Per-response semantic deviation score</td></tr>
+<tr><td><strong>Baseline Drift</strong></td><td>Long-term behavioral deviation from established norms</td></tr>
+<tr><td><strong>Vows</strong></td><td>Commitments the AI makes and is held to (with conviction tracking)</td></tr>
+<tr><td><strong>Council</strong></td><td>Multi-perspective deliberation before output finalization</td></tr>
+<tr><td><strong>Soul Band</strong></td><td>Current health level (serene → alert → strained → critical)</td></tr>
+<tr><td><strong>Crystal Memory</strong></td><td>Patterns that survive decay and become durable knowledge</td></tr>
+</tbody>
+</table>
+
+<h2>Next Steps</h2>
+<ul>
+<li><a href="https://github.com/Fan1234-1/tonesoul52/blob/master/DESIGN.md">DESIGN.md</a> — Why each subsystem exists</li>
+<li><a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AXIOMS.json">AXIOMS.json</a> — The 7 immutable laws (machine-readable)</li>
+<li><a href="concepts.html">Core Concepts</a> — Deep dive into the philosophy</li>
+<li><a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AI_ONBOARDING.md">AI Onboarding</a> — If you are an AI agent reading this</li>
+</ul>
+
+<footer>
+<p class="philosophy">約束不是懲罰，是關懷。</p>
+<p><a href="index.html">← Back to ToneSoul</a> | <a href="https://github.com/Fan1234-1/tonesoul52">GitHub</a></p>
+</footer>
+
+</body>
+</html>

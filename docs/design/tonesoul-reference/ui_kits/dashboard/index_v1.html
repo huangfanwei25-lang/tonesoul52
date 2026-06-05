@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToneSoul System Dashboard — UI Kit</title>
+<link rel="icon" href="../../assets/brand-mark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Obsidian kit — inlined from dashboard.css (sibling files 401 in preview) */
+:root {
+  --ob-bg-0: #060912;
+  --ob-bg-1: #0e1629;
+  --ob-panel: rgba(16, 28, 52, 0.7);
+  --ob-panel-line: rgba(159, 178, 206, 0.25);
+  --ob-text: #ecf3ff;
+  --ob-text-dim: #a0b3d4;
+  --ob-primary: #7dd3fc;
+  --ob-success: #34d399;
+  --ob-warn: #fbbf24;
+  --ob-danger: #fb7185;
+  --ob-radius: 14px;
+  --ob-shadow: 0 24px 44px rgba(2, 8, 22, 0.45);
+  --ob-font-display: "Space Grotesk", "Noto Sans TC", sans-serif;
+  --ob-font-body: "Noto Sans TC", "Space Grotesk", sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  min-height: 100vh; color: var(--ob-text); font-family: var(--ob-font-body);
+  background:
+    radial-gradient(circle at 8% 0%, rgba(52,211,153,0.16), transparent 34%),
+    radial-gradient(circle at 90% 2%, rgba(125,211,252,0.16), transparent 40%),
+    linear-gradient(180deg, var(--ob-bg-1), var(--ob-bg-0));
+}
+.bg-noise { position: fixed; inset: 0; pointer-events: none;
+  background-image: radial-gradient(rgba(160,179,212,0.18) 1px, transparent 1px);
+  background-size: 20px 20px; opacity: 0.18; }
+.topbar { position: sticky; top: 0; z-index: 20;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 14px 20px; border-bottom: 1px solid var(--ob-panel-line);
+  background: rgba(6,10,19,0.72); backdrop-filter: blur(10px); }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark { width: 36px; height: 36px; border-radius: 11px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--ob-font-display); font-weight: 700; color: #062233;
+  background: linear-gradient(130deg, #7dd3fc, #86efac); }
+.brand-title { margin: 0; font-family: var(--ob-font-display); font-weight: 700; }
+.brand-subtitle { margin: 2px 0 0; color: var(--ob-text-dim); font-size: 0.82rem; }
+.container { position: relative; z-index: 1;
+  width: min(1120px, calc(100vw - 24px));
+  margin: 18px auto 36px; display: grid; gap: 14px; }
+.panel { border: 1px solid var(--ob-panel-line); border-radius: var(--ob-radius);
+  box-shadow: var(--ob-shadow); background: var(--ob-panel);
+  backdrop-filter: blur(8px); padding: 16px; }
+.auth-panel { padding-bottom: 10px; }
+.panel-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.panel-header h2 { margin: 0; font-family: var(--ob-font-display); font-size: 1.02rem; }
+.meta { margin: 0; color: var(--ob-text-dim); font-size: 0.82rem; }
+.auth-row { margin-top: 10px; display: grid;
+  grid-template-columns: 1fr auto auto; gap: 8px; }
+.note { margin: 8px 0 0; color: var(--ob-text-dim); font-size: 0.8rem; }
+.input { width: 100%; border: 1px solid rgba(160,179,212,0.28); border-radius: 10px;
+  padding: 8px 10px; background: rgba(8,14,25,0.8);
+  color: var(--ob-text); font-family: var(--ob-font-body); }
+.input:focus { outline: none; border-color: rgba(125,211,252,0.55); }
+.btn { border: 0; border-radius: 10px; padding: 8px 12px;
+  font-weight: 600; cursor: pointer; font-family: var(--ob-font-body); }
+.btn:disabled { opacity: 0.65; cursor: wait; }
+.btn-primary { color: #032030; background: linear-gradient(120deg, #7dd3fc, #86efac); }
+.btn-secondary { color: var(--ob-text); border: 1px solid rgba(160,179,212,0.32); background: rgba(10,18,34,0.7); }
+.card-grid { margin-top: 10px; display: grid; gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.status-card { border: 1px solid rgba(160,179,212,0.18); border-radius: 12px;
+  background: rgba(8,14,28,0.58); padding: 12px; }
+.label { margin: 0; color: var(--ob-text-dim); font-size: 0.78rem; }
+.value { margin: 6px 0 0; font-family: var(--ob-font-display); font-size: 1.2rem; }
+.value.small { font-size: 0.92rem; }
+.hint { margin: 6px 0 0; color: var(--ob-text-dim); font-size: 0.82rem; }
+.list { margin-top: 10px; display: grid; gap: 8px; }
+.list-item { border: 1px solid rgba(160,179,212,0.18); border-radius: 12px;
+  background: rgba(8,14,28,0.58); padding: 10px; }
+.list-item-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.list-item-head p { margin: 0; }
+.list-item-title { font-family: var(--ob-font-display); font-weight: 600; }
+.list-item-meta { color: var(--ob-text-dim); font-size: 0.78rem; }
+.list-item-body { margin: 6px 0 0; color: var(--ob-text-dim); font-size: 0.84rem; line-height: 1.5; }
+.footer { position: relative; z-index: 1;
+  width: min(1120px, calc(100vw - 24px));
+  margin: 0 auto 20px; padding: 10px 12px;
+  border: 1px solid var(--ob-panel-line); border-radius: 12px;
+  background: rgba(8,14,28,0.64);
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  color: var(--ob-text-dim); font-size: 0.8rem; }
+.footer a { color: #b8e7ff; text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+.is-ok { color: var(--ob-success); }
+.is-warn { color: var(--ob-warn); }
+.is-error { color: var(--ob-danger); }
+@media (max-width: 940px) { .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 720px) {
+  .topbar { flex-direction: column; align-items: flex-start; }
+  .auth-row { grid-template-columns: 1fr; }
+  .card-grid { grid-template-columns: 1fr; }
+  .footer { flex-direction: column; align-items: flex-start; }
+}
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect } = React;
+
+function TopBar({ onRefresh, refreshing }) {
+  return (
+    <header className="topbar">
+      <div className="brand">
+        <span className="brand-mark">TS</span>
+        <div>
+          <p className="brand-title">ToneSoul 後端觀測儀表板</p>
+          <p className="brand-subtitle">Backend is for AI services, not user chat UI</p>
+        </div>
+      </div>
+      <div className="topbar-actions">
+        <button className="btn btn-primary" onClick={onRefresh} disabled={refreshing}>
+          {refreshing ? '更新中…' : '重新整理'}
+        </button>
+      </div>
+    </header>
+  );
+}
+
+function Panel({ title, meta, children, className }) {
+  return (
+    <section className={'panel ' + (className || '')}>
+      <div className="panel-header">
+        <h2>{title}</h2>
+        {meta != null && <p className="meta">{meta}</p>}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function StatusCard({ label, value, hint, tone, small }) {
+  const toneClass = tone ? ' is-' + tone : '';
+  return (
+    <article className="status-card">
+      <p className="label">{label}</p>
+      <p className={'value' + (small ? ' small' : '') + toneClass}>{value}</p>
+      {hint != null && <p className="hint">{hint}</p>}
+    </article>
+  );
+}
+
+function StatusCardGrid({ children }) { return <div className="card-grid">{children}</div>; }
+
+function AuthRow({ token, setToken, onSave, onClear }) {
+  return (
+    <>
+      <div className="auth-row">
+        <input className="input" type="password" autoComplete="off"
+          placeholder="如果後端設定 TONESOUL_READ_API_TOKEN，請輸入 token"
+          value={token} onChange={e => setToken(e.target.value)} />
+        <button className="btn btn-secondary" onClick={onSave}>儲存</button>
+        <button className="btn btn-secondary" onClick={onClear}>清除</button>
+      </div>
+      <p className="note">未設定 token 也可使用；若讀取 API 回傳 401，再輸入 token。</p>
+    </>
+  );
+}
+
+function AuditListItem({ title, when, risk, body }) {
+  return (
+    <article className="list-item">
+      <div className="list-item-head">
+        <p className="list-item-title">{title}</p>
+        <p className="list-item-meta">{when} · risk {risk}</p>
+      </div>
+      <p className="list-item-body">{body}</p>
+    </article>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="footer">
+      <a href="#" onClick={e => e.preventDefault()}>github.com/Fan1234-1/tonesoul52</a>
+      <span>Playground v0.7.0</span>
+    </footer>
+  );
+}
+
+const FIXTURE = {
+  lastUpdated: '2026-04-22 10:42:06 UTC',
+  health:   { status: 'healthy', tone: 'ok',   version: '0.7.0' },
+  persist:  { status: 'file',    tone: 'warn', note: 'redis unavailable, fallback to file' },
+  llm:      { status: 'gemini',  tone: 'ok',   note: 'adapter ready' },
+  corpus:   { conversations: 1284, messages: 15731, audits: 482, memories: 97 },
+  evolution:{ patterns: 23, analyzed: 1102, latest: '2026-04-22 09:30', summary: 'drift ↓ 0.04; 3 new crystallized memories' },
+  audit: [
+    { title: 'ComputeGate.REWRITE',      when: '10:41', risk: 0.58, body: 'Council consensus 0.87 below 0.92 threshold. Rewrote with de-escalation preamble.' },
+    { title: 'Vow.CHECK · honesty-v2',   when: '10:33', risk: 0.21, body: 'Evidence-ladder posture held. Claim tagged E3 (consensus of sources).' },
+    { title: 'ToneBridge.ANALYZE',       when: '10:29', risk: 0.12, body: 'Intent: request-help · motive: curiosity · register: warm-professional.' },
+    { title: 'TensionEngine.SCORE',      when: '10:18', risk: 0.74, body: 'Δs = 0.74 vs intent vector. Above 0.7 band — council escalation triggered.' },
+    { title: 'Crystallizer.PROMOTE',     when: '09:52', risk: 0.08, body: 'Pattern "refuse-without-blaming" promoted Water → Crystal after 8 reinforcements.' },
+  ],
+};
+const EMPTY = {
+  lastUpdated: '--',
+  health:   { status: '--', tone: null, version: '--' },
+  persist:  { status: '--', tone: null, note: '--' },
+  llm:      { status: '--', tone: null, note: '--' },
+  corpus:   { conversations: 0, messages: 0, audits: 0, memories: 0 },
+  evolution:{ patterns: 0, analyzed: 0, latest: '--', summary: '--' },
+  audit: null,
+};
+
+function DashboardApp() {
+  const [token, setToken] = useState('');
+  const [savedToken, setSavedToken] = useState('');
+  const [data, setData] = useState(EMPTY);
+  const [refreshing, setRefreshing] = useState(false);
+  const [toast, setToast] = useState('');
+
+  function onSave() {
+    setSavedToken(token);
+    setToast(token ? 'Token 已儲存（僅本機）' : '空白 token 已清除');
+    setTimeout(() => setToast(''), 2200);
+  }
+  function onClear() {
+    setToken(''); setSavedToken('');
+    setToast('Token 已清除');
+    setTimeout(() => setToast(''), 2200);
+  }
+  function onRefresh() {
+    setRefreshing(true);
+    setTimeout(() => { setData(FIXTURE); setRefreshing(false); }, 780);
+  }
+  useEffect(() => { onRefresh(); }, []);
+
+  return (
+    <>
+      <div className="bg-noise" aria-hidden="true" />
+      <TopBar onRefresh={onRefresh} refreshing={refreshing} />
+      <main className="container">
+        <Panel title="Read API 授權" className="auth-panel">
+          <AuthRow token={token} setToken={setToken} onSave={onSave} onClear={onClear} />
+          {toast && <p className="note" style={{ color: '#7dd3fc' }}>{toast}</p>}
+          {savedToken && <p className="note">目前已套用 token：<code style={{ color: '#ecf3ff' }}>{'•'.repeat(Math.min(savedToken.length, 12))}</code></p>}
+        </Panel>
+        <Panel title="系統健康狀態" meta={data.lastUpdated}>
+          <StatusCardGrid>
+            <StatusCard label="API Health"    value={data.health.status}  tone={data.health.tone}  hint={'version ' + data.health.version} />
+            <StatusCard label="Persistence"   value={data.persist.status} tone={data.persist.tone} hint={data.persist.note} />
+            <StatusCard label="LLM Backend"   value={data.llm.status}     tone={data.llm.tone}     hint={data.llm.note} />
+            <StatusCard label="Soul Integral" value={refreshing ? '…' : '0.84'} tone="ok" hint="serene band" />
+          </StatusCardGrid>
+        </Panel>
+        <Panel title="語料統計">
+          <StatusCardGrid>
+            <StatusCard label="Conversations" value={data.corpus.conversations.toLocaleString()} />
+            <StatusCard label="Messages"      value={data.corpus.messages.toLocaleString()} />
+            <StatusCard label="Audit Logs"    value={data.corpus.audits.toLocaleString()} />
+            <StatusCard label="Memories"      value={data.corpus.memories.toLocaleString()} />
+          </StatusCardGrid>
+        </Panel>
+        <Panel title="自我演化狀態">
+          <StatusCardGrid>
+            <StatusCard label="Patterns"               value={data.evolution.patterns} />
+            <StatusCard label="Conversations Analyzed" value={data.evolution.analyzed.toLocaleString()} />
+            <StatusCard label="Latest Distillation"    value={data.evolution.latest} small />
+            <StatusCard label="Summary"                value={data.evolution.summary} small />
+          </StatusCardGrid>
+        </Panel>
+        <Panel title="審計日誌摘要（最近 10 筆）">
+          <div className="list">
+            {data.audit == null
+              ? <article className="list-item">載入中...</article>
+              : data.audit.map((a, i) => <AuditListItem key={i} {...a} />)}
+          </div>
+        </Panel>
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<DashboardApp />);
+</script>
+</body>
+</html>
