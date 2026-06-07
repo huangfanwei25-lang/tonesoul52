@@ -15,6 +15,11 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import List, Optional
 
+__ts_layer__ = "council"
+__ts_purpose__ = (
+    "Deliberation trace: structured audit trail of Council verdict reasoning paths."
+)
+
 
 @dataclass
 class AlternativePath:

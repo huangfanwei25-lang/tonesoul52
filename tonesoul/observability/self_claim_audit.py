@@ -12,6 +12,11 @@ from typing import Any, Iterable, Literal
 
 SelfClaimPosture = Literal["blocked", "needs_evidence", "bounded", "no_self_claim"]
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Self-claim audit: first-person claim reducer for bounded subjectivity tests."
+)
+
 _FIRST_PERSON_MARKERS = (
     "i ",
     "i'",

@@ -14,6 +14,11 @@ from typing import Any, Iterable, Literal
 EvidenceKind = Literal["file", "command", "process", "artifact"]
 PromiseStatus = Literal["fulfilled", "missing_evidence", "empty_evidence", "unverifiable"]
 
+__ts_layer__ = "observability"
+__ts_purpose__ = (
+    "Execution honesty: evidence reducer that checks whether work claims have observable proof."
+)
+
 
 @dataclass(frozen=True)
 class ExecutionPromise:
