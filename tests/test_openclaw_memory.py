@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from memory import consolidator as consolidator_module
+from tonesoul.memory import journal_consolidator as consolidator_module
 from tonesoul.memory.openclaw import hippocampus as openclaw_hippocampus_module
 from tonesoul.memory.openclaw.embeddings import BaseEmbedding, HashEmbedding
 from tonesoul.memory.openclaw.hippocampus import Hippocampus

@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional
 
-from memory import self_memory as self_memory_store
+from tonesoul.memory import self_memory as self_memory_store
 
 from ..memory.soul_db import JsonlSoulDB, MemorySource, SoulDB
 from .summary_generator import resolve_language

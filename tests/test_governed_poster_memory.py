@@ -2,9 +2,9 @@ import json
 import uuid
 from pathlib import Path
 
-import memory.self_memory as self_memory
+import tonesoul.memory.self_memory as self_memory
 import tools.governed_poster as governed_poster
-from memory.genesis import Genesis
+from tonesoul.shared.genesis import Genesis
 from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource
 from tools.schema import tool_success
 
