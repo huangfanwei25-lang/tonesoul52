@@ -31,8 +31,8 @@ ToneSoul is a multi-agent AI governance framework with these active layers:
 | Memory Retention Script | `scripts/run_memory_retention.py` | ✅ |
 
 ### Supabase Configuration
-- **Project ID**: `sjtoyjsnykstclcbktoo`
-- **Dashboard URL**: `https://supabase.com/dashboard/project/sjtoyjsnykstclcbktoo`
+- **Project ID**: `(redacted 2026-06-12 — project decommissioned, endpoint no longer resolves; ID removed from public surface as hygiene)`
+- **Dashboard URL**: `(redacted, see above)`
 - **Env Vars Required**:
   - `SUPABASE_URL` — Supabase project API URL
   - `SUPABASE_KEY` (or `SUPABASE_SERVICE_ROLE_KEY`) — Auth key
