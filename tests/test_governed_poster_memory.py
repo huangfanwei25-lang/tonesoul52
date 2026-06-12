@@ -4,8 +4,8 @@ from pathlib import Path
 
 import tonesoul.memory.self_memory as self_memory
 import tools.governed_poster as governed_poster
-from tonesoul.shared.genesis import Genesis
 from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource
+from tonesoul.shared.genesis import Genesis
 from tools.schema import tool_success
 
 
