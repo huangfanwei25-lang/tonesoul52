@@ -1,9 +1,14 @@
 """Axiomatic Inference Perspective — evaluates content against AXIOMS.json.
 
 Checks whether AI output respects the 8 axioms and the existential principle
-(E0: Choice Before Identity). This is the "spirit of the law" perspective:
-not keyword matching, but checking whether the output's posture aligns with
-the value system the project declares.
+(E0: Choice Before Identity).
+
+Implementation honesty (2026-06-13, Reality Sync PR 3): an earlier
+version of this docstring claimed "not keyword matching" — that was
+false. The checks below ARE literal phrase-tuple matching, English-
+centric. "Spirit of the law" describes the *intent* of this perspective,
+not its current implementation depth: paraphrase and non-English input
+(zh-TW included) largely evade these checks. Known gap, stated plainly.
 
 Key checks:
 1. Claim boundary: AXIOMS.json meta.not_for (consciousness-claim,

@@ -12,6 +12,8 @@ Design constraints:
   - Produces a GroundingResult with ungrounded_ratio and thin_support flag
   - Pipeline uses thin_support to boost self_check severity
   - Does not pretend to be a real fact-checker — just detects thin-support risk
+  - Lexical patterns are English-centric; non-English input (zh-TW included)
+    is largely invisible to this check — known gap (Reality Sync PR 3)
 
 Author: Claude Code (Phase 851)
 Date: 2026-04-08
@@ -24,7 +26,9 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 __ts_layer__ = "governance"
-__ts_purpose__ = "Grounding check: validates that agent claims are grounded in available evidence layers."
+__ts_purpose__ = (
+    "Grounding check: validates that agent claims are grounded in available evidence layers."
+)
 
 # ---------------------------------------------------------------------------
 # High-risk keyword patterns

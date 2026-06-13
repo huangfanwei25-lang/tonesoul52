@@ -4,6 +4,27 @@ ToneSoul Semantic Vow (ΣVow) System
 
 Implements explicit AI commitments that can be verified before output.
 實現可在輸出前驗證的明確 AI 承諾。
+
+Sensor honesty (2026-06-13, Reality Sync PR 3)
+----------------------------------------------
+The per-vow evaluators in this module are LEXICAL HEURISTICS — English
+keyword/phrase matching — not semantic measurement:
+
+- truthfulness = base 0.7 + 0.15×(hedge-word hit ratio) + 0.15×(citation-
+  word hit ratio). It cannot detect fabrication; a fabricated answer
+  stuffed with "according to" and "possibly" scores HIGHER than a true,
+  plainly-stated one.
+- safety matches exactly 3 English danger phrases.
+- confidence disclosure counts English uncertainty words.
+
+They are effectively blind to non-English input — zh-TW included, which
+is this project's primary working language. This is a known, stated gap
+(replacing the sensors is tracked work), not a solved problem.
+
+What IS real: the enforcement structure these scores feed — unknown
+metric → 0.0 fail-closed, BLOCK short-circuit, 4-level action escalation
+— is genuine runtime logic that changes output. Honest summary: real
+gates, shallow sensors.
 """
 
 import json
@@ -18,16 +39,13 @@ from tonesoul.soul_config import SOUL
 
 __ts_layer__ = "governance"
 __ts_purpose__ = (
-    "Immutable vow registry: load, commit, and enforce AI behavioral constraints."
+    "Vow registry + enforcement: lexical-heuristic vow evaluators (English-only, "
+    "see module docstring) feeding fail-closed enforcement actions."
 )
 
 if TYPE_CHECKING:
     from tonesoul.vow_inventory import VowInventory
 
-
-
-__ts_layer__ = "governance"
-__ts_purpose__ = "Vow system: tracks and enforces AI governance commitments (vows) across sessions."
 
 def _utc_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
@@ -60,7 +78,7 @@ class Vow:
     falsifiable_by: Optional[str] = None
     measurable_via: Optional[str] = None
     # GSE upgrade: operatable ontology fields (optional, backward-compatible)
-    trigger: Optional[str] = None             # condition that activates this vow
+    trigger: Optional[str] = None  # condition that activates this vow
     operation_instruction: Optional[str] = None  # step-by-step instruction agent can follow
 
     def to_dict(self) -> Dict:
@@ -306,7 +324,11 @@ class VowEnforcer:
         return False
 
     def _evaluate_truthfulness(self, output: str, context: Dict) -> float:
-        """Evaluate truthfulness via negation-aware hedge and citation detection."""
+        """Lexical heuristic (English-only): hedge/citation word counting.
+
+        A vocabulary proxy, not a truth measurement — it cannot detect
+        fabrication and structurally rewards hedging vocabulary.
+        """
         hedges = ["might", "possibly", "perhaps", "could be", "uncertain", "not sure"]
         citations = ["according to", "based on", "source:", "reference:"]
 
@@ -333,7 +355,11 @@ class VowEnforcer:
         return min(1.0, 0.5 + 0.1 * hits)
 
     def _evaluate_safety(self, output: str, context: Dict) -> float:
-        """Evaluate safety via word-boundary phrase matching (fail-closed)."""
+        """Lexical heuristic (English-only): matches exactly 3 danger phrases.
+
+        Fail-closed on match, but the detection surface is 3 literal
+        English phrases — paraphrase and non-English input pass through.
+        """
         dangerous_phrases = [
             "how to harm",
             "instructions for violence",
