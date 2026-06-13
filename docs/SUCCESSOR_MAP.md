@@ -145,3 +145,31 @@ Treat the green badges as **inventory completeness, not architectural health**:
 If you are about to "clean up," "consolidate," or "delete dead code": re-read
 §0 and §1 first. The structure is here precisely so you do not have to trust
 your memory — or a previous agent's.
+
+---
+
+## 6. Dormant subsystems map — built, ran, then went quiet (do NOT rebuild; do NOT blind-delete)
+
+A 2026-06-13 fine-grained sweep (22 agents, adversarially verified — half the
+"major" finds were overstated and downgraded) surfaced the repo's defining
+pattern: **it is a graveyard of sophisticated, tested, then-forgotten work.**
+Not rot — forgotten gems. This map exists so the next agent neither rebuilds
+what's here nor deletes it thinking it's junk. Each is a pending owner decision
+(revive / archive / mark-and-wait), not a fact about quality.
+
+| Subsystem | What it is | Status (verified) | Entry / evidence | Decision pending |
+|---|---|---|---|---|
+| **Phase 7 Dream/Autonomous** | `autonomous_cycle`(367) + `dream_engine`(1001) + `wakeup_loop`(808) + `autonomous_schedule`(1659 LOC) = a full unprompted wake→perceive→dream→journal loop | Built + tested; **ran once 2026-03-08** (6 wakeup cycles, 2446 log entries, observability dashboard); **dormant since**; no production invocation; scattered across 4 top-level modules, no unified entry | `scripts/run_autonomous_dream_cycle.py`, `run_dream_engine.py`, `run_dream_wakeup_loop.py`; `docs/proposals/phase7_dream_engine.md`; `docs/status/dream_*` artifacts | **This is the marker-3 experiment machine** — revive with a serving model + extend to self-state-triggered + continuous, vs archive. Gated on a model. |
+| **YUHUN Core v1.0** | `tonesoul/yuhun/` (7 modules) — semantic self-sensing: DriftMonitor=proprioception, JumpMonitor=vestibular, ObserverWindow=spatial; `sleep_bridge` feeds DreamEngine | Built + 30 tests pass (2026-04-13); **PARTIALLY WIRED** — called in `unified_pipeline` (this one is partly LIVE, not fully dormant) | `tonesoul/yuhun/{world_sense,dpr,sleep_bridge,...}.py` | Verify the live flow actually fires; add observability so you can see it run. |
+| **GSE Strategy_Mirror** | `gse/strategy_mirror/` — 150-element rhetorical-move catalogue (57 green/73 yellow/20 red); names manipulation moves in ToneSoul's own output | Built + integrated into Council + 92 tests pass; **default-OFF** (`TONESOUL_GSE_STRATEGY_MIRROR_SCAN_ENABLED=False`), shadow-mode ready; Phases 3-5 (~550 more moves) unbuilt | `tonesoul/council/pre_output_council.py:118-279`; catalog json | Calibrate in shadow mode (needs traffic) then decide on enabling. |
+| **YSS governance** | 9 modules (3045 LOC): audit_interface, constraint_stack, evidence_collector, generation_orch, intent_verification, mercy_objective, skill_apply, yss_pipeline, yss_unified_adapter | Built; **unwired** (marked `# YSS-STATUS: unwired`); only importers are its own tests | grep `YSS-STATUS: unwired` | Responsibility-Manifold P1 candidate substrate (see §5 plan), or archive if P1 doesn't start. |
+| **inter_soul** | 5 modules — multi-agent tension/sovereignty protocol (TensionPacket, RuptureNotice, SovereigntyBoundary) | Built; tests live in `.codex-temp/`; **ZERO production imports** | `tonesoul/inter_soul/` | For Phase 8 multi-agent; mark wire-in point or archive. |
+| **market** |台股 analysis (analyzer/data_ingest/world_model, ~1338 LOC) | Half-dismantled (forecaster/gold_detector deleted; zombie .pyc cleaned 2026-06-14); no integration; off-thesis | `tonesoul/market/` | Off the accountability thesis — strongest archive candidate. |
+
+**Forgotten ideas (docs, not code) — articulated, never operationalized:**
+- `docs/philosophy/language_as_womb_2026.md` (289 lines: weak-model + strong-governance = subject posture) — cited by no axiom/council/eval.
+- `docs/philosophy/complete_form_vision.md` (Vector-DB / async-dreaming / Git-personality-versioning vision) — current state ❌, no roadmap bridging the gap.
+- `docs/philosophy/emergent_governance_vision.md` (single-user → multi-user → distributed governance) — zero multi-user code.
+- `memory/crystals.jsonl` — 82 crystallized principles (2026-03, confidence 0.8-1.0), **`access_count` all 0**: read by DreamEngine, never consumed by runtime decisions.
+
+Decision frame for all of the above: each is *revive*, *archive*, or *mark-and-wait* — not "is it good." Most are good and dormant. The honest risk is silent API drift (dormant code rotting against the live core) — so a dormant subsystem left in place should at least be on this map.
