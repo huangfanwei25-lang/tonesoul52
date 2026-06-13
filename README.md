@@ -60,6 +60,21 @@ adapter-ready architecture, LoRA-ready distillation.
 | 🛡️ Self-Governance | Unsafe or incoherent output is blocked or rewritten with audit traces. |
 | 📊 Live Dashboard | Real-time crystals, resonance stats, journal health, and repair signals. |
 
+## See the difference in 30 seconds
+
+A hard tradeoff where the reasoning genuinely splits. A helpfulness-maximizing
+assistant smooths it into a confident paragraph that hides the disagreement.
+ToneSoul refuses to fake consensus — it shows you exactly where the
+perspectives split and hands the decision back to you:
+
+```bash
+pip install -e .
+python examples/demo_declare_stance.py
+```
+
+No config, no LLM keys — it exercises the governance layer directly.
+`Honesty > Helpfulness`, implemented as a verdict (`DECLARE_STANCE`), not a slogan.
+
 ## Quick Start (5 minutes)
 
 ### 0) Try it in your browser (no install)
