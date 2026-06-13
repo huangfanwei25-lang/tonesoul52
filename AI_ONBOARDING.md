@@ -6,6 +6,13 @@
 
 ---
 
+> ⚠️ **Before you delete, refactor, or "clean up" anything**, read
+> [docs/SUCCESSOR_MAP.md](docs/SUCCESSOR_MAP.md) first. It is the deletion-hazard
+> / runtime-reachability map written after a 2026-06-13 consolidation nearly
+> deleted a live runtime module that *looked* dead. "Nobody imports it" ≠ "safe
+> to delete." That page lists the load-bearing surprises and the verification
+> recipe.
+
 ## Clean First-Hop Route
 
 1. Open `docs/AI_QUICKSTART.md`.
@@ -14,6 +21,8 @@
 4. Open `docs/foundation/README.md`.
 5. Read `task.md`.
 6. Only then widen into `DESIGN.md`, `docs/README.md`, `docs/architecture/`, or code.
+7. If your task involves deletion / consolidation / "dead code" removal:
+   [docs/SUCCESSOR_MAP.md](docs/SUCCESSOR_MAP.md) is mandatory pre-reading.
 
 Tiered entry options:
 
