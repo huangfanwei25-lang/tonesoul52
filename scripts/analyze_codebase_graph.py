@@ -186,6 +186,20 @@ ROOT_MODULE_LAYER: dict[str, str] = {
 # as a self-declaration (Phase 867), which takes priority over subpackage rules.
 MODULE_LAYER_OVERRIDES: dict[str, str] = {}
 
+# Honest naming (2026-06-13, Reality Sync PR 5): ALLOWED_DEPS is a DEPENDENCY
+# INVENTORY with an accepted-inversions ledger — NOT a strict-hierarchy
+# enforcement. It currently permits 75 directed cross-layer edges (~52% of all
+# 13×13 ordered layer pairs) including 8 BIDIRECTIONAL pairs (see
+# ACCEPTED_INVERSIONS below). With this much permitted, "0 layer_violations"
+# means "no NEW edge stepped outside an already-wide allowlist" — it does NOT
+# mean the architecture is a clean acyclic hierarchy. Two of the bidirectional
+# pairs (governance<->evolution, governance<->domain) were legitimized in
+# Phase 859/866 by widening the rules around dependencies the project itself
+# diagnosed as "genuinely inverted". That trade was made; this block now states
+# it plainly instead of letting the green badge imply strong layering.
+# Truly re-establishing hierarchy (interface inversion) is deferred — see
+# task.md "Reality Sync Patchset" PR5 (option c).
+
 # Allowed downward dependencies (layer A may import layer B)
 ALLOWED_DEPS: dict[str, set[str]] = {
     "surface": {
@@ -251,6 +265,46 @@ ALLOWED_DEPS: dict[str, set[str]] = {
     "infrastructure": {"shared"},
     "shared": set(),
     "legacy": {"shared", "infrastructure", "governance", "memory", "pipeline", "domain"},
+}
+
+# Accepted layer inversions: bidirectional pairs that ALLOWED_DEPS permits in
+# both directions. Each is an honest admission that these two layers do not
+# sit in a clean above/below relationship in the current code. Listing them
+# here (a) documents the inversion instead of hiding it inside ALLOWED_DEPS,
+# and (b) lets a guard test fail if a NEW bidirectional pair is silently added.
+# Re-tightening any of these to one-way is option (c) in the PR5 plan
+# (interface inversion), deliberately deferred. The justification per pair is
+# why the inversion exists today, not a claim that it is ideal.
+ACCEPTED_INVERSIONS: dict[tuple[str, str], str] = {
+    (
+        "domain",
+        "governance",
+    ): "domain types reach governance constants; governance reaches domain helpers (Phase 866 widen)",
+    (
+        "domain",
+        "observability",
+    ): "domain modules emit observability signals; observers read domain state",
+    (
+        "evolution",
+        "governance",
+    ): "council.runtime -> benevolence and governance.kernel -> resistance (diagnosed 'genuinely inverted', Phase 859/866)",
+    ("evolution", "observability"): "evolution trials are observed; observers read trial lineage",
+    (
+        "governance",
+        "observability",
+    ): "governance writes audit/trace; observers read governance state (observers observe)",
+    (
+        "governance",
+        "semantic",
+    ): "governance consumes semantic zones; semantic consults governance thresholds",
+    (
+        "memory",
+        "pipeline",
+    ): "memory.boot -> runtime_adapter and pipeline -> memory stores (Phase 866 widen)",
+    (
+        "observability",
+        "semantic",
+    ): "observability reads semantic state; semantic emits observable signals",
 }
 
 
