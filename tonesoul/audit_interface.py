@@ -15,10 +15,6 @@ __ts_layer__ = "observability"
 __ts_purpose__ = "Structured interface for querying and replaying audit records."
 
 
-__ts_layer__ = "observability"
-__ts_purpose__ = "Audit interface: common read surface for Aegis chain audit and integrity checks."
-
-
 def _load_frame_role_meta(frame_plan_path: Optional[str]) -> Dict[str, object]:
     if not frame_plan_path or not os.path.exists(frame_plan_path):
         return {}

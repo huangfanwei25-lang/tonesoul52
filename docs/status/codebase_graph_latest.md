@@ -1,6 +1,6 @@
 # ToneSoul Codebase Graph Analysis
 
-Generated: 2026-06-13T02:45:34Z
+Generated: 2026-06-13T03:27:27Z
 Package: `tonesoul`
 
 ## Summary
@@ -8,7 +8,7 @@ Package: `tonesoul`
 | Metric | Value |
 | --- | ---: |
 | Modules | 280 |
-| Lines | 86,499 |
+| Lines | 86,383 |
 | Classes | 532 |
 | Functions | 2,915 |
 | Import edges | 499 |
@@ -56,7 +56,7 @@ Nobody imports these. Potential dead code or standalone entry points.
 
 | Subpackage | Layer | Files | Lines | Classes | Functions |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `(root)` | — | 96 | 40,063 | 192 | 1180 |
+| `(root)` | — | 96 | 39,947 | 192 | 1180 |
 | `axioms` | — | 2 | 380 | 3 | 14 |
 | `backends` | infrastructure | 2 | 909 | 2 | 72 |
 | `cli` | surface | 3 | 285 | 0 | 10 |

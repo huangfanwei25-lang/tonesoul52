@@ -14,9 +14,6 @@ from .ystm.schema import stable_hash, utc_now
 # Responsibility Manifold program (docs/plans/responsibility_manifold_engineering_program_2026-06-12.md).
 # Do not assume runtime use. Canonical list + rationale: task.md > Reality Sync Patchset > PR5.
 
-__ts_layer__ = "pipeline"
-__ts_purpose__ = "Orchestrate multi-step generation with gate checkpoints."
-
 
 __ts_layer__ = "pipeline"
 __ts_purpose__ = (

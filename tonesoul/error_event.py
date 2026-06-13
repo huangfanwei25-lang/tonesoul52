@@ -18,14 +18,8 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List
 
 __ts_layer__ = "observability"
-__ts_purpose__ = (
-    "Error event schema and emission for observability pipeline."
-)
-
-
-
-__ts_layer__ = "observability"
 __ts_purpose__ = "Error event: structured governance error dataclass for observability pipeline."
+
 
 @dataclass
 class ErrorEvent:

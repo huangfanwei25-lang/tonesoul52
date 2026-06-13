@@ -15,10 +15,6 @@ __ts_layer__ = "governance"
 __ts_purpose__ = "Verify stated intent against behavioral signals and history."
 
 
-__ts_layer__ = "governance"
-__ts_purpose__ = "Intent verification: checks user intent signals against council posture for ambiguity detection."
-
-
 @dataclass
 class Intent:
     surface: str

@@ -18,14 +18,8 @@ from enum import Enum
 from typing import Dict, List, Optional
 
 __ts_layer__ = "observability"
-__ts_purpose__ = (
-    "Detect unexpected semantic jumps between turns."
-)
+__ts_purpose__ = "Detect unexpected semantic jumps between turns."
 
-
-
-__ts_layer__ = "observability"
-__ts_purpose__ = "Jump monitor: detects abrupt governance-state jumps from tension or drift thresholds."
 
 class LockdownStatus(str, Enum):
     NORMAL = "normal"
