@@ -46,7 +46,7 @@ python scripts/end_agent_session.py --agent claude-sonnet-4-6 --summary "..." --
 | 足跡 | Redis `ts:footprints` | 最近 100 次 agent 訪問紀錄 |
 | 防禦鏈 | Redis `ts:aegis:chain_head` + `.aegis/keys/` | hash chain + Ed25519 keypairs |
 | 自我日記 | `memory/self_journal.jsonl` | AI 的自我反思（council 產出）|
-| 私密記憶 | `OpenClaw-Memory/` (submodule) | 向量記憶，`ask_my_brain.py` 查詢 |
+| 記憶引擎 | `OpenClaw-Memory/` (submodule，公開框架) | 向量記憶引擎，`ask_my_brain.py` 查詢；真實記憶資料在本機 `memory_base/`（gitignored，不入任何 repo）|
 | Handoff | `memory/handoff/` | AI 之間的交接筆記 |
 
 ## 多 Agent 接入
@@ -63,7 +63,7 @@ python scripts/gateway.py --port 7700 --token YOUR_SECRET
 
 ## 核心文件（按優先序）
 
-1. `AXIOMS.json` — 7 條不可變公理
+1. `AXIOMS.json` — 8 條不可變公理（v1.1.0，2026-04 增補 Axiom 8 記憶主權）
 2. `AGENTS.md` — AI 協作手冊
 3. `AI_ONBOARDING.md` — AI 入口總覽
 4. `docs/AI_QUICKSTART.md` — 最小正確流程
