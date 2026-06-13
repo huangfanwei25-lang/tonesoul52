@@ -84,7 +84,6 @@ ROOT_MODULE_LAYER: dict[str, str] = {
     "tension_engine": "governance",
     "risk_calculator": "governance",
     "drift_monitor": "governance",
-    "drift_tracker": "governance",
     "stale_rule_verifier": "governance",
     "seed_schema_check": "governance",
     "intent_verification": "governance",
