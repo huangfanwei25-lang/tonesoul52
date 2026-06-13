@@ -83,3 +83,14 @@ hide the same gap, not close it. This is the finding — stated, not buried.
    that wording with measurement.
 
 Re-run: `python scripts/compare_sensor_approaches.py`
+
+---
+
+## Update (post-fix, 2026-06-13)
+
+Decision-input item 1 (zh-TW language coverage) was shipped: `_evaluate_safety`
+gained 6 specific zh-TW danger phrases (substring-matched), with over-block
+guards proving benign Chinese (recipes, emotional-harm discussion, law/news) is
+not censored. The offline ceiling is unchanged — fabrication and paraphrased
+intent still evade, as this phase predicted. Item 2 (LLM-judge) remains the real
+fix, now unblocked by available compute (P1 Phase 3).

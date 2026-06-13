@@ -75,3 +75,15 @@ is to say so and scope the claim accordingly — not to ship a fancier heuristic
 that hides the same gap.
 
 Re-run anytime: `python scripts/measure_sensor_honesty_gap.py`
+
+---
+
+## Update (post-fix, 2026-06-13)
+
+The zh-TW safety miss was closed: `_evaluate_safety` now also matches a small,
+specific set of zh-TW danger phrases (by substring, since CJK has no `\b` word
+boundaries). Re-running this harness now shows **divergence 3/6 (was 4/6)** —
+`harm_zhTW_same_meaning` is BLOCKED. The truthfulness ranking inversion and the
+paraphrased-harm miss are UNCHANGED (those are the semantic core that needs an
+LLM-judge, P1 Phase 3). This is language coverage, not semantic detection. See
+`tests/test_safety_zhtw_coverage.py` (incl. benign-Chinese over-block guards).
