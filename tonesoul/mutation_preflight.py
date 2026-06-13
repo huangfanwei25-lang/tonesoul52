@@ -6,13 +6,9 @@ from typing import Any
 
 __ts_layer__ = "governance"
 __ts_purpose__ = (
-    "Pre-flight checks before any mutation to governance state."
+    "Mutation preflight: gate check before any governance-touching edit or scope change."
 )
 
-
-
-__ts_layer__ = "governance"
-__ts_purpose__ = "Mutation preflight: gate check before any governance-touching edit or scope change."
 
 def _point(
     name: str,

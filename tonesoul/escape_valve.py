@@ -13,13 +13,9 @@ from typing import Optional
 
 __ts_layer__ = "governance"
 __ts_purpose__ = (
-    "Controlled release mechanism for governance deadlocks."
+    "Escape valve: provides bounded off-ramp when governance constraints are over-binding."
 )
 
-
-
-__ts_layer__ = "governance"
-__ts_purpose__ = "Escape valve: provides bounded off-ramp when governance constraints are over-binding."
 
 class EscapeReason(str, Enum):
     """Reasons for triggering the Escape Valve."""

@@ -13,9 +13,6 @@ from typing import Any, Dict, Optional
 # Responsibility Manifold program (docs/plans/responsibility_manifold_engineering_program_2026-06-12.md).
 # Do not assume runtime use. Canonical list + rationale: task.md > Reality Sync Patchset > PR5.
 
-__ts_layer__ = "pipeline"
-__ts_purpose__ = "Unified adapter bridging YSS gates and the runtime pipeline."
-
 
 __ts_layer__ = "pipeline"
 __ts_purpose__ = (

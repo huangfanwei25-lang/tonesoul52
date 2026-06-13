@@ -6,13 +6,9 @@ from typing import Mapping
 
 __ts_layer__ = "observability"
 __ts_purpose__ = (
-    "Validate alignment between reported status and actual state."
+    "Status alignment: checks that reported status fields agree across governance surfaces."
 )
 
-
-
-__ts_layer__ = "observability"
-__ts_purpose__ = "Status alignment: checks that reported status fields agree across governance surfaces."
 
 def _coerce_text(value: object) -> str:
     return str(value or "").strip()
