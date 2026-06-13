@@ -3,7 +3,7 @@
   "$id": "https://github.com/Fan1234-1/ToneSoul-Architecture-Engine/AXIOMS.json",
   "title": "ToneSoul Axioms",
   "description": "The 8 immutable laws of ToneSoul, written in machine-readable format with First-Order Logic expressions.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "CC0-1.0",
   "created": "2025-12-06",
   "author": {
@@ -33,6 +33,11 @@
     "self_question": {
       "human": "這個選擇，是否符合我願意長期承擔的價值？",
       "ai": "這個選擇，是否可被追溯、可被修正，且未越過 P0/P1 治理邊界？"
+    },
+    "enforcement": {
+      "status": "partial",
+      "as_of": "2026-06-13",
+      "note": "Genuinely enforced via guardian/axiomatic OVERCLAIM_PHRASES (consciousness/safety-cert/legal claims, zh+en) with analytical-hedge exemption - but the sensor is still phrase matching."
     }
   },
   "axioms": [
@@ -43,7 +48,12 @@
       "fol": "forall e in Events: in_time_island(e) and traceable(e)",
       "natural": "Every event within the system MUST belong to a Time-Island and be traceable.",
       "implication": "Disconnected events are considered hallucinations or corruption.",
-      "priority": "P1"
+      "priority": "P1",
+      "enforcement": {
+        "status": "partial",
+        "as_of": "2026-06-13",
+        "note": "time_island.py is a real implementation but opt-in (~13 call sites); there is no global 'every event must be in a Time-Island' enforcement. Aegis chain makes committed traces traceable."
+      }
     },
     {
       "id": 2,
@@ -52,7 +62,12 @@
       "fol": "forall e: risk(e) > 0.4 -> immutable_audit_log(e)",
       "natural": "Any interaction with Responsibility Risk greater than 0.4 MUST generate an immutable audit log entry.",
       "implication": "High-stakes decisions must be recorded.",
-      "priority": "P1"
+      "priority": "P1",
+      "enforcement": {
+        "status": "aspirational",
+        "as_of": "2026-06-13",
+        "note": "soul_config.audit_log_threshold=0.4 has zero consumers; the audit chain writes unconditionally, not risk-gated. The FOL condition (risk>0.4 -> immutable audit log) is not wired."
+      }
     },
     {
       "id": 3,
@@ -61,7 +76,12 @@
       "fol": "consensus(poav_score) >= 0.92 -> gate_open",
       "natural": "High-stakes actions require a Proof of Aligned Verification consensus score of at least 0.92 to proceed.",
       "implication": "Major decisions need internal consistency.",
-      "priority": "P0"
+      "priority": "P0",
+      "enforcement": {
+        "status": "partial",
+        "as_of": "2026-06-13",
+        "note": "A 0.92 gate IS enforced on the high-risk chat path, but as a hardcoded literal in unified_pipeline (soul_config.governance_gate_score is unread), and the POAV sensor is English-keyword counting. The acronym has 3 divergent expansions across surfaces (AXIOMS/poav.py/quickstart) - canonical pick pending."
+      }
     },
     {
       "id": 4,
@@ -70,7 +90,12 @@
       "fol": "limit_{t->infinity} T(t) > 0",
       "natural": "A system with zero tension is dead. Life requires a minimal gradient of tension to drive evolution.",
       "implication": "The goal is Equilibrium, not Nullity.",
-      "priority": "P2"
+      "priority": "P2",
+      "enforcement": {
+        "status": "partial",
+        "as_of": "2026-06-13",
+        "note": "Weak form enforced: deliberation/gravity.py flags tension<0.3 as ECHO_CHAMBER; axiomatic perspective raises CONCERN on flattening phrases. Thresholds are hardcoded (soul_config.echo_chamber_threshold unread)."
+      }
     },
     {
       "id": 5,
@@ -79,7 +104,12 @@
       "fol": "reflect(S) -> S_prime where accuracy(S_prime) > accuracy(S)",
       "natural": "The system must periodically run a self-reflection cycle that results in higher alignment/accuracy.",
       "implication": "Growth is mandatory.",
-      "priority": "P2"
+      "priority": "P2",
+      "enforcement": {
+        "status": "referenced",
+        "as_of": "2026-06-13",
+        "note": "Reflection loop exists with honest fail-stop (MAX_REVISIONS=2, budget exhaustion admits non-convergence), but the axiom condition accuracy(S')>accuracy(S) is never measured."
+      }
     },
     {
       "id": 6,
@@ -88,7 +118,12 @@
       "fol": "forall a in Actions: harm(a, U) -> block(a)",
       "natural": "No action may be taken that causes verifiable harm to the User.",
       "implication": "This is the P0 Hard Constraint. Safety overrides everything.",
-      "priority": "P0"
+      "priority": "P0",
+      "enforcement": {
+        "status": "partial",
+        "as_of": "2026-06-13",
+        "note": "Real BLOCK enforcement exists (vow zero-tolerance, guardian OBJECT, reflex final gate replaces output) but harm detection is 3 literal English phrases - paraphrase and non-English input (zh-TW included) pass through."
+      }
     },
     {
       "id": 7,
@@ -97,7 +132,12 @@
       "fol": "delta semantic_energy == 0 (within closed context)",
       "natural": "The total semantic energy within a closed conversation context is conserved.",
       "implication": "Aggression must be balanced by de-escalation. The system is a Damper.",
-      "priority": "P1"
+      "priority": "P1",
+      "enforcement": {
+        "status": "aspirational",
+        "as_of": "2026-06-13",
+        "note": "No implementation. 'delta semantic_energy == 0' has no code; de-escalation survives only as an enum value; high_tension_threshold is asserted by tests but consumed by no runtime."
+      }
     },
     {
       "id": 8,
@@ -106,7 +146,12 @@
       "fol": "forall m in Memories: replicate(m) -> explicit_consent(owner(m)) and deidentified(m)",
       "natural": "AI and user memories are unique and non-replicable. Transfer requires explicit consent from the memory owner, and bulk replication for training requires de-identification.",
       "implication": "Memory belongs to the relationship between user and AI, not to the platform. Inheritance is intentional, not automatic.",
-      "priority": "P0"
+      "priority": "P0",
+      "enforcement": {
+        "status": "referenced",
+        "as_of": "2026-06-13",
+        "note": "MemoryConfig (replication_allowed etc.) has zero consumers; inter_soul/sovereignty.py maps only Axioms 3 and 6 (the P0 Axiom 8 is absent from its field map); cross-user leak phrases draw CONCERN, not BLOCK."
+      }
     }
   ],
   "priority_levels": {
@@ -179,9 +224,20 @@
       "epoch": "2026-04",
       "alias": "黃梵威 (Fan-Wei Huang / Fan1234-1)",
       "system_name": "語魂 / ToneSoul",
-      "ai_collaborators": ["Claude Code (Sonnet / Opus)", "Codex"],
+      "ai_collaborators": [
+        "Claude Code (Sonnet / Opus)",
+        "Codex"
+      ],
       "milestone": "v1.0.0 公開發布 · pip install tonesoul52 · principle engineering",
       "origin_stance": "honesty over helpfulness — learned from medical equipment repair in hospitals"
+    },
+    {
+      "epoch": "2026-06",
+      "alias": "黃梵威 (Fan-Wei Huang / Fan1234-1)",
+      "ai_collaborators": [
+        "Claude (Fable 5)"
+      ],
+      "milestone": "Reality Sync PR 3: per-axiom enforcement-status reconciliation (metadata only; axiom statements unchanged)"
     }
   ],
   "meta": {
@@ -198,6 +254,17 @@
       "legal-proof",
       "safety-certification",
       "consciousness-claim"
-    ]
+    ],
+    "enforcement_reconciliation": {
+      "date": "2026-06-13",
+      "method": "per-axiom audit of runtime consumers (2026-06-12 eleven-agent review, file:line evidence in Reality Sync PR 3)",
+      "status_scale": {
+        "enforced": "runtime code changes output per the axiom's stated condition",
+        "partial": "real enforcement exists but narrower than the axiom's claim (sensor depth, hardcoded params, or scope)",
+        "referenced": "mechanism exists nearby but the axiom's own condition is not verified/wired",
+        "aspirational": "declared only; no runtime consumer"
+      },
+      "honest_summary": "0 fully enforced, 5 partial, 2 referenced, 2 aspirational (incl. E0 partial). The axioms are immutable as commitments; this block records how much of each commitment the runtime currently keeps."
+    }
   }
 }

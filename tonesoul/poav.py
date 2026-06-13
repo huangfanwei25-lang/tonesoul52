@@ -1,8 +1,24 @@
+"""POAV score — lexical heuristic, not semantic verification.
+
+Sensor honesty (2026-06-13, Reality Sync PR 3): this module counts
+English evidence keywords and sentence-length statistics. It is a proxy
+for claim-language posture, blind to meaning and to non-English input
+(zh-TW included). Note also a vocabulary drift that is still unresolved:
+AXIOMS.json Axiom 3 expands POAV as "Proof of Aligned Verification",
+this module as "posture-over-agent-vocabulary", and the quickstart as
+"Parsimony/Orthogonality/Audibility/Verifiability" — three different
+expansions for one acronym; picking the canonical one is an owner
+decision tracked in the Reality Sync program.
+"""
+
 import re
 from typing import Dict, List
 
 __ts_layer__ = "observability"
-__ts_purpose__ = "POAV: posture-over-agent-vocabulary score — measures claim-language alignment."
+__ts_purpose__ = (
+    "POAV score — lexical heuristic (English keyword + sentence stats) proxy for "
+    "claim-language posture; not semantic verification."
+)
 
 DEFAULT_MAX_TOKENS = 800
 DEFAULT_MAX_AVG_SENTENCE = 40
