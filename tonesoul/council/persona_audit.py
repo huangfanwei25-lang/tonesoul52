@@ -117,7 +117,7 @@ def audit_persona_uniqueness(
         recommendation=recommendation,
     )
     try:
-        from memory.provenance_chain import ProvenanceManager
+        from tonesoul.memory.provenance_chain import ProvenanceManager
 
         ProvenanceManager().add_record(
             event_type="council_event",

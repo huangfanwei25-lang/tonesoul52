@@ -7,6 +7,50 @@
 
 ---
 
+## Active Program: Reality Sync Patchset (2026-06-13)
+> Ratified by owner 2026-06-13 after the 2026-06-12 eleven-agent external audit.
+> The constraint set below is an **active vow set**, not a task checklist — every
+> agent working any Reality Sync PR is bound by it.
+
+- Program Goal: bring public claims, packaging, runtime gates, CI, and privacy
+  labels back to verifiable consistency. No new capability.
+- Vow set (hard constraints):
+  1. No new philosophy concepts; no long-form new docs (editing/deleting wrong
+     claims is allowed).
+  2. Every patch must reduce drift first: delete / merge / downgrade / rename /
+     fix runtime. Do not cover an old problem with a new artifact.
+  3. A claim that does not hold gets downgraded in the docs first — never
+     pretend completion.
+  4. External claims carry E1–E5 labels; no claim above E3 without runtime
+     enforcement.
+  5. Fixes that touch runtime / CI / packaging / security boundary take
+     priority over narrative fixes.
+  6. Every PR ships: failing reproduction, minimal fix, test (or explicit
+     downgrade).
+  7. Every PR states its net surface-area effect (files +/−, lines +/−, claims
+     upgraded/downgraded, runtime guarantees added/removed). If additions
+     exceed deletions, justify why this is not generation-over-convergence.
+  8. No victory language unless a failing reproduction existed before the
+     patch and passes after it. Do not call anything "fixed", "proven",
+     "production-ready", or "non-repudiable" without the corresponding test or
+     external verification.
+- PR sequence (owner-ratified order):
+  - PR 1: Baseline Green + Packaging Truth — master's 4 red tests + pip-only
+    council import (branch `fix/pr1-baseline-green-packaging-truth-20260613`)
+  - PR 2: Public Claim Downgrade — production / non-repudiable / honesty-cap /
+    7-immutable-laws / pip-install-audit-extend, plus stale numbers and dead
+    links across README / PITCH / CLAUDE.md / docs/INDEX.md
+  - PR 3: Sensor Honesty — keyword sensors renamed lexical heuristics; zh-TW
+    blind spot stated as a gap; axiom enforcement status reconciled
+    (enforced / referenced / aspirational)
+  - PR 4: Governance Self-Application — branch protection (strictly after
+    master is green), chain_head reconciliation, unsigned-ledger honest
+    labeling, embedded-hash drift warning repair
+  - PR 5: Consolidation + explicit layer-boundary redefinition — deletions
+    must exceed additions
+- Supporting analysis: `docs/plans/responsibility_manifold_engineering_program_2026-06-12.md`
+  (parked plan; this program supersedes its P0 section).
+
 ## Active Program: Launch Readiness And Design Legibility (2026-03-30)
 > Merged from: Launch Maturity Go/No-Go + Design Center & Successor Continuation
 

@@ -10,7 +10,7 @@ import os
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from memory.provenance_chain import ProvenanceManager
+from tonesoul.memory.provenance_chain import ProvenanceManager
 
 from ..benevolence import AuditLayer, AuditResult, filter_benevolence
 from ..escape_valve import EscapeValve, EscapeValveConfig

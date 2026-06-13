@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import TYPE_CHECKING, List, Optional, Union
 
-from memory.genesis import Genesis
+from tonesoul.shared.genesis import Genesis
 
 if TYPE_CHECKING:
     from tonesoul.gse.strategy_mirror import StrategySignature

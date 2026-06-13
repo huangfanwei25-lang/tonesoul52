@@ -268,7 +268,15 @@ def _claim_evidence_level(claim_text: str, blocked_reasons: list[str]) -> str:
 
 
 def _run_session_start(agent_id: str, *, tier: int = 0) -> dict[str, Any]:
-    from scripts.start_agent_session import run_session_start_bundle
+    # Repo-coupled call path: scripts/ is not shipped in the wheel.
+    # Fail with an explicit boundary error instead of a bare ModuleNotFoundError.
+    try:
+        from scripts.start_agent_session import run_session_start_bundle
+    except ImportError as exc:
+        raise RuntimeError(
+            "MCP session_start requires the repo checkout "
+            "(scripts/ is not part of the tonesoul52 wheel)"
+        ) from exc
 
     return _quiet_call(run_session_start_bundle, agent_id=agent_id, tier=tier, no_ack=True)
 

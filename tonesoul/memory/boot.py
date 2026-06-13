@@ -16,15 +16,13 @@ from pathlib import Path
 from time import perf_counter
 from typing import Dict, List, Optional
 
-from memory.consolidator import check_and_consolidate
 from tonesoul.memory.crystallizer import MemoryCrystallizer
 from tonesoul.memory.handoff_ingester import HandoffIngester
+from tonesoul.memory.journal_consolidator import check_and_consolidate
 from tonesoul.memory.soul_db import JsonlSoulDB
 
 __ts_layer__ = "memory"
-__ts_purpose__ = (
-    "Memory boot: initialize memory subsystem on session start."
-)
+__ts_purpose__ = "Memory boot: initialize memory subsystem on session start."
 
 
 @dataclass(frozen=True)
