@@ -5,15 +5,19 @@ from typing import Dict, List, Optional, Sequence, Tuple
 
 from .ystm.schema import utc_now
 
-__ts_layer__ = "observability"
-__ts_purpose__ = (
-    "Collect and index evidence records for governance review."
-)
+# YSS-STATUS: unwired (2026-06-13, Reality Sync PR5) — built but not imported by
+# any live runtime path (verified: only importer is the dead yss_pipeline closure
+# and its own tests). Retained, NOT deleted, as candidate substrate for the
+# Responsibility Manifold program (docs/plans/responsibility_manifold_engineering_program_2026-06-12.md).
+# Do not assume runtime use. Canonical list + rationale: task.md > Reality Sync Patchset > PR5.
 
+__ts_layer__ = "observability"
+__ts_purpose__ = "Collect and index evidence records for governance review."
 
 
 __ts_layer__ = "observability"
 __ts_purpose__ = "Evidence collector: gathers and structures evidence for verification claims."
+
 
 def _load_json(path: str) -> Optional[Dict[str, object]]:
     try:

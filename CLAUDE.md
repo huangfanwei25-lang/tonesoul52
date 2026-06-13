@@ -61,6 +61,12 @@ python scripts/gateway.py --port 7700 --token YOUR_SECRET
 
 `tonesoul/` 是唯一有效的程式碼來源。不要讀 `.archive/`。
 
+**動手刪除 / 重構 / 「清理死碼」之前，先讀 `docs/SUCCESSOR_MAP.md`。** 那是
+刪除危害 / runtime 可達性地圖——2026-06-13 一次 consolidation 差點刪掉看似
+死掉、實為 runtime 命脈的 `yss_gates`。「沒人 import」≠「可安全刪除」。地圖
+列出「看似退役實為活線」的模組、刻意保留的 unwired 子系統、以及刪除前的驗證
+紀律。
+
 ## 核心文件（按優先序）
 
 1. `AXIOMS.json` — 8 條不可變公理（v1.1.0，2026-04 增補 Axiom 8 記憶主權）
