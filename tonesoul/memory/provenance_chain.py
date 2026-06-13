@@ -54,8 +54,13 @@ class IsnadNode:
         agent_id: str,
         role: str,  # PROPOSER, WITNESS, REVIEWER, VOUCHER
         timestamp: str = None,
-        signature: str = "SIG_AUTO_GENERATED",
+        signature: str = "UNSIGNED",
     ):
+        # Reality Sync PR 4: the previous default "SIG_AUTO_GENERATED"
+        # looked like a signature had been produced — nothing was ever
+        # signed on this path (31k+ ledger entries carried the
+        # placeholder). "UNSIGNED" states the truth; real signatures,
+        # if introduced, must replace this default explicitly.
         self.agent_id = agent_id
         self.role = role
         self.timestamp = timestamp or _iso_now()

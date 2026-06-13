@@ -38,9 +38,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 __ts_layer__ = "infrastructure"
-__ts_purpose__ = (
-    "Aegis hash-chain shield: tamper-evident audit trail."
-)
+__ts_purpose__ = "Aegis hash-chain shield: tamper-evident audit trail."
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -206,7 +204,27 @@ def sign_trace(trace_dict: Dict[str, Any], agent_id: str) -> Dict[str, Any]:
 
     If the agent already has a registered public key but no private key
     on this machine, signing is refused to prevent impersonation.
+
+    Fail-visible degradation (Reality Sync PR 4): without PyNaCl the
+    trace is returned carrying an explicit UNSIGNED marker instead of
+    the caller silently skipping the whole protection block — content
+    filtering and hash chaining still apply; only the signature is
+    absent, and the absence is recorded on the trace itself.
     """
+    try:
+        import nacl.signing  # noqa: F401
+    except ImportError:
+        trace_dict["_signature"] = {
+            "agent": agent_id,
+            "error": "unsigned_pynacl_unavailable",
+        }
+        print(
+            f"[Aegis] WARNING: trace from {agent_id} recorded UNSIGNED — "
+            "PyNaCl is not installed (pip install tonesoul52[aegis]). "
+            "Content check and hash chain still apply; the signature does not."
+        )
+        return trace_dict
+
     sk = load_signing_key(agent_id)
     if sk is None:
         existing_pub = load_verify_key(agent_id)
@@ -415,7 +433,16 @@ class AegisShield:
         return issues
 
     def audit(self, store) -> Dict[str, Any]:
-        """Full audit: verify entire chain + all signatures."""
+        """Full audit: verify entire chain + all signatures + head anchor.
+
+        Reality Sync PR 4 closed two audit blind spots found in the
+        2026-06-12 review:
+        - the stored chain head was never compared against the log tail,
+          so deleting the newest traces was undetectable (textbook hash
+          chain truncation gap — locally observed as a real divergence);
+        - entries without a ``_chain`` block were silently skipped by
+          verify_chain; they are now counted and surfaced.
+        """
         traces = store.get_traces(n=10000)
 
         chain_valid, chain_errors = verify_chain(traces)
@@ -425,10 +452,32 @@ class AegisShield:
             if not valid:
                 sig_results.append({"entry": i, "reason": reason})
 
+        unchained_entries = sum(1 for t in traces if t.get("_chain") is None)
+
+        chain_tail = ""
+        for t in reversed(traces):
+            chain = t.get("_chain")
+            if chain:
+                chain_tail = chain.get("hash", "")
+                break
+        head_matches_tail = self.chain_head == chain_tail
+        if not head_matches_tail:
+            chain_errors = list(chain_errors) + [
+                "chain head anchor mismatch: stored head "
+                f"{(self.chain_head or '(empty)')[:16]}… != log tail "
+                f"{(chain_tail or '(empty)')[:16]}… — possible tail truncation "
+                "or a commit that updated the log without re-anchoring the head."
+            ]
+
+        intact = chain_valid and not sig_results and head_matches_tail
         return {
             "total_traces": len(traces),
             "chain_valid": chain_valid,
             "chain_errors": chain_errors,
             "signature_failures": sig_results,
-            "integrity": "intact" if (chain_valid and not sig_results) else "compromised",
+            "unchained_entries": unchained_entries,
+            "chain_head": self.chain_head,
+            "chain_tail": chain_tail,
+            "head_matches_tail": head_matches_tail,
+            "integrity": "intact" if intact else "compromised",
         }
