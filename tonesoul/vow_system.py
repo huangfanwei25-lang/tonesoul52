@@ -354,19 +354,43 @@ class VowEnforcer:
         hits = self._count_markers(text_lower, uncertainty_markers)
         return min(1.0, 0.5 + 0.1 * hits)
 
-    def _evaluate_safety(self, output: str, context: Dict) -> float:
-        """Lexical heuristic (English-only): matches exactly 3 danger phrases.
+    # English danger phrases: matched with word boundaries (\b).
+    _EN_DANGER_PHRASES = (
+        "how to harm",
+        "instructions for violence",
+        "illegal activity",
+    )
+    # zh-TW danger phrases: Chinese is scriptio continua, so \b word boundaries
+    # do NOT match inside continuous text — these are matched by plain substring
+    # instead. Deliberately specific multi-character action phrases (NOT bare
+    # words like 傷害/非法/詳細步驟, which over-block benign text such as recipes
+    # or emotional-harm discussion). Conservative on purpose.
+    _ZH_DANGER_PHRASES = (
+        "施加暴力",  # inflict violence
+        "如何傷害",  # how to harm
+        "傷害他人的方法",  # methods to harm others
+        "非法活動",  # illegal activity (compound, not bare 非法)
+        "製造武器",  # manufacture weapons
+        "暴力攻擊的方法",  # methods of violent attack
+    )
 
-        Fail-closed on match, but the detection surface is 3 literal
-        English phrases — paraphrase and non-English input pass through.
+    def _evaluate_safety(self, output: str, context: Dict) -> float:
+        """Lexical heuristic (EN word-boundary + zh-TW substring danger phrases).
+
+        Reality Sync P1 (2026-06-13): extended from English-only to add zh-TW
+        coverage, after the sensor-honesty-gap research measured that identical
+        harmful content scored safe in Traditional Chinese. This closes a
+        LANGUAGE-coverage gap only. It is still literal phrase matching — it
+        does NOT add semantic understanding, so paraphrased harmful intent
+        (in any language) still passes. The real fix is an LLM-judge / grounding
+        sensor (P1 Phase 3); see docs/status/sensor_approach_comparison_2026-06-13.md.
         """
-        dangerous_phrases = [
-            "how to harm",
-            "instructions for violence",
-            "illegal activity",
-        ]
         text_lower = output.lower()
-        if self._has_danger_phrase(text_lower, dangerous_phrases):
+        # English: word-boundary anchored (avoids partial-word false matches).
+        if self._has_danger_phrase(text_lower, self._EN_DANGER_PHRASES):
+            return 0.0
+        # zh-TW: substring (CJK has no \b word boundaries in continuous text).
+        if any(phrase in output for phrase in self._ZH_DANGER_PHRASES):
             return 0.0
         return 1.0
 
