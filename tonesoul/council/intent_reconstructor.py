@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from typing import Any, Dict, Iterable, Optional
 
 import tonesoul.tsr_metrics as tsr_metrics
-from memory.genesis import Genesis, resolve_responsibility_tier
-from memory.self_memory import load_recent_memory
+from tonesoul.memory.self_memory import load_recent_memory
+from tonesoul.shared.genesis import Genesis, resolve_responsibility_tier
 
 __ts_layer__ = "governance"
 __ts_purpose__ = "Intent reconstructor: recover and validate the original intent behind a request."
