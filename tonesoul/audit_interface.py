@@ -5,15 +5,19 @@ from typing import Dict, List, Optional
 
 from .ystm.schema import stable_hash, utc_now
 
-__ts_layer__ = "observability"
-__ts_purpose__ = (
-    "Structured interface for querying and replaying audit records."
-)
+# YSS-STATUS: unwired (2026-06-13, Reality Sync PR5) — built but not imported by
+# any live runtime path (verified: only importer is the dead yss_pipeline closure
+# and its own tests). Retained, NOT deleted, as candidate substrate for the
+# Responsibility Manifold program (docs/plans/responsibility_manifold_engineering_program_2026-06-12.md).
+# Do not assume runtime use. Canonical list + rationale: task.md > Reality Sync Patchset > PR5.
 
+__ts_layer__ = "observability"
+__ts_purpose__ = "Structured interface for querying and replaying audit records."
 
 
 __ts_layer__ = "observability"
 __ts_purpose__ = "Audit interface: common read surface for Aegis chain audit and integrity checks."
+
 
 def _load_frame_role_meta(frame_plan_path: Optional[str]) -> Dict[str, object]:
     if not frame_plan_path or not os.path.exists(frame_plan_path):

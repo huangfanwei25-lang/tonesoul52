@@ -46,8 +46,28 @@
   - PR 4: Governance Self-Application — branch protection (strictly after
     master is green), chain_head reconciliation, unsigned-ledger honest
     labeling, embedded-hash drift warning repair
-  - PR 5: Consolidation + explicit layer-boundary redefinition — deletions
-    must exceed additions
+  - PR 5: Consolidation + explicit layer-boundary redefinition. Owner
+    decision 2026-06-13 (after PR5 verification reclassified the targets):
+    the "yss zombie chain" is actually an entire **unwired governance/audit
+    subsystem** (YSS), not dead re-exports — so it is RETAINED and flagged,
+    not deleted. Net effect: additions > deletions this PR (annotation +
+    honest layer naming traded for the big deletion), which overrides the
+    "deletions must exceed additions" tagline by explicit owner choice, not
+    generation-creep. Layer-boundary direction: honest-naming (option b),
+    not interface-inversion (option c, deferred).
+  - PR 5b: 35 double-`__ts_purpose__` files (stash-pop residue) — metadata
+    cleanup, split out for isolated review (orthogonal, zero runtime impact;
+    13 files need the non-obvious "keep first declaration" fix per the PR5
+    verification pass).
+- **Unwired YSS subsystem (retained, candidate for Responsibility Manifold P1):**
+  these 9 modules are built but imported by no live runtime path — kept as
+  candidate sensor/accountability substrate, marked in-file with
+  `# YSS-STATUS: unwired`. Do not assume runtime use; do not silently delete.
+  `yss_pipeline`, `yss_unified_adapter`, `audit_interface`, `evidence_collector`,
+  `generation_orch`, `intent_verification`, `mercy_objective`, `skill_apply`,
+  `constraint_stack`. (Live, NOT unwired, do not touch: `yss_gates` — runtime
+  POAV gate at unified_pipeline.py:643 — `tsr_metrics`, `action_set`,
+  `memory_manager`, `skill_gate`, `skill_promoter`.)
 - Supporting analysis: `docs/plans/responsibility_manifold_engineering_program_2026-06-12.md`
   (parked plan; this program supersedes its P0 section).
 
