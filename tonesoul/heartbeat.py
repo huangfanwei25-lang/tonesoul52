@@ -7,14 +7,12 @@ from datetime import datetime, timezone
 from typing import Any, Awaitable, Callable, Mapping, Optional
 from uuid import uuid4
 
-from memory.genesis import Genesis
 from tonesoul.gateway import GatewayClient, GatewaySession
 from tonesoul.openclaw_auditor import OpenClawAuditor, OpenClawAuditReport
+from tonesoul.shared.genesis import Genesis
 
 __ts_layer__ = "observability"
-__ts_purpose__ = (
-    "Periodic heartbeat probe to validate AI session continuity."
-)
+__ts_purpose__ = "Periodic heartbeat probe to validate AI session continuity."
 
 CouncilCheck = Callable[[Mapping[str, Any]], Any]
 SleepFunc = Callable[[float], Awaitable[None]]
@@ -25,7 +23,16 @@ def _utc_now() -> str:
 
 
 def _default_council_check(payload: Mapping[str, Any]) -> dict[str, Any]:
-    from integrations.openclaw.skills.tonesoul import invoke_skill
+    # Repo-coupled call path: integrations/ is not shipped in the wheel.
+    # Fail with an explicit boundary error instead of a bare ModuleNotFoundError.
+    try:
+        from integrations.openclaw.skills.tonesoul import invoke_skill
+    except ImportError as exc:
+        raise RuntimeError(
+            "heartbeat default council_check requires the repo checkout "
+            "(integrations/ is not part of the tonesoul52 wheel); "
+            "pass an explicit council_check callable in pip-only environments"
+        ) from exc
 
     return invoke_skill("council_deliberate", payload)
 
@@ -242,11 +249,13 @@ class Heartbeat:
     def __init__(self, path: Optional[str] = None) -> None:
         import os
         import pathlib
+
         self._path = pathlib.Path(path or self._DEFAULT_PATH)
         os.makedirs(str(self._path.parent), exist_ok=True)
 
     def pulse(self, agent: str = "unknown", note: str = "") -> dict[str, Any]:
         import json
+
         record: dict[str, Any] = {
             "ts": _utc_now(),
             "agent": agent,
@@ -259,6 +268,7 @@ class Heartbeat:
 
     def status(self) -> dict[str, Any]:
         import json
+
         if not self._path.exists():
             return {"alive": False, "last_pulse": None, "pulse_count": 0}
         records: list[dict[str, Any]] = []
@@ -272,7 +282,12 @@ class Heartbeat:
         if not records:
             return {"alive": False, "last_pulse": None, "pulse_count": 0}
         last = records[-1]
-        return {"alive": True, "last_pulse": last["ts"], "pulse_count": len(records), "last_agent": last.get("agent")}
+        return {
+            "alive": True,
+            "last_pulse": last["ts"],
+            "pulse_count": len(records),
+            "last_agent": last.get("agent"),
+        }
 
 
 __all__ = ["HeartbeatResult", "ResponsibilityHeartbeat", "Heartbeat"]
