@@ -1925,30 +1925,34 @@ def _commit_locked_posture(store: Any, trace: SessionTrace) -> GovernancePosture
         posture = GovernancePosture.from_dict(raw)
         posture.tension_history = decay_tensions(posture.tension_history)
 
-    # Aegis Shield: check trace BEFORE mutating governance state
+    # Aegis Shield: check trace BEFORE mutating governance state.
+    # Reality Sync PR 4: this block used to be wrapped in
+    # `except ImportError: pass` ("PyNaCl not installed -> skip shield"),
+    # which silently disabled content filtering, vetoes, hash chaining
+    # AND signing whenever PyNaCl was absent — a fail-open in the
+    # integrity layer. aegis_shield itself is stdlib-only; PyNaCl is
+    # needed only for signatures, and sign_trace now degrades by
+    # marking the trace UNSIGNED explicitly. No exception swallowing.
     trace_dict = trace.to_dict()
-    try:
-        from tonesoul.aegis_shield import AegisShield
+    from tonesoul.aegis_shield import AegisShield
 
-        shield = AegisShield.load(store)
-        trace_dict, content_check = shield.protect_trace(trace_dict, trace.agent)
-        if content_check.severity == "blocked":
-            print(f"[Aegis] BLOCKED trace from {trace.agent}: {content_check.violations}")
-            posture.aegis_vetoes.append(
-                {
-                    "type": "memory_poisoning",
-                    "agent": trace.agent,
-                    "violations": content_check.violations,
-                    "timestamp": _utc_now(),
-                }
-            )
-            store.set_state(posture.to_dict())
-            return posture
-        if content_check.violations:
-            print(f"[Aegis] WARNING: {content_check.violations}")
-        shield.save(store)
-    except ImportError:
-        pass  # PyNaCl not installed -> skip shield
+    shield = AegisShield.load(store)
+    trace_dict, content_check = shield.protect_trace(trace_dict, trace.agent)
+    if content_check.severity == "blocked":
+        print(f"[Aegis] BLOCKED trace from {trace.agent}: {content_check.violations}")
+        posture.aegis_vetoes.append(
+            {
+                "type": "memory_poisoning",
+                "agent": trace.agent,
+                "violations": content_check.violations,
+                "timestamp": _utc_now(),
+            }
+        )
+        store.set_state(posture.to_dict())
+        return posture
+    if content_check.violations:
+        print(f"[Aegis] WARNING: {content_check.violations}")
+    shield.save(store)
 
     for event in trace.tension_events:
         entry = dict(event)
