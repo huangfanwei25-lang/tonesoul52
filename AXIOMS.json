@@ -148,9 +148,9 @@
       "implication": "Memory belongs to the relationship between user and AI, not to the platform. Inheritance is intentional, not automatic.",
       "priority": "P0",
       "enforcement": {
-        "status": "referenced",
-        "as_of": "2026-06-13",
-        "note": "MemoryConfig (replication_allowed etc.) has zero consumers; inter_soul/sovereignty.py maps only Axioms 3 and 6 (the P0 Axiom 8 is absent from its field map); cross-user leak phrases draw CONCERN, not BLOCK."
+        "status": "partial",
+        "as_of": "2026-06-14",
+        "note": "MemorySovereigntyGate (tonesoul/memory/sovereignty_gate.py) now makes MemoryConfig a real fail-closed consumer at the two memory egress edges: handoff TRANSFER (external-owner/replica without a consent token is blocked; first-party handoffs pass and are stamped) and training EXPORT (corpus_builder.export_jsonl de-identifies by default). Narrower than the full claim: the central write_payload path is intentionally NOT gated (would break first-party writes / the dream cycle), general non-replicability is not enforced everywhere, and inter_soul/sovereignty.py's field map still omits Axiom 8."
       }
     }
   ],
@@ -238,6 +238,14 @@
         "Claude (Fable 5)"
       ],
       "milestone": "Reality Sync PR 3: per-axiom enforcement-status reconciliation (metadata only; axiom statements unchanged)"
+    },
+    {
+      "epoch": "2026-06-14",
+      "alias": "黃梵威 (Fan-Wei Huang / Fan1234-1)",
+      "ai_collaborators": [
+        "Claude (Opus 4.8)"
+      ],
+      "milestone": "Axiom 8 aspirational->partial: MemorySovereigntyGate makes MemoryConfig a real fail-closed consumer at memory egress (transfer + training export). 'Steal the enforcement craft, keep the accountability direction.'"
     }
   ],
   "meta": {
@@ -264,7 +272,7 @@
         "referenced": "mechanism exists nearby but the axiom's own condition is not verified/wired",
         "aspirational": "declared only; no runtime consumer"
       },
-      "honest_summary": "0 fully enforced, 5 partial, 2 referenced, 2 aspirational (incl. E0 partial). The axioms are immutable as commitments; this block records how much of each commitment the runtime currently keeps."
+      "honest_summary": "0 fully enforced, 6 partial, 1 referenced, 2 aspirational (incl. E0 partial). Axiom 8 moved referenced->partial on 2026-06-14 when MemorySovereigntyGate wired MemoryConfig to fail-closed enforcement at the transfer/export egress edges. The axioms are immutable as commitments; this block records how much of each commitment the runtime currently keeps."
     }
   }
 }

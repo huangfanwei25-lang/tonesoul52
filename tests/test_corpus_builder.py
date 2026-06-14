@@ -240,7 +240,14 @@ def test_export_jsonl_writes_serialized_entries(tmp_path: Path):
     assert output.exists()
     lines = output.read_text(encoding="utf-8").strip().splitlines()
     assert len(lines) == len(entries)
-    assert "conv_with_audit" in lines[0]
+    # Axiom 8 (training requires de-identification): export is de-identified by
+    # default, so the raw conversation id is hashed, not round-tripped verbatim.
+    import json as _json
+
+    first = _json.loads(lines[0])
+    assert first["deidentified"] is True
+    assert "conv_with_audit" not in lines[0]
+    assert first["conversation_id"].startswith("sha256:")
 
 
 def test_build_from_conversation_aligns_descending_audit_logs_by_timestamp():
