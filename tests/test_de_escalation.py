@@ -11,7 +11,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from tonesoul.governance.de_escalation import evaluate_de_escalation
+from tonesoul.governance.de_escalation import (
+    DE_ESCALATION_FRAMING,
+    de_escalation_framing,
+    evaluate_de_escalation,
+)
 from tonesoul.soul_config import SOUL
 
 
@@ -42,6 +46,21 @@ def test_threshold_override() -> None:
     out = evaluate_de_escalation({"tension_events": [{"severity": 0.6}]}, threshold=0.5)
     assert out["de_escalation_required"] is True
     assert out["threshold"] == 0.5
+
+
+def test_framing_applied_above_threshold_empty_below() -> None:
+    # referenced->partial: the directive is APPLIED as a user-facing gesture.
+    assert de_escalation_framing(0.9) == DE_ESCALATION_FRAMING
+    assert de_escalation_framing(0.5) == ""
+
+
+def test_framing_respects_threshold_override() -> None:
+    assert de_escalation_framing(0.6, threshold=0.5) == DE_ESCALATION_FRAMING
+    assert de_escalation_framing(0.4, threshold=0.5) == ""
+
+
+def test_framing_handles_bad_input() -> None:
+    assert de_escalation_framing(None) == ""  # type: ignore[arg-type]
 
 
 def test_empty_trace_no_directive() -> None:

@@ -3357,6 +3357,24 @@ Respond with a clear, practical answer."""
         if final_reflex_decision is not None:
             response = self._apply_reflex_final_gate(response, final_reflex_decision, repair_stages)
 
+        # Axiom 7 (reframed, referenced->partial): APPLY the de-escalation directive
+        # to live output. When live tension exceeds high_tension_threshold, append a
+        # visible damping gesture (non-destructive, idempotent, rare at threshold 0.8).
+        try:
+            from tonesoul.governance.de_escalation import de_escalation_framing
+
+            _live_tension = float(getattr(tension_result, "total", 0.0) or 0.0)
+            _deesc = de_escalation_framing(_live_tension)
+            if _deesc and _deesc not in response:
+                response = f"{response}\n\n---\n{_deesc}"
+                dispatch_trace["de_escalation"] = self._build_trace_section(
+                    "de_escalation",
+                    {"axiom": 7, "peak_tension": round(_live_tension, 4), "applied": True},
+                    status="degraded",
+                )
+        except Exception as e:
+            self._exc_trace.record("unified_pipeline", "de_escalation_apply", e)
+
         current_zone = getattr(getattr(tension_result, "zone", None), "value", "safe")
         response, blocked_by_poav, poav_result = self._enforce_poav_gate(
             response=response,

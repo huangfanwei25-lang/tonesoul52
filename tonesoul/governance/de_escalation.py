@@ -31,6 +31,11 @@ _DIRECTIVE = (
     "explicitly instead of smoothing it over"
 )
 
+# User-facing de-escalation gesture appended to live output under high tension
+# (the referenced->partial application of the directive). zh-TW to match the
+# codebase's other user-facing governance annotations.
+DE_ESCALATION_FRAMING = "（高張力交流——放慢步調，直接面對分歧而非把它抹平。）"
+
 
 def _peak_severity(events: List[Any]) -> float:
     peak = 0.0
@@ -66,3 +71,19 @@ def evaluate_de_escalation(
         "de_escalation_required": required,
         "directive": _DIRECTIVE if required else "",
     }
+
+
+def de_escalation_framing(tension: float, *, threshold: Optional[float] = None) -> str:
+    """User-facing de-escalation gesture to APPLY to live output (Axiom 7 partial).
+
+    Returns the framing string to append to a response when live tension exceeds
+    the high-tension threshold, or "" otherwise. This is the referenced->partial
+    step: the directive is applied (a visible damping move appended to output),
+    not merely recorded on the trace.
+    """
+    th = SOUL.tension.high_tension_threshold if threshold is None else float(threshold)
+    try:
+        live = float(tension)
+    except (TypeError, ValueError):
+        return ""
+    return DE_ESCALATION_FRAMING if live > th else ""
