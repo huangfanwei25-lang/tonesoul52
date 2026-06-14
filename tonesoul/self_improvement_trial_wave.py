@@ -4,13 +4,9 @@ from typing import Any
 
 __ts_layer__ = "evolution"
 __ts_purpose__ = (
-    "Trial wave harness for iterative self-improvement experiments."
+    "Self-improvement trial wave: admits, runs, and registers bounded self-improvement trials."
 )
 
-
-
-__ts_layer__ = "evolution"
-__ts_purpose__ = "Self-improvement trial wave: admits, runs, and registers bounded self-improvement trials."
 
 def _build_result_surface(
     *,

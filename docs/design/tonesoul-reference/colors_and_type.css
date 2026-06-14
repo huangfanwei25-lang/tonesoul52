@@ -1,0 +1,161 @@
+/* ToneSoul Design System — Colors & Type tokens
+ * Two co-existing surfaces:
+ *   1. "Blueprint" (marketing site / story) — steel blue on parchment, grid paper
+ *   2. "Obsidian" (dashboard / playground)  — deep slate with cyan/green tech accents
+ */
+
+/* ---------- Fonts (Google Fonts) ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* ===================== BLUEPRINT palette ===================== */
+  --blue-deep:  #3a6b9f;   /* primary — links, h1, CTA */
+  --blue-mid:   #5a8ec0;   /* mid accent */
+  --blue-light: #b8d4e8;
+  --blue-pale:  #dce8f2;
+
+  --bg:            #eef1f5;      /* parchment-gray */
+  --bg-card:       rgba(255,255,255,0.72);
+  --bg-pre:        #1e2d3d;      /* code blocks */
+  --bg-pre-text:   #d4e4f1;
+
+  --text:       #2c3e50;
+  --text-muted: #6b7c8d;
+
+  --border:     rgba(90,142,192,0.20);
+  --grid-line:  rgba(90,142,192,0.06);
+
+  --warn-tint:  rgba(245,166,35,0.06);
+  --warn-line:  #d4a056;
+
+  /* ===================== OBSIDIAN palette (dashboard) ===================== */
+  --ob-bg-0:      #060912;       /* near-black */
+  --ob-bg-1:      #0e1629;       /* deep navy */
+  --ob-panel:     rgba(16,28,52,0.70);
+  --ob-line:      rgba(159,178,206,0.25);
+  --ob-card:      rgba(8,14,28,0.58);
+
+  --ob-text:      #ecf3ff;
+  --ob-text-dim: #a0b3d4;
+
+  --ob-primary:   #7dd3fc;   /* cyan — primary CTA */
+  --ob-success:   #34d399;   /* serene band */
+  --ob-warn:      #fbbf24;   /* alert / strained */
+  --ob-danger:    #fb7185;   /* critical */
+
+  /* ===================== Soul Band semantic colors ===================== */
+  --band-serene:    #34d399;
+  --band-alert:     #fbbf24;
+  --band-strained:  #f97316;
+  --band-critical:  #fb7185;
+
+  /* ===================== Tension Triad ===================== */
+  --triad-tension:  #7dd3fc;  /* T */
+  --triad-entropy:  #c4b5fd;  /* S */
+  --triad-risk:     #fb7185;  /* R */
+
+  /* ===================== Type scale ===================== */
+  --font-display: 'Space Grotesk', 'Noto Sans TC', system-ui, sans-serif;
+  --font-body:    'Noto Sans TC', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-serif:   'Noto Serif TC', Georgia, serif;
+  --font-mono:    'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
+
+  --fs-h1: 2.4rem;   --lh-h1: 1.2;   --ls-h1: 0.08em;   --fw-h1: 300;
+  --fs-h2: 1.35rem;  --lh-h2: 1.4;   --ls-h2: 0.04em;   --fw-h2: 400;
+  --fs-h3: 1.05rem;  --lh-h3: 1.4;   --ls-h3: 0.02em;   --fw-h3: 600;
+  --fs-body: 1rem;   --lh-body: 1.8;
+  --fs-small: 0.88rem;
+  --fs-tagline: 1.6rem;  --ls-tagline: 0.15em;  /* 治理是以結構表達的愛 */
+
+  /* ===================== Spacing / radii / shadow ===================== */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  --radius-xs: 3px;   /* inline code */
+  --radius-sm: 6px;   /* code blocks, CTA */
+  --radius-md: 8px;   /* card (blueprint) */
+  --radius-lg: 12px;  /* status card (obsidian) */
+  --radius-xl: 14px;  /* panel (obsidian) */
+  --radius-pill: 20px;
+
+  --shadow-card:   0 2px 12px rgba(90,142,192,0.10);
+  --shadow-panel:  0 24px 44px rgba(2,8,22,0.45);
+
+  /* ===================== Motion ===================== */
+  --ease:   cubic-bezier(.2, .8, .2, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+
+  /* ===================== Grid backdrop ===================== */
+  --grid-size: 40px;
+}
+
+/* ---------- Semantic type roles (blueprint default) ---------- */
+.ts-h1 {
+  font-family: var(--font-body);
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-h1);
+  line-height: var(--lh-h1);
+  letter-spacing: var(--ls-h1);
+  color: var(--blue-deep);
+  margin: 0;
+}
+.ts-h2 {
+  font-family: var(--font-body);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-h2);
+  line-height: var(--lh-h2);
+  letter-spacing: var(--ls-h2);
+  color: var(--blue-deep);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+  margin: 0;
+}
+.ts-h3 {
+  font-family: var(--font-body);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-h3);
+  color: var(--text);
+  margin: 0;
+}
+.ts-p {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text);
+  margin: 0;
+}
+.ts-tagline-zh {
+  font-family: var(--font-body);
+  font-size: var(--fs-tagline);
+  font-weight: 300;
+  letter-spacing: var(--ls-tagline);
+  color: var(--blue-deep);
+}
+.ts-code {
+  font-family: var(--font-mono);
+  background: rgba(90,142,192,0.08);
+  padding: .15rem .45rem;
+  border-radius: var(--radius-xs);
+  font-size: .88em;
+  color: var(--text);
+}
+.ts-mono { font-family: var(--font-mono); }
+
+/* ---------- Obsidian type overrides (dashboard chrome) ---------- */
+.obsidian .ts-h2,
+.obsidian-heading {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--ob-text);
+  border: none;
+  padding: 0;
+}
+.obsidian .ts-p { color: var(--ob-text); }

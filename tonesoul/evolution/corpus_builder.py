@@ -10,9 +10,7 @@ from typing import Any
 from .corpus_schema import CorpusEntry
 
 __ts_layer__ = "evolution"
-__ts_purpose__ = (
-    "Corpus builder: assemble training corpora from approved session transcripts."
-)
+__ts_purpose__ = "Corpus builder: assemble training corpora from approved session transcripts."
 
 
 def _utc_now() -> str:
@@ -182,11 +180,23 @@ class CorpusBuilder:
         return result
 
     def export_jsonl(self, entries: list[CorpusEntry], path: str) -> None:
+        """Export entries to JSONL for training.
+
+        Axiom 8 (training requires de-identification): each record passes through
+        the MemorySovereigntyGate, which redacts PII free-text and hashes
+        identifiers when ``SOUL.memory.training_requires_deidentification`` is set
+        (the default). This is a real consumer of MemoryConfig — the policy is
+        opt-out, not silent.
+        """
+        from tonesoul.memory.sovereignty_gate import MemorySovereigntyGate
+
+        gate = MemorySovereigntyGate()
         output_path = Path(path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         with output_path.open("w", encoding="utf-8") as handle:
             for entry in entries:
-                handle.write(json.dumps(entry.to_dict(), ensure_ascii=False))
+                record = gate.deidentify(entry.to_dict())
+                handle.write(json.dumps(record, ensure_ascii=False))
                 handle.write("\n")
 
     def _build_turn_pairs(self, messages: list[dict[str, Any]]) -> list[dict[str, Any]]:

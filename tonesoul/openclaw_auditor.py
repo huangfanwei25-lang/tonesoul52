@@ -5,15 +5,13 @@ from datetime import datetime, timezone
 from typing import Any, Mapping, Optional
 from uuid import uuid4
 
-from memory.genesis import Genesis
-from memory.provenance_chain import ProvenanceManager
 from tonesoul.benevolence import AuditLayer, filter_benevolence
 from tonesoul.gateway.session import GatewaySession
+from tonesoul.memory.provenance_chain import ProvenanceManager
+from tonesoul.shared.genesis import Genesis
 
 __ts_layer__ = "evolution"
-__ts_purpose__ = (
-    "OpenClaw auditor: verify integrity and freshness of vector memory entries."
-)
+__ts_purpose__ = "OpenClaw auditor: verify integrity and freshness of vector memory entries."
 
 
 def _utc_now() -> str:

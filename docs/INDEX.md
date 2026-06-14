@@ -25,7 +25,7 @@ Use these in order if you intentionally need the fuller registry. Do not let a d
 ### Routing rule for "what does this file do?"
 
 - **Query**: "what does `tonesoul/<x>.py` do / which layer is it / who depends on it?"
-  - **Go to**: [status/codebase_graph_latest.md](status/codebase_graph_latest.md) — auto-generated from the live code by `scripts/analyze_codebase_graph.py`, covers all 254 modules with declared layer + purpose + coupling.
+  - **Go to**: [status/codebase_graph_latest.md](status/codebase_graph_latest.md) — auto-generated from the live code by `scripts/analyze_codebase_graph.py`, covers every module with declared layer + purpose + coupling (live count is in that file's summary header — hand-written counts drift).
   - **Do NOT go to**: [CORE_MODULES.md](CORE_MODULES.md) — narrative explanation of ~20 conceptual modules (TSC-01, PN-02, MCP-03…), last hand-updated 2026-03-23. It is interpretive design history, not a file-level index. Treat it as a lens, not a lookup table.
 - **Query**: "what are the legitimate import directions between layers?"
   - **Go to**: [ARCHITECTURE_BOUNDARIES.md](ARCHITECTURE_BOUNDARIES.md) — reconciled against the body-map's 13-layer taxonomy.
@@ -131,7 +131,7 @@ Use these when readiness, track classification, or `task.md` mutation discipline
 - [architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md](architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md)
   - observable-shell honesty contract for distinguishing what ToneSoul can really audit from what remains opaque
 - [architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md](architecture/TONESOUL_AXIOM_FALSIFICATION_MAP.md)
-  - support/weakening map for the 7 axioms so later agents can challenge claims without rewriting the constitution
+  - support/weakening map for the axioms so later agents can challenge claims without rewriting the constitution (currently covers Axiom 1–7; Axiom 8 Memory Sovereignty, added 2026-04, is not yet mapped)
 - [plans/tonesoul_observability_and_axiom_adoption_review_2026-03-28.md](plans/tonesoul_observability_and_axiom_adoption_review_2026-03-28.md)
   - adoption review for the extracted external theory proposals, including what was translated into ToneSoul-native naming and what remains deferred
 

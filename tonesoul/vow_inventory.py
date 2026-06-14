@@ -23,14 +23,8 @@ from pathlib import Path
 from typing import Dict, List, Literal, Optional
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Enumerate and summarize active vows and their enforcement state."
-)
+__ts_purpose__ = "Enumerate and summarize active vows and their enforcement state."
 
-
-
-__ts_layer__ = "governance"
-__ts_purpose__ = "Vow inventory: loads and indexes the active vow registry for governance enforcement."
 
 def _utc_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")

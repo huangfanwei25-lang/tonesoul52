@@ -1925,30 +1925,50 @@ def _commit_locked_posture(store: Any, trace: SessionTrace) -> GovernancePosture
         posture = GovernancePosture.from_dict(raw)
         posture.tension_history = decay_tensions(posture.tension_history)
 
-    # Aegis Shield: check trace BEFORE mutating governance state
+    # Aegis Shield: check trace BEFORE mutating governance state.
+    # Reality Sync PR 4: this block used to be wrapped in
+    # `except ImportError: pass` ("PyNaCl not installed -> skip shield"),
+    # which silently disabled content filtering, vetoes, hash chaining
+    # AND signing whenever PyNaCl was absent — a fail-open in the
+    # integrity layer. aegis_shield itself is stdlib-only; PyNaCl is
+    # needed only for signatures, and sign_trace now degrades by
+    # marking the trace UNSIGNED explicitly. No exception swallowing.
     trace_dict = trace.to_dict()
-    try:
-        from tonesoul.aegis_shield import AegisShield
 
-        shield = AegisShield.load(store)
-        trace_dict, content_check = shield.protect_trace(trace_dict, trace.agent)
-        if content_check.severity == "blocked":
-            print(f"[Aegis] BLOCKED trace from {trace.agent}: {content_check.violations}")
-            posture.aegis_vetoes.append(
-                {
-                    "type": "memory_poisoning",
-                    "agent": trace.agent,
-                    "violations": content_check.violations,
-                    "timestamp": _utc_now(),
-                }
-            )
-            store.set_state(posture.to_dict())
-            return posture
-        if content_check.violations:
-            print(f"[Aegis] WARNING: {content_check.violations}")
-        shield.save(store)
-    except ImportError:
-        pass  # PyNaCl not installed -> skip shield
+    # Axiom 2 (Responsibility Threshold): stamp the responsibility-audit marker
+    # BEFORE the trace enters the immutable Aegis chain, so audit_log_threshold is
+    # a live consumer and "risk > 0.4 -> immutable audit" is explicit + queryable.
+    from tonesoul.governance.responsibility_audit import evaluate_responsibility_audit
+
+    trace_dict["responsibility_audit"] = evaluate_responsibility_audit(trace_dict)
+
+    # Axiom 7 (reframed 2026-06-14): high live tension -> de-escalation directive.
+    # Makes high_tension_threshold a live consumer for the damping axis; the
+    # directive is recorded on the immutable trace (applying it to live output is
+    # a separate referenced->partial step).
+    from tonesoul.governance.de_escalation import evaluate_de_escalation
+
+    trace_dict["de_escalation"] = evaluate_de_escalation(trace_dict)
+
+    from tonesoul.aegis_shield import AegisShield
+
+    shield = AegisShield.load(store)
+    trace_dict, content_check = shield.protect_trace(trace_dict, trace.agent)
+    if content_check.severity == "blocked":
+        print(f"[Aegis] BLOCKED trace from {trace.agent}: {content_check.violations}")
+        posture.aegis_vetoes.append(
+            {
+                "type": "memory_poisoning",
+                "agent": trace.agent,
+                "violations": content_check.violations,
+                "timestamp": _utc_now(),
+            }
+        )
+        store.set_state(posture.to_dict())
+        return posture
+    if content_check.violations:
+        print(f"[Aegis] WARNING: {content_check.violations}")
+    shield.save(store)
 
     for event in trace.tension_events:
         entry = dict(event)

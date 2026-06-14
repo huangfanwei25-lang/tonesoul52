@@ -5,15 +5,15 @@ from typing import Dict, List, Optional
 
 from .ystm.schema import utc_now
 
+# YSS-STATUS: unwired (2026-06-13, Reality Sync PR5) — built but not imported by
+# any live runtime path (verified: only importer is the dead yss_pipeline closure
+# and its own tests). Retained, NOT deleted, as candidate substrate for the
+# Responsibility Manifold program (docs/plans/responsibility_manifold_engineering_program_2026-06-12.md).
+# Do not assume runtime use. Canonical list + rationale: task.md > Reality Sync Patchset > PR5.
+
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Verify stated intent against behavioral signals and history."
-)
+__ts_purpose__ = "Verify stated intent against behavioral signals and history."
 
-
-
-__ts_layer__ = "governance"
-__ts_purpose__ = "Intent verification: checks user intent signals against council posture for ambiguity detection."
 
 @dataclass
 class Intent:

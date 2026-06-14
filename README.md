@@ -1,10 +1,10 @@
 # ToneSoul / 語魂
 
-> AI that does not just answer. It catches semantic drift, remembers what matters, and audits itself.
-> If you want AI that won't make things up, start here.
+> AI governance that does not just trust the answer. It enforces output gates, records dissent, and audits its own trail.
+> If you want AI output governance you can read, run, and challenge, start here. (It will not make your model truthful — current truth sensors are lexical heuristics; see "Evidence Honesty" below.)
 
 > Purpose: public repository entrypoint for ToneSoul's architecture, governance posture, and practical onboarding.
-> Last Updated: 2026-05-05
+> Last Updated: 2026-06-13
 
 ---
 
@@ -60,6 +60,21 @@ adapter-ready architecture, LoRA-ready distillation.
 | 🛡️ Self-Governance | Unsafe or incoherent output is blocked or rewritten with audit traces. |
 | 📊 Live Dashboard | Real-time crystals, resonance stats, journal health, and repair signals. |
 
+## See the difference in 30 seconds
+
+A hard tradeoff where the reasoning genuinely splits. A helpfulness-maximizing
+assistant smooths it into a confident paragraph that hides the disagreement.
+ToneSoul refuses to fake consensus — it shows you exactly where the
+perspectives split and hands the decision back to you:
+
+```bash
+pip install -e .
+python examples/demo_declare_stance.py
+```
+
+No config, no LLM keys — it exercises the governance layer directly.
+`Honesty > Helpfulness`, implemented as a verdict (`DECLARE_STANCE`), not a slogan.
+
 ## Quick Start (5 minutes)
 
 ### 0) Try it in your browser (no install)
@@ -77,6 +92,8 @@ For local install continue below.
 ```bash
 pip install tonesoul52
 ```
+
+> ⚠️ Known gap: PyPI **1.0.0** shipped with a broken council import (`ModuleNotFoundError: No module named 'memory'`) — `ts council` and `import tonesoul.council` fail on a pip-only install. The fix is in PR #78 (open at the time of writing), planned for **1.0.1**. Until then, prefer the source install below.
 
 Or from source:
 
@@ -110,11 +127,17 @@ print(f"Soul Integral: {posture.soul_integral}")
 print(f"Active Vows: {len(posture.active_vows)}")
 ```
 
-### 4) Run the dashboard (optional)
+### 4) Open an observability surface (optional)
 
 ```bash
 pip install tonesoul52[dashboard]
 python scripts/tension_dashboard.py --work-category research
+```
+
+Operator shell:
+
+```bash
+python apps/dashboard/run_dashboard.py
 ```
 
 ### 5) Run tests
@@ -124,7 +147,7 @@ pip install tonesoul52[dev]
 pytest tests/ -v
 ```
 
-Current suite size: **7652 tests collected** (latest local collection, Python 3.13 / Windows). CI currently runs the blocking Python test gate on pull requests.
+Current suite size: **7652 tests collected** (latest local collection, Python 3.13 / Windows). CI currently runs the blocking Python test gate on pull requests. Honest boundary: `master` has no branch protection yet, so these gates bind PRs but not direct pushes.
 
 For local development, use `./test.sh` as the canonical core pre-commit check — it mirrors the core Python gates (ruff + bounded black gate + pytest), not every CI job. Modes: `./test.sh` (full), `lint` (only lint+format), `test` (only tests), `fast` (lint + tests with -x). CI also runs web quality, architecture/docs contracts, red-team, package integrity, and memory hygiene gates.
 
@@ -179,12 +202,23 @@ If you need the smallest decision-affecting startup packet for consistent human/
 | Developer | [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) | [docs/foundation/README.md](docs/foundation/README.md) -> [docs/README.md](docs/README.md) | install first, then one thin project packet, then the curated docs gateway only if the lane is still unclear |
 | Researcher | [DESIGN.md](DESIGN.md) | [docs/foundation/README.md](docs/foundation/README.md) -> [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) | design center first, then a bounded packet, then one grounded whole-system map |
 | AI Agent | [docs/AI_QUICKSTART.md](docs/AI_QUICKSTART.md) | `python scripts/start_agent_session.py --agent <your-id>` -> [AI_ONBOARDING.md](AI_ONBOARDING.md) | operational first-hop first, session handshake second, routing map third |
-| AI Agent (file-level lookup) | [docs/status/codebase_graph_latest.md](docs/status/codebase_graph_latest.md) | [docs/ARCHITECTURE_BOUNDARIES.md](docs/ARCHITECTURE_BOUNDARIES.md) | if the question is "what does `tonesoul/<x>.py` do, which layer is it in, who depends on it?", go to the body map first — it is the auto-generated per-module index for all 254 modules (purpose, layer, coupling). Do not route through `docs/CORE_MODULES.md` (conceptual) for this class of question. |
+| AI Agent (file-level lookup) | [docs/status/codebase_graph_latest.md](docs/status/codebase_graph_latest.md) | [docs/ARCHITECTURE_BOUNDARIES.md](docs/ARCHITECTURE_BOUNDARIES.md) | if the question is "what does `tonesoul/<x>.py` do, which layer is it in, who depends on it?", go to the body map first — it is the auto-generated per-module index for every module (purpose, layer, coupling; the live module count is in that file's own summary header — do not trust hand-written counts). Do not route through `docs/CORE_MODULES.md` (conceptual) for this class of question. |
 | Curious Human | [README.zh-TW.md](README.zh-TW.md) | [SOUL.md](SOUL.md) -> [LETTER_TO_AI.md](LETTER_TO_AI.md) | public introduction first, then identity and intent surfaces |
 
 Open one owner surface first instead of the whole row at once.
 Use [docs/README.md](docs/README.md) as the curated docs gateway.
 Use [docs/INDEX.md](docs/INDEX.md) only when the curated path is not enough and you need the fuller registry.
+
+## Surface Authority
+
+| Surface | Role | Use it for | Do not confuse it with |
+|---|---|---|---|
+| `site/` | public static site | marketing, docs, SEO-facing pages | `apps/web/` |
+| `apps/web/` | interactive app | chat, navigator, browser app work | `site/` |
+| `apps/dashboard/` | operator shell | tiered operator workflow and workspace | `apps/council-playground/` |
+| `apps/council-playground/` | static observability playground | read-only demos and prototype observation | `apps/dashboard/` |
+| `scripts/tension_dashboard.py` | CLI observability dashboard | quick runtime inspection | `apps/dashboard/` |
+| `docs/design/tonesoul-reference/` | archived design reference | visual rebuild guidance | production code |
 
 ## Five System Areas
 
@@ -309,10 +343,8 @@ layers, start with these files in this order:
   - current north-star architecture and the intended evolution path
 - `SOUL.md`
   - agent-facing identity / operating posture layer
-- `MGGI_SPEC.md`
-  - formal engineering and governance framing
-- `TAE-01_Architecture_Spec.md`
-  - earlier architecture lineage and historical specification context
+
+(Two historical spec files previously listed here — `MGGI_SPEC.md`, `TAE-01_Architecture_Spec.md` — were deleted in the 2026-04-13 v1 cleanup; the dead references survived on this page for two months. For where legacy specs went, see `docs/architecture/TONESOUL_HISTORICAL_SPEC_AND_LEGACY_SURFACE_MAP.md`.)
 
 If they disagree, prefer:
 
@@ -398,6 +430,8 @@ If formula status matters, prefer [docs/GLOSSARY.md](docs/GLOSSARY.md) and [docs
 - `scripts/run_self_play_resonance.py` — self-play signal generation
 - `scripts/run_swarm_resonance_roleplay.py` — multi-role swarm scenarios
 - `scripts/tension_dashboard.py` — CLI observability dashboard
+- `apps/dashboard/` — operator-facing Streamlit shell
+- `apps/council-playground/` — static observability playground
 - `tests/` — full regression and subsystem tests
 
 ## The Philosophy (for those who care)

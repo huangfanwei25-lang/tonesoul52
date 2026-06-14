@@ -7,15 +7,18 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+# YSS-STATUS: unwired (2026-06-13, Reality Sync PR5) — built but not imported by
+# any live runtime path (verified: only importer is the dead yss_pipeline closure
+# and its own tests). Retained, NOT deleted, as candidate substrate for the
+# Responsibility Manifold program (docs/plans/responsibility_manifold_engineering_program_2026-06-12.md).
+# Do not assume runtime use. Canonical list + rationale: task.md > Reality Sync Patchset > PR5.
+
+
 __ts_layer__ = "pipeline"
 __ts_purpose__ = (
-    "Unified adapter bridging YSS gates and the runtime pipeline."
+    "YSS unified adapter: bridges YSS M1 pipeline outputs to the governance runtime adapter."
 )
 
-
-
-__ts_layer__ = "pipeline"
-__ts_purpose__ = "YSS unified adapter: bridges YSS M1 pipeline outputs to the governance runtime adapter."
 
 def _iso_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")

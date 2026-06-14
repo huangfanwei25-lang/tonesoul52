@@ -10,7 +10,6 @@ import {
 
 const REQUEST_TIMEOUT_MS = 10000;
 const MOCK_FALLBACK_ENV = "TONESOUL_ENABLE_CONVERSATION_MOCK_FALLBACK";
-const _SAME_ORIGIN_PRIMARY_FALLBACK_REASON = "same_origin_primary";
 
 function shouldAllowMockFallback(): boolean {
     if (isSameOriginMode()) return true;

@@ -444,6 +444,41 @@ class StaleRuleVerificationTaskBatch:
 
         return results
 
+    def apply_recorded_outcome(
+        self,
+        task_id: str,
+        result: Dict[str, object],
+    ) -> Optional[str]:
+        """Record an externally-observed verification outcome and persist it.
+
+        This is the missing weld between task GENERATION and
+        ``apply_verification_results``. ``record_attempt`` moves a task's status
+        off ``"pending"``, and persisting it means the *next*
+        ``apply_verification_results`` cycle actually acts on it (re-confirm or
+        retire the crystal). Without this call every task stays ``pending`` and
+        ``apply_verification_results`` is a guaranteed no-op — the
+        "observe outcome -> next cycle revises" loop never closes.
+
+        The outcome is operator/test-supplied and is NOT auto-synthesized by a
+        model, so a small local model cannot silently retire durable rules.
+
+        Targets the first ``pending``/``in_progress`` task with ``task_id``;
+        already-applied tasks are skipped (task_ids can collide when generated in
+        the same millisecond, so id alone is not a safe unique key).
+
+        Returns the task's new status, or ``None`` if no eligible task was found.
+        """
+        tasks = self.load_tasks()
+        target = next(
+            (t for t in tasks if t.task_id == task_id and t.status in ("pending", "in_progress")),
+            None,
+        )
+        if target is None:
+            return None
+        target.record_attempt(result)
+        self._rewrite_tasks(tasks)
+        return target.status
+
     def _rewrite_tasks(self, tasks: List[StaleRuleVerificationTask]) -> None:
         """Overwrite the task file with updated statuses."""
         try:

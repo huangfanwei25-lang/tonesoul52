@@ -46,7 +46,7 @@ python scripts/end_agent_session.py --agent claude-sonnet-4-6 --summary "..." --
 | 足跡 | Redis `ts:footprints` | 最近 100 次 agent 訪問紀錄 |
 | 防禦鏈 | Redis `ts:aegis:chain_head` + `.aegis/keys/` | hash chain + Ed25519 keypairs |
 | 自我日記 | `memory/self_journal.jsonl` | AI 的自我反思（council 產出）|
-| 私密記憶 | `OpenClaw-Memory/` (submodule) | 向量記憶，`ask_my_brain.py` 查詢 |
+| 記憶引擎 | `OpenClaw-Memory/` (submodule，公開框架) | 向量記憶引擎，`ask_my_brain.py` 查詢；真實記憶資料在本機 `memory_base/`（gitignored，不入任何 repo）|
 | Handoff | `memory/handoff/` | AI 之間的交接筆記 |
 
 ## 多 Agent 接入
@@ -61,15 +61,22 @@ python scripts/gateway.py --port 7700 --token YOUR_SECRET
 
 `tonesoul/` 是唯一有效的程式碼來源。不要讀 `.archive/`。
 
+**動手刪除 / 重構 / 「清理死碼」之前，先讀 `docs/SUCCESSOR_MAP.md`。** 那是
+刪除危害 / runtime 可達性地圖——2026-06-13 一次 consolidation 差點刪掉看似
+死掉、實為 runtime 命脈的 `yss_gates`。「沒人 import」≠「可安全刪除」。地圖
+列出「看似退役實為活線」的模組、刻意保留的 unwired 子系統、以及刪除前的驗證
+紀律。
+
 ## 核心文件（按優先序）
 
-1. `AXIOMS.json` — 7 條不可變公理
+1. `AXIOMS.json` — 8 條不可變公理（v1.1.0，2026-04 增補 Axiom 8 記憶主權）
 2. `AGENTS.md` — AI 協作手冊
 3. `AI_ONBOARDING.md` — AI 入口總覽
 4. `docs/AI_QUICKSTART.md` — 最小正確流程
 5. `DESIGN.md` — 系統為什麼這樣分層
 6. `docs/status/codex_handoff_2026-03-31.md` — 近期 handoff
 7. `task.md` — 現行短板與下一桶
+8. `docs/memory/STRATEGIC_CRYSTAL_FORMAT.md` — 策略性決策 closed-loop 5-field memory format
 
 ## 治理綁定（Governance Binding）
 

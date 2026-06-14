@@ -1,7 +1,7 @@
 # Cross-Agent Consistency Wave Report
 
-**Agent**: `claude-opus-4-6`
-**Timestamp**: 2026-04-07T19:50:27.097903+00:00
+**Agent**: `antigravity`
+**Timestamp**: 2026-06-01T12:59:44.027534+00:00
 **Wave**: `cross_agent_consistency_v1`
 **Result**: ALL OK
 **Checks**: 7/7 ok, 0 degraded, 0 error
@@ -11,7 +11,7 @@
 ### [+] first_hop_short_board
 - **Surface**: `session_start.canonical_center.current_short_board`
 - **Status**: `ok`
-- value: `- Phase 730: add one detailed 3-day execution program so the next agent can continue the current short board without reopening settled launch wording`
+- value: `**Current short board:**`
 
 ### [+] governance_depth_recommendation
 - **Surface**: `compute_gate.governance_depth`
@@ -23,7 +23,7 @@
 ### [+] closeout_reading
 - **Surface**: `session_start.bounded_handoff.closeout_status`
 - **Status**: `ok`
-- latest_handoff: `codex_handoff_2026-04-07.md`
+- latest_handoff: `codex_handoff_2026-04-15.md`
 - has_branch_state: `True`
 - has_next_move: `True`
 
@@ -38,7 +38,7 @@
 - **Surface**: `reflex_config.vow_enforcement_mode + soul_band`
 - **Status**: `ok`
 - enabled: `True`
-- vow_enforcement_mode: `soft`
+- vow_enforcement_mode: `hard`
 - soul_band_thresholds: `{'alert': 0.3, 'strained': 0.55, 'critical': 0.8}`
 
 ### [+] grounding_check_awareness

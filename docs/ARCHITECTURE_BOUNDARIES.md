@@ -59,7 +59,7 @@
 
 ## ⬇️ 合法依賴方向（`ALLOWED_DEPS`）
 
-依賴箭頭只能**向下或平向**地穿越層，不可反向。以下是 body-map 實際執行的 `ALLOWED_DEPS` 規則（違反會被 CI 的 body-map gate 標為 layer violation）：
+依賴箭頭**理想上**只能向下或平向穿越層。誠實校正（2026-06-13, Reality Sync PR 5）：`ALLOWED_DEPS` 目前 widen 到允許約 75 條跨層有向邊（約 52% 的 13×13 配對），**含 8 對雙向邊**（governance↔evolution、governance↔domain、memory↔pipeline 等，見 `analyze_codebase_graph.py` 的 `ACCEPTED_INVERSIONS`）。因此「**0 layer violations**」目前的真正含義是「沒有新邊踩出這張已經很寬的 allowlist」，**不等於**「架構是乾淨的無環分層」。這張表應理解為 **dependency inventory + 已接受倒掛的帳本**，而非強分層 enforcement；把雙向邊收回單向（interface 反轉）是 PR5 option (c)，刻意延後。以下是現行 `ALLOWED_DEPS` 規則（新越界仍會被 CI body-map gate 標為 layer violation）：
 
 | 來源 Layer | 允許 import 的目標 Layer |
 |------------|---------------------------|

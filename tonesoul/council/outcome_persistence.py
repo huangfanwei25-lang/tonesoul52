@@ -101,14 +101,18 @@ _SCHEMA_VERSION = "v0b-bucket-a-1.0.0"
 
 # Fields that are non-deterministic across identical Council runs and must
 # be stripped before fingerprinting. Empirically (2026-04-19) the only
-# instability is transcript.timestamp — but we scrub a broader set so a
-# later addition of a second timestamp doesn't silently break the
-# verdict↔outcome JOIN that Bucket B depends on.
+# instability was transcript.timestamp. The 864c deliberation-trace merge
+# (4ce344b, 2026-06-03) added a second volatile timestamp —
+# deliberation_trace.deliberated_at — which was NOT in this set and broke
+# fingerprint stability plus the verdict↔outcome JOIN that Bucket B
+# depends on (master red 2026-06-03 → 2026-06-13). Lesson: any new
+# timestamp field in the verdict payload must land here in the same commit.
 _FINGERPRINT_IGNORE_PATHS: frozenset[str] = frozenset(
     {
         "transcript.timestamp",
         "transcript.generated_at",
         "recorded_at",
+        "deliberation_trace.deliberated_at",
     }
 )
 

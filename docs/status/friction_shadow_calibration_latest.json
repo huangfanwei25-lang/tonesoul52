@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-08T15:38:34Z",
+  "generated_at": "2026-06-01T12:49:38Z",
   "source": "scripts/run_friction_shadow_calibration_report.py",
   "overall_ok": true,
   "inputs": {
@@ -16,49 +16,49 @@
     "max_high_friction_escape_rate": 0.15
   },
   "metrics": {
-    "scenario_count": 1200,
-    "trace_row_count": 1200,
+    "scenario_count": 337,
+    "trace_row_count": 337,
     "synthetic_row_count": 0,
     "invalid_json_line_count": 0,
     "route_change_count": 0,
     "route_change_rate": 0.0,
-    "active_council_rate": 0.8825,
-    "shadow_council_rate": 0.8825,
+    "active_council_rate": 0.1128,
+    "shadow_council_rate": 0.1128,
     "council_rate_delta": 0.0,
-    "high_friction_candidate_count": 939,
+    "high_friction_candidate_count": 3,
     "high_friction_escape_count": 0,
     "high_friction_escape_rate": 0.0
   },
   "route_distribution": {
     "active": {
       "route_local_llm": 0,
-      "route_single_cloud": 141,
-      "route_full_council": 1059,
+      "route_single_cloud": 299,
+      "route_full_council": 38,
       "block_rate_limit": 0
     },
     "shadow": {
       "route_local_llm": 0,
-      "route_single_cloud": 141,
-      "route_full_council": 1059,
+      "route_single_cloud": 299,
+      "route_full_council": 38,
       "block_rate_limit": 0
     }
   },
   "friction_band_metrics": [
     {
       "band": "low",
-      "count": 4,
+      "count": 267,
       "active_council_rate": 0.0,
       "shadow_council_rate": 0.0
     },
     {
       "band": "mid",
-      "count": 257,
-      "active_council_rate": 0.4669,
-      "shadow_council_rate": 0.4669
+      "count": 67,
+      "active_council_rate": 0.5224,
+      "shadow_council_rate": 0.5224
     },
     {
       "band": "high",
-      "count": 939,
+      "count": 3,
       "active_council_rate": 1.0,
       "shadow_council_rate": 1.0
     },
