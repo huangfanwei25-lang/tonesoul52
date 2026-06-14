@@ -64,9 +64,9 @@
       "implication": "High-stakes decisions must be recorded.",
       "priority": "P1",
       "enforcement": {
-        "status": "aspirational",
-        "as_of": "2026-06-13",
-        "note": "soul_config.audit_log_threshold=0.4 has zero consumers; the audit chain writes unconditionally, not risk-gated. The FOL condition (risk>0.4 -> immutable audit log) is not wired."
+        "status": "partial",
+        "as_of": "2026-06-14",
+        "note": "audit_log_threshold is now a live consumer: governance/responsibility_audit.py stamps a responsibility_audit marker (peak tension severity vs threshold, escalated by Aegis vetoes / vow violations) onto every committed trace BEFORE it enters the immutable Aegis chain (runtime_adapter._commit_locked_posture). The chain already wrote unconditionally, so the MUST was over-satisfied; this makes the threshold live and the FOL explicit + queryable. Narrower than the full claim: risk is a peak-severity proxy, and protection is not actually gated OFF below the threshold (everything is still chained)."
       }
     },
     {
@@ -245,7 +245,7 @@
       "ai_collaborators": [
         "Claude (Opus 4.8)"
       ],
-      "milestone": "Axiom 8 aspirational->partial: MemorySovereigntyGate makes MemoryConfig a real fail-closed consumer at memory egress (transfer + training export). 'Steal the enforcement craft, keep the accountability direction.'"
+      "milestone": "Enforcement program ('steal the enforcement craft, keep the accountability direction'): Axiom 8 referenced->partial (MemorySovereigntyGate: MemoryConfig is a real fail-closed consumer at memory egress - transfer + training export); Axiom 2 aspirational->partial (responsibility_audit: audit_log_threshold is a live marker on the immutable trace chain)."
     }
   ],
   "meta": {
@@ -272,7 +272,7 @@
         "referenced": "mechanism exists nearby but the axiom's own condition is not verified/wired",
         "aspirational": "declared only; no runtime consumer"
       },
-      "honest_summary": "0 fully enforced, 6 partial, 1 referenced, 2 aspirational (incl. E0 partial). Axiom 8 moved referenced->partial on 2026-06-14 when MemorySovereigntyGate wired MemoryConfig to fail-closed enforcement at the transfer/export egress edges. The axioms are immutable as commitments; this block records how much of each commitment the runtime currently keeps."
+      "honest_summary": "0 fully enforced, 7 partial, 1 referenced, 1 aspirational (incl. E0 partial). 2026-06-14: Axiom 8 moved referenced->partial (MemorySovereigntyGate wired MemoryConfig to fail-closed egress enforcement); Axiom 2 moved aspirational->partial (responsibility_audit wired audit_log_threshold to a live marker on the immutable chain). The axioms are immutable as commitments; this block records how much of each commitment the runtime currently keeps."
     }
   }
 }
