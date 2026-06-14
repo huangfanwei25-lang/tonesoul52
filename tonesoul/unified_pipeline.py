@@ -19,6 +19,7 @@ from typing import Any, Dict, List, Optional
 
 from tonesoul.exception_trace import ExceptionTrace
 from tonesoul.schemas import DispatchTraceSection
+from tonesoul.soul_config import SOUL
 
 
 def _read_bool_env(name: str, default: bool = False) -> bool:
@@ -645,7 +646,11 @@ class UnifiedPipeline:
             self._exc_trace.record("unified_pipeline", "_enforce_poav_gate.import", e)
             return response, False, {}
 
-        threshold = 0.92 if high_risk_mode else 0.70
+        threshold = (
+            SOUL.risk.governance_gate_score
+            if high_risk_mode
+            else SOUL.risk.governance_gate_score_low_risk
+        )
         enforce = high_risk_mode
 
         try:
