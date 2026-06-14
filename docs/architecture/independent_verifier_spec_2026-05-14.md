@@ -158,13 +158,13 @@ Phase E (deferred)：introduce `VerifierConfig.override_enabled: bool`. When Tru
 
 | Phase | 內容 | Cost | Reversibility |
 |---|---|---|---|
-| **A — spec** (this PR) | This doc | None | trivially reversible (revert PR) |
-| **B — scaffold** (this PR) | `IndependentVerifier` abstract class + `MockIndependentVerifier` + `VerifierReport` dataclass + unit tests | None | reversible (delete module) |
-| C — integration | Hook into `pre_output_council.py` with optional flag (default OFF). Verifier attaches report to verdict via new optional field | None (still mock) | reversible (remove flag) |
+| ✅ **A — spec** (PR #76) | This doc | None | trivially reversible (revert PR) |
+| ✅ **B — scaffold** (PR #76) | `IndependentVerifier` abstract class + `MockIndependentVerifier` + `FlaggingMockVerifier` + `VerifierReport` dataclass + unit tests | None | reversible (delete module) |
+| ✅ **C — integration** (2026-06-15, ported from the auto-closed #77) | `PreOutputCouncil.__init__` gains optional `verifier` + `verifier_config`. When set, the verifier runs post-verdict and attaches `verdict.verifier_report` via the new optional `CouncilVerdict` field. Fail-open on exception (ERROR report; verdict proceeds). Default behaviour: no change. | None (default-off; mock-only) | reversible (params default None, field optional) |
 | **D — Haiku impl** | `HaikuVerifier(IndependentVerifier)` with Anthropic SDK call, timeout, retry, cost tracking | API budget | deferred until budget returns |
 | E — opt-in trial + override | CLI flag + telemetry + override mode (Fan-Wei explicit) | API budget + governance review | gated |
 
-Phase A+B ship together — they form one complete contract (spec + minimal impl) that downstream phases can build on.
+Phase A+B+C now form a complete **default-off** integration: spec, scaffold with Mock, and a live hook in `PreOutputCouncil`. Existing callers see zero behavioural change unless they explicitly pass a `verifier`. Phase D activates real audit behaviour, gated on API budget.
 
 ---
 

@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from tonesoul.gse.strategy_mirror import StrategySignature
 
     from .epistemic_labeler import EpistemicLabel
+    from .independent_verifier import VerifierReport
     from .persona_audit import AuditResult
 
 
@@ -126,6 +127,12 @@ class CouncilVerdict:
     # See docs/gse/phase_2_strategy_mirror_spec.md §5 for the integration contract.
     strategy_signature: Optional["StrategySignature"] = None
     deliberation_trace: Optional[object] = None  # DeliberationTrace from 864c
+    # Phase C Independent Verifier — attached only when PreOutputCouncil is
+    # constructed with verifier=<IndependentVerifier>. None when the verifier
+    # hook is disabled (default) or skipped. See
+    # docs/architecture/independent_verifier_spec_2026-05-14.md §2.2 (report
+    # schema) and §2.5 (fail-open semantics).
+    verifier_report: Optional["VerifierReport"] = None
 
     def to_dict(self) -> dict:
         """

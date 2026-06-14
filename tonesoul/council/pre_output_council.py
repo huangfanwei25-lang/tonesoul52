@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import inspect
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Union
 
 from tonesoul.soul_config import SOUL
@@ -10,6 +11,12 @@ from tonesoul.soul_config import SOUL
 from .base import IPerspective
 from .coherence import compute_coherence
 from .epistemic_labeler import EpistemicLabeler
+from .independent_verifier import (
+    IndependentVerifier,
+    VerifierConfig,
+    VerifierReport,
+    VerifierStatus,
+)
 from .self_journal import record_self_memory
 from .summary_generator import (
     build_divergence_analysis,
@@ -39,11 +46,19 @@ class PreOutputCouncil:
         coherence_threshold: float = SOUL.council.coherence_threshold,
         block_threshold: float = SOUL.council.block_threshold,
         perspective_config: Optional[Dict[Union[PerspectiveType, str], Dict[str, Any]]] = None,
+        verifier: Optional[IndependentVerifier] = None,
+        verifier_config: Optional[VerifierConfig] = None,
     ):
         self.perspectives = self._normalize_perspectives(
             perspectives,
             perspective_config,
         )
+        # Phase C Independent Verifier — optional post-verdict audit by a
+        # substrate-separated reviewer. verifier=None (default) -> no audit and
+        # behaviour identical to pre-Phase-C. See independent_verifier_spec_
+        # 2026-05-14.md for role boundary + fail-open semantics.
+        self.verifier = verifier
+        self.verifier_config = verifier_config or VerifierConfig()
         self.coherence_threshold = coherence_threshold
         self.block_threshold = block_threshold
         # Phase 864a Layer 1: deterministic, side-effect-free; safe to share.
@@ -136,6 +151,18 @@ class PreOutputCouncil:
             divergence=divergence,
         )
 
+        # Phase C Independent Verifier — runs AFTER verdict construction is
+        # complete (synthesis, strategy_mirror, human_summary, transcript) so it
+        # sees the final artifact. Attaches a report, never modifies the verdict.
+        # Default-off (verifier is None). Fail-open. See
+        # independent_verifier_spec_2026-05-14.md §2.4 / §2.5.
+        if self.verifier is not None:
+            verdict.verifier_report = self._run_independent_verifier(
+                verdict=verdict,
+                context=context,
+                user_intent=user_intent,
+            )
+
         # Selective self-memory: auto-record for meaningful decisions
         record_option = context.get("record_self_memory")
         should_auto_record = verdict.verdict in (
@@ -150,7 +177,37 @@ class PreOutputCouncil:
                 record_self_memory(verdict, context=context, path=path)
             except OSError:
                 pass
+
         return verdict
+
+    def _run_independent_verifier(
+        self,
+        *,
+        verdict: CouncilVerdict,
+        context: dict,
+        user_intent: Optional[str],
+    ) -> VerifierReport:
+        """Invoke the configured verifier with fail-open semantics.
+
+        Any exception from the verifier produces an ERROR VerifierReport with
+        fail_open_reason populated. The caller proceeds with the original verdict
+        unchanged. See spec §2.5.
+        """
+        assert self.verifier is not None  # caller guarded
+        try:
+            return self.verifier.verify(
+                verdict=verdict,
+                context={"user_intent": user_intent, **(context or {})},
+                config=self.verifier_config,
+            )
+        except Exception as exc:
+            return VerifierReport(
+                status=VerifierStatus.ERROR,
+                reasoning=f"Verifier raised: {type(exc).__name__}",
+                verifier_id=getattr(self.verifier, "verifier_id", "unknown"),
+                audited_at=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                fail_open_reason=f"{type(exc).__name__}: {str(exc)[:200]}",
+            )
 
     def _evaluate_perspective(
         self,
