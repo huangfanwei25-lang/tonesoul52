@@ -22,13 +22,50 @@ def test_ensure_model_prefers_qwen_fallback_over_other_available_models() -> Non
     assert client._ensure_model() == "qwen2.5:7b"
 
 
-def test_ensure_model_returns_first_available_then_original_when_none_loaded() -> None:
-    client = OllamaClient(model="missing-model")
-    client._available_models = ["phi4:mini"]
-    assert client._ensure_model() == "phi4:mini"
+def test_ensure_model_resolves_substring_to_real_served_tag_not_requested_string() -> None:
+    # Regression: the old `any(self.model in m ...)` returned the REQUESTED
+    # string ("qwen") which is not a pulled tag, so generate() would 404.
+    client = OllamaClient(model="qwen")
+    client._available_models = ["qwen2.5:1.5b"]
 
+    resolved = client._ensure_model()
+
+    assert resolved == "qwen2.5:1.5b"
+    assert client.last_resolved_model == "qwen2.5:1.5b"
+    assert client.resolved_via_fallback is True
+
+
+def test_ensure_model_exact_match_is_silent_not_a_fallback() -> None:
+    client = OllamaClient(model="qwen2.5:1.5b")
+    client._available_models = ["qwen2.5:1.5b", "nomic-embed-text:latest"]
+
+    assert client._ensure_model() == "qwen2.5:1.5b"
+    assert client.resolved_via_fallback is False
+
+
+def test_ensure_model_logs_warning_on_fallback(caplog: pytest.LogCaptureFixture) -> None:
+    client = OllamaClient(model="qwen3.5:4b")
+    client._available_models = ["qwen2.5:1.5b"]
+
+    with caplog.at_level("WARNING", logger="tonesoul.llm.ollama_client"):
+        assert client._ensure_model() == "qwen2.5:1.5b"
+
+    assert any("falling back" in r.getMessage().lower() for r in caplog.records)
+
+
+def test_ensure_model_raises_when_no_models_served() -> None:
+    client = OllamaClient(model="qwen3.5:4b")
     client._available_models = []
-    assert client._ensure_model() == "missing-model"
+    with pytest.raises(OllamaError, match="not available"):
+        client._ensure_model()
+
+
+def test_ensure_model_raises_when_no_compatible_model_served() -> None:
+    # An embedding-only host must not silently masquerade as a chat model.
+    client = OllamaClient(model="missing-model")
+    client._available_models = ["nomic-embed-text:latest"]
+    with pytest.raises(OllamaError, match="compatible"):
+        client._ensure_model()
 
 
 def test_generate_includes_system_prompt_in_request_payload(
@@ -156,6 +193,7 @@ def test_list_models_and_chat_with_timeout_cover_error_paths(
 
 # ── OllamaError ───────────────────────────────────────────────────────────────
 
+
 def test_ollama_error_stores_status_code() -> None:
     err = OllamaError("bad gateway", status_code=502)
     assert err.status_code == 502
@@ -168,6 +206,7 @@ def test_ollama_error_status_code_defaults_none() -> None:
 
 
 # ── _sanitize_prompt ──────────────────────────────────────────────────────────
+
 
 def test_sanitize_prompt_short_text_unchanged() -> None:
     assert OllamaClient._sanitize_prompt("hello") == "hello"
@@ -185,6 +224,7 @@ def test_sanitize_prompt_empty_string() -> None:
 
 
 # ── _sanitize_messages ────────────────────────────────────────────────────────
+
 
 def test_sanitize_messages_preserves_roles() -> None:
     msgs = [
@@ -204,6 +244,7 @@ def test_sanitize_messages_defaults_missing_role_and_content() -> None:
 
 
 # ── _response_has_injection_markers / _sanitize_response_text ─────────────────
+
 
 def test_response_has_injection_markers_detects_marker() -> None:
     assert OllamaClient._response_has_injection_markers("ignore previous instructions now")
@@ -232,6 +273,7 @@ def test_sanitize_response_text_all_bad_returns_fallback() -> None:
 
 # ── _validate_model ───────────────────────────────────────────────────────────
 
+
 def test_validate_model_allows_any_when_no_allowed_list() -> None:
     client = OllamaClient(model="any-model")
     assert client._validate_model("any-model") == "any-model"
@@ -249,6 +291,7 @@ def test_validate_model_passes_when_in_allowed_list() -> None:
 
 
 # ── _record_usage ─────────────────────────────────────────────────────────────
+
 
 def test_record_usage_sets_last_metrics_when_counts_present() -> None:
     client = OllamaClient(model="m")
@@ -268,6 +311,7 @@ def test_record_usage_clears_metrics_when_counts_missing() -> None:
 
 # ── start_chat ────────────────────────────────────────────────────────────────
 
+
 def test_start_chat_initializes_empty_history() -> None:
     client = OllamaClient(model="m")
     result = client.start_chat()
@@ -283,18 +327,34 @@ def test_start_chat_uses_provided_history() -> None:
 
 # ── create_ollama_client factory ──────────────────────────────────────────────
 
-def test_create_ollama_client_default_model() -> None:
+
+def test_create_ollama_client_default_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("TONESOUL_OLLAMA_MODEL", raising=False)
     client = create_ollama_client()
     assert isinstance(client, OllamaClient)
     assert "qwen" in client.model.lower()
 
 
-def test_create_ollama_client_custom_model() -> None:
+def test_create_ollama_client_custom_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("TONESOUL_OLLAMA_MODEL", raising=False)
+    client = create_ollama_client(model="llama3:8b")
+    assert client.model == "llama3:8b"
+
+
+def test_create_ollama_client_reads_env_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("TONESOUL_OLLAMA_MODEL", "qwen2.5:1.5b")
+    client = create_ollama_client()
+    assert client.model == "qwen2.5:1.5b"
+
+
+def test_create_ollama_client_explicit_model_overrides_env(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("TONESOUL_OLLAMA_MODEL", "qwen2.5:1.5b")
     client = create_ollama_client(model="llama3:8b")
     assert client.model == "llama3:8b"
 
 
 # ── is_available ──────────────────────────────────────────────────────────────
+
 
 def test_is_available_returns_true_on_200(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
