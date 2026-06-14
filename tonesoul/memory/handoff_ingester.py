@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Dict, Optional
 
 from .soul_db import MemorySource, SoulDB
+from .sovereignty_gate import MemorySovereigntyGate
 from .write_gateway import MemoryWriteGateway
 
 __ts_layer__ = "memory"
@@ -40,6 +41,24 @@ class HandoffIngester:
     def __init__(self, soul_db: SoulDB) -> None:
         self.soul_db = soul_db
         self.write_gateway = MemoryWriteGateway(soul_db)
+        self._sovereignty_gate = MemorySovereigntyGate()
+        self.last_reject_reasons: list[str] = []
+
+    def _gate_transfer(self, memory_payload: Dict[str, object]) -> bool:
+        """Axiom 8: stamp the handoff transfer with a sovereignty verdict.
+
+        Returns True (allow) for first-party handoffs — they are stamped and
+        flow through, so existing intra-relationship handoffs and session boot
+        are unaffected. Returns False (reject) only for a transfer that declares
+        an external memory owner or a replica without a consent token.
+        """
+        verdict = self._sovereignty_gate.evaluate_transfer(memory_payload)
+        provenance = memory_payload.get("provenance")
+        if isinstance(provenance, dict):
+            provenance["sovereignty"] = verdict.stamp
+        if not verdict.allowed:
+            self.last_reject_reasons = list(verdict.reasons)
+        return verdict.allowed
 
     def ingest_handoff_dir(
         self,
@@ -140,6 +159,10 @@ class HandoffIngester:
             "type": "handoff",
             "from_agent": str(payload.get("source_model") or "unknown"),
             "to_agent": str(payload.get("target_model") or "unknown"),
+            # Optional Axiom 8 sovereignty fields (absent on first-party handoffs):
+            "memory_owner": payload.get("memory_owner"),
+            "is_replica": bool(payload.get("replicate") or payload.get("is_replica")),
+            "consent_token": payload.get("consent_token"),
             "summary": summary,
             "key_decisions": key_decisions,
             "files_changed": files_changed,
@@ -160,6 +183,8 @@ class HandoffIngester:
                 "imported_at": timestamp,
             },
         }
+        if not self._gate_transfer(memory_payload):
+            return "skipped"
         self.write_gateway.write_payload(MemorySource.CUSTOM, memory_payload)
         return "ingested"
 
@@ -206,5 +231,7 @@ class HandoffIngester:
                 "imported_at": timestamp,
             },
         }
+        if not self._gate_transfer(memory_payload):
+            return "skipped"
         self.write_gateway.write_payload(MemorySource.CUSTOM, memory_payload)
         return "ingested"
