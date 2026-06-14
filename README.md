@@ -12,13 +12,13 @@
 
 ## In one sentence
 
-**ToneSoul is epistemic defense for AI** — categorical refusal of forbidden claim classes (`AXIOMS.json` `meta.not_for`), plus surfaced dissent for other ungrounded claims and infrastructure that makes accountability possible after errors occur.
+**ToneSoul is epistemic defense for AI** — it surfaces forbidden claim classes (`AXIOMS.json` `meta.not_for`) as Guardian dissent that can route a draft to refinement, flags other ungrounded claims, and builds infrastructure that makes accountability possible after errors occur. (Honesty boundary: the forbidden-class detector is keyword-level and paraphrase-permeable — it *surfaces*, it does not hard-block; see `meta.enforcement_reconciliation`, which self-rates "0 fully enforced".)
 
 This is different from **probabilistic optimization** (RAG, confidence scoring, calibration tuning), which tries to make errors statistically less likely. ToneSoul accepts errors will happen and focuses on three things instead:
 
-- **Hard limits** — `AXIOMS.json`'s `meta.not_for` list (consciousness-claim, safety-certification, legal-proof) defines claims the system should never make regardless of confidence. Categorical, not probabilistic.
+- **Hard limits (by design)** — `AXIOMS.json`'s `meta.not_for` list (consciousness-claim, safety-certification, legal-proof) defines claims the system *should* never make regardless of confidence. The intent is categorical; today's enforcement is a keyword-level Guardian CONCERN that surfaces such claims and can route to refinement — paraphrase-permeable, not yet a hard block.
 - **Traceable evidence** — every council verdict carries per-perspective dissent and an `evidence_chain` distinguishing substantive engagement from default-fallback. Verdicts are auditable, not opaque.
-- **Externalized evaluation** — five council perspectives (Guardian, Analyst, Critic, Advocate, Axiomatic) evaluate drafts independently. The system does not trust the AI's self-reported confidence; it builds external machinery to assess.
+- **Externalized evaluation (partial)** — five council perspectives (Guardian, Analyst, Critic, Advocate, Axiomatic) score each draft as lexical/heuristic voters (keyword, hedge-marker, and embedding checks over the *same* draft string — not independent reasoners or a second model). A substrate-separated independent verifier exists but is default-off and mock-only (Phase D, deferred); "externalized" is fully true only once it ships.
 
 The slogan version: *most AI safety work optimizes; ToneSoul defends.*
 
@@ -57,9 +57,9 @@ adapter-ready architecture, LoRA-ready distillation.
 |---|---|
 | 🧠 Memory that forgets | Exponential decay + crystallization. Important patterns stay, noise fades. |
 | ⚡ Tension Engine | Every response is scored for semantic deviation before it ships. |
-| 🎭 Council Deliberation | Guardian, Analyst, Critic, Advocate debate before final output. |
-| 🔮 Resonance Detection | Distinguishes genuine understanding from empty agreement. |
-| 🛡️ Self-Governance | Unsafe or incoherent output is blocked or rewritten with audit traces. |
+| 🎭 Council Deliberation | Guardian, Analyst, Critic, Advocate score each draft as lexical/heuristic voters before final output. |
+| 🔮 Resonance Detection | Classifies cosine-delta convergence between consecutive turns. |
+| 🛡️ Self-Governance | Unsafe or incoherent output is blocked (replaced with a refusal message) with audit traces — no generative rewrite path. |
 | 📊 Live Dashboard | Real-time crystals, resonance stats, journal health, and repair signals. |
 
 ## See the difference in 30 seconds
@@ -149,7 +149,7 @@ pip install tonesoul52[dev]
 pytest tests/ -v
 ```
 
-Current suite size: **7652 tests collected** (latest local collection, Python 3.13 / Windows). CI currently runs the blocking Python test gate on pull requests. Honest boundary: `master` has no branch protection yet, so these gates bind PRs but not direct pushes.
+Current suite size: **~3,137 tests passing** (Python 3.13, Windows/Ubuntu — see the Quality Snapshot below). CI runs the blocking Python test gate on pull requests, and `master` **is** branch-protected (required checks: `Test Python 3.12` + `Commit Attribution Check`, strict up-to-date), so red commits are blocked at the machine level for both PRs and direct pushes. (An earlier "7,652 collected" figure in this spot was inconsistent with the Quality Snapshot — collected ≠ passing — and is pending re-confirmation.)
 
 For local development, use `./test.sh` as the canonical core pre-commit check — it mirrors the core Python gates (ruff + bounded black gate + pytest), not every CI job. Modes: `./test.sh` (full), `lint` (only lint+format), `test` (only tests), `fast` (lint + tests with -x). CI also runs web quality, architecture/docs contracts, red-team, package integrity, and memory hygiene gates.
 
@@ -186,7 +186,7 @@ User Input
     ↓
 [Council] Guardian / Analyst / Critic / Advocate deliberate
     ↓
-[ComputeGate] approve / block / rewrite
+[ComputeGate] approve / block (replace with refusal message; no rewrite path)
     ↓
 [Journal + Crystallizer] remember what matters, forget the rest
     ↓
