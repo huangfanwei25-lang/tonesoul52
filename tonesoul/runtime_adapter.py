@@ -1934,6 +1934,14 @@ def _commit_locked_posture(store: Any, trace: SessionTrace) -> GovernancePosture
     # needed only for signatures, and sign_trace now degrades by
     # marking the trace UNSIGNED explicitly. No exception swallowing.
     trace_dict = trace.to_dict()
+
+    # Axiom 2 (Responsibility Threshold): stamp the responsibility-audit marker
+    # BEFORE the trace enters the immutable Aegis chain, so audit_log_threshold is
+    # a live consumer and "risk > 0.4 -> immutable audit" is explicit + queryable.
+    from tonesoul.governance.responsibility_audit import evaluate_responsibility_audit
+
+    trace_dict["responsibility_audit"] = evaluate_responsibility_audit(trace_dict)
+
     from tonesoul.aegis_shield import AegisShield
 
     shield = AegisShield.load(store)
