@@ -1942,6 +1942,14 @@ def _commit_locked_posture(store: Any, trace: SessionTrace) -> GovernancePosture
 
     trace_dict["responsibility_audit"] = evaluate_responsibility_audit(trace_dict)
 
+    # Axiom 7 (reframed 2026-06-14): high live tension -> de-escalation directive.
+    # Makes high_tension_threshold a live consumer for the damping axis; the
+    # directive is recorded on the immutable trace (applying it to live output is
+    # a separate referenced->partial step).
+    from tonesoul.governance.de_escalation import evaluate_de_escalation
+
+    trace_dict["de_escalation"] = evaluate_de_escalation(trace_dict)
+
     from tonesoul.aegis_shield import AegisShield
 
     shield = AegisShield.load(store)

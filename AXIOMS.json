@@ -129,14 +129,21 @@
       "id": 7,
       "name": "Semantic Field Conservation",
       "name_zh": "語義場守恆",
-      "fol": "delta semantic_energy == 0 (within closed context)",
-      "natural": "The total semantic energy within a closed conversation context is conserved.",
-      "implication": "Aggression must be balanced by de-escalation. The system is a Damper.",
+      "fol": "forall e: tension(e) > high_tension_threshold -> de_escalation_directive(e)",
+      "natural": "When live session tension exceeds the high-tension threshold, the system MUST raise a de-escalation move (damping).",
+      "implication": "Aggression must be balanced by de-escalation -- operationalized as a recorded directive raised on high live tension, not as an unmeasurable energy-conservation claim.",
       "priority": "P1",
+      "statement_history": {
+        "reframed": "2026-06-14",
+        "by": "human decision (Fan-Wei Huang)",
+        "original_fol": "delta semantic_energy == 0 (within closed context)",
+        "original_natural": "The total semantic energy within a closed conversation context is conserved. The system is a Damper.",
+        "reason": "The original was a metaphor with no operational definition (un-enforceable). Reframed to its testable subset: high live tension -> de-escalation directive. The 'damper' intuition is preserved; the unmeasurable energy-conservation claim is retired."
+      },
       "enforcement": {
-        "status": "aspirational",
+        "status": "referenced",
         "as_of": "2026-06-14",
-        "note": "DELIBERATELY not enforced (assessed 2026-06-14): 'delta semantic_energy == 0' is a design metaphor with no operational definition, so any runtime 'conservation' test would be fabricated specificity (the anti-pattern). de-escalation survives only as an enum value; the live high_tension_threshold consumer ranks offline DREAM candidates, not live damping. Honest options: keep it as a declared metaphor, OR reframe the STATEMENT to a testable subset (high-tension -> live de-escalation) -- and reframing an axiom statement is a human decision (per CLAUDE.md), not an AI metadata edit."
+        "note": "Reframed from metaphor to testable subset (statement_history). governance/de_escalation.py now makes SOUL.tension.high_tension_threshold a live consumer for the damping axis (previously it only fed dream-candidate scoring) and stamps a de_escalation directive marker onto every committed trace BEFORE the immutable Aegis chain (runtime_adapter._commit_locked_posture). REFERENCED, not partial: the directive is raised + recorded + tested on high tension, but is NOT yet APPLIED to live response output -- a reflex SOFTEN append is the referenced->partial step and a per-turn output-behavior change reserved for explicit opt-in."
       }
     },
     {
@@ -246,6 +253,14 @@
         "Claude (Opus 4.8)"
       ],
       "milestone": "Enforcement program ('steal the enforcement craft, keep the accountability direction'): Axiom 8 referenced->partial (MemorySovereigntyGate: MemoryConfig is a real fail-closed consumer at memory egress - transfer + training export); Axiom 2 aspirational->partial (responsibility_audit: audit_log_threshold is a live marker on the immutable trace chain)."
+    },
+    {
+      "epoch": "2026-06-14",
+      "alias": "黃梵威 (Fan-Wei Huang / Fan1234-1)",
+      "ai_collaborators": [
+        "Claude (Opus 4.8)"
+      ],
+      "milestone": "Axiom 7 STATEMENT reframed (human decision): retired the un-operationalized 'semantic energy conservation' metaphor for its testable subset 'high tension -> de-escalation directive' (de_escalation evaluator; high_tension_threshold now a live consumer). statement_history preserves the original. aspirational->referenced."
     }
   ],
   "meta": {
@@ -272,7 +287,7 @@
         "referenced": "mechanism exists nearby but the axiom's own condition is not verified/wired",
         "aspirational": "declared only; no runtime consumer"
       },
-      "honest_summary": "0 fully enforced, 7 partial, 1 referenced, 1 aspirational (incl. E0 partial). 2026-06-14: Axiom 8 moved referenced->partial (MemorySovereigntyGate wired MemoryConfig to fail-closed egress enforcement); Axiom 2 moved aspirational->partial (responsibility_audit wired audit_log_threshold to a live marker on the immutable chain). Axiom 5 (referenced) and Axiom 7 (aspirational) were assessed the same day and DELIBERATELY left un-enforced -- A5 lacks a runtime accuracy oracle (see reflection-revision probe), A7 is an un-operationalized metaphor whose reframe is a human decision -- because fabricating their tests would violate the discipline. The axioms are immutable as commitments; this block records how much of each commitment the runtime currently keeps."
+      "honest_summary": "0 fully enforced, 7 partial, 2 referenced, 0 aspirational (incl. E0 partial). 2026-06-14 enforcement program: Axiom 8 referenced->partial (MemorySovereigntyGate: MemoryConfig is a live fail-closed consumer at memory egress); Axiom 2 aspirational->partial (responsibility_audit: audit_log_threshold is a live marker on the immutable chain); Axiom 7 statement REFRAMED (human decision) from the un-operationalized 'semantic energy conservation' metaphor to its testable subset 'high tension -> de-escalation directive', then aspirational->referenced (de_escalation makes high_tension_threshold a live consumer + records the directive; apply-to-output is the referenced->partial next step). Axiom 5 stays referenced -- DELIBERATELY un-enforced: no runtime accuracy oracle (see reflection-revision probe), and fabricating an 'accuracy' metric would violate the discipline. The axioms are immutable as commitments; this block records how much of each commitment the runtime currently keeps."
     }
   }
 }
