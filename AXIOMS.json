@@ -107,8 +107,8 @@
       "priority": "P2",
       "enforcement": {
         "status": "referenced",
-        "as_of": "2026-06-13",
-        "note": "Reflection loop exists with honest fail-stop (MAX_REVISIONS=2, budget exhaustion admits non-convergence), but the axiom condition accuracy(S')>accuracy(S) is never measured."
+        "as_of": "2026-06-14",
+        "note": "Reflection loop exists with honest fail-stop (MAX_REVISIONS=2, budget exhaustion admits non-convergence), but accuracy(S')>accuracy(S) is never measured -- and is not enforceable: there is no runtime accuracy oracle. The reflection-revision probe (tools/probe/reflection_revision_probe.py) is the honest measurement attempt; on the local 1.5B model even content-change is dominated by sampling noise (outcome 0.76 < noise-floor 0.78). DELIBERATELY left referenced on 2026-06-14: the mechanism is real, the gain is unmeasurable at this scale, and fabricating an 'accuracy' metric would violate the axiom-as-decision-deferral discipline."
       }
     },
     {
@@ -135,8 +135,8 @@
       "priority": "P1",
       "enforcement": {
         "status": "aspirational",
-        "as_of": "2026-06-13",
-        "note": "No implementation. 'delta semantic_energy == 0' has no code; de-escalation survives only as an enum value; high_tension_threshold is asserted by tests but consumed by no runtime."
+        "as_of": "2026-06-14",
+        "note": "DELIBERATELY not enforced (assessed 2026-06-14): 'delta semantic_energy == 0' is a design metaphor with no operational definition, so any runtime 'conservation' test would be fabricated specificity (the anti-pattern). de-escalation survives only as an enum value; the live high_tension_threshold consumer ranks offline DREAM candidates, not live damping. Honest options: keep it as a declared metaphor, OR reframe the STATEMENT to a testable subset (high-tension -> live de-escalation) -- and reframing an axiom statement is a human decision (per CLAUDE.md), not an AI metadata edit."
       }
     },
     {
@@ -272,7 +272,7 @@
         "referenced": "mechanism exists nearby but the axiom's own condition is not verified/wired",
         "aspirational": "declared only; no runtime consumer"
       },
-      "honest_summary": "0 fully enforced, 7 partial, 1 referenced, 1 aspirational (incl. E0 partial). 2026-06-14: Axiom 8 moved referenced->partial (MemorySovereigntyGate wired MemoryConfig to fail-closed egress enforcement); Axiom 2 moved aspirational->partial (responsibility_audit wired audit_log_threshold to a live marker on the immutable chain). The axioms are immutable as commitments; this block records how much of each commitment the runtime currently keeps."
+      "honest_summary": "0 fully enforced, 7 partial, 1 referenced, 1 aspirational (incl. E0 partial). 2026-06-14: Axiom 8 moved referenced->partial (MemorySovereigntyGate wired MemoryConfig to fail-closed egress enforcement); Axiom 2 moved aspirational->partial (responsibility_audit wired audit_log_threshold to a live marker on the immutable chain). Axiom 5 (referenced) and Axiom 7 (aspirational) were assessed the same day and DELIBERATELY left un-enforced -- A5 lacks a runtime accuracy oracle (see reflection-revision probe), A7 is an un-operationalized metaphor whose reframe is a human decision -- because fabricating their tests would violate the discipline. The axioms are immutable as commitments; this block records how much of each commitment the runtime currently keeps."
     }
   }
 }
