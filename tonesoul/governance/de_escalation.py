@@ -10,9 +10,13 @@ damping axis — previously it only fed dream-candidate scoring (world_sense.py)
 and records the directive on the immutable trace so the reframed condition is
 testable and traceable.
 
-Scope honesty: this RAISES + RECORDS the directive (the referenced level).
-APPLYING it to the live response (e.g. a reflex SOFTEN append) is the
-referenced->partial step and a per-turn output-behavior change, kept separate.
+Scope honesty: `evaluate_de_escalation` (here) RAISES + RECORDS the directive on
+the immutable trace. The live-apply step is now wired too (2026-06-14, #104):
+`de_escalation_framing(tension)` (also in this module) returns the framing string
+that `unified_pipeline.py` appends to the response after the reflex final gate
+when tension exceeds the threshold. That append moved A7 from referenced->partial.
+What is still NOT done: a generative rewrite of the response body (only an
+appended framing line), and any zh-TW / paraphrase-robust tension sensor.
 """
 
 from __future__ import annotations
