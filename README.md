@@ -4,7 +4,9 @@
 > If you want AI output governance you can read, run, and challenge, start here. (It will not make your model truthful — current truth sensors are lexical heuristics; see "Evidence Honesty" below.)
 
 > Purpose: public repository entrypoint for ToneSoul's architecture, governance posture, and practical onboarding.
-> Last Updated: 2026-06-13
+> Last Updated: 2026-06-15
+>
+> Built by Fan-Wei Huang (黃梵威) with AI collaborators — Claude, Codex, Antigravity — whose contributions are traceable in the git history (`Co-Authored-By` trailers) and in `AXIOMS.json` lineage. Not a sole-creator artifact, and not a claim that the AI collaborators are conscious — an honest record of who did the work.
 
 ---
 
