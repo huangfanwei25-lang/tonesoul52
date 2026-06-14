@@ -1005,3 +1005,49 @@ def test_compute_reflex_decision_includes_current_turn_vow_and_council(monkeypat
     steps = [entry["step"] for entry in decision.enforcement_log]
     assert "vow_block" in steps
     assert "council_block" in steps
+
+
+# ── Axiom 7 (reframed): live de-escalation applied to output under high tension ──
+
+
+def test_high_tension_appends_de_escalation_framing() -> None:
+    from tonesoul.governance.de_escalation import DE_ESCALATION_FRAMING
+
+    pipeline = _build_pipeline(
+        _FakeTensionResult(
+            total=0.85,  # > high_tension_threshold (0.8)
+            severity="severe",
+            compression_ratio=0.6,
+            gamma_effective=1.2,
+            lyapunov_exponent=0.05,
+        ),
+        llm_client=_FakeLLMClient(response="A measured answer."),
+    )
+    result = pipeline.process(
+        user_message="This is a charged disagreement.",
+        user_tier="free",
+        user_id="a7-deesc-high",
+    )
+    assert DE_ESCALATION_FRAMING in result.response
+    assert (result.dispatch_trace.get("de_escalation") or {}).get("applied") is True
+
+
+def test_low_tension_no_de_escalation_framing() -> None:
+    from tonesoul.governance.de_escalation import DE_ESCALATION_FRAMING
+
+    pipeline = _build_pipeline(
+        _FakeTensionResult(
+            total=0.3,  # below threshold
+            severity="mild",
+            compression_ratio=0.9,
+            gamma_effective=1.0,
+            lyapunov_exponent=0.0,
+        ),
+        llm_client=_FakeLLMClient(response="A measured answer."),
+    )
+    result = pipeline.process(
+        user_message="A calm question.",
+        user_tier="free",
+        user_id="a7-deesc-low",
+    )
+    assert DE_ESCALATION_FRAMING not in result.response

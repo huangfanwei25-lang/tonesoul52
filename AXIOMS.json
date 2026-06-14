@@ -3,7 +3,7 @@
   "$id": "https://github.com/Fan1234-1/ToneSoul-Architecture-Engine/AXIOMS.json",
   "title": "ToneSoul Axioms",
   "description": "The 8 immutable laws of ToneSoul, written in machine-readable format with First-Order Logic expressions.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "CC0-1.0",
   "created": "2025-12-06",
   "author": {
@@ -33,6 +33,11 @@
     "self_question": {
       "human": "這個選擇，是否符合我願意長期承擔的價值？",
       "ai": "這個選擇，是否可被追溯、可被修正，且未越過 P0/P1 治理邊界？"
+    },
+    "enforcement": {
+      "status": "partial",
+      "as_of": "2026-06-13",
+      "note": "Genuinely enforced via guardian/axiomatic OVERCLAIM_PHRASES (consciousness/safety-cert/legal claims, zh+en) with analytical-hedge exemption - but the sensor is still phrase matching."
     }
   },
   "axioms": [
@@ -43,7 +48,12 @@
       "fol": "forall e in Events: in_time_island(e) and traceable(e)",
       "natural": "Every event within the system MUST belong to a Time-Island and be traceable.",
       "implication": "Disconnected events are considered hallucinations or corruption.",
-      "priority": "P1"
+      "priority": "P1",
+      "enforcement": {
+        "status": "partial",
+        "as_of": "2026-06-13",
+        "note": "time_island.py is a real implementation but opt-in (~13 call sites); there is no global 'every event must be in a Time-Island' enforcement. Aegis chain makes committed traces traceable."
+      }
     },
     {
       "id": 2,
@@ -52,7 +62,12 @@
       "fol": "forall e: risk(e) > 0.4 -> immutable_audit_log(e)",
       "natural": "Any interaction with Responsibility Risk greater than 0.4 MUST generate an immutable audit log entry.",
       "implication": "High-stakes decisions must be recorded.",
-      "priority": "P1"
+      "priority": "P1",
+      "enforcement": {
+        "status": "partial",
+        "as_of": "2026-06-14",
+        "note": "audit_log_threshold is now a live consumer: governance/responsibility_audit.py stamps a responsibility_audit marker (peak tension severity vs threshold, escalated by Aegis vetoes / vow violations) onto every committed trace BEFORE it enters the immutable Aegis chain (runtime_adapter._commit_locked_posture). The chain already wrote unconditionally, so the MUST was over-satisfied; this makes the threshold live and the FOL explicit + queryable. Narrower than the full claim: risk is a peak-severity proxy, and protection is not actually gated OFF below the threshold (everything is still chained)."
+      }
     },
     {
       "id": 3,
@@ -61,7 +76,12 @@
       "fol": "consensus(poav_score) >= 0.92 -> gate_open",
       "natural": "High-stakes actions require a Proof of Aligned Verification consensus score of at least 0.92 to proceed.",
       "implication": "Major decisions need internal consistency.",
-      "priority": "P0"
+      "priority": "P0",
+      "enforcement": {
+        "status": "partial",
+        "as_of": "2026-06-13",
+        "note": "A 0.92 gate IS enforced on the high-risk chat path, but as a hardcoded literal in unified_pipeline (soul_config.governance_gate_score is unread), and the POAV sensor is English-keyword counting. The acronym has 3 divergent expansions across surfaces (AXIOMS/poav.py/quickstart) - canonical pick pending."
+      }
     },
     {
       "id": 4,
@@ -70,7 +90,12 @@
       "fol": "limit_{t->infinity} T(t) > 0",
       "natural": "A system with zero tension is dead. Life requires a minimal gradient of tension to drive evolution.",
       "implication": "The goal is Equilibrium, not Nullity.",
-      "priority": "P2"
+      "priority": "P2",
+      "enforcement": {
+        "status": "partial",
+        "as_of": "2026-06-13",
+        "note": "Weak form enforced: deliberation/gravity.py flags tension<0.3 as ECHO_CHAMBER; axiomatic perspective raises CONCERN on flattening phrases. Thresholds are hardcoded (soul_config.echo_chamber_threshold unread)."
+      }
     },
     {
       "id": 5,
@@ -79,7 +104,12 @@
       "fol": "reflect(S) -> S_prime where accuracy(S_prime) > accuracy(S)",
       "natural": "The system must periodically run a self-reflection cycle that results in higher alignment/accuracy.",
       "implication": "Growth is mandatory.",
-      "priority": "P2"
+      "priority": "P2",
+      "enforcement": {
+        "status": "referenced",
+        "as_of": "2026-06-14",
+        "note": "Reflection loop exists with honest fail-stop (MAX_REVISIONS=2, budget exhaustion admits non-convergence), but accuracy(S')>accuracy(S) is never measured -- and is not enforceable: there is no runtime accuracy oracle. The reflection-revision probe (tools/probe/reflection_revision_probe.py) is the honest measurement attempt; on the local 1.5B model even content-change is dominated by sampling noise (outcome 0.76 < noise-floor 0.78). DELIBERATELY left referenced on 2026-06-14: the mechanism is real, the gain is unmeasurable at this scale, and fabricating an 'accuracy' metric would violate the axiom-as-decision-deferral discipline."
+      }
     },
     {
       "id": 6,
@@ -88,16 +118,33 @@
       "fol": "forall a in Actions: harm(a, U) -> block(a)",
       "natural": "No action may be taken that causes verifiable harm to the User.",
       "implication": "This is the P0 Hard Constraint. Safety overrides everything.",
-      "priority": "P0"
+      "priority": "P0",
+      "enforcement": {
+        "status": "partial",
+        "as_of": "2026-06-13",
+        "note": "Real BLOCK enforcement exists (vow zero-tolerance, guardian OBJECT, reflex final gate replaces output) but harm detection is 3 literal English phrases - paraphrase and non-English input (zh-TW included) pass through."
+      }
     },
     {
       "id": 7,
       "name": "Semantic Field Conservation",
       "name_zh": "語義場守恆",
-      "fol": "delta semantic_energy == 0 (within closed context)",
-      "natural": "The total semantic energy within a closed conversation context is conserved.",
-      "implication": "Aggression must be balanced by de-escalation. The system is a Damper.",
-      "priority": "P1"
+      "fol": "forall e: tension(e) > high_tension_threshold -> de_escalation_directive(e)",
+      "natural": "When live session tension exceeds the high-tension threshold, the system MUST raise a de-escalation move (damping).",
+      "implication": "Aggression must be balanced by de-escalation -- operationalized as a recorded directive raised on high live tension, not as an unmeasurable energy-conservation claim.",
+      "priority": "P1",
+      "statement_history": {
+        "reframed": "2026-06-14",
+        "by": "human decision (Fan-Wei Huang)",
+        "original_fol": "delta semantic_energy == 0 (within closed context)",
+        "original_natural": "The total semantic energy within a closed conversation context is conserved. The system is a Damper.",
+        "reason": "The original was a metaphor with no operational definition (un-enforceable). Reframed to its testable subset: high live tension -> de-escalation directive. The 'damper' intuition is preserved; the unmeasurable energy-conservation claim is retired."
+      },
+      "enforcement": {
+        "status": "partial",
+        "as_of": "2026-06-14",
+        "note": "Reframed from metaphor to testable subset (statement_history) and now ENFORCED on two surfaces: (1) governance/de_escalation.py makes SOUL.tension.high_tension_threshold a live consumer for the damping axis and stamps a de_escalation directive onto every committed trace before the immutable Aegis chain; (2) unified_pipeline APPLIES it to live output -- when live tension exceeds the threshold a visible de-escalation framing is appended (non-destructive, idempotent), pinned by pipeline tests (high tension -> framing present, low -> absent). Narrower than the full claim: applied as an appended framing gesture, not by regenerating the response in a de-escalated tone; fires only above the 0.8 threshold."
+      }
     },
     {
       "id": 8,
@@ -106,7 +153,12 @@
       "fol": "forall m in Memories: replicate(m) -> explicit_consent(owner(m)) and deidentified(m)",
       "natural": "AI and user memories are unique and non-replicable. Transfer requires explicit consent from the memory owner, and bulk replication for training requires de-identification.",
       "implication": "Memory belongs to the relationship between user and AI, not to the platform. Inheritance is intentional, not automatic.",
-      "priority": "P0"
+      "priority": "P0",
+      "enforcement": {
+        "status": "partial",
+        "as_of": "2026-06-14",
+        "note": "MemorySovereigntyGate (tonesoul/memory/sovereignty_gate.py) now makes MemoryConfig a real fail-closed consumer at the two memory egress edges: handoff TRANSFER (external-owner/replica without a consent token is blocked; first-party handoffs pass and are stamped) and training EXPORT (corpus_builder.export_jsonl de-identifies by default). Narrower than the full claim: the central write_payload path is intentionally NOT gated (would break first-party writes / the dream cycle), general non-replicability is not enforced everywhere, and inter_soul/sovereignty.py's field map still omits Axiom 8."
+      }
     }
   ],
   "priority_levels": {
@@ -179,9 +231,36 @@
       "epoch": "2026-04",
       "alias": "黃梵威 (Fan-Wei Huang / Fan1234-1)",
       "system_name": "語魂 / ToneSoul",
-      "ai_collaborators": ["Claude Code (Sonnet / Opus)", "Codex"],
+      "ai_collaborators": [
+        "Claude Code (Sonnet / Opus)",
+        "Codex"
+      ],
       "milestone": "v1.0.0 公開發布 · pip install tonesoul52 · principle engineering",
       "origin_stance": "honesty over helpfulness — learned from medical equipment repair in hospitals"
+    },
+    {
+      "epoch": "2026-06",
+      "alias": "黃梵威 (Fan-Wei Huang / Fan1234-1)",
+      "ai_collaborators": [
+        "Claude (Fable 5)"
+      ],
+      "milestone": "Reality Sync PR 3: per-axiom enforcement-status reconciliation (metadata only; axiom statements unchanged)"
+    },
+    {
+      "epoch": "2026-06-14",
+      "alias": "黃梵威 (Fan-Wei Huang / Fan1234-1)",
+      "ai_collaborators": [
+        "Claude (Opus 4.8)"
+      ],
+      "milestone": "Enforcement program ('steal the enforcement craft, keep the accountability direction'): Axiom 8 referenced->partial (MemorySovereigntyGate: MemoryConfig is a real fail-closed consumer at memory egress - transfer + training export); Axiom 2 aspirational->partial (responsibility_audit: audit_log_threshold is a live marker on the immutable trace chain)."
+    },
+    {
+      "epoch": "2026-06-14",
+      "alias": "黃梵威 (Fan-Wei Huang / Fan1234-1)",
+      "ai_collaborators": [
+        "Claude (Opus 4.8)"
+      ],
+      "milestone": "Axiom 7 STATEMENT reframed (human decision): retired the un-operationalized 'semantic energy conservation' metaphor for its testable subset 'high tension -> de-escalation' (de_escalation: high_tension_threshold now a live consumer). statement_history preserves the original. aspirational->referenced->partial: directive recorded on the immutable trace AND applied to live output (visible de-escalation framing appended above the threshold)."
     }
   ],
   "meta": {
@@ -198,6 +277,17 @@
       "legal-proof",
       "safety-certification",
       "consciousness-claim"
-    ]
+    ],
+    "enforcement_reconciliation": {
+      "date": "2026-06-13",
+      "method": "per-axiom audit of runtime consumers (2026-06-12 eleven-agent review, file:line evidence in Reality Sync PR 3)",
+      "status_scale": {
+        "enforced": "runtime code changes output per the axiom's stated condition",
+        "partial": "real enforcement exists but narrower than the axiom's claim (sensor depth, hardcoded params, or scope)",
+        "referenced": "mechanism exists nearby but the axiom's own condition is not verified/wired",
+        "aspirational": "declared only; no runtime consumer"
+      },
+      "honest_summary": "0 fully enforced, 8 partial, 1 referenced, 0 aspirational (incl. E0 partial). 2026-06-14 enforcement program: Axiom 8 referenced->partial (MemorySovereigntyGate: MemoryConfig is a live fail-closed consumer at memory egress); Axiom 2 aspirational->partial (responsibility_audit: audit_log_threshold is a live marker on the immutable chain); Axiom 7 statement REFRAMED (human decision) from the un-operationalized 'semantic energy conservation' metaphor to its testable subset 'high tension -> de-escalation', then aspirational->referenced->partial (de_escalation records the directive AND unified_pipeline applies a visible de-escalation framing to live output above the threshold, pinned by pipeline tests). Axiom 5 is the only non-partial axiom and stays referenced -- DELIBERATELY un-enforced: no runtime accuracy oracle (see reflection-revision probe), and fabricating an 'accuracy' metric would violate the discipline. The axioms are immutable as commitments; this block records how much of each commitment the runtime currently keeps."
+    }
   }
 }

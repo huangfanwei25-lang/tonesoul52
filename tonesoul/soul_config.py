@@ -128,7 +128,8 @@ class VowConfig:
 @dataclass(frozen=True)
 class RiskConfig:
     audit_log_threshold: float = 0.4  # risk > this → immutable log (Axiom 2)
-    governance_gate_score: float = 0.92  # POAV consensus required (Axiom 3)
+    governance_gate_score: float = 0.92  # POAV gate, high-risk/lockdown path (Axiom 3)
+    governance_gate_score_low_risk: float = 0.70  # POAV gate, low-risk/non-lockdown path
     entropy_check_threshold: float = 0.7  # semantic drift → integrity check
     soft_block_threshold: float = 0.9  # risk → soft block + audit
 

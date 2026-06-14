@@ -265,7 +265,7 @@ class TestShouldWarnCollapse:
 
 class TestComputeDeltaNorm:
     def test_none_when_no_baseline(self):
-        with patch("memory.self_memory.load_recent_memory", return_value=[]):
+        with patch("tonesoul.council.intent_reconstructor.load_recent_memory", return_value=[]):
             result = _compute_delta_norm("text", {})
         assert result is None
 

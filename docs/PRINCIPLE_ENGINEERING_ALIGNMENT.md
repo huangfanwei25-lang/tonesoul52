@@ -282,7 +282,7 @@ FORBIDDEN_ACTIONS = [
 ]
 ```
 
-這是文章「最高公理」層的具體化：不需要計算，直接攔截。
+這是文章「最高公理」層的**意圖**具體化。誠實修正（2026-06-13, Reality Sync PR 3）：`FORBIDDEN_ACTIONS` 目前只存在於 `soul_config.py` 的定義與測試斷言——**runtime 沒有任何程式碼攔截這四項行為**。「不需要計算，直接攔截」描述的是設計目標，不是現況。本文先前標示「✅ 完整」是 enforcement overclaim。
 
 ---
 
@@ -295,7 +295,7 @@ FORBIDDEN_ACTIONS = [
 | 張力觸發審議 | 門檻 → 四人議會 | MIN_COUNCIL_TENSION/FRICTION → council | ✅ 完整 |
 | 記憶衰減 | 指數衰減，遺忘門檻 | decay.py, HALF_LIFE=7d, FORGET=0.1 | ✅ 完整 |
 | 結晶保存 | 對話 → axioms，使用者確認 | crystallizer.py, HALF_LIFE=21d | ⚠️ 使用者介面待補 |
-| 誓言硬約束 | 原則 = 可執行腳本 | VowConfig + FORBIDDEN_ACTIONS | ✅ 完整 |
+| 誓言硬約束 | 原則 = 可執行腳本 | VowConfig 有 runtime enforcement；FORBIDDEN_ACTIONS 僅定義、零攔截 | ⚠️ 部分（FORBIDDEN_ACTIONS 未接線） |
 | **使用者自定義原則 YAML** | **核心差異化功能** | **soul_config.py 是內部的，不開放** | ❌ 最大缺口 |
 
 ## 下一步：最大缺口

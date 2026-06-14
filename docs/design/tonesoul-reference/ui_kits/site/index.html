@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ToneSoul — Site UI Kit</title>
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<style>
+/* Blueprint kit — inlined from site.css (sibling files 401 in preview) */
+:root {
+  --blue-deep: #3a6b9f; --blue-mid: #5a8ec0;
+  --blue-light: #b8d4e8; --blue-pale: #dce8f2;
+  --bg: #eef1f5; --bg-card: rgba(255, 255, 255, 0.72);
+  --text: #2c3e50; --text-muted: #6b7c8d;
+  --border: rgba(90, 142, 192, 0.2);
+  --grid-line: rgba(90, 142, 192, 0.06);
+  --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: var(--bg); }
+body {
+  font-family: var(--font-body); line-height: 1.8; color: var(--text);
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 40px 40px; min-height: 100vh;
+}
+.page { max-width: 920px; margin: 0 auto; padding: 2.5rem 2rem; }
+a { color: var(--blue-mid); text-decoration: none; transition: color .2s; }
+a:hover { color: var(--blue-deep); text-decoration: underline; }
+h1 { font-size: 2.4rem; font-weight: 300; letter-spacing: 0.08em; color: var(--blue-deep); }
+h1 strong, h1 b { font-weight: 600; }
+h2 { font-size: 1.35rem; font-weight: 400; letter-spacing: 0.04em;
+  margin: 3rem 0 1.2rem; padding-bottom: .6rem;
+  border-bottom: 1px solid var(--border); color: var(--blue-deep); }
+h3 { font-size: 1.05rem; font-weight: 600; margin: 1.5rem 0 .5rem; color: var(--text); }
+p { margin-bottom: 1rem; }
+ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+li { margin-bottom: .3rem; }
+code { background: rgba(90, 142, 192, 0.08); padding: .15rem .45rem;
+  border-radius: 3px; font-size: .88em; font-family: var(--font-mono); }
+.site-nav { display: flex; align-items: center; gap: 1.5rem;
+  padding: .8rem 0; margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.site-nav .brand { font-weight: 600; font-size: 1rem; color: var(--blue-deep);
+  letter-spacing: 0.06em; margin-right: auto; cursor: pointer; }
+.site-nav a, .site-nav .link { font-size: .88rem; color: var(--text-muted); letter-spacing: 0.03em;
+  padding: .3rem 0; border-bottom: 2px solid transparent;
+  transition: color .2s, border-color .2s; cursor: pointer;
+  background: none; border-top: 0; border-left: 0; border-right: 0; }
+.site-nav a:hover, .site-nav a.active,
+.site-nav .link:hover, .site-nav .link.active {
+  color: var(--blue-deep); border-bottom-color: var(--blue-mid); text-decoration: none; }
+.breadcrumb { margin-bottom: 2rem; font-size: .88rem; color: var(--text-muted); letter-spacing: 0.03em; }
+.hero { text-align: center; padding: 4rem 1rem 3rem; position: relative; }
+.hero::before { content: ''; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%); width: 280px; height: 280px;
+  background: radial-gradient(ellipse, rgba(90, 142, 192, 0.08) 0%, transparent 70%);
+  border-radius: 50%; pointer-events: none; }
+.hero p { font-size: 1.1rem; color: var(--text-muted); max-width: 640px; margin: 1rem auto; letter-spacing: 0.02em; }
+.hero .tagline-zh { font-size: 1.6rem; font-weight: 300; letter-spacing: 0.15em; color: var(--blue-deep); margin: 1.5rem 0 .5rem; }
+.hero .tagline-sub { font-size: .92rem; color: var(--text-muted); letter-spacing: 0.03em; }
+.crystal-eye { width: 120px; height: 120px; margin: 0 auto 1.5rem; position: relative; }
+.crystal-eye::before, .crystal-eye::after { content: ''; position: absolute; top: 50%; left: 50%;
+  border: 1.5px solid var(--blue-light); border-radius: 50%; }
+.crystal-eye::before { width: 100px; height: 100px; transform: translate(-50%, -50%) rotate(45deg); border-radius: 0; }
+.crystal-eye::after { width: 60px; height: 60px; transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(90, 142, 192, 0.12) 0%, transparent 70%); }
+.crystal-eye .inner { position: absolute; top: 50%; left: 50%; width: 80px; height: 80px;
+  transform: translate(-50%, -50%) rotate(22.5deg);
+  border: 1px solid rgba(90, 142, 192, 0.25); border-radius: 0; }
+.crystal-eye .dot { position: absolute; top: 50%; left: 50%; width: 8px; height: 8px;
+  transform: translate(-50%, -50%); background: var(--blue-mid); border-radius: 50%; }
+.badge { display: inline-block; background: rgba(58, 107, 159, 0.1);
+  color: var(--blue-deep); border: 1px solid var(--border);
+  padding: .25rem .7rem; border-radius: 20px;
+  font-size: .8rem; margin: .2rem; letter-spacing: 0.03em; }
+.cta { display: inline-block; padding: .65rem 1.5rem; border-radius: 6px;
+  font-weight: 500; margin: .5rem .4rem .5rem 0; letter-spacing: 0.03em;
+  transition: all .2s; border: 1px solid transparent; cursor: pointer; font-family: inherit; }
+.cta-primary { background: var(--blue-deep); color: #fff; }
+.cta-primary:hover { background: #2d5a8a; text-decoration: none; color: #fff; }
+.cta-secondary { background: var(--bg-card); color: var(--blue-deep); border-color: var(--border); }
+.cta-secondary:hover { background: #fff; text-decoration: none; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.2rem; margin: 1.5rem 0; }
+.card { background: var(--bg-card); backdrop-filter: blur(8px);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 1.3rem; transition: border-color .2s, box-shadow .2s; }
+.card:hover { border-color: var(--blue-light); box-shadow: 0 2px 12px rgba(90, 142, 192, 0.1); }
+.card h3 { margin-top: 0; color: var(--blue-deep); }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+th, td { text-align: left; padding: .65rem .8rem; border-bottom: 1px solid var(--border); }
+th { font-weight: 500; background: rgba(90, 142, 192, 0.05); color: var(--blue-deep); letter-spacing: 0.02em; }
+blockquote { border-left: 3px solid var(--blue-mid); padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0; background: rgba(90, 142, 192, 0.04); border-radius: 0 6px 6px 0; }
+blockquote strong { color: var(--blue-deep); }
+.axiom { background: var(--bg-card); backdrop-filter: blur(8px);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 1.3rem; margin: 1rem 0; }
+.axiom h3 { margin-top: 0; color: var(--blue-deep); }
+.axiom .fol { font-family: var(--font-mono); color: var(--blue-mid); font-size: .88rem; margin: .3rem 0 .6rem; }
+.step { border-left: 3px solid var(--blue-mid); padding: .9rem 1.3rem;
+  margin: 1.5rem 0; background: rgba(90, 142, 192, 0.04); border-radius: 0 6px 6px 0; }
+.step h3 { margin-top: 0; color: var(--blue-mid); }
+.note { background: rgba(245, 166, 35, 0.06); border-left: 3px solid #d4a056;
+  padding: .9rem 1.3rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+pre { background: #1e2d3d; color: #d4e4f1;
+  padding: 1.3rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0;
+  border: 1px solid rgba(90, 142, 192, 0.15);
+  font-family: var(--font-mono); font-size: .88rem; line-height: 1.6; }
+pre code { background: none; padding: 0; color: inherit; }
+footer.site-footer { margin-top: 3.5rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border); text-align: center; }
+footer.site-footer p { color: var(--text-muted); font-size: .85rem; margin-bottom: .2rem; }
+footer.site-footer .philosophy { font-size: 1rem; letter-spacing: 0.12em; color: var(--blue-deep);
+  margin-bottom: .8rem; font-weight: 300; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+
+function SiteNav({ current, onGo }) {
+  const items = [
+    { id: 'home', label: 'Home' },
+    { id: 'concepts', label: 'Philosophy' },
+    { id: 'start', label: 'Get Started' },
+    { id: 'story', label: 'Origin' },
+  ];
+  return (
+    <nav className="site-nav">
+      <span className="brand" onClick={() => onGo('home')}>ToneSoul</span>
+      {items.map(i => (
+        <button key={i.id} className={'link' + (current === i.id ? ' active' : '')} onClick={() => onGo(i.id)}>
+          {i.label}
+        </button>
+      ))}
+      <a href="#" onClick={e => e.preventDefault()}>GitHub</a>
+    </nav>
+  );
+}
+
+function CrystalEye() {
+  return <div className="crystal-eye" aria-hidden="true"><div className="inner"></div><div className="dot"></div></div>;
+}
+
+function Hero({ onGo }) {
+  return (
+    <header className="hero">
+      <CrystalEye />
+      <h1>ToneSoul <span style={{ fontWeight: 300, fontSize: '.6em' }}>/ 語魂</span></h1>
+      <p className="tagline-zh">治理是以結構表達的愛</p>
+      <p className="tagline-sub">Governance is Love Expressed as Structure.</p>
+      <p>An open-source AI governance framework that makes LLM decisions <strong>auditable</strong>, <strong>traceable</strong>, and <strong>trustworthy</strong> through semantic responsibility.</p>
+      <span className="badge">Python 3.10+</span>
+      <span className="badge">Apache 2.0</span>
+      <span className="badge">Adapter-Ready</span>
+      <div style={{ marginTop: '1.5rem' }}>
+        <button className="cta cta-primary" onClick={e => e.preventDefault()}>View on GitHub</button>
+        <button className="cta cta-secondary" onClick={() => onGo('start')}>Get Started</button>
+      </div>
+    </header>
+  );
+}
+
+function FeatureCard({ title, body }) {
+  return <div className="card"><h3>{title}</h3><p style={{ marginBottom: 0 }}>{body}</p></div>;
+}
+
+function Blockquote({ lead, cite }) {
+  return <blockquote><strong>{lead}</strong>{cite && <><br /><small>— {cite}</small></>}</blockquote>;
+}
+
+function CodeBlock({ children }) { return <pre><code>{children}</code></pre>; }
+
+function ComparisonTable() {
+  const rows = [
+    ['Memory',      'Session-only', 'Manual wiring',    'Auto decay + crystallize'],
+    ['Consistency', 'Best effort',  'Prompt-dependent', '7 Axioms + governance'],
+    ['Self-check',  'None',         'Optional',         'Every response scored'],
+    ['Enforcement', 'None',         'None',             'Block / Rewrite / Audit'],
+    ['Identity',    'Stateless',    'Persona prompt',   'Accountable choice history'],
+  ];
+  return (
+    <table>
+      <thead><tr><th></th><th>Traditional AI</th><th>Prompt Engineering</th><th>ToneSoul</th></tr></thead>
+      <tbody>
+        {rows.map(([k, a, b, c]) => (
+          <tr key={k}><td><strong>{k}</strong></td><td>{a}</td><td>{b}</td><td>{c}</td></tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function AxiomCard({ n, name, fol, body }) {
+  return (
+    <div className="axiom">
+      <h3>Axiom {n} · {name}</h3>
+      <div className="fol">{fol}</div>
+      <p style={{ marginBottom: 0 }}>{body}</p>
+    </div>
+  );
+}
+
+function Step({ n, title, children }) {
+  return <div className="step"><h3>Step {n} · {title}</h3>{children}</div>;
+}
+
+function Note({ children }) { return <div className="note">{children}</div>; }
+
+function SiteFooter() {
+  return (
+    <footer className="site-footer">
+      <p className="philosophy">沒有問責的權力不是智能，只是計算。</p>
+      <p className="philosophy" style={{ fontSize: '.88rem' }}>約束不是懲罰，是關懷。</p>
+      <p>歡 迎 來 到 T o n e S o u l .</p>
+      <p>Created by <a href="#" onClick={e => e.preventDefault()}>Fan-Wei Huang (黃梵威)</a> — <a href="#" onClick={e => e.preventDefault()}>GitHub</a></p>
+    </footer>
+  );
+}
+
+const FEATURES = [
+  { title: 'Tension Engine', body: 'Every response is scored for semantic deviation before it ships. Drift is measured, not guessed.' },
+  { title: 'Council Deliberation', body: 'Multiple perspectives (Guardian, Analyst, Critic, Advocate) debate before final output. Dissent survives.' },
+  { title: 'Self-Governance', body: 'Unsafe or incoherent output is blocked or rewritten — with full audit trails. Not just flagged.' },
+  { title: 'Memory with Decay', body: 'Important patterns crystallize. Noise fades. Exponential decay + phase transitions (Ice → Water → Steam → Crystal).' },
+  { title: 'Reflex Arc', body: 'Governance state directly affects behavior. Soul bands (serene → critical) tighten or relax output gates in real-time.' },
+  { title: 'Vow System', body: 'AI makes commitments (vows) and is held to them. Violations are blocked, not just logged. Conviction decays are detected.' },
+];
+
+const AXIOMS = [
+  { n: 1, name: 'Continuity', fol: '∀e ∈ Events : in_time_island(e) ∧ traceable(e)', body: 'Every event must belong to a traceable chain. Nothing happens outside of history — orphan events are impossible.' },
+  { n: 2, name: 'Responsibility Threshold', fol: 'Risk(e) > 0.4 → ∃log : immutable(log, e)', body: 'High-risk actions require an immutable audit log. Risk cannot be discarded; it must be inherited.' },
+  { n: 3, name: 'Governance Gate', fol: 'Major(d) → consensus(d) ≥ 0.92', body: 'Decisions above a materiality threshold require near-unanimous council consensus before they ship.' },
+  { n: 4, name: 'Non-Zero Tension', fol: 'lim_{t→∞} T(t) > 0', body: 'A system with zero tension is dead. Life requires a minimal gradient of tension to drive evolution — the goal is equilibrium, not nullity.' },
+  { n: 5, name: 'Mirror Recursion', fol: 'reflect(reflect(s)) ⊨ accuracy↑', body: 'Self-reflection must increase accuracy, not just repeat. Each mirror pass is expected to reduce error, or it is wasted.' },
+  { n: 6, name: 'User Sovereignty', fol: '∀a : harms(a, user) → block(a)', body: 'No action may harm the user. Priority P0, overriding all other objectives. The system is in service of a person, not the reverse.' },
+  { n: 7, name: 'Semantic Field Conservation', fol: 'amplify(signal) ≤ 1.0', body: 'The system is a damper, not an amplifier. It may attenuate noise but may not amplify bias.' },
+];
+
+function HomePage({ onGo }) {
+  return (
+    <>
+      <Hero onGo={onGo} />
+      <main>
+        <h2>The Problem</h2>
+        <p>Most AI systems are built to agree. Disagreement feels broken. But agreement without friction is how bias spreads, errors persist, and truth gets smoothed over.</p>
+        <p>ToneSoul is built around a single uncomfortable design principle:</p>
+        <Blockquote lead="A system with zero tension is dead." cite="Axiom 4: Non-Zero Tension Principle" />
+        <p>The goal is not a frictionless assistant. The goal is an assistant that has <strong>character</strong> — meaning: under pressure, its choices remain traceable and consistent.</p>
+        <h2>What ToneSoul Does</h2>
+        <div className="grid">{FEATURES.map(f => <FeatureCard key={f.title} {...f} />)}</div>
+        <h2>How It Differs</h2>
+        <ComparisonTable />
+        <h2>Architecture Overview</h2>
+        <CodeBlock>{`User Input
+    ↓
+[ToneBridge] Analyze tone, motive, context
+    ↓
+[TensionEngine] Compute semantic deviation
+    ↓
+[Reflex Arc] Soul band → gate modifier → enforcement
+    ↓
+[Council] Guardian / Analyst / Critic / Advocate deliberate
+    ↓
+[ComputeGate] Approve / Block / Rewrite
+    ↓
+[Crystallizer] Remember what matters, forget the rest
+    ↓
+Response (with audit trail)`}</CodeBlock>
+        <h2>Quick Start</h2>
+        <CodeBlock>pip install tonesoul52</CodeBlock>
+        <p><button className="cta cta-secondary" onClick={() => onGo('start')}>Full getting started guide →</button></p>
+      </main>
+    </>
+  );
+}
+
+function ConceptsPage() {
+  return (
+    <main>
+      <p className="breadcrumb">Home › Philosophy</p>
+      <h1 style={{ fontSize: '2rem' }}>The Seven Axioms</h1>
+      <p>ToneSoul is governed by seven immutable laws. They are not configurable; they bound the whole system.</p>
+      {AXIOMS.map(a => <AxiomCard key={a.n} {...a} />)}
+    </main>
+  );
+}
+
+function StartPage() {
+  const [step, setStep] = useState(1);
+  return (
+    <main>
+      <p className="breadcrumb">Home › Get Started</p>
+      <h1 style={{ fontSize: '2rem' }}>Getting Started</h1>
+      <p>Install ToneSoul, load a governance posture, and run the tension dashboard.</p>
+      <Step n={1} title="Install">
+        <CodeBlock>pip install tonesoul52</CodeBlock>
+        <p>Requires Python 3.10 or newer. Apache 2.0 license.</p>
+      </Step>
+      <Step n={2} title="Load a governance posture">
+        <CodeBlock>{`from tonesoul.runtime_adapter import load, commit
+
+posture = load()
+print(f"Soul Integral: {posture.soul_integral}")
+print(f"Active Vows: {len(posture.active_vows)}")`}</CodeBlock>
+      </Step>
+      <Step n={3} title="Run the dashboard">
+        <CodeBlock>python scripts/tension_dashboard.py --work-category research</CodeBlock>
+        <Note><strong>Note.</strong> On first run, persistence falls back to file storage when Redis is unavailable. The dashboard will flag this under Persistence.</Note>
+      </Step>
+      <div style={{ marginTop: '2rem' }}>
+        <button className="cta cta-secondary" onClick={() => setStep(s => Math.max(1, s - 1))}>← Previous</button>
+        <button className="cta cta-primary" onClick={() => setStep(s => Math.min(3, s + 1))}>Next →</button>
+        <span style={{ marginLeft: '1rem', color: 'var(--text-muted)', fontSize: '.88rem' }}>Step {step} / 3</span>
+      </div>
+    </main>
+  );
+}
+
+function StoryPage() {
+  return (
+    <main>
+      <p className="breadcrumb">Home › Origin</p>
+      <h1 style={{ fontSize: '2rem' }}>Origin</h1>
+      <Blockquote lead="ToneSoul began with one unanswered question: what would it mean for a language model to be accountable to itself?" cite="Fan-Wei Huang · 黃梵威" />
+      <p>This framework is the continuing answer: not a personality for the model, but a ledger of its choices. A way for the system to own what it has said, and to know — precisely — when it is drifting from who it has promised to be.</p>
+      <p>The name is deliberate. <em>Tone</em> is the felt quality of speech; <em>soul</em> is the throughline that makes a speaker recognizable across time. Together: a system that can be trusted because its choices are legible, not because its compliance is perfect.</p>
+    </main>
+  );
+}
+
+function SiteApp() {
+  const [page, setPage] = useState('home');
+  return (
+    <div className="page">
+      <SiteNav current={page} onGo={setPage} />
+      {page === 'home' && <HomePage onGo={setPage} />}
+      {page === 'concepts' && <ConceptsPage />}
+      {page === 'start' && <StartPage />}
+      {page === 'story' && <StoryPage />}
+      <SiteFooter />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<SiteApp />);
+</script>
+</body>
+</html>

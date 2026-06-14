@@ -70,7 +70,7 @@ class MoltbookClient:
 
     def create_comment(self, account: str, post_id: str, content: str) -> Dict[str, object]:
         url = f"{self.base_url}/posts/{post_id}/comments"
-        payload = {"post_id": post_id, "content": content}
+        payload = {"content": content}
         return self._post(account, url, payload)
 
     def get_posts(

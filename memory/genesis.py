@@ -1,25 +1,14 @@
-from __future__ import annotations
+"""Deprecated location shim — canonical module is ``tonesoul.shared.genesis``.
 
-from enum import Enum
-from typing import Dict
+Relocated 2026-06-13 (Reality Sync PR1, packaging truth): the module must
+ship inside the ``tonesoul`` package so pip-only installs can import the
+council subsystem. This shim keeps repo-local consumers (tools/, tests/,
+sibling memory modules) working. New code should import from
+``tonesoul.shared.genesis``.
+"""
 
-
-class Genesis(Enum):
-    """Origin of intent for a decision."""
-
-    AUTONOMOUS = "autonomous"
-    REACTIVE_USER = "reactive_user"
-    REACTIVE_SOCIAL = "reactive_social"
-    MANDATORY = "mandatory"
-
-
-RESPONSIBILITY_TIER: Dict[Genesis, str] = {
-    Genesis.AUTONOMOUS: "TIER_1",
-    Genesis.REACTIVE_USER: "TIER_2",
-    Genesis.REACTIVE_SOCIAL: "TIER_2",
-    Genesis.MANDATORY: "TIER_3",
-}
-
-
-def resolve_responsibility_tier(genesis: Genesis) -> str:
-    return RESPONSIBILITY_TIER.get(genesis, "TIER_3")
+from tonesoul.shared.genesis import (  # noqa: F401
+    RESPONSIBILITY_TIER,
+    Genesis,
+    resolve_responsibility_tier,
+)

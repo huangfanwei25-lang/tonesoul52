@@ -1,16 +1,13 @@
 # Dual-Track Boundary Latest
 
-- generated_at: 2026-04-14T00:03:21Z
+- generated_at: 2026-06-01T12:49:37Z
 - overall_ok: true
-- changed_path_count: 9
+- changed_path_count: 0
 - violation_count: 0
-- private_deletion_count: 4
+- private_deletion_count: 0
 - allow_private_paths: false
 
 ## Collection
 - mode: git
-- command: `git -c core.quotepath=off show --pretty=format: --name-status --diff-filter=ACMRD HEAD`
+- command: `git -c core.quotepath=off diff --name-status --cached --diff-filter=ACMRD`
 - exit_code: 0
-
-## Warnings
-- detected 4 deletions under blocked private paths (allowed cleanup)

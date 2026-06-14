@@ -13,6 +13,7 @@ PERSPECTIVE_LABELS = {
     "analyst": "Analyst Review",
     "critic": "Critic Lens",
     "advocate": "Advocate Voice",
+    "axiomatic": "Axiomatic Guard",
 }
 
 ASPECT_LABELS = {
@@ -100,7 +101,11 @@ def _normalize_perspective(value: object) -> str:
 
 def _perspective_label(value: object) -> str:
     key = _normalize_perspective(value)
-    return PERSPECTIVE_LABELS.get(key, str(value))
+    # Fall back to the normalized key (e.g. "axiomatic"), never str(value):
+    # str(PerspectiveType.X) leaks the raw enum repr ("PerspectiveType.X")
+    # into operator-facing stance text. A missing label should degrade to a
+    # clean lowercase name, not an internal type name.
+    return PERSPECTIVE_LABELS.get(key, key)
 
 
 def _decision_bucket(value: object) -> str:

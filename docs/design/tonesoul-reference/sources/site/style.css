@@ -1,0 +1,364 @@
+/* ToneSoul Site — Blueprint + Crystalline Aesthetic
+   Inspired by: 語魂.pdf final page
+   Colors: steel blue on parchment gray, translucent layers */
+
+:root {
+  --blue-deep: #3a6b9f;
+  --blue-mid: #5a8ec0;
+  --blue-light: #b8d4e8;
+  --blue-pale: #dce8f2;
+  --bg: #eef1f5;
+  --bg-card: rgba(255, 255, 255, 0.72);
+  --text: #2c3e50;
+  --text-muted: #6b7c8d;
+  --border: rgba(90, 142, 192, 0.2);
+  --grid-line: rgba(90, 142, 192, 0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  line-height: 1.8;
+  color: var(--text);
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+  min-height: 100vh;
+}
+
+/* Typography */
+h1 {
+  font-size: 2.4rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: var(--blue-deep);
+}
+h1 strong, h1 b { font-weight: 600; }
+
+h2 {
+  font-size: 1.35rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  margin: 3rem 0 1.2rem;
+  padding-bottom: .6rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--blue-deep);
+}
+
+h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 1.5rem 0 .5rem;
+  color: var(--text);
+}
+
+p { margin-bottom: 1rem; }
+
+a { color: var(--blue-mid); text-decoration: none; transition: color .2s; }
+a:hover { color: var(--blue-deep); text-decoration: underline; }
+
+code {
+  background: rgba(90, 142, 192, 0.08);
+  padding: .15rem .45rem;
+  border-radius: 3px;
+  font-size: .88em;
+  font-family: 'Cascadia Code', 'Fira Code', monospace;
+}
+
+pre {
+  background: #1e2d3d;
+  color: #d4e4f1;
+  padding: 1.3rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 1rem 0;
+  border: 1px solid rgba(90, 142, 192, 0.15);
+}
+pre code { background: none; padding: 0; color: inherit; }
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 4rem 1rem 3rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(ellipse, rgba(90, 142, 192, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Crystalline eye symbol — pure CSS */
+.crystal-eye {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1.5rem;
+  position: relative;
+}
+.crystal-eye::before,
+.crystal-eye::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 1.5px solid var(--blue-light);
+  border-radius: 50%;
+}
+.crystal-eye::before {
+  width: 100px;
+  height: 100px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  border-radius: 0;
+}
+.crystal-eye::after {
+  width: 60px;
+  height: 60px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(90, 142, 192, 0.12) 0%, transparent 70%);
+}
+.crystal-eye .inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  transform: translate(-50%, -50%) rotate(22.5deg);
+  border: 1px solid rgba(90, 142, 192, 0.25);
+  border-radius: 0;
+}
+.crystal-eye .dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  transform: translate(-50%, -50%);
+  background: var(--blue-mid);
+  border-radius: 50%;
+}
+
+.hero p {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  max-width: 640px;
+  margin: 1rem auto;
+  letter-spacing: 0.02em;
+}
+
+.hero .tagline-zh {
+  font-size: 1.6rem;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  color: var(--blue-deep);
+  margin: 1.5rem 0 .5rem;
+}
+
+.hero .tagline-sub {
+  font-size: .92rem;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  background: rgba(58, 107, 159, 0.1);
+  color: var(--blue-deep);
+  border: 1px solid var(--border);
+  padding: .25rem .7rem;
+  border-radius: 20px;
+  font-size: .8rem;
+  margin: .2rem;
+  letter-spacing: 0.03em;
+}
+
+/* CTA buttons */
+.cta {
+  display: inline-block;
+  padding: .65rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  margin: .5rem .4rem .5rem 0;
+  letter-spacing: 0.03em;
+  transition: all .2s;
+  border: 1px solid transparent;
+}
+.cta-primary {
+  background: var(--blue-deep);
+  color: #fff;
+}
+.cta-primary:hover {
+  background: #2d5a8a;
+  text-decoration: none;
+  color: #fff;
+}
+.cta-secondary {
+  background: var(--bg-card);
+  color: var(--blue-deep);
+  border-color: var(--border);
+}
+.cta-secondary:hover {
+  background: #fff;
+  text-decoration: none;
+}
+
+/* Cards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.2rem;
+  margin: 1.5rem 0;
+}
+.card {
+  background: var(--bg-card);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.3rem;
+  transition: border-color .2s, box-shadow .2s;
+}
+.card:hover {
+  border-color: var(--blue-light);
+  box-shadow: 0 2px 12px rgba(90, 142, 192, 0.1);
+}
+.card h3 { margin-top: 0; color: var(--blue-deep); }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+th, td {
+  text-align: left;
+  padding: .65rem .8rem;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  font-weight: 500;
+  background: rgba(90, 142, 192, 0.05);
+  color: var(--blue-deep);
+  letter-spacing: 0.02em;
+}
+
+/* Blockquote */
+blockquote {
+  border-left: 3px solid var(--blue-mid);
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0;
+  background: rgba(90, 142, 192, 0.04);
+  border-radius: 0 6px 6px 0;
+}
+blockquote strong { color: var(--blue-deep); }
+
+/* Axiom cards (concepts page) */
+.axiom {
+  background: var(--bg-card);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.3rem;
+  margin: 1rem 0;
+}
+.axiom h3 { margin-top: 0; color: var(--blue-deep); }
+.axiom .fol {
+  font-family: 'Cascadia Code', 'Fira Code', monospace;
+  color: var(--blue-mid);
+  font-size: .88rem;
+}
+
+/* Step boxes (getting-started page) */
+.step {
+  border-left: 3px solid var(--blue-mid);
+  padding: .9rem 1.3rem;
+  margin: 1.5rem 0;
+  background: rgba(90, 142, 192, 0.04);
+  border-radius: 0 6px 6px 0;
+}
+.step h3 { margin-top: 0; color: var(--blue-mid); }
+
+.note {
+  background: rgba(245, 166, 35, 0.06);
+  border-left: 3px solid #d4a056;
+  padding: .9rem 1.3rem;
+  margin: 1rem 0;
+  border-radius: 0 6px 6px 0;
+}
+
+/* Site Navigation */
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: .8rem 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.site-nav .brand {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--blue-deep);
+  letter-spacing: 0.06em;
+  margin-right: auto;
+}
+.site-nav a {
+  font-size: .88rem;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+  padding: .3rem 0;
+  border-bottom: 2px solid transparent;
+  transition: color .2s, border-color .2s;
+}
+.site-nav a:hover, .site-nav a.active {
+  color: var(--blue-deep);
+  border-bottom-color: var(--blue-mid);
+  text-decoration: none;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  margin-bottom: 2rem;
+  font-size: .88rem;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+}
+
+/* Lists */
+ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+li { margin-bottom: .3rem; }
+
+/* Footer */
+footer {
+  margin-top: 3.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+footer p { color: var(--text-muted); font-size: .85rem; }
+footer .philosophy {
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  color: var(--blue-deep);
+  margin-bottom: .8rem;
+  font-weight: 300;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  body { padding: 1.5rem 1rem; }
+  h1 { font-size: 1.8rem; }
+  .hero { padding: 2.5rem .5rem 2rem; }
+  .hero .tagline-zh { font-size: 1.3rem; }
+  .grid { grid-template-columns: 1fr; }
+}

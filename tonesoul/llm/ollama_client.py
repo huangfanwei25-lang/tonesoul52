@@ -5,6 +5,8 @@ Connects to local Ollama service for LLM inference.
 
 from __future__ import annotations
 
+import logging
+import os
 import time
 from typing import TYPE_CHECKING, Dict, List, Optional
 
@@ -13,9 +15,9 @@ import requests
 from tonesoul.schemas import LLMCallMetrics
 
 __ts_layer__ = "infrastructure"
-__ts_purpose__ = (
-    "Ollama client: inference adapter for locally-hosted Ollama model endpoints."
-)
+__ts_purpose__ = "Ollama client: inference adapter for locally-hosted Ollama model endpoints."
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from tonesoul.observability.token_meter import TokenMeter
@@ -63,6 +65,7 @@ class OllamaClient:
         self._meter = meter
         self.last_metrics: LLMCallMetrics | None = None
         self.last_resolved_model: str | None = None
+        self.resolved_via_fallback: bool = False
         self._allowed_models = {
             str(item).strip().lower() for item in list(allowed_models or []) if str(item).strip()
         }
@@ -174,6 +177,16 @@ class OllamaClient:
                 "reason": "timeout",
                 "latency_ms": int(round((time.perf_counter() - started) * 1000)),
             }
+        except OllamaError as exc:
+            return {
+                "ok": False,
+                "supported": True,
+                "backend": "ollama",
+                "model": self.model,
+                "reason": "no_compatible_model",
+                "detail": str(exc),
+                "latency_ms": int(round((time.perf_counter() - started) * 1000)),
+            }
         payload = {
             "model": model,
             "prompt": self._sanitize_prompt(prompt),
@@ -266,28 +279,71 @@ class OllamaClient:
         return []
 
     def _ensure_model(self, timeout_seconds: float = 5.0) -> str:
-        """Ensure model is available, fallback to alternatives."""
+        """Resolve which served model to use, most-to-least trustworthy.
+
+        1. Exact tag match in the served list -> use it silently.
+        2. Curated-token fallback -> return a REAL served tag (never the
+           requested string, which may not be a pulled tag) and record +
+           log that a fallback happened, so 'which model produced this' stays
+           attributable.
+        3. No served models, or none compatible -> raise OllamaError rather
+           than silently returning an unpulled / arbitrary model the caller
+           never asked for.
+        """
         if self._available_models is None:
             if max(0.0, float(timeout_seconds)) < 0.02:
                 raise TimeoutError("probe_deadline_exhausted")
             self._available_models = self.list_models(timeout_seconds=timeout_seconds)
 
-        # Check if preferred model is available
-        if any(self.model in m for m in self._available_models):
+        available = self._available_models
+
+        # 1) Exact tag match — the only silent, fully-trusted resolution.
+        if self.model in available:
+            self.last_resolved_model = self.model
+            self.resolved_via_fallback = False
             return self.model
 
-        # Fallback order: qwen3.5 > qwen > formosa > gemma > llama > mistral > any
-        fallbacks = ["qwen3.5", "qwen", "formosa", "gemma", "llama", "mistral"]
-        for fallback in fallbacks:
-            for model in self._available_models:
-                if fallback in model.lower():
-                    return model
+        # 2) Nothing served at all -> fail loud (do not return an unpulled tag).
+        if not available:
+            raise OllamaError(
+                f"No Ollama models are served; requested model '{self.model}' is "
+                "not available. Pull it, or set TONESOUL_OLLAMA_MODEL to a served tag."
+            )
 
-        # Use first available model
-        if self._available_models:
-            return self._available_models[0]
+        # 3) Curated-token fallback to a real served tag. Prefer the requested
+        #    family first, then the historical preference order.
+        tokens = [
+            self.model.split(":")[0].lower(),
+            "qwen3.5",
+            "qwen",
+            "formosa",
+            "gemma",
+            "llama",
+            "mistral",
+        ]
+        for token in tokens:
+            if not token:
+                continue
+            for served in available:
+                if token in served.lower():
+                    self.last_resolved_model = served
+                    self.resolved_via_fallback = served != self.model
+                    if self.resolved_via_fallback:
+                        logger.warning(
+                            "Ollama model %r not served; falling back to %r "
+                            "(served: %s). Set TONESOUL_OLLAMA_MODEL to silence.",
+                            self.model,
+                            served,
+                            available,
+                        )
+                    return served
 
-        return self.model  # Return original, let Ollama handle error
+        # 4) Models served, but none compatible -> fail loud, do not pick one
+        #    arbitrarily (an embedding-only host must not masquerade as a chat model).
+        raise OllamaError(
+            f"No served Ollama model is compatible with '{self.model}'; "
+            f"served: {available}. Set TONESOUL_OLLAMA_MODEL to a served tag."
+        )
 
     def start_chat(self, history: Optional[List[Dict]] = None):
         """Start a new chat session (GeminiClient compatible)."""
@@ -436,5 +492,12 @@ def create_ollama_client(
     model: Optional[str] = None,
     meter: TokenMeter | None = None,
 ) -> OllamaClient:
-    """Factory function to create an Ollama client."""
-    return OllamaClient(model=model or "qwen3.5:4b", meter=meter)
+    """Factory function to create an Ollama client.
+
+    Model resolution precedence: explicit ``model`` arg > ``TONESOUL_OLLAMA_MODEL``
+    env var > the ``qwen3.5:4b`` default. Naming the model via env keeps
+    'which model produced this' attributable instead of relying on the
+    substring fallback inside ``_ensure_model``.
+    """
+    resolved = model or os.environ.get("TONESOUL_OLLAMA_MODEL") or "qwen3.5:4b"
+    return OllamaClient(model=resolved, meter=meter)

@@ -8,15 +8,18 @@ import yaml
 from .error_event import ErrorEvent, ErrorLedger
 from .ystm.schema import stable_hash, utc_now
 
+# YSS-STATUS: unwired (2026-06-13, Reality Sync PR5) — built but not imported by
+# any live runtime path (verified: only importer is the dead yss_pipeline closure
+# and its own tests). Retained, NOT deleted, as candidate substrate for the
+# Responsibility Manifold program (docs/plans/responsibility_manifold_engineering_program_2026-06-12.md).
+# Do not assume runtime use. Canonical list + rationale: task.md > Reality Sync Patchset > PR5.
+
+
 __ts_layer__ = "pipeline"
 __ts_purpose__ = (
-    "Orchestrate multi-step generation with gate checkpoints."
+    "Generation orchestration: coordinates LLM generation with council gate and output routing."
 )
 
-
-
-__ts_layer__ = "pipeline"
-__ts_purpose__ = "Generation orchestration: coordinates LLM generation with council gate and output routing."
 
 def _load_context(path: str) -> Dict[str, object]:
     with open(path, "r", encoding="utf-8") as handle:

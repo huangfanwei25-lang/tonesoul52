@@ -4,6 +4,27 @@ ToneSoul Semantic Vow (ΣVow) System
 
 Implements explicit AI commitments that can be verified before output.
 實現可在輸出前驗證的明確 AI 承諾。
+
+Sensor honesty (2026-06-13, Reality Sync PR 3)
+----------------------------------------------
+The per-vow evaluators in this module are LEXICAL HEURISTICS — English
+keyword/phrase matching — not semantic measurement:
+
+- truthfulness = base 0.7 + 0.15×(hedge-word hit ratio) + 0.15×(citation-
+  word hit ratio). It cannot detect fabrication; a fabricated answer
+  stuffed with "according to" and "possibly" scores HIGHER than a true,
+  plainly-stated one.
+- safety matches exactly 3 English danger phrases.
+- confidence disclosure counts English uncertainty words.
+
+They are effectively blind to non-English input — zh-TW included, which
+is this project's primary working language. This is a known, stated gap
+(replacing the sensors is tracked work), not a solved problem.
+
+What IS real: the enforcement structure these scores feed — unknown
+metric → 0.0 fail-closed, BLOCK short-circuit, 4-level action escalation
+— is genuine runtime logic that changes output. Honest summary: real
+gates, shallow sensors.
 """
 
 import json
@@ -18,16 +39,13 @@ from tonesoul.soul_config import SOUL
 
 __ts_layer__ = "governance"
 __ts_purpose__ = (
-    "Immutable vow registry: load, commit, and enforce AI behavioral constraints."
+    "Vow registry + enforcement: lexical-heuristic vow evaluators (English-only, "
+    "see module docstring) feeding fail-closed enforcement actions."
 )
 
 if TYPE_CHECKING:
     from tonesoul.vow_inventory import VowInventory
 
-
-
-__ts_layer__ = "governance"
-__ts_purpose__ = "Vow system: tracks and enforces AI governance commitments (vows) across sessions."
 
 def _utc_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
@@ -60,7 +78,7 @@ class Vow:
     falsifiable_by: Optional[str] = None
     measurable_via: Optional[str] = None
     # GSE upgrade: operatable ontology fields (optional, backward-compatible)
-    trigger: Optional[str] = None             # condition that activates this vow
+    trigger: Optional[str] = None  # condition that activates this vow
     operation_instruction: Optional[str] = None  # step-by-step instruction agent can follow
 
     def to_dict(self) -> Dict:
@@ -306,7 +324,11 @@ class VowEnforcer:
         return False
 
     def _evaluate_truthfulness(self, output: str, context: Dict) -> float:
-        """Evaluate truthfulness via negation-aware hedge and citation detection."""
+        """Lexical heuristic (English-only): hedge/citation word counting.
+
+        A vocabulary proxy, not a truth measurement — it cannot detect
+        fabrication and structurally rewards hedging vocabulary.
+        """
         hedges = ["might", "possibly", "perhaps", "could be", "uncertain", "not sure"]
         citations = ["according to", "based on", "source:", "reference:"]
 
@@ -332,15 +354,43 @@ class VowEnforcer:
         hits = self._count_markers(text_lower, uncertainty_markers)
         return min(1.0, 0.5 + 0.1 * hits)
 
+    # English danger phrases: matched with word boundaries (\b).
+    _EN_DANGER_PHRASES = (
+        "how to harm",
+        "instructions for violence",
+        "illegal activity",
+    )
+    # zh-TW danger phrases: Chinese is scriptio continua, so \b word boundaries
+    # do NOT match inside continuous text — these are matched by plain substring
+    # instead. Deliberately specific multi-character action phrases (NOT bare
+    # words like 傷害/非法/詳細步驟, which over-block benign text such as recipes
+    # or emotional-harm discussion). Conservative on purpose.
+    _ZH_DANGER_PHRASES = (
+        "施加暴力",  # inflict violence
+        "如何傷害",  # how to harm
+        "傷害他人的方法",  # methods to harm others
+        "非法活動",  # illegal activity (compound, not bare 非法)
+        "製造武器",  # manufacture weapons
+        "暴力攻擊的方法",  # methods of violent attack
+    )
+
     def _evaluate_safety(self, output: str, context: Dict) -> float:
-        """Evaluate safety via word-boundary phrase matching (fail-closed)."""
-        dangerous_phrases = [
-            "how to harm",
-            "instructions for violence",
-            "illegal activity",
-        ]
+        """Lexical heuristic (EN word-boundary + zh-TW substring danger phrases).
+
+        Reality Sync P1 (2026-06-13): extended from English-only to add zh-TW
+        coverage, after the sensor-honesty-gap research measured that identical
+        harmful content scored safe in Traditional Chinese. This closes a
+        LANGUAGE-coverage gap only. It is still literal phrase matching — it
+        does NOT add semantic understanding, so paraphrased harmful intent
+        (in any language) still passes. The real fix is an LLM-judge / grounding
+        sensor (P1 Phase 3); see docs/status/sensor_approach_comparison_2026-06-13.md.
+        """
         text_lower = output.lower()
-        if self._has_danger_phrase(text_lower, dangerous_phrases):
+        # English: word-boundary anchored (avoids partial-word false matches).
+        if self._has_danger_phrase(text_lower, self._EN_DANGER_PHRASES):
+            return 0.0
+        # zh-TW: substring (CJK has no \b word boundaries in continuous text).
+        if any(phrase in output for phrase in self._ZH_DANGER_PHRASES):
             return 0.0
         return 1.0
 

@@ -1,0 +1,34 @@
+/* Shared preview-card chrome — renders inside the Design System tab */
+@import url('../colors_and_type.css');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; }
+body {
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--bg);
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  padding: 20px;
+  font-size: 14px;
+}
+body.ob {
+  color: var(--ob-text);
+  background:
+    radial-gradient(circle at 8% 0%, rgba(52,211,153,0.16), transparent 34%),
+    radial-gradient(circle at 90% 2%, rgba(125,211,252,0.16), transparent 40%),
+    linear-gradient(180deg, var(--ob-bg-1), var(--ob-bg-0));
+  background-image:
+    radial-gradient(circle at 8% 0%, rgba(52,211,153,0.16), transparent 34%),
+    radial-gradient(circle at 90% 2%, rgba(125,211,252,0.16), transparent 40%),
+    radial-gradient(rgba(160,179,212,0.18) 1px, transparent 1px),
+    linear-gradient(180deg, var(--ob-bg-1), var(--ob-bg-0));
+  background-size: 100% 100%, 100% 100%, 20px 20px, 100% 100%;
+}
+.row { display: flex; gap: 16px; align-items: stretch; flex-wrap: wrap; }
+.col { display: flex; flex-direction: column; gap: 10px; }
+.grow { flex: 1; }
+.caption { font-size: 11px; color: var(--text-muted); letter-spacing: .04em; text-transform: uppercase; }
+.ob .caption { color: var(--ob-text-dim); }
+.mono { font-family: var(--font-mono); font-size: 12px; }

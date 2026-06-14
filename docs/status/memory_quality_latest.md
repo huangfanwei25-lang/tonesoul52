@@ -1,31 +1,28 @@
 # Memory Quality Latest
 
-- generated_at: 2026-03-08T15:38:33Z
+- generated_at: 2026-06-01T12:49:38Z
 - overall_ok: true
 - journal_path: C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl
 
 ## Metrics
-- entry_count: 3150
-- failure_case_count: 3065
-- learning_sample_count: 3065
+- entry_count: 66
+- failure_case_count: 63
+- learning_sample_count: 63
 - invalid_json_line_count: 0
-- high_risk_failure_count: 2999
-- average_failure_coherence: 0.6574
+- high_risk_failure_count: 63
+- average_failure_coherence: 0.7489
 
 ## Quality Signals
-- failure_case_rate: 0.973
-- provenance_coverage_rate: 0.8029
+- failure_case_rate: 0.9545
+- provenance_coverage_rate: 0.9841
 - divergence_coverage_rate: 1.0
 - contract_coverage_rate: 1.0
 - contract_evidence_coverage_rate: 0.0
 
 ## Verdict Counts
-- block: 2999
-- unknown: 77
-- declare_stance: 66
-- approve: 7
-- refine: 1
+- block: 63
+- digest: 2
+- unknown: 1
 
 ## Risk Levels
-- high: 2999
-- low: 66
+- high: 63

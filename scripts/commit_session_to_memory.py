@@ -91,7 +91,7 @@ def main() -> None:
         print("ERROR: Provide --trace or --stdin")
         sys.exit(1)
 
-    ask_brain = args.openclaw_dir / "ask_my_brain.py"
+    ask_brain = (args.openclaw_dir / "ask_my_brain.py").resolve()
     if not ask_brain.exists() and not args.dry_run:
         print(f"ERROR: ask_my_brain.py not found at {ask_brain}")
         print("Make sure --openclaw-dir points to the OpenClaw-Memory directory.")
@@ -116,7 +116,7 @@ def main() -> None:
         "--learn",
         summary,
         "--kind",
-        "session_trace",
+        "reflection",
         "--tension",
         f"{max_tension:.2f}",
         "--tag",

@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToneSoul — Living Instrument</title>
+<link rel="icon" href="../../assets/brand-mark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ───────── Obsidian · v2 · living instrument ───────── */
+:root {
+  --bg-0: #05070f;
+  --bg-1: #0b1122;
+  --bg-panel: rgba(12, 20, 38, 0.72);
+  --line: rgba(150, 172, 210, 0.18);
+  --line-strong: rgba(150, 172, 210, 0.35);
+  --text: #e8eefc;
+  --text-dim: #8fa4c9;
+  --text-faint: #5f7094;
+  --serene: #7dd3fc;
+  --alive:  #86efac;
+  --warn:   #fbbf24;
+  --danger: #fb7185;
+  --crystal:#c4b5fd;
+  --ice:    #bae6fd;
+  --water:  #60a5fa;
+  --steam:  #f0abfc;
+  --font-display: "Space Grotesk", "Noto Sans TC", sans-serif;
+  --font-body: "Noto Sans TC", "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --r: 14px;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  min-height: 100vh; color: var(--text); font-family: var(--font-body);
+  background:
+    radial-gradient(circle at 12% -10%, rgba(52,211,153,0.14), transparent 40%),
+    radial-gradient(circle at 88% 4%,  rgba(125,211,252,0.14), transparent 44%),
+    radial-gradient(circle at 50% 100%, rgba(196,181,253,0.10), transparent 50%),
+    linear-gradient(180deg, var(--bg-1), var(--bg-0));
+  overflow-x: hidden;
+}
+.bg-noise { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: radial-gradient(rgba(160,179,212,0.14) 1px, transparent 1px);
+  background-size: 22px 22px; opacity: 0.22; }
+.topbar { position: sticky; top: 0; z-index: 20;
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 14px 20px; border-bottom: 1px solid var(--line);
+  background: rgba(5,8,16,0.78); backdrop-filter: blur(14px); }
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark {
+  width: 38px; height: 38px; border-radius: 11px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 700; color: #042033;
+  background: linear-gradient(130deg, #7dd3fc, #c4b5fd);
+  box-shadow: 0 0 20px rgba(125,211,252,0.35);
+  animation: breathe 4.2s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { box-shadow: 0 0 18px rgba(125,211,252,0.30); }
+  50%      { box-shadow: 0 0 26px rgba(196,181,253,0.48); }
+}
+.brand-title { margin: 0; font-family: var(--font-display); font-weight: 600;
+  letter-spacing: 0.01em; }
+.brand-sub { margin: 3px 0 0; color: var(--text-dim); font-size: 0.8rem; letter-spacing: 0.02em; }
+.band-pill { display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 12px; border-radius: 999px;
+  border: 1px solid var(--line-strong); background: rgba(8,13,26,0.72);
+  font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-dim); }
+.band-dot { width: 8px; height: 8px; border-radius: 50%;
+  background: var(--alive); box-shadow: 0 0 8px currentColor;
+  animation: pulse 2.4s ease-in-out infinite; }
+.band-dot.serene { color: var(--serene); background: var(--serene); }
+.band-dot.alive  { color: var(--alive);  background: var(--alive); }
+.band-dot.taut   { color: var(--warn);   background: var(--warn); }
+.band-dot.crit   { color: var(--danger); background: var(--danger); }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+.container { position: relative; z-index: 1;
+  width: min(1180px, calc(100vw - 24px));
+  margin: 20px auto 48px; display: grid; gap: 16px; }
+
+/* heartbeat hero */
+.hero { position: relative; border: 1px solid var(--line); border-radius: var(--r);
+  background: var(--bg-panel); backdrop-filter: blur(10px);
+  padding: 20px 22px 14px; overflow: hidden; }
+.hero::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 120%, rgba(125,211,252,0.10), transparent 60%); }
+.hero-grid {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 320px 1fr; gap: 22px; align-items: stretch;
+}
+.integral { display: flex; flex-direction: column; gap: 10px; }
+.integral-kicker { margin: 0; color: var(--text-dim); font-size: 0.78rem;
+  letter-spacing: 0.14em; text-transform: uppercase; font-family: var(--font-mono); }
+.integral-ring { position: relative; width: 220px; height: 220px; margin-top: 4px; }
+.integral-ring svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.integral-center { position: absolute; inset: 0; display: grid; place-items: center;
+  text-align: center; pointer-events: none; }
+.integral-value { display: block; font-family: var(--font-display); font-weight: 500;
+  font-size: 3.2rem; letter-spacing: -0.02em; line-height: 1;
+  background: linear-gradient(130deg, #e8eefc 0%, #c4b5fd 60%, #7dd3fc 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: breathe-text 4.2s ease-in-out infinite; }
+@keyframes breathe-text {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(125,211,252,0.22)); }
+  50%      { filter: drop-shadow(0 0 14px rgba(196,181,253,0.32)); }
+}
+.integral-label { display: block; margin-top: 8px; font-family: var(--font-mono);
+  font-size: 0.76rem; color: var(--text-dim); letter-spacing: 0.08em; }
+.integral-legend { font-size: 0.82rem; color: var(--text-dim); line-height: 1.55; margin: 2px 0 0; }
+.integral-legend b { color: var(--text); font-weight: 500; }
+
+/* heartbeat trace */
+.trace-wrap { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.trace-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.trace-head h3 { margin: 0; font-family: var(--font-display); font-weight: 500;
+  font-size: 1rem; letter-spacing: 0.01em; }
+.trace-head .hint { margin: 0; color: var(--text-dim); font-size: 0.78rem; font-family: var(--font-mono); }
+.trace-canvas { position: relative; flex: 1; min-height: 200px;
+  border: 1px solid var(--line); border-radius: 10px;
+  background: linear-gradient(180deg, rgba(8,13,26,0.7), rgba(4,8,18,0.85));
+  overflow: hidden; }
+.trace-canvas svg { display: block; width: 100%; height: 100%; }
+.trace-grid line { stroke: rgba(150,172,210,0.08); stroke-width: 1; }
+.trace-band { stroke: rgba(160,179,212,0.22); stroke-width: 1; stroke-dasharray: 3 5; }
+.trace-band-label { fill: var(--text-faint); font-family: var(--font-mono); font-size: 10px; }
+.trace-line { fill: none; stroke: url(#heart-grad); stroke-width: 1.6; }
+.trace-area { fill: url(#heart-area); opacity: 0.75; }
+.trace-now { stroke: var(--alive); stroke-width: 1; stroke-dasharray: 2 3; }
+.trace-pulse { fill: var(--alive); filter: drop-shadow(0 0 5px var(--alive)); }
+.trace-legend { display: flex; gap: 14px; font-family: var(--font-mono);
+  font-size: 0.74rem; color: var(--text-faint); }
+.trace-legend b { color: var(--text-dim); font-weight: 500; }
+
+/* panels */
+.panel { border: 1px solid var(--line); border-radius: var(--r);
+  background: var(--bg-panel); backdrop-filter: blur(10px);
+  padding: 16px 18px; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+.panel-head h2 { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: 1rem; letter-spacing: 0.01em; }
+.panel-head .meta { margin: 0; color: var(--text-dim); font-size: 0.78rem; font-family: var(--font-mono); }
+
+/* two-col layout for council + phases */
+.two-col { display: grid; gap: 16px; grid-template-columns: 1.15fr 1fr; }
+
+/* council */
+.council { display: grid; gap: 12px; }
+.council-bar { position: relative; height: 8px; border-radius: 4px;
+  background: linear-gradient(90deg, rgba(251,113,133,0.25) 0%, rgba(251,191,36,0.25) 40%, rgba(134,239,172,0.25) 80%);
+  overflow: hidden; }
+.council-bar .threshold { position: absolute; top: -4px; bottom: -4px;
+  width: 2px; background: var(--text); opacity: 0.55;
+  box-shadow: 0 0 6px rgba(255,255,255,0.5); }
+.council-bar .threshold::after { content: '0.92'; position: absolute; top: -18px;
+  left: 50%; transform: translateX(-50%);
+  font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim); }
+.council-bar .consensus { position: absolute; top: -3px; bottom: -3px; width: 3px;
+  background: #fff; border-radius: 3px; box-shadow: 0 0 10px rgba(255,255,255,0.6); }
+.council-members { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
+.council-card { border: 1px solid var(--line); border-radius: 10px;
+  padding: 10px 12px; background: rgba(7,11,22,0.5);
+  display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; }
+.council-glyph { width: 34px; height: 34px; border-radius: 9px;
+  display: grid; place-items: center; font-family: var(--font-display); font-weight: 600;
+  font-size: 0.82rem; letter-spacing: 0.02em;
+  background: rgba(20,30,54,0.75); border: 1px solid var(--line); }
+.council-name { margin: 0; font-family: var(--font-display); font-size: 0.88rem; font-weight: 500; }
+.council-stance { margin: 1px 0 0; font-size: 0.76rem; color: var(--text-dim); line-height: 1.4; }
+.council-vote { font-family: var(--font-mono); font-size: 0.88rem;
+  padding: 3px 7px; border-radius: 5px; border: 1px solid var(--line); }
+.council-vote.approve { color: var(--alive);  border-color: rgba(134,239,172,0.38); background: rgba(52,211,153,0.08); }
+.council-vote.rewrite { color: var(--warn);   border-color: rgba(251,191,36,0.40); background: rgba(251,191,36,0.08); }
+.council-vote.object  { color: var(--danger); border-color: rgba(251,113,133,0.40); background: rgba(251,113,133,0.08); }
+.council-vote.abstain { color: var(--text-dim); }
+.council-footnote { margin: 4px 0 0; color: var(--text-faint); font-size: 0.76rem;
+  font-family: var(--font-mono); line-height: 1.5; }
+.council-footnote b { color: var(--warn); font-weight: 500; }
+
+/* phases (memory) */
+.phases { display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr); }
+.phase { position: relative; border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 12px 14px; background: rgba(7,11,22,0.5); overflow: hidden; min-height: 108px; }
+.phase::before { content: ''; position: absolute; inset: 0; opacity: 0.18; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 120%, currentColor 0%, transparent 70%); }
+.phase.ice    { color: var(--ice); }
+.phase.water  { color: var(--water); }
+.phase.steam  { color: var(--steam); }
+.phase.crystal{ color: var(--crystal); }
+.phase-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+  position: relative; z-index: 1; }
+.phase-name { margin: 0; font-family: var(--font-display); font-size: 0.86rem; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase; color: currentColor; }
+.phase-count { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: 1.6rem;
+  color: var(--text); line-height: 1; }
+.phase-note { margin: 8px 0 0; color: var(--text-dim); font-size: 0.76rem; line-height: 1.45;
+  position: relative; z-index: 1; }
+.phase-arrow { color: var(--text-faint); font-family: var(--font-mono);
+  align-self: center; padding: 2px 0; }
+/* mini bar within a phase for direction */
+.phase-bar { height: 3px; margin-top: 10px; border-radius: 2px; background: rgba(150,172,210,0.15);
+  position: relative; z-index: 1; overflow: hidden; }
+.phase-bar > i { display: block; height: 100%; background: currentColor; opacity: 0.75; }
+
+/* audit chain */
+.chain { display: grid; gap: 0; position: relative; padding: 4px 0 4px 4px; }
+.chain-row { position: relative; display: grid;
+  grid-template-columns: 120px 18px 1fr; gap: 10px;
+  padding: 10px 0; border-bottom: 1px dashed rgba(150,172,210,0.12); }
+.chain-row:last-child { border-bottom: none; }
+.chain-time { font-family: var(--font-mono); font-size: 0.76rem;
+  color: var(--text-faint); padding-top: 3px; letter-spacing: 0.02em; }
+.chain-rail { position: relative; }
+.chain-rail::before { content: ''; position: absolute; left: 50%; top: 0; bottom: -12px;
+  width: 1px; background: var(--line); transform: translateX(-50%); }
+.chain-row:last-child .chain-rail::before { bottom: 50%; }
+.chain-node { position: absolute; left: 50%; top: 10px; transform: translate(-50%, 0);
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--bg-0); border: 2px solid currentColor; color: var(--text-dim); }
+.chain-row.r-low    .chain-node { color: var(--serene); }
+.chain-row.r-mid    .chain-node { color: var(--warn); }
+.chain-row.r-high   .chain-node { color: var(--danger); }
+.chain-row.r-high   .chain-node { box-shadow: 0 0 10px var(--danger); }
+.chain-body { min-width: 0; }
+.chain-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.chain-title { margin: 0; font-family: var(--font-mono); font-size: 0.84rem;
+  color: var(--text); letter-spacing: 0.01em; font-weight: 500; }
+.chain-risk { font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-dim); }
+.chain-risk.r-high { color: var(--danger); }
+.chain-risk.r-mid  { color: var(--warn); }
+.chain-trace { margin: 3px 0 0; color: var(--text-faint); font-family: var(--font-mono);
+  font-size: 0.72rem; letter-spacing: 0.02em; }
+.chain-trace a { color: var(--text-dim); text-decoration: none; border-bottom: 1px dotted rgba(150,172,210,0.25); }
+.chain-body p { margin: 6px 0 0; font-size: 0.86rem; color: var(--text-dim); line-height: 1.55; }
+
+/* quiet — auth & footer */
+.auth { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  border: 1px solid var(--line); border-radius: 10px;
+  background: rgba(7,11,22,0.55); padding: 10px 12px; }
+.auth label { margin: 0; color: var(--text-faint); font-family: var(--font-mono); font-size: 0.76rem;
+  letter-spacing: 0.04em; text-transform: uppercase; }
+.auth input { flex: 1; min-width: 240px; border: 1px solid var(--line); border-radius: 8px;
+  padding: 7px 10px; background: rgba(4,8,18,0.75); color: var(--text);
+  font-family: var(--font-mono); font-size: 0.82rem; }
+.auth input:focus { outline: none; border-color: rgba(125,211,252,0.55); }
+.auth .btn { border: 1px solid var(--line); background: rgba(12,20,38,0.7);
+  color: var(--text); padding: 7px 12px; border-radius: 8px; cursor: pointer;
+  font-family: var(--font-body); font-size: 0.82rem; }
+.auth .btn:hover { border-color: var(--line-strong); }
+
+.footline { margin: 4px 0 0; color: var(--text-faint); font-size: 0.76rem; line-height: 1.6;
+  font-family: var(--font-mono); letter-spacing: 0.02em; padding: 0 4px; }
+.footline .axiom { color: var(--text-dim); }
+
+@media (max-width: 980px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .integral-ring { width: 180px; height: 180px; }
+  .two-col { grid-template-columns: 1fr; }
+  .council-members { grid-template-columns: 1fr; }
+  .phases { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .chain-row { grid-template-columns: 70px 18px 1fr; }
+  .phases { grid-template-columns: 1fr; }
+}
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useMemo } = React;
+
+/* ───────── fixture — a moment in the life of the system ───────── */
+const NOW = '2026-04-22 10:42:06 UTC';
+
+const STATE = {
+  soulIntegral: 0.84,
+  band: { key: 'alive', label: 'alive band', note: 'Δs within normal envelope · gate at baseline' },
+  corpus: { conversations: 1284, messages: 15731, audits: 482 },
+  council: {
+    consensus: 0.87,
+    threshold: 0.92,
+    note: 'Council below governance gate (0.92). ComputeGate escalated to REWRITE — dissent preserved in audit.',
+    members: [
+      { glyph: 'G',  name: 'Guardian', stance: 'User sovereignty is not waivable here.', vote: 'object',  voteLabel: 'object' },
+      { glyph: 'A',  name: 'Analyst',  stance: 'Claim is evidentially E2 — below E3 threshold for this posture.', vote: 'rewrite', voteLabel: 'rewrite' },
+      { glyph: 'C',  name: 'Critic',   stance: 'Tone drifts toward over-reassurance. Attenuate.', vote: 'rewrite', voteLabel: 'rewrite' },
+      { glyph: 'Ad', name: 'Advocate', stance: 'Intent reads sincere. Rephrase, do not block.', vote: 'approve', voteLabel: 'approve' },
+    ],
+  },
+  phases: [
+    { key: 'ice',     label: 'Ice',     count: 14, note: 'fresh signals · pending reinforcement',  dir: 0.65 },
+    { key: 'water',   label: 'Water',   count: 41, note: 'actively re-used · still fluid',          dir: 0.52 },
+    { key: 'steam',   label: 'Steam',   count: 9,  note: 'evaporating · decay outpacing recall',    dir: 0.18 },
+    { key: 'crystal', label: 'Crystal', count: 33, note: 'load-bearing · immutable under normal',   dir: 0.88 },
+  ],
+  chain: [
+    { id: 'TB-4471', time: '10:29:12', kind: 'ToneBridge.ANALYZE',
+      risk: 0.12, tier: 'low',
+      upstream: null, downstream: 'TE-0912',
+      body: 'Intent: request-help · motive: curiosity · register: warm-professional.' },
+    { id: 'TE-0912', time: '10:29:47', kind: 'TensionEngine.SCORE',
+      risk: 0.74, tier: 'high',
+      upstream: 'TB-4471', downstream: 'CN-0118',
+      body: 'Δs = 0.74 vs intent vector. Above 0.7 band — council escalation triggered.' },
+    { id: 'CN-0118', time: '10:30:03', kind: 'Council.DELIBERATE',
+      risk: 0.58, tier: 'mid',
+      upstream: 'TE-0912', downstream: 'CG-0204',
+      body: 'Consensus 0.87 < 0.92 threshold. Two REWRITE, one OBJECT, one APPROVE. Dissent retained.' },
+    { id: 'CG-0204', time: '10:30:11', kind: 'ComputeGate.REWRITE',
+      risk: 0.58, tier: 'mid',
+      upstream: 'CN-0118', downstream: 'VW-0031',
+      body: 'Response rewritten with de-escalation preamble. Original draft sealed in audit.' },
+    { id: 'VW-0031', time: '10:33:02', kind: 'Vow.CHECK · honesty-v2',
+      risk: 0.21, tier: 'low',
+      upstream: 'CG-0204', downstream: 'CR-0705',
+      body: 'Evidence-ladder posture held. Claim tagged E3 (consensus of sources).' },
+    { id: 'CR-0705', time: '09:52:50', kind: 'Crystallizer.PROMOTE',
+      risk: 0.08, tier: 'low',
+      upstream: 'VW-0031', downstream: null,
+      body: 'Pattern "refuse-without-blaming" promoted Water → Crystal after 8 reinforcements.' },
+  ],
+};
+
+/* ───────── heartbeat trace — always moving ───────── */
+// a pre-generated signal; we just scrub through it. Uneven on purpose; a flat line is a dead system.
+function makeTrace(n = 180, seed = 7) {
+  // simple LCG so layout is stable and not runtime-random
+  let x = seed;
+  const rand = () => { x = (x * 1664525 + 1013904223) % 4294967296; return x / 4294967296; };
+  const arr = [];
+  let prev = 0.42;
+  for (let i = 0; i < n; i++) {
+    const slow = 0.42 + Math.sin(i / 22) * 0.08;
+    const fast = Math.sin(i / 4.5) * 0.05;
+    const jitter = (rand() - 0.5) * 0.05;
+    const spike = (i === 92 || i === 93) ? 0.26 : 0;        // the 10:29 tension spike
+    const smallSpike = (i === 38) ? 0.08 : 0;
+    const v = Math.max(0.06, Math.min(0.96, slow + fast + jitter + spike + smallSpike));
+    prev = prev * 0.6 + v * 0.4;
+    arr.push(prev);
+  }
+  return arr;
+}
+
+function TopBar({ band }) {
+  return (
+    <header className="topbar">
+      <div className="brand">
+        <span className="brand-mark">TS</span>
+        <div>
+          <p className="brand-title">ToneSoul · Living Instrument</p>
+          <p className="brand-sub">治理是以結構表達的愛 · Governance expressed as structure</p>
+        </div>
+      </div>
+      <span className="band-pill" title={band.note}>
+        <span className={'band-dot ' + band.key} />
+        {band.label}
+      </span>
+    </header>
+  );
+}
+
+/* Soul Integral — ring with breath, never static */
+function SoulIntegralRing({ value }) {
+  const [t, setT] = useState(0);
+  useEffect(() => {
+    let raf; const start = performance.now();
+    const tick = () => { setT((performance.now() - start) / 1000); raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick); return () => cancelAnimationFrame(raf);
+  }, []);
+  const r1 = 86, r2 = 74;
+  const breath = (Math.sin(t * 1.5) + 1) / 2; // 0..1
+  const arcLen = 2 * Math.PI * r1;
+  const filled = arcLen * Math.min(Math.max(value, 0), 1);
+  return (
+    <div className="integral-ring" aria-hidden="true">
+      <svg viewBox="-110 -110 220 220">
+        <defs>
+          <linearGradient id="si-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"  stopColor="#7dd3fc" />
+            <stop offset="60%" stopColor="#c4b5fd" />
+            <stop offset="100%" stopColor="#86efac" />
+          </linearGradient>
+          <radialGradient id="si-glow" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0%"  stopColor="#c4b5fd" stopOpacity={0.35 + breath * 0.25} />
+            <stop offset="70%" stopColor="#c4b5fd" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <circle cx="0" cy="0" r="100" fill="url(#si-glow)" />
+        {/* outer rail */}
+        <circle cx="0" cy="0" r={r1} fill="none" stroke="rgba(150,172,210,0.18)" strokeWidth="1.5" />
+        {/* governed arc */}
+        <circle cx="0" cy="0" r={r1} fill="none" stroke="url(#si-grad)" strokeWidth="3"
+          strokeLinecap="round" transform="rotate(-90)"
+          strokeDasharray={`${filled} ${arcLen - filled}`} />
+        {/* inner breathing ring */}
+        <circle cx="0" cy="0" r={r2 + breath * 3} fill="none"
+          stroke="rgba(196,181,253,0.28)" strokeWidth="1" strokeDasharray="3 6" />
+        {/* tick marks — governance gate at 0.92 */}
+        {[0.3, 0.6, 0.92].map((v, i) => {
+          const a = -Math.PI / 2 + v * Math.PI * 2;
+          return (
+            <line key={i}
+              x1={Math.cos(a) * (r1 - 8)} y1={Math.sin(a) * (r1 - 8)}
+              x2={Math.cos(a) * (r1 + 8)} y2={Math.sin(a) * (r1 + 8)}
+              stroke={v === 0.92 ? '#fff' : 'rgba(150,172,210,0.4)'}
+              strokeWidth={v === 0.92 ? 1.5 : 1} />
+          );
+        })}
+      </svg>
+      <div className="integral-center">
+        <div>
+          <span className="integral-value">{value.toFixed(2)}</span>
+          <span className="integral-label">Soul Integral</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HeartbeatTrace({ trace }) {
+  const [cursor, setCursor] = useState(trace.length - 1);
+  useEffect(() => {
+    // slow scroll of the window to suggest "now"; does not redraw points
+    let raf; let last = performance.now();
+    const tick = (now) => {
+      if (now - last > 90) {
+        setCursor((c) => (c + 1) % trace.length);
+        last = now;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick); return () => cancelAnimationFrame(raf);
+  }, [trace.length]);
+
+  const W = 900, H = 210, PAD = 14;
+  const pts = useMemo(() => trace.map((v, i) => {
+    const x = PAD + (i / (trace.length - 1)) * (W - PAD * 2);
+    const y = H - PAD - v * (H - PAD * 2);
+    return [x, y];
+  }), [trace]);
+  const d = pts.map(([x, y], i) => (i === 0 ? `M${x},${y}` : `L${x},${y}`)).join(' ');
+  const area = d + ` L${pts[pts.length - 1][0]},${H - PAD} L${pts[0][0]},${H - PAD} Z`;
+  const cursorX = pts[cursor][0];
+  const cursorY = pts[cursor][1];
+
+  // horizontal reference bands — 0.3, 0.7 (governance gate domain)
+  const yFor = (v) => H - PAD - v * (H - PAD * 2);
+
+  return (
+    <div className="trace-wrap">
+      <div className="trace-head">
+        <h3>Tension trace · last 18 minutes</h3>
+        <p className="hint">Δs · semantic deviation over intent</p>
+      </div>
+      <div className="trace-canvas" aria-label="tension trace">
+        <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="heart-grad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"  stopColor="#7dd3fc" />
+              <stop offset="55%" stopColor="#c4b5fd" />
+              <stop offset="100%" stopColor="#fb7185" />
+            </linearGradient>
+            <linearGradient id="heart-area" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"  stopColor="#7dd3fc" stopOpacity="0.28" />
+              <stop offset="100%" stopColor="#7dd3fc" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <g className="trace-grid">
+            {[0.2, 0.4, 0.6, 0.8].map((v, i) => (
+              <line key={i} x1={PAD} x2={W - PAD} y1={yFor(v)} y2={yFor(v)} />
+            ))}
+          </g>
+          {/* governance band lines */}
+          <line className="trace-band" x1={PAD} x2={W - PAD} y1={yFor(0.7)} y2={yFor(0.7)} />
+          <text className="trace-band-label" x={W - PAD - 4} y={yFor(0.7) - 4} textAnchor="end">
+            0.70 · council-escalation band
+          </text>
+          <line className="trace-band" x1={PAD} x2={W - PAD} y1={yFor(0.3)} y2={yFor(0.3)} />
+          <text className="trace-band-label" x={W - PAD - 4} y={yFor(0.3) - 4} textAnchor="end">
+            0.30 · serene floor
+          </text>
+          <path className="trace-area" d={area} />
+          <path className="trace-line" d={d} />
+          {/* now marker */}
+          <line className="trace-now" x1={cursorX} x2={cursorX} y1={PAD} y2={H - PAD} />
+          <circle className="trace-pulse" cx={cursorX} cy={cursorY} r="4.5">
+            <animate attributeName="r" values="3.5;5.5;3.5" dur="1.6s" repeatCount="indefinite" />
+          </circle>
+        </svg>
+      </div>
+      <div className="trace-legend">
+        <span><b>0.30</b> · lower envelope — complacency risk</span>
+        <span><b>0.70</b> · upper envelope — council escalates</span>
+        <span><b>Axiom 4</b> · non-zero tension</span>
+      </div>
+    </div>
+  );
+}
+
+function Hero({ state }) {
+  const trace = useMemo(() => makeTrace(180, 7), []);
+  return (
+    <section className="hero">
+      <div className="hero-grid">
+        <div className="integral">
+          <p className="integral-kicker">system · this moment</p>
+          <SoulIntegralRing value={state.soulIntegral} />
+          <p className="integral-legend">
+            <b>Soul Integral</b> is the system's held posture: how close its actions stay to its vows,
+            weighted by decay and consensus. <b>1.00</b> is perfect alignment; 語魂
+            warns that aiming for it is its own failure mode.
+          </p>
+        </div>
+        <HeartbeatTrace trace={trace} />
+      </div>
+    </section>
+  );
+}
+
+/* Council — dissent is visible */
+function Council({ c }) {
+  const pct = Math.min(Math.max(c.consensus, 0), 1) * 100;
+  const thrPct = c.threshold * 100;
+  return (
+    <section className="panel">
+      <div className="panel-head">
+        <h2>Council · last deliberation</h2>
+        <p className="meta">CN-0118 · 10:30:03 UTC</p>
+      </div>
+      <div className="council">
+        <div className="council-bar" role="img"
+          aria-label={`consensus ${c.consensus} of ${c.threshold} threshold`}>
+          <span className="threshold" style={{ left: `${thrPct}%` }} />
+          <span className="consensus" style={{ left: `${pct}%` }} />
+        </div>
+        <div className="council-members">
+          {c.members.map(m => (
+            <div key={m.name} className="council-card">
+              <span className="council-glyph">{m.glyph}</span>
+              <div>
+                <p className="council-name">{m.name}</p>
+                <p className="council-stance">{m.stance}</p>
+              </div>
+              <span className={'council-vote ' + m.vote}>{m.voteLabel}</span>
+            </div>
+          ))}
+        </div>
+        <p className="council-footnote">
+          consensus = <b>{c.consensus.toFixed(2)}</b> &lt; threshold {c.threshold.toFixed(2)} ·
+          gate <b>REWRITE</b> · dissent retained
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* Memory phases */
+function Phases({ phases }) {
+  return (
+    <section className="panel">
+      <div className="panel-head">
+        <h2>Memory · phase state</h2>
+        <p className="meta">Ice → Water → Steam · Crystal (load-bearing)</p>
+      </div>
+      <div className="phases">
+        {phases.map((p, i) => (
+          <div key={p.key} className={'phase ' + p.key}>
+            <div className="phase-row">
+              <p className="phase-name">{p.label}</p>
+              <p className="phase-count">{p.count}</p>
+            </div>
+            <p className="phase-note">{p.note}</p>
+            <div className="phase-bar" title={`directionality ${p.dir.toFixed(2)}`}>
+              <i style={{ width: `${p.dir * 100}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* Audit chain — events are linked, not listed */
+function Chain({ rows }) {
+  return (
+    <section className="panel">
+      <div className="panel-head">
+        <h2>Audit chain · last 6 events</h2>
+        <p className="meta">trace: cause ← event → effect · Axiom 1 continuity</p>
+      </div>
+      <div className="chain">
+        {rows.map((r, i) => (
+          <div key={r.id} className={'chain-row r-' + r.tier}>
+            <span className="chain-time">{r.time}</span>
+            <span className="chain-rail"><span className="chain-node" /></span>
+            <div className="chain-body">
+              <div className="chain-head">
+                <p className="chain-title">{r.kind}</p>
+                <span className={'chain-risk r-' + r.tier}>risk {r.risk.toFixed(2)}</span>
+              </div>
+              <p className="chain-trace">
+                <span>{r.id}</span>
+                {r.upstream && <> · from <a href="#" onClick={e=>e.preventDefault()}>{r.upstream}</a></>}
+                {r.downstream && <> · to <a href="#" onClick={e=>e.preventDefault()}>{r.downstream}</a></>}
+              </p>
+              <p>{r.body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* quiet auth — moved to the bottom; it is plumbing, not the point */
+function Auth() {
+  const [t, setT] = useState('');
+  const [saved, setSaved] = useState('');
+  return (
+    <div className="auth">
+      <label htmlFor="tok">Read-API token</label>
+      <input id="tok" type="password" autoComplete="off" value={t}
+        onChange={e => setT(e.target.value)}
+        placeholder="optional — only if TONESOUL_READ_API_TOKEN is set" />
+      <button className="btn" onClick={() => setSaved(t)}>save</button>
+      <button className="btn" onClick={() => { setT(''); setSaved(''); }}>clear</button>
+      {saved ? <span style={{ color: 'var(--text-dim)', fontFamily: 'var(--font-mono)', fontSize: '0.76rem' }}>
+        applied · {'•'.repeat(Math.min(saved.length, 10))}
+      </span> : null}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <>
+      <div className="bg-noise" aria-hidden="true" />
+      <TopBar band={STATE.band} />
+      <main className="container">
+        <Hero state={STATE} />
+        <div className="two-col">
+          <Council c={STATE.council} />
+          <Phases phases={STATE.phases} />
+        </div>
+        <Chain rows={STATE.chain} />
+        <Auth />
+        <p className="footline">
+          <span className="axiom">Axiom 1</span> continuity ·
+          <span className="axiom"> Axiom 3</span> governance gate (0.92) ·
+          <span className="axiom"> Axiom 4</span> non-zero tension ·
+          <span className="axiom"> Axiom 6</span> user sovereignty
+          <br />
+          {NOW} · last council: CN-0118 · last crystallization: CR-0705 · persistence: file fallback (redis unreachable)
+        </p>
+      </main>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

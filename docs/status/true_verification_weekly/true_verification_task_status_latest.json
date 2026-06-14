@@ -7,9 +7,9 @@
     "TaskPath": "\\",
     "State": "Ready",
     "Enabled": true,
-    "LastRunTime": "2026-03-08T22:08:08.0000000+08:00",
-    "NextRunTime": "2026-03-09T01:08:08.0000000+08:00",
-    "LastTaskResult": 0,
+    "LastRunTime": "2026-06-01T19:08:08.0000000+08:00",
+    "NextRunTime": "2026-06-01T22:08:08.0000000+08:00",
+    "LastTaskResult": 1,
     "NumberOfMissedRuns": 0
   },
   "task_contract": {
@@ -29,6 +29,24 @@
   "errors": {
     "xml": null,
     "runtime": null
+  },
+  "primary_status_line": "task_ready | scheduler=Ready registered=yes host_trigger_mode=single_tick runtime_source=none session=n/a resumed=no",
+  "runtime_status_line": "none | runtime_lineage=unavailable",
+  "scribe_status_line": "none | scribe=unavailable",
+  "anchor_status_line": "",
+  "problem_route_status_line": "",
+  "problem_route_secondary_labels": "",
+  "dream_weekly_alignment_line": "",
+  "artifact_policy_status_line": "host_trigger_mode=single_tick | experiment_summary=ignored reason=host_tick_single_tick_mode",
+  "admissibility_primary_status_line": "",
+  "handoff": {
+    "queue_shape": "weekly_host_status",
+    "primary_status_line": "task_ready | scheduler=Ready registered=yes host_trigger_mode=single_tick runtime_source=none session=n/a resumed=no",
+    "scribe_status_line": "none | scribe=unavailable",
+    "anchor_status_line": "",
+    "problem_route_status_line": "",
+    "artifact_policy_status_line": "host_trigger_mode=single_tick | experiment_summary=ignored reason=host_tick_single_tick_mode",
+    "requires_operator_action": false
   },
   "artifact_policy": {
     "host_trigger_mode": "single_tick",
@@ -108,7 +126,7 @@
         "profile": "runtime_probe_watch"
       },
       "preflight": {
-        "generated_at": "2026-03-08T14:10:00Z",
+        "generated_at": "2026-03-12T05:08:12Z",
         "overall_ok": true,
         "preflight_profile": "runtime_probe_watch",
         "config": {
@@ -145,9 +163,9 @@
         "latest_result": {
           "cycle": 2,
           "overall_ok": true,
-          "duration_ms": 6834,
-          "started_at": "2026-03-08T14:09:53Z",
-          "finished_at": "2026-03-08T14:10:00Z",
+          "duration_ms": 3877,
+          "started_at": "2026-03-12T05:08:08Z",
+          "finished_at": "2026-03-12T05:08:12Z",
           "registry_batch": {
             "selected_url_count": 1,
             "deferred_category_count": 0,
@@ -167,7 +185,7 @@
           },
           "autonomous_payload": {
             "overall_ok": true,
-            "generated_at": "2026-03-08T14:10:00Z",
+            "generated_at": "2026-03-12T05:08:12Z",
             "urls_requested": 1,
             "urls_ingested": 1,
             "urls_failed": 0,
@@ -181,13 +199,12 @@
             },
             "llm_policy": {
               "active": true,
-              "mode": "mixed_latency",
+              "mode": "probe_latency",
               "backoff_until_cycle": 3,
-              "reason_count": 4,
+              "reason_count": 3,
               "breach_reasons": [
-                "llm_preflight_latency_ms>1800 (observed=2001)",
-                "llm_selection_latency_ms>700 (observed=774)",
-                "llm_probe_latency_ms>1200 (observed=1227)",
+                "llm_preflight_latency_ms>1800 (observed=2002)",
+                "llm_probe_latency_ms>1200 (observed=1491)",
                 "llm_preflight_timeout_count>0 (observed=1)"
               ],
               "action": "disable_reflection"
@@ -195,6 +212,7 @@
             "paths": {
               "history_path": "memory/autonomous/true_verification_weekly/preflight/dream_wakeup_history.jsonl",
               "snapshot_path": "docs/status/true_verification_weekly/preflight/dream_wakeup_snapshot.json",
+              "state_path": "memory/autonomous/dream_wakeup_state.json",
               "dashboard_json_path": "docs/status/true_verification_weekly/preflight/dream_observability_latest.json",
               "dashboard_html_path": "docs/status/true_verification_weekly/preflight/dream_observability_latest.html"
             }
@@ -208,13 +226,12 @@
             "llm_breach_reasons": [],
             "llm_policy": {
               "active": true,
-              "mode": "mixed_latency",
+              "mode": "probe_latency",
               "backoff_until_cycle": 3,
-              "reason_count": 4,
+              "reason_count": 3,
               "breach_reasons": [
-                "llm_preflight_latency_ms>1800 (observed=2001)",
-                "llm_selection_latency_ms>700 (observed=774)",
-                "llm_probe_latency_ms>1200 (observed=1227)",
+                "llm_preflight_latency_ms>1800 (observed=2002)",
+                "llm_probe_latency_ms>1200 (observed=1491)",
                 "llm_preflight_timeout_count>0 (observed=1)"
               ],
               "action": "disable_reflection"
@@ -233,26 +250,25 @@
           "entry_state_count": 2,
           "category_entry_cursor_count": 2,
           "category_state_count": 2,
-          "updated_at": "2026-03-08T14:10:00Z",
+          "updated_at": "2026-03-12T05:08:12Z",
           "last_entry_ids": [
             "scorecard"
           ],
           "llm_backoff": {
             "backoff_until_cycle": 3,
             "last_status": "breached",
-            "last_mode": "mixed_latency",
-            "updated_at": "2026-03-08T14:09:53Z",
+            "last_mode": "probe_latency",
+            "updated_at": "2026-03-12T05:08:08Z",
             "last_breach_reasons": [
-              "llm_preflight_latency_ms>1800 (observed=2001)",
-              "llm_selection_latency_ms>700 (observed=774)",
-              "llm_probe_latency_ms>1200 (observed=1227)",
+              "llm_preflight_latency_ms>1800 (observed=2002)",
+              "llm_probe_latency_ms>1200 (observed=1491)",
               "llm_preflight_timeout_count>0 (observed=1)"
             ]
           }
         }
       },
       "schedule": {
-        "generated_at": "2026-03-08T14:10:21Z",
+        "generated_at": "2026-03-12T05:08:25Z",
         "overall_ok": true,
         "config": {
           "interval_seconds": 0.0,
@@ -294,12 +310,12 @@
         "latest_result": {
           "cycle": 1,
           "overall_ok": true,
-          "duration_ms": 19606,
-          "started_at": "2026-03-08T14:10:02Z",
-          "finished_at": "2026-03-08T14:10:21Z",
+          "duration_ms": 12081,
+          "started_at": "2026-03-12T05:08:13Z",
+          "finished_at": "2026-03-12T05:08:25Z",
           "registry_batch": {
             "selected_url_count": 3,
-            "deferred_category_count": 0,
+            "deferred_category_count": 1,
             "deferred_entry_count": 0,
             "warning_count": 1,
             "ok": true,
@@ -311,14 +327,26 @@
               "vulnerability-intel",
               "vulnerability-intel"
             ],
-            "deferred_categories": [],
+            "deferred_categories": [
+              {
+                "category": "supply-chain-hardening",
+                "reason": "tension_budget_cooldown",
+                "available_after_cycle": 15,
+                "last_budget_status": "breached",
+                "last_breach_reasons": [
+                  "max_lyapunov_proxy>0.2 (observed=0.2499)",
+                  "council_count>1 (observed=4)"
+                ],
+                "weight": 1
+              }
+            ],
             "warnings": [
               "selected URLs capped at urls_per_cycle=3"
             ]
           },
           "autonomous_payload": {
             "overall_ok": true,
-            "generated_at": "2026-03-08T14:10:21Z",
+            "generated_at": "2026-03-12T05:08:25Z",
             "urls_requested": 3,
             "urls_ingested": 3,
             "urls_failed": 0,
@@ -327,20 +355,25 @@
             "wakeup_cycle_count": 1,
             "dashboard_overall_ok": true,
             "memory_write": {
-              "written": 0,
-              "skipped": 3
+              "written": 1,
+              "skipped": 2
             },
             "llm_policy": {
               "active": false,
-              "mode": "none",
-              "backoff_until_cycle": 0,
-              "reason_count": 0,
-              "breach_reasons": [],
+              "mode": "probe_latency",
+              "backoff_until_cycle": 12,
+              "reason_count": 3,
+              "breach_reasons": [
+                "llm_preflight_latency_ms>1800 (observed=2001)",
+                "llm_probe_latency_ms>1200 (observed=1484)",
+                "llm_preflight_timeout_count>0 (observed=1)"
+              ],
               "action": "normal"
             },
             "paths": {
               "history_path": "memory/autonomous/true_verification_weekly/dream_wakeup_history.jsonl",
               "snapshot_path": "docs/status/true_verification_weekly/dream_wakeup_snapshot.json",
+              "state_path": "memory/autonomous/dream_wakeup_state.json",
               "dashboard_json_path": "docs/status/true_verification_weekly/dream_observability_latest.json",
               "dashboard_html_path": "docs/status/true_verification_weekly/dream_observability_latest.html"
             }
@@ -353,8 +386,7 @@
               "max_lyapunov_proxy>0.2 (observed=0.2499)",
               "council_count>1 (observed=4)",
               "llm_preflight_latency_ms>1800 (observed=2003)",
-              "llm_selection_latency_ms>700 (observed=767)",
-              "llm_probe_latency_ms>1200 (observed=1236)",
+              "llm_probe_latency_ms>1200 (observed=1496)",
               "llm_preflight_timeout_count>0 (observed=1)"
             ],
             "governance_breach_reasons": [
@@ -363,16 +395,19 @@
             ],
             "llm_breach_reasons": [
               "llm_preflight_latency_ms>1800 (observed=2003)",
-              "llm_selection_latency_ms>700 (observed=767)",
-              "llm_probe_latency_ms>1200 (observed=1236)",
+              "llm_probe_latency_ms>1200 (observed=1496)",
               "llm_preflight_timeout_count>0 (observed=1)"
             ],
             "llm_policy": {
               "active": false,
-              "mode": "none",
-              "backoff_until_cycle": 0,
-              "reason_count": 0,
-              "breach_reasons": [],
+              "mode": "probe_latency",
+              "backoff_until_cycle": 12,
+              "reason_count": 3,
+              "breach_reasons": [
+                "llm_preflight_latency_ms>1800 (observed=2001)",
+                "llm_probe_latency_ms>1200 (observed=1484)",
+                "llm_preflight_timeout_count>0 (observed=1)"
+              ],
               "action": "normal"
             },
             "observation": {
@@ -380,32 +415,31 @@
               "max_friction_score": 0.3436,
               "max_lyapunov_proxy": 0.2499,
               "max_llm_preflight_latency_ms": 2003,
-              "max_llm_selection_latency_ms": 767,
-              "max_llm_probe_latency_ms": 1236
+              "max_llm_selection_latency_ms": 507,
+              "max_llm_probe_latency_ms": 1496
             }
           }
         },
         "state": {
           "cursor": 0,
           "category_cursor": 2,
-          "cycles_run": 1,
-          "entry_state_count": 2,
-          "category_entry_cursor_count": 1,
-          "category_state_count": 1,
-          "updated_at": "2026-03-08T14:10:21Z",
+          "cycles_run": 13,
+          "entry_state_count": 5,
+          "category_entry_cursor_count": 4,
+          "category_state_count": 4,
+          "updated_at": "2026-03-12T05:08:25Z",
           "last_entry_ids": [
             "osv",
             "nvd"
           ],
           "llm_backoff": {
-            "backoff_until_cycle": 3,
+            "backoff_until_cycle": 15,
             "last_status": "breached",
-            "last_mode": "mixed_latency",
-            "updated_at": "2026-03-08T14:10:21Z",
+            "last_mode": "probe_latency",
+            "updated_at": "2026-03-12T05:08:25Z",
             "last_breach_reasons": [
               "llm_preflight_latency_ms>1800 (observed=2003)",
-              "llm_selection_latency_ms>700 (observed=767)",
-              "llm_probe_latency_ms>1200 (observed=1236)",
+              "llm_probe_latency_ms>1200 (observed=1496)",
               "llm_preflight_timeout_count>0 (observed=1)"
             ]
           }
@@ -413,6 +447,20 @@
       }
     },
     "experiment_summary": null,
+    "schedule_snapshot": null
+  },
+  "runtime_lineage": {
+    "latest_available_source": null,
+    "host_tick": {
+      "cycle": 1,
+      "result_overall_ok": true,
+      "schedule_overall_ok": true
+    },
+    "schedule_snapshot": null
+  },
+  "scribe_handoff": {
+    "latest_available_source": null,
+    "host_tick": null,
     "schedule_snapshot": null
   }
 }

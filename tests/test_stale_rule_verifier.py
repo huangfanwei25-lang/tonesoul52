@@ -523,3 +523,124 @@ class TestApplyVerificationResults:
             loaded = batch2.load_tasks()
             assert len(loaded) == 1
             assert loaded[0].status == "applied_re_confirmed"
+
+
+class TestApplyRecordedOutcome:
+    """The missing weld: recording an outcome so the verification loop closes.
+
+    Without apply_recorded_outcome, generated tasks stay ``pending`` forever and
+    apply_verification_results is a guaranteed no-op (record_attempt had zero
+    runtime callers). These tests pin that recording an outcome lets the NEXT
+    apply cycle actually re-confirm or retire the crystal.
+    """
+
+    def _pending_task(self, *, task_id: str, rule_text: str) -> StaleRuleVerificationTask:
+        return StaleRuleVerificationTask(
+            task_id=task_id,
+            rule_id=f"rule_{task_id}",
+            rule_text=rule_text,
+            source_pattern="test",
+            freshness_score=0.20,
+            age_days=30.0,
+            verification_query=VerificationQuery(
+                rule_text=rule_text,
+                challenge="Challenge",
+                evidence_types=["type"],
+                confidence_threshold=0.75,
+            ),
+            created_at=_utcnow_iso(),
+            dream_engine_priority=0.70,
+            status="pending",
+        )
+
+    def test_pending_is_noop_until_outcome_recorded(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            storage_path = str(Path(tmpdir) / "tasks.jsonl")
+            batch = StaleRuleVerificationTaskBatch(storage_path=storage_path)
+            batch.persist_tasks([self._pending_task(task_id="v1", rule_text="stale-rule")])
+
+            crystallizer = MagicMock()
+
+            # Failing-repro: a pending task makes apply a guaranteed no-op.
+            before = batch.apply_verification_results(crystallizer)
+            assert before == {"re_confirmed": 0, "retired": 0, "skipped": 0}
+            crystallizer.retire_crystal.assert_not_called()
+
+            # Record an externally-observed outcome -> status leaves "pending".
+            new_status = batch.apply_recorded_outcome(
+                "v1",
+                {"status": "decomissioned", "confidence": 0.9, "evidence_summary": "no support"},
+            )
+            assert new_status == "decomissioned"
+
+            # Next cycle now actually retires the crystal -> loop closed.
+            after = batch.apply_verification_results(crystallizer)
+            assert after["retired"] == 1
+            crystallizer.retire_crystal.assert_called_once_with("stale-rule")
+
+    def test_recorded_reconfirm_closes_loop_via_mark_support(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            storage_path = str(Path(tmpdir) / "tasks.jsonl")
+            batch = StaleRuleVerificationTaskBatch(storage_path=storage_path)
+            batch.persist_tasks([self._pending_task(task_id="v2", rule_text="keep-rule")])
+            crystallizer = MagicMock()
+
+            assert (
+                batch.apply_recorded_outcome("v2", {"status": "re_confirmed", "confidence": 0.8})
+                == "re_confirmed"
+            )
+            after = batch.apply_verification_results(crystallizer)
+            assert after["re_confirmed"] == 1
+            crystallizer.mark_support.assert_called_once_with("keep-rule")
+
+    def test_unknown_task_id_returns_none(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            batch = StaleRuleVerificationTaskBatch(storage_path=str(Path(tmpdir) / "tasks.jsonl"))
+            batch.persist_tasks([self._pending_task(task_id="v3", rule_text="r")])
+            assert batch.apply_recorded_outcome("nope", {"status": "decomissioned"}) is None
+
+    def test_already_applied_task_is_not_retouched(self):
+        # id-collision safety: a second outcome on a now-resolved id is a no-op.
+        with tempfile.TemporaryDirectory() as tmpdir:
+            storage_path = str(Path(tmpdir) / "tasks.jsonl")
+            batch = StaleRuleVerificationTaskBatch(storage_path=storage_path)
+            batch.persist_tasks([self._pending_task(task_id="dup", rule_text="r")])
+
+            assert (
+                batch.apply_recorded_outcome("dup", {"status": "decomissioned"}) == "decomissioned"
+            )
+            # Second call finds no pending/in_progress task with that id.
+            assert batch.apply_recorded_outcome("dup", {"status": "re_confirmed"}) is None
+
+    def test_end_to_end_recorded_decommission_removes_crystal(self, stale_crystal):
+        # With a REAL crystallizer: the crystal is gone from top_crystals after the loop closes.
+        with tempfile.TemporaryDirectory() as tmpdir:
+            from tonesoul.memory.crystallizer import Crystal, MemoryCrystallizer
+
+            cz = MemoryCrystallizer(crystal_path=Path(tmpdir) / "crystals.jsonl")
+            cz._write_crystals(
+                [
+                    Crystal(
+                        rule=stale_crystal.rule,
+                        source_pattern=stale_crystal.source_pattern,
+                        weight=0.75,
+                        created_at=stale_crystal.created_at,
+                        freshness_score=0.20,
+                        freshness_status="stale",
+                    )
+                ]
+            )
+            assert any(c.rule == stale_crystal.rule for c in cz.top_crystals())
+
+            batch = StaleRuleVerificationTaskBatch(storage_path=str(Path(tmpdir) / "tasks.jsonl"))
+            tasks = batch.generate_from_crystals([stale_crystal])
+            batch.persist_tasks(tasks)
+            assert tasks, "a stale crystal should generate a verification task"
+
+            assert (
+                batch.apply_recorded_outcome(tasks[0].task_id, {"status": "decomissioned"})
+                == "decomissioned"
+            )
+            after = batch.apply_verification_results(cz)
+            assert after["retired"] == 1
+            assert not any(c.rule == stale_crystal.rule for c in cz.top_crystals())

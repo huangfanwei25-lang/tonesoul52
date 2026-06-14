@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ToneSoul Geometry Self-Checked</title>
+<style>
+  :root{
+    --bg:#f5f8fc;
+    --grid: rgba(135,206,250,.22);
+    --line: rgba(122,190,232,.58);
+    --line2: rgba(122,190,232,.44);
+    --line3: rgba(122,190,232,.66);
+    --dot: rgba(75,145,207,.78);
+    --p: 0;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0; min-height:220vh; font-family:Inter, system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans TC", sans-serif; color:#38627f; background:var(--bg);}
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-2; pointer-events:none;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:82px 82px;
+  }
+  body::after{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:radial-gradient(circle at center, rgba(255,255,255,.25) 0 28%, rgba(245,248,252,.82) 72%, rgba(245,248,252,.96) 100%);
+  }
+  .wrap{min-height:100vh; display:grid; grid-template-columns:1fr 1fr; gap:min(6vw,64px); align-items:center; justify-items:center; padding:7vh 6vw 18vh; position:sticky; top:0;}
+  .panel{width:min(42vw,520px); min-width:330px; display:grid; gap:18px; justify-items:center;}
+  .label{font-size:13px; letter-spacing:.14em; text-transform:uppercase; opacity:.72; font-weight:700; text-align:center;}
+  .note{font-size:14px; line-height:1.55; max-width:480px; text-align:center; color:rgba(56,98,127,.72)}
+
+  svg{overflow:visible; width:100%; height:100%;}
+  .flat-box,.stage3d{width:min(38vmin,430px); height:min(38vmin,430px);}
+
+  .stroke{fill:none; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke;}
+  .outer-stroke{stroke:var(--line); stroke-width:1.75;}
+  .middle-stroke{stroke:var(--line2); stroke-width:1.18;}
+  .inner-stroke{stroke:var(--line3); stroke-width:1.65;}
+  .dot{fill:var(--dot);}
+  .touch{fill:rgba(30,130,210,.35); opacity:.0; transition:opacity .2s ease;}
+  .panel:hover .touch{opacity:.9}
+
+  .stage3d{perspective:980px; display:grid; place-items:center;}
+  .logo3d{width:100%; height:100%; position:relative; transform-style:preserve-3d;
+    transform:
+      rotateX(calc(var(--p) * 48deg))
+      rotateY(calc(var(--p) * -34deg))
+      rotateZ(calc(-1deg + var(--p) * -8deg));
+    animation: breathe 8.5s ease-in-out infinite;
+  }
+  .layer{position:absolute; inset:0; transform-style:preserve-3d;}
+  .layer.outer{transform:translateZ(calc(-22px - var(--p) * 170px)); opacity:calc(.78 - var(--p) * .16)}
+  .layer.middle{transform:translateZ(calc(var(--p) * 18px)); opacity:calc(.64 - var(--p) * .04)}
+  .layer.inner{transform:translateZ(calc(22px + var(--p) * 190px)); opacity:calc(.88 - var(--p) * .02)}
+  .logo3d .stroke{filter:drop-shadow(0 0 7px rgba(135,206,250,.28));}
+  @keyframes breathe{
+    0%,100%{translate:0 0; scale:1;}
+    50%{translate:0 -5px; scale:1.012;}
+  }
+  .scroll-hint{position:fixed; left:50%; bottom:26px; transform:translateX(-50%); font-size:12px; letter-spacing:.18em; opacity:.58; color:#38627f;}
+  .math{font-family:"SFMono-Regular",Consolas,monospace; font-size:12px; opacity:.64;}
+  @media(max-width:850px){.wrap{grid-template-columns:1fr; position:relative}.panel{width:min(86vw,520px)}.scroll-hint{display:none}}
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="panel">
+      <div class="label">2D reference / checked touch points</div>
+      <div class="flat-box">
+        <svg viewBox="0 0 100 100" aria-label="ToneSoul flat geometry">
+          <!-- Outer large square rotated 45deg: diamond equation |x-50| + |y-50| = 42 -->
+          <polygon class="stroke outer-stroke" points="50,8 92,50 50,92 8,50"/>
+
+          <!-- Inner rotated square. Side = 42 / cos(10.5deg) = 42.7168, so all four corners sit on the outer diamond edges. -->
+          <rect class="stroke middle-stroke" x="28.6416" y="28.6416" width="42.7168" height="42.7168" transform="rotate(10.5 50 50)"/>
+
+          <!-- Touch-point markers appear on hover. They are vertices of the inner square after rotation. -->
+          <circle class="touch" cx="32.999" cy="25.141" r="0.95"/>
+          <circle class="touch" cx="74.859" cy="32.999" r="0.95"/>
+          <circle class="touch" cx="67.001" cy="74.859" r="0.95"/>
+          <circle class="touch" cx="25.141" cy="67.001" r="0.95"/>
+
+          <circle class="stroke inner-stroke" cx="50" cy="50" r="16.65"/>
+          <circle class="dot" cx="50" cy="50" r="2.45"/>
+        </svg>
+      </div>
+      <div class="note">內正方形已自檢：四個角都落在外層大正方形四條邊上，不是裁切，也不是凸出去。hover 可看四個接觸點。</div>
+      <div class="math">outer: |x-50|+|y-50|=42 · inner side=42/cos(10.5°)</div>
+    </section>
+
+    <section class="panel">
+      <div class="label">CSS 3D version / same geometry</div>
+      <div class="stage3d">
+        <div class="logo3d" id="logo3d">
+          <div class="layer outer">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <polygon class="stroke outer-stroke" points="50,8 92,50 50,92 8,50"/>
+            </svg>
+          </div>
+          <div class="layer middle">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <rect class="stroke middle-stroke" x="28.6416" y="28.6416" width="42.7168" height="42.7168" transform="rotate(10.5 50 50)"/>
+            </svg>
+          </div>
+          <div class="layer inner">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <circle class="stroke inner-stroke" cx="50" cy="50" r="16.65"/>
+              <circle class="dot" cx="50" cy="50" r="2.45"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="note">右邊是同一組幾何拆成三層；往下捲動會展開 Z-depth，初始仍保持參考圖的半平面疊合。</div>
+    </section>
+  </main>
+  <div class="scroll-hint">SCROLL TO UNFOLD</div>
+<script>
+  const root = document.documentElement;
+  const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
+  const easeOutCubic = x => 1 - Math.pow(1 - x, 3);
+
+  function update(){
+    const max = document.body.scrollHeight - innerHeight;
+    const raw = max > 0 ? scrollY / max : 0;
+    const p = easeOutCubic(clamp((raw - .18) / .48, 0, 1));
+    root.style.setProperty('--p', p.toFixed(4));
+    requestAnimationFrame(update);
+  }
+  update();
+
+  // Self-check in console: every rotated inner-square vertex must satisfy the outer diamond equation.
+  (function selfCheck(){
+    const R = 42;
+    const theta = 10.5 * Math.PI / 180;
+    const side = R / Math.cos(theta);
+    const a = side / 2;
+    const verts = [[-a,-a],[a,-a],[a,a],[-a,a]].map(([x,y])=>{
+      const c=Math.cos(theta), s=Math.sin(theta);
+      const X = 50 + x*c - y*s;
+      const Y = 50 + x*s + y*c;
+      const diamond = Math.abs(X-50) + Math.abs(Y-50);
+      return {x:+X.toFixed(3), y:+Y.toFixed(3), diamond:+diamond.toFixed(3), error:+(diamond-R).toFixed(6)};
+    });
+    console.table(verts);
+  })();
+</script>
+</body>
+</html>
