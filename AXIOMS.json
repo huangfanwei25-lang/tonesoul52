@@ -79,8 +79,8 @@
       "priority": "P0",
       "enforcement": {
         "status": "partial",
-        "as_of": "2026-06-13",
-        "note": "A 0.92 gate IS enforced on the high-risk chat path, but as a hardcoded literal in unified_pipeline (soul_config.governance_gate_score is unread), and the POAV sensor is English-keyword counting. The acronym has 3 divergent expansions across surfaces (AXIOMS/poav.py/quickstart) - canonical pick pending."
+        "as_of": "2026-06-15",
+        "note": "A 0.92 gate IS enforced on the high-risk chat path and now reads SOUL.risk.governance_gate_score from soul_config (unified_pipeline.py:650; fixed commit 1eb4006 2026-06-14 - the earlier 'hardcoded literal / unread' note was stale). The remaining caveat stands: the POAV sensor is one lexical function (English-keyword counting + file-path regex), not a semantic consensus, and the gate is record-only off high-risk paths (enforce=high_risk_mode). The acronym still has 3 divergent expansions across surfaces (AXIOMS/poav.py/quickstart) - canonical pick pending."
       }
     },
     {

@@ -103,7 +103,8 @@ claims, packaging, sensors, and governance back to verifiable consistency:
 - **Sensors are honestly labeled** (PR3): the vow/POAV/axiomatic evaluators
   are **lexical heuristics, English-centric, blind to zh-TW** — they do NOT
   measure truth/safety semantically. `AXIOMS.json` v1.2.0 records per-axiom
-  enforcement status (0 fully enforced, 5 partial, 2 referenced, 2 aspirational).
+  enforcement status (0 fully enforced, 8 partial, 1 referenced, 0 aspirational
+  as of 2026-06-15; the earlier "5 partial, 2 referenced, 2 aspirational" line was stale).
 - **Governance is self-applied** (PR4): Aegis signing fails *visibly*
   (UNSIGNED marker) without PyNaCl instead of silently skipping; `audit()`
   detects chain-head/tail truncation.
