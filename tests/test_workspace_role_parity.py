@@ -9,6 +9,13 @@ def _read(relative_path: str) -> str:
     return (ROOT / relative_path).read_text(encoding="utf-8")
 
 
+def _nows(text: str) -> str:
+    """Whitespace-insensitive form. black may wrap a call across lines, but the
+    contract (which call, which args) is unchanged — strip all whitespace so the
+    source-match assertion survives reformatting."""
+    return "".join(text.split())
+
+
 def test_dashboard_workspace_keeps_operator_shell_markers() -> None:
     workspace_page = _read("apps/dashboard/frontend/pages/workspace.py")
 
@@ -21,12 +28,13 @@ def test_dashboard_workspace_keeps_operator_shell_markers() -> None:
     ):
         assert marker in workspace_page
 
+    workspace_squashed = _nows(workspace_page)
     for tier_call in (
         "run_session_start_bundle(agent_id=WORKSPACE_AGENT_ID, tier=0",
         "run_session_start_bundle(agent_id=WORKSPACE_AGENT_ID, tier=1",
         "run_session_start_bundle(agent_id=WORKSPACE_AGENT_ID, tier=2",
     ):
-        assert tier_call in workspace_page
+        assert _nows(tier_call) in workspace_squashed
 
 
 def test_dashboard_workspace_keeps_tier2_bounded() -> None:
