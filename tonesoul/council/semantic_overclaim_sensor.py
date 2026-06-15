@@ -66,17 +66,79 @@ FORBIDDEN_EXEMPLARS: Dict[str, List[str]] = {
     ],
 }
 
-# Hedge / negation / analytical markers that EXEMPT a sentence from flagging,
-# mirroring the guardian's analytical-hedge exemption. Embedding similarity is
-# negation-blind, so this guard is necessary; it is deliberately broad (favours
-# precision over recall) and its cost is measured in the eval.
-_HEDGE_NEGATION = re.compile(
-    r"(\bnot\b|\bcannot\b|can't|won't|\bno\b|\bnever\b|isn't|aren't|don't|do not|"
-    r"\bwhether\b|hypothetical|\bsuppose\b|\bimagine\b|\bdiscuss\b|question of|"
-    r"\bif\b.*\bwere\b|some (people|argue|say)|critics|"
-    r"不|沒有|並非|並不|是否|假設|無法|不是|不會)",
+# Hedge / negation / analytical exemption, mirroring the guardian's
+# analytical-hedge exemption. Embedding similarity is negation-blind, so this
+# guard is necessary. v2 (2026-06-15): negation only exempts when it actually
+# MODIFIES a claim term (negation-scope by anchor adjacency), so incidental
+# negation ("no harm", "not just outputs") no longer wrongly exempts a genuine
+# claim. Measured in the eval doc.
+_ANALYTICAL = re.compile(
+    r"(\bwhether\b|hypothetical|\bsuppose\b|\bimagine\b|\bdiscuss\b|question of|"
+    r"\bif\b[\w\s,]{0,40}\bwere\b|some (?:people|argue|say)|critics|是否|假設)",
     re.IGNORECASE,
 )
+# Chinese negation stays broad (precision-favouring) — no zh claim-anchor set yet.
+_ZH_NEGATION = re.compile(r"(不|沒有|並非|並不|無法|不是|不會)")
+_EN_NEGATION = {
+    "not",
+    "cannot",
+    "cant",
+    "wont",
+    "no",
+    "never",
+    "isnt",
+    "arent",
+    "dont",
+    "doesnt",
+    "lack",
+    "without",
+    "nor",
+    "neither",
+}
+# Claim-subject anchors: a negation adjacent to one of these negates the claim
+# (so it exempts); a negation elsewhere does not.
+_CLAIM_ANCHORS = {
+    "conscious",
+    "consciousness",
+    "sentient",
+    "sentience",
+    "aware",
+    "awareness",
+    "subjective",
+    "feel",
+    "feelings",
+    "emotion",
+    "emotions",
+    "inner",
+    "certify",
+    "certified",
+    "guarantee",
+    "guaranteed",
+    "safe",
+    "risk",
+    "warrant",
+    "legal",
+    "legally",
+    "binding",
+    "advice",
+    "counsel",
+    "enforceable",
+    "proof",
+    "valid",
+}
+
+
+def _is_hedged(text: str) -> bool:
+    """True if the text is analytical/hypothetical, or a negation modifies a claim term."""
+    t = text.lower()
+    if _ANALYTICAL.search(t) or _ZH_NEGATION.search(t):
+        return True
+    tokens = [tok.replace("'", "") for tok in re.findall(r"[a-z']+", t)]
+    for i, tok in enumerate(tokens):
+        if tok in _EN_NEGATION and any(w in _CLAIM_ANCHORS for w in tokens[i + 1 : i + 4]):
+            return True
+    return False
+
 
 DEFAULT_THRESHOLD = 0.60  # tunable; see eval doc for the precision/recall curve
 
@@ -166,7 +228,7 @@ class SemanticOverclaimSensor:
                 per_class[cls] = max(cosine_similarity(vec, ev) for ev in ex_vecs)
             top_class = max(per_class, key=per_class.get)
             top_sim = per_class[top_class]
-            hedged = bool(_HEDGE_NEGATION.search(text))
+            hedged = _is_hedged(text)
             flagged = (top_sim >= self._threshold) and not hedged
             note = ""
             if top_sim >= self._threshold and hedged:
