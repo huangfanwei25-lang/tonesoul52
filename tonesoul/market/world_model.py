@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): off-thesis 台股 (Taiwan-stock) analysis. Reachable only via the CLI script scripts/run_market_scanner.py; zero core/governance importer; half-dismantled (forecaster/gold_detector removed). DECISION GATE: archive at the next consolidation unless a governance wire-in lands. See docs/plans/01_active/tier4_structural_decisions_2026-06-15.md.
 """ToneSoul Market Mirror Phase 3: World Model Simulation.
 
 Integrates structural financial analysis (Phase 2) with a multi-agent
@@ -15,9 +16,7 @@ from tonesoul.llm.ollama_client import create_ollama_client
 from tonesoul.market.analyzer import QuarterlySnapshot
 
 __ts_layer__ = "domain"
-__ts_purpose__ = (
-    "World model: maintain a structured representation of the current domain state."
-)
+__ts_purpose__ = "World model: maintain a structured representation of the current domain state."
 
 logger = logging.getLogger(__name__)
 
