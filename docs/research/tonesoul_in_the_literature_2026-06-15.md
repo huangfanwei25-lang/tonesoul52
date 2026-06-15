@@ -396,10 +396,16 @@ Everything beyond these two should be described as *instantiation*, not
 
 ## Dropped / flagged citations
 
-- **No citations were dropped as unverifiable.** All 25 supplied papers were
+- **No citations were dropped as *unverifiable*.** All 25 supplied papers were
   located with real, live URLs; the load-bearing anchors (D'Alessandro, Lavi,
   Clark et al.) plus the two flagged-caveat papers were re-verified by web search
   this session, and their abstracts matched the supplied descriptions.
+- **Superseded — UniCR (arXiv:2509.01455) was later DROPPED from the public
+  `docs/RELATED_WORK.md`.** A second, independent 27-agent re-verification
+  (2026-06-15) found the citation details accurate but the **paper withdrawn by
+  arXiv admin** over unverifiable authorship/affiliation. It is retained here (as
+  a research note of the consequentialist/risk-budget alternative) but must not
+  anchor any public artifact.
 - **Flagged — Lavi, Right-to-Act (arXiv:2604.24153):** arXiv ID is `2604.*`
   (April 2026), a recent **preprint, not peer-reviewed**. Treat its formal claims
   as unreviewed.
