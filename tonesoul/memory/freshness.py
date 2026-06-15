@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): Module is completely unwired from production runtime. No production code imports freshness.py or calls any of its exported functions (ZoneFreshness, FreshnessReport, compute_zone_freshness, touch_zone, build_freshness_report, filter_stale_zones). Only mention is in hybrid_search.py docstring (aspirational, not implemented). hybrid_search.py itself is not imported by any production code; see docs/architecture/architecture_legibility_2026-06-15.md
 """Zone Freshness Tracker — staleness detection for the world model.
 
 Every zone in the ToneSoul world model was last updated at some point.
@@ -39,7 +40,7 @@ __ts_purpose__ = (
 HALF_LIFE_DAYS: float = 7.0
 _LAMBDA: float = math.log(2) / HALF_LIFE_DAYS
 
-STALE_THRESHOLD: float = 0.3    # below this → zone needs review
+STALE_THRESHOLD: float = 0.3  # below this → zone needs review
 CRITICAL_THRESHOLD: float = 0.1  # below this → zone is unreliable, raises tension
 
 
@@ -51,8 +52,8 @@ class ZoneFreshness:
     """Freshness record for a single zone."""
 
     zone_id: str
-    last_touched_at: str          # ISO-8601, UTC
-    freshness_score: float        # 0.0 (stale) → 1.0 (fresh)
+    last_touched_at: str  # ISO-8601, UTC
+    freshness_score: float  # 0.0 (stale) → 1.0 (fresh)
     needs_review: bool = False
     is_critical: bool = False
     days_since_touch: float = 0.0
@@ -74,8 +75,8 @@ class FreshnessReport:
 
     generated_at: str = field(default_factory=lambda: _utcnow())
     total_zones: int = 0
-    stale_count: int = 0          # below STALE_THRESHOLD
-    critical_count: int = 0       # below CRITICAL_THRESHOLD
+    stale_count: int = 0  # below STALE_THRESHOLD
+    critical_count: int = 0  # below CRITICAL_THRESHOLD
     zone_records: List[ZoneFreshness] = field(default_factory=list)
 
     @property
@@ -99,7 +100,7 @@ class FreshnessReport:
             if r.is_critical:
                 delta += 2 * (STALE_THRESHOLD - r.freshness_score)
             elif r.needs_review:
-                delta += (STALE_THRESHOLD - r.freshness_score)
+                delta += STALE_THRESHOLD - r.freshness_score
         return min(1.0, round(delta / max(1, self.total_zones), 4))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -127,7 +128,7 @@ def _parse_iso(ts: str) -> Optional[datetime]:
         return None
     for fmt in ("%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S+00:00", "%Y-%m-%dT%H:%M:%S"):
         try:
-            dt = datetime.strptime(ts[:19], fmt[:len(fmt)])
+            dt = datetime.strptime(ts[:19], fmt[: len(fmt)])
             return dt.replace(tzinfo=timezone.utc)
         except ValueError:
             continue
@@ -198,8 +199,7 @@ def build_freshness_report(
     ``zone_timestamps`` can come from the zone registry or from Redis ts:zones.
     """
     records = [
-        compute_zone_freshness(zone_id, ts, now=now)
-        for zone_id, ts in zone_timestamps.items()
+        compute_zone_freshness(zone_id, ts, now=now) for zone_id, ts in zone_timestamps.items()
     ]
     stale = [r for r in records if r.needs_review]
     critical = [r for r in records if r.is_critical]

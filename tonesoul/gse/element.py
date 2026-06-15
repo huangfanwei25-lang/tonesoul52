@@ -1,3 +1,4 @@
+# PACKAGE-STATUS (as of 2026-06-15): GSEElement is the gse package's core dataclass, imported by gse/registry.py and gse/__init__.py — but the gse package as a whole is unwired (no non-test live importer; see registry.py DORMANT marker). Live only within a parked package. see docs/architecture/architecture_legibility_2026-06-15.md
 """GSEElement — the atomic unit of the Governance Semantic Engine."""
 
 from __future__ import annotations

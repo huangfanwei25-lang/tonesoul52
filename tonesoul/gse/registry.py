@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): In-memory registry for GSE elements loaded from JSON cluster files. Re-exported by tonesoul.gse.__init__ but never imported by any non-test live code or entry points (verified: CLI, unified_pipeline, apps/, scripts/, tools/ all lack gse imports). Test-only usage in tests/test_gse.py; see docs/architecture/architecture_legibility_2026-06-15.md
 """GSERegistry — load and query the element catalogue."""
 
 from __future__ import annotations

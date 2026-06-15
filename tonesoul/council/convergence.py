@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): Module exports convergence_score, check_convergence, should_continue_deliberating, and ConvergenceResult but is only imported by tests/test_council_convergence.py. Council.__init__ does not re-export; CouncilRuntime/PreOutputCouncil do not use; no entry points (CLI, scripts, apps) reference convergence functions or types. Unwired since creation (commit 61cefd9); see docs/architecture/architecture_legibility_2026-06-15.md
 """Convergence verification for council deliberation.
 
 When perspectives have wildly different confidence values, the council

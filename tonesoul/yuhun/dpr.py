@@ -14,7 +14,10 @@ from enum import Enum
 
 __ts_layer__ = "semantic"
 __ts_purpose__ = (
-    "DPR (Dense Passage Retrieval): semantic retrieval over the yuhun knowledge base."
+    "DPR (Dynamic Priority Router): routes each input to FAST_PATH (low complexity) or "
+    "COUNCIL_PATH (high conflict) by complexity/conflict scoring — NOT a retrieval module. "
+    "Fixed 2026-06-15: the prior 'Dense Passage Retrieval / semantic retrieval' annotation "
+    "contradicted the docstring and code (RoutingDecision/complexity_score)."
 )
 
 

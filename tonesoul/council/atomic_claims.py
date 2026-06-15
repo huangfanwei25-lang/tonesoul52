@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): Pure extraction utility pending integration into council verdict pathway; currently only tested by tests/test_council_atomic_claims.py, not imported or re-exported by any live module or entry point (ts CLI, api/server, mcp_server, unified_pipeline, council/__init__.py, or scripts); see docs/architecture/architecture_legibility_2026-06-15.md
 """Atomic claim extraction with source span citations.
 
 A "claim" is the smallest unit of assertable meaning. Not a sentence —

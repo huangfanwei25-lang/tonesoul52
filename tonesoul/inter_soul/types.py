@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): Unwired: only imported by tests and sibling modules within dormant inter_soul package; never referenced by unified_pipeline, runtime_adapter, council/runtime, cli/main, or any scripts/tools/api/apps entry point; see docs/architecture/architecture_legibility_2026-06-15.md
 from __future__ import annotations
 
 import hashlib
@@ -9,9 +10,7 @@ from enum import Enum
 from typing import ClassVar, Dict, FrozenSet, Mapping
 
 __ts_layer__ = "surface"
-__ts_purpose__ = (
-    "Inter-soul type definitions: message envelopes and sovereignty claim structures."
-)
+__ts_purpose__ = "Inter-soul type definitions: message envelopes and sovereignty claim structures."
 
 
 def _utcnow_iso() -> str:

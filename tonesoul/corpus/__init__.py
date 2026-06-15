@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): No non-test imports; unused in live entry points (ts CLI, mcp_server); not re-exported from tonesoul/__init__.py; separate corpus_schema/corpus_builder in evolution/ are local-only; see docs/architecture/architecture_legibility_2026-06-15.md
 """
 ToneSoul Corpus Collection Module
 

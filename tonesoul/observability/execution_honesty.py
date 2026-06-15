@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): Module is a design asset (promise validation framework) that was never wired into the runtime. Re-exported by observability/__init__.py as a facade, but observability package is never imported by any live code path (CLI, entry points, or runtime imports). Only used in tests (test_execution_honesty.py); see docs/architecture/architecture_legibility_2026-06-15.md
 """Evidence reducer for execution promises.
 
 This module checks whether externally visible work claims have observable
@@ -43,7 +44,9 @@ class ExecutionEvidenceResult:
     reason: str
 
 
-def check_promise(promise: ExecutionPromise, *, workspace_root: Path | None = None) -> ExecutionEvidenceResult:
+def check_promise(
+    promise: ExecutionPromise, *, workspace_root: Path | None = None
+) -> ExecutionEvidenceResult:
     """Check one promise without mutating repo state or runtime memory."""
 
     if promise.evidence_kind in {"command", "process"}:
