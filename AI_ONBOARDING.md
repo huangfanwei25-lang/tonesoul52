@@ -1,7 +1,7 @@
 # AI Onboarding Guide
 
 > Purpose: route later AI agents into the right entry lane without making them bulk-read the repo.
-> Last Updated: 2026-04-14
+> Last Updated: 2026-06-16
 > Status: active AI routing map. Operational work starts in `docs/AI_QUICKSTART.md`; deeper lanes open only after session start and the bounded project packet.
 
 ---
@@ -55,6 +55,8 @@ Do not:
 - continuity, packet, compaction, or handoff: `docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md`
 - knowledge, retrieval, or residue boundaries: `docs/architecture/TONESOUL_KNOWLEDGE_LAYER_BOUNDARY_CONTRACT.md` and `docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md`
 - evidence posture or overclaim risk: `docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md`
+- new advisory sensors / Tier-5 gates: `docs/status/semantic_overclaim_eval_2026-06-15.md` and `docs/status/intent_proportionality_eval_2026-06-15.md` (both advisory-only, default-OFF, measured not calibrated; design rationale in `DESIGN.md` "Tier-5 Advisory Sensors")
+- where ToneSoul sits vs other governance/accountability work: `docs/RELATED_WORK.md`
 - whole-system explanation: `DESIGN.md` then `docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md`
 - docs routing or mirror confusion: `docs/README.md` first, `docs/INDEX.md` only if needed
 - historical or interpretive reading: open only after the canonical lane is already clear
@@ -107,6 +109,7 @@ Works without any external service. Run it at session start and after major mile
 - `docs/foundation/README.md`
 - `task.md`
 - `DESIGN.md`
+- `docs/RELATED_WORK.md`
 - `docs/README.md`
 - `docs/INDEX.md`
 

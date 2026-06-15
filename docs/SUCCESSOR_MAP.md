@@ -1,14 +1,15 @@
 # Successor Cognitive Map — read this before deleting, refactoring, or "cleaning up"
 
-> Last Updated: 2026-06-15
+> Last Updated: 2026-06-16
 > Audience: the next AI agent (or human) who picks up this repo cold.
 > Purpose: the single page that prevents the failure that almost happened on
 > 2026-06-13 — a "consolidation" PR that nearly deleted `yss_gates`, a module
 > that *looks* dead but is the runtime POAV gate inside the #1 god node.
 
 This map exists because **continuity in this project is carried by artifacts,
-not by a model's memory** (DESIGN.md Invariant 2). A model label can disappear
-mid-project; the repo must still be safely continuable. If you are a fresh
+not by a model's memory** (DESIGN.md Invariant 2), and **identity is carried by
+accountable choice-point records, not model memory** (DESIGN.md E0). A model
+label can disappear mid-project; the repo must still be safely continuable. If you are a fresh
 agent, this page + `task.md` + `docs/status/codebase_graph_latest.md` are your
 cognitive baseline.
 
@@ -113,6 +114,15 @@ claims, packaging, sensors, and governance back to verifiable consistency:
   `ALLOWED_DEPS` honestly (it is a dependency inventory with 8 accepted
   inversions, NOT strict-hierarchy enforcement — "0 layer violations" ≠ clean
   hierarchy).
+
+**Since Reality Sync — two ADVISORY Tier-5 sensors** (2026-06-15/16, *not* part of
+Reality Sync; advisory-only, default-OFF, record-only, measured before any wire-in):
+the **embedding-based** `semantic_overclaim_sensor` (catches paraphrased `meta.not_for`
+claims the lexical guardian misses — so "sensors are lexical heuristics" above is now
+"lexical *plus* one embedding-based advisory sensor") and `intent_proportionality` (the
+"小天使", flags a draft escalating beyond user intent). Both only record a signal on the
+verdict; neither blocks or auto-edits. Evals in `docs/status/`; design rationale in
+DESIGN.md "Tier-5 Advisory Sensors".
 
 ---
 
