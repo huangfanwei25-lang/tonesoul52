@@ -169,3 +169,6 @@ graphify-out/
 # External binary tools — kept local for individual agents, not in repo
 # (e.g. x64dbg, IDA, Ghidra, decompilers, custom RE tooling)
 tools/x64dbg-*/
+
+# Private AI memory data — local only, never in the public repo (CLAUDE.md: memory_base gitignored, 不入任何 repo)
+memory/memory_base/
