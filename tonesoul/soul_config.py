@@ -106,6 +106,10 @@ class CouncilConfig:
     # model and is a RECORDED signal only (DESIGN Inv3 — Advisory != Canonical), never
     # a gate. Measured limits: docs/status/semantic_overclaim_eval_2026-06-15.md.
     semantic_overclaim_advisory_enabled: bool = False
+    # Tier 5 intent-proportionality gate (advisory). Default OFF: flags when a draft
+    # escalates beyond the agent's OWN intent + suggests contracting; records a signal,
+    # never auto-edits/blocks (DESIGN Inv3). See intent_proportionality_eval_2026-06-15.md.
+    intent_proportionality_advisory_enabled: bool = False
 
 
 # ---------------------------------------------------------------------------

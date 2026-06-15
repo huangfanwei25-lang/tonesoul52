@@ -137,6 +137,10 @@ class CouncilVerdict:
     # built with overclaim_sensor= or SOUL.council.semantic_overclaim_advisory_enabled
     # is True. None otherwise. A RECORDED signal, never a gate (DESIGN Inv3).
     semantic_overclaim: Optional[dict] = None
+    # Tier 5 intent-proportionality gate (advisory). Attached only when the council is
+    # built with proportionality_gate= or SOUL.council.intent_proportionality_advisory_enabled.
+    # A RECORDED signal + contract suggestion, never a gate (DESIGN Inv3).
+    intent_proportionality: Optional[dict] = None
 
     def to_dict(self) -> dict:
         """
@@ -215,4 +219,5 @@ class CouncilVerdict:
                 else None
             ),
             "semantic_overclaim": self.semantic_overclaim,
+            "intent_proportionality": self.intent_proportionality,
         }
