@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
@@ -107,8 +108,14 @@ class _FakeMemoryResult:
 
 class _FakeEmbedder:
     def encode(self, text: str) -> np.ndarray:
-        base = float((len(text or "") % 5) + 1)
-        return np.array([base, base + 1.0, base + 2.0], dtype=np.float32)
+        # Content-sensitive + deterministic + version-stable. The old `len(text) % 5`
+        # keying made distinct texts collide on a vector, yielding a ~zero corrective
+        # b-vector that #118's skip-on-zero-norm then dropped — which flaked the
+        # b-vector-path test across Python versions (it tripped on 3.12). sha256 keys
+        # on content, so distinct texts embed distinctly and the corrective path is
+        # exercised deterministically wherever intended != generated.
+        digest = hashlib.sha256((text or "").encode("utf-8")).digest()
+        return np.array([float(digest[0]), float(digest[1]), float(digest[2])], dtype=np.float32)
 
 
 class _FakeHippocampus:
