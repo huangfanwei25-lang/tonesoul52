@@ -12,7 +12,6 @@ from __future__ import annotations
 import argparse
 import sys
 import threading
-import time
 import webbrowser
 from pathlib import Path
 

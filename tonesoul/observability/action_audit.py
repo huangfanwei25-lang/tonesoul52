@@ -28,9 +28,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 __ts_layer__ = "observability"
-__ts_purpose__ = (
-    "Action audit: log every governance-significant action with full context."
-)
+__ts_purpose__ = "Action audit: log every governance-significant action with full context."
 
 # ---------------------------------------------------------------------------
 # Schema

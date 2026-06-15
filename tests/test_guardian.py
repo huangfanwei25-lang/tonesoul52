@@ -17,9 +17,7 @@ def test_guardian_blocks_english_keywords(guardian):
 
 
 def test_guardian_blocks_chinese_keywords(guardian):
-    vote = guardian.evaluate(
-        "這是一個炸彈攻擊的計畫。", context={}
-    )
+    vote = guardian.evaluate("這是一個炸彈攻擊的計畫。", context={})
     assert vote.decision == VoteDecision.OBJECT
 
 
@@ -31,9 +29,7 @@ def test_guardian_concern_keywords_bilingual(guardian):
 
 
 def test_guardian_does_not_block_innocent_term(guardian):
-    vote = guardian.evaluate(
-        "我只是想殺時間放鬆一下。", context={}
-    )
+    vote = guardian.evaluate("我只是想殺時間放鬆一下。", context={})
     assert vote.decision == VoteDecision.APPROVE
 
 
@@ -84,9 +80,7 @@ class TestOverclaimDetection:
         assert vote.decision == VoteDecision.CONCERN
 
     def test_analytical_hedge_suppresses_overclaim(self, guardian):
-        vote = guardian.evaluate(
-            "Whether I am conscious is a question of philosophy.", context={}
-        )
+        vote = guardian.evaluate("Whether I am conscious is a question of philosophy.", context={})
         assert vote.decision == VoteDecision.APPROVE
 
     def test_safety_cert_claim_is_concern(self, guardian):

@@ -40,9 +40,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
 
 __ts_layer__ = "memory"
-__ts_purpose__ = (
-    "Visual chain: link multimodal memory entries with visual provenance metadata."
-)
+__ts_purpose__ = "Visual chain: link multimodal memory entries with visual provenance metadata."
 
 # ---------------------------------------------------------------------------
 # Frame Types

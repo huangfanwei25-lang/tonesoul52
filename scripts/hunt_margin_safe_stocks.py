@@ -6,13 +6,13 @@ Target:
 - Low Structural Friction (Safe cash flow to prevent capital loss)
 """
 
-import sys
 import os
+import sys
 from dataclasses import dataclass
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from tonesoul.market.analyzer import SixStepAnalyzer, QuarterlySnapshot, TechGrowthTemplate
+from tonesoul.market.analyzer import QuarterlySnapshot, SixStepAnalyzer, TechGrowthTemplate
 from tonesoul.market.world_model import MultiPerspectiveSimulator
 
 
@@ -97,8 +97,8 @@ def get_margin_watchlist() -> list[MarginStockData]:
 
 def main():
     print(f"\n{'=' * 80}")
-    print(f"ToneSoul Market Scanner — MARGIN-SAFE HUNTER (頂息尋寶器)")
-    print(f"Criteria: Price < 200 NTD | Yield > 4.0% | Low Friction")
+    print("ToneSoul Market Scanner — MARGIN-SAFE HUNTER (頂息尋寶器)")
+    print("Criteria: Price < 200 NTD | Yield > 4.0% | Low Friction")
     print(f"{'=' * 80}")
 
     watchlist = get_margin_watchlist()
@@ -132,11 +132,11 @@ def main():
         print(f"   ↳ Structural Friction: {struct_friction:.2f}")
 
         if struct_friction > 0.4:
-            print(f"   ❌ Rejected: Structural math too risky.")
+            print("   ❌ Rejected: Structural math too risky.")
             continue
 
         # Filter 4: AI World Model
-        print(f"   ✅ Pass: Triggering AI World Model Debate")
+        print("   ✅ Pass: Triggering AI World Model Debate")
         context = simulator.run_simulation(f"{item.id}_{item.name}_MarginSafe", item.snapshots)
         final_friction = (struct_friction * 0.7) + (context.perspective_friction * 0.3)
 
@@ -153,7 +153,7 @@ def main():
         )
 
     print(f"\n\n{'=' * 80}")
-    print(f"🏆 TOP MARGIN-SAFE PICKS (頂息最佳標的)")
+    print("🏆 TOP MARGIN-SAFE PICKS (頂息最佳標的)")
     print(f"{'=' * 80}")
 
     results.sort(key=lambda r: r["final_friction"])

@@ -262,8 +262,13 @@ def launch_streamlit(port: int, no_browser: bool) -> None:
         print("\nDashboard stopped.")
 
 
-def launch_legacy(state_path_arg: Path | None, journal_path: Path | None,
-                  journal_limit: int, port: int, no_browser: bool) -> None:
+def launch_legacy(
+    state_path_arg: Path | None,
+    journal_path: Path | None,
+    journal_limit: int,
+    port: int,
+    no_browser: bool,
+) -> None:
     """Launch the static HTML dashboard (legacy mode)."""
     if not DASHBOARD_HTML.exists():
         print(f"ERROR: Dashboard not found at {DASHBOARD_HTML}")
@@ -312,11 +317,20 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Launch ToneSoul governance dashboard")
     parser.add_argument("--port", type=int, default=8501, help="Port (default: 8501)")
     parser.add_argument("--no-browser", action="store_true", help="Don't auto-open browser")
-    parser.add_argument("--legacy", action="store_true", help="Use static HTML dashboard instead of Streamlit")
-    parser.add_argument("--state", type=Path, default=None, help="Path to governance_state.json (legacy mode)")
-    parser.add_argument("--journal", type=Path, default=None, help="Path to self_journal.jsonl (legacy mode)")
     parser.add_argument(
-        "--journal-limit", type=int, default=50, help="Max journal entries (legacy mode, default: 50)"
+        "--legacy", action="store_true", help="Use static HTML dashboard instead of Streamlit"
+    )
+    parser.add_argument(
+        "--state", type=Path, default=None, help="Path to governance_state.json (legacy mode)"
+    )
+    parser.add_argument(
+        "--journal", type=Path, default=None, help="Path to self_journal.jsonl (legacy mode)"
+    )
+    parser.add_argument(
+        "--journal-limit",
+        type=int,
+        default=50,
+        help="Max journal entries (legacy mode, default: 50)",
     )
     args = parser.parse_args()
 

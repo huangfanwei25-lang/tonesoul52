@@ -53,6 +53,7 @@ def test_terrain_signature_contains_expected_structure() -> None:
 
 # ── Individual acceptance test functions ──────────────────────────────────────
 
+
 def test_decoupling_does_not_raise() -> None:
     module.test_decoupling()  # should complete without AssertionError
 
@@ -75,14 +76,17 @@ def test_audit_replay_passes_default_segments() -> None:
 
 # ── Multiple failures in run_acceptance ───────────────────────────────────────
 
+
 def test_run_acceptance_multiple_failures(monkeypatch) -> None:
     monkeypatch.setattr(
-        module, "test_decoupling",
+        module,
+        "test_decoupling",
         lambda: (_ for _ in ()).throw(AssertionError("err1")),
     )
     monkeypatch.setattr(module, "test_terrain_consistency", lambda: None)
     monkeypatch.setattr(
-        module, "test_drift_readability",
+        module,
+        "test_drift_readability",
         lambda: (_ for _ in ()).throw(AssertionError("err2")),
     )
     monkeypatch.setattr(module, "test_p2_projection", lambda: None)

@@ -86,4 +86,6 @@ __all__ = [
 ]
 
 __ts_layer__ = "governance"
-__ts_purpose__ = "Deliberation package: adaptive round calculation and tension-severity aggregation."
+__ts_purpose__ = (
+    "Deliberation package: adaptive round calculation and tension-severity aggregation."
+)

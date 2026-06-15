@@ -204,7 +204,7 @@ module: `docs/architecture/architecture_legibility_2026-06-15.md`.
 | `observability/execution_honesty.py` | promise-validation framework | `observability` package never imported by live code |
 | `observability/self_claim_audit.py` | first-person claim reducer | same — package facade unused at runtime |
 | `inter_soul/{__init__,bridge,negotiation,sovereignty,types}.py` | cross-agent tension/sovereignty protocol | Phase-8 substrate; zero live importers (also the §6 row) |
-| `corpus/{__init__,consent,pipeline,storage}.py` | privacy-first training-data corpus | never wired; **DEAD-candidate** — wire-or-archive owner decision (do NOT blind-delete: a tested consent+storage unit) |
+| ~~`corpus/{__init__,consent,pipeline,storage}.py`~~ | privacy-first training-data corpus | **ARCHIVED 2026-06-15** (owner decision — parked duplicate of the live Supabase consent path). Removed from the tracked tree; recover via `git checkout b497c68 -- tonesoul/corpus`; local copy in `.archive/corpus_archived_2026-06-15/`. See §6b. |
 
 **Caught as ACTUALLY LIVE — NOT marked dormant (the verification's safety win):**
 `gse/element.py` — the `GSEElement` dataclass is imported by `gse/registry.py`
@@ -212,10 +212,27 @@ and `gse/__init__.py`. It is live *within* the (otherwise-parked) `gse` package,
 so it carries a `# PACKAGE-STATUS` note, not a `# DORMANT` one. This is the §0
 failure mode in miniature: "has importers" ≠ "live", but also ≠ "safe to call dead."
 
-**Correction to the YUHUN Core row above (2026-06-15, verified):** the
-`dpr` / `context_assembler` path is *imported* into `unified_pipeline.py:190-210`
-but **never invoked** — `_get_dpr()` / `_get_context_assembler()` have zero call
-sites repo-wide (a dead hook). "Import exists; invocation does not." This is a
-wire-or-remove **owner decision**, not a deletion. (`yuhun/dpr.py`'s
-`__ts_purpose__` was also corrected the same day — it claimed "Dense Passage
-Retrieval / semantic retrieval" but the code is a Dynamic Priority Router.)
+**YUHUN dead-hook — RESOLVED 2026-06-15 (owner decision: "wire if feasible").**
+The old `_get_dpr()` / `_get_context_assembler()` dead hook is gone:
+- **DPR is now wired** as an *advisory* signal — `unified_pipeline.py` records
+  `dispatch_trace["dpr_advisory"]` (recommended FAST/COUNCIL path + complexity +
+  triggers). It is advisory ONLY by design — a lexical router must not bypass the
+  council. `_get_dpr()` is now live.
+- **ContextAssembler stayed parked** — its `assemble()` would replace the
+  pipeline's context-build (a behavior change), so it was not additively wireable.
+  The dead `_get_context_assembler()` getter was **removed**; the module is kept as
+  test substrate and marked "PARKED, not superseded."
+
+---
+
+### 6b. Tier 4 structural decisions — executed 2026-06-15 (owner: Fan-Wei)
+
+Decision evidence + adversarial review: `docs/plans/01_active/tier4_structural_decisions_2026-06-15.md`.
+
+| Item | Decision | What changed |
+|---|---|---|
+| `corpus/` | **Archive** | Removed from the tracked tree (parked duplicate of the live Supabase consent path). Recover: `git checkout b497c68 -- tonesoul/corpus`. The 3 corpus-dedicated tests were removed; the 2 consent cases in `test_security_memory_boundary.py` (duplicated in the archived `test_corpus_consent.py`) were dropped, leaving its 4 genuine memory-security tests. **Coverage note:** the live Supabase consent path's own test coverage is a separate, pre-existing question. |
+| YUHUN hook | **Wire (advisory)** | DPR wired as `dispatch_trace["dpr_advisory"]`; ContextAssembler kept parked (see §6a). |
+| `council/evolution.py` | **Rename** | → `council/voting_evolution.py` (resolves the live-vs-live grep collision with `tonesoul/evolution/`). Class names unchanged; 3 importers + 1 test updated. `yss`/`yuhun` were NOT renamed — they are not true namesakes. |
+| `market/` | **Keep + mark** | The 4 modules now carry a `# DORMANT` marker with a **dated archive gate** ("archive at next consolidation unless a governance wire-in lands"). Not removed (tested + CLI-script-reachable). |
+| dual `Hippocampus` | **Leave + mark** | No merge (M-effort/M-risk for zero gain). Root `memory/hippocampus.py` marked `# PARTIAL-LIVE` (only the static `compute_error_vector` is live; the default-ON corrective branch is a usually-zero near-no-op). |

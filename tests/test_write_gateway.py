@@ -205,6 +205,7 @@ def test_write_payload_rejects_vow_review_gate_without_review_basis(tmp_path: Pa
 
 # ── _has_evidence ─────────────────────────────────────────────────────────────
 
+
 def test_has_evidence_from_evidence_ids() -> None:
     assert _has_evidence({"evidence_ids": ["id_1"]}) is True
     assert _has_evidence({"evidence_ids": ["  "]}) is False
@@ -217,13 +218,7 @@ def test_has_evidence_from_evidence_list() -> None:
 
 
 def test_has_evidence_from_transcript_contract_records() -> None:
-    payload = {
-        "transcript": {
-            "multi_agent_contract": {
-                "records": [{"evidence": ["trace://one"]}]
-            }
-        }
-    }
+    payload = {"transcript": {"multi_agent_contract": {"records": [{"evidence": ["trace://one"]}]}}}
     assert _has_evidence(payload) is True
 
 
@@ -232,6 +227,7 @@ def test_has_evidence_returns_false_for_empty_payload() -> None:
 
 
 # ── _has_provenance ───────────────────────────────────────────────────────────
+
 
 def test_has_provenance_from_intent_id() -> None:
     assert _has_provenance({"intent_id": "abc"}) is True
@@ -254,6 +250,7 @@ def test_has_provenance_returns_false_for_empty() -> None:
 
 # ── _intentional_forgetting_gate ──────────────────────────────────────────────
 
+
 def test_forgetting_gate_bypasses_handoff_types() -> None:
     for t in ("handoff", "crystal", "audit", "governance_retro"):
         keep, reasons = _intentional_forgetting_gate({"type": t, "content": ""})
@@ -268,19 +265,23 @@ def test_forgetting_gate_rejects_short_content() -> None:
 
 
 def test_forgetting_gate_rejects_ephemeral_tag() -> None:
-    keep, reasons = _intentional_forgetting_gate({
-        "content": "sufficient content to pass length check",
-        "tags": ["ephemeral"],
-    })
+    keep, reasons = _intentional_forgetting_gate(
+        {
+            "content": "sufficient content to pass length check",
+            "tags": ["ephemeral"],
+        }
+    )
     assert keep is False
     assert "ephemeral_tag" in reasons
 
 
 def test_forgetting_gate_rejects_passive_noise() -> None:
-    keep, reasons = _intentional_forgetting_gate({
-        "content": "sufficient content to pass length check",
-        "observation_mode": "passive_noise",
-    })
+    keep, reasons = _intentional_forgetting_gate(
+        {
+            "content": "sufficient content to pass length check",
+            "observation_mode": "passive_noise",
+        }
+    )
     assert keep is False
     assert "passive_noise" in reasons
 
@@ -292,6 +293,7 @@ def test_forgetting_gate_passes_normal_content() -> None:
 
 
 # ── _has_strong_promotion_gate ────────────────────────────────────────────────
+
 
 def test_strong_promotion_gate_string_reviewed() -> None:
     assert _has_strong_promotion_gate({"promotion_gate": "approved"}) is True
@@ -315,6 +317,7 @@ def test_strong_promotion_gate_reviewed_by_list() -> None:
 
 # ── MemoryWriteRejectedError ──────────────────────────────────────────────────
 
+
 def test_memory_write_rejected_error_formats_message() -> None:
     exc = MemoryWriteRejectedError(["missing_evidence", "missing_provenance"])
     assert exc.reasons == ["missing_evidence", "missing_provenance"]
@@ -329,6 +332,7 @@ def test_memory_write_rejected_error_empty_reasons() -> None:
 
 # ── MemoryWriteResult ─────────────────────────────────────────────────────────
 
+
 def test_memory_write_result_defaults() -> None:
     result = MemoryWriteResult()
     assert result.written == 0
@@ -339,6 +343,7 @@ def test_memory_write_result_defaults() -> None:
 
 
 # ── MemoryWriteGateway._merge_tags ───────────────────────────────────────────
+
 
 def test_merge_tags_deduplicates_and_always_includes_defaults(tmp_path: Path) -> None:
     gw = MemoryWriteGateway(SqliteSoulDB(db_path=tmp_path / "soul.db"))
@@ -357,6 +362,7 @@ def test_merge_tags_empty_input_adds_defaults(tmp_path: Path) -> None:
 
 
 # ── MemoryWriteGateway.write_payload type guard ───────────────────────────────
+
 
 def test_write_payload_raises_type_error_for_non_dict(tmp_path: Path) -> None:
     gw = MemoryWriteGateway(SqliteSoulDB(db_path=tmp_path / "soul.db"))

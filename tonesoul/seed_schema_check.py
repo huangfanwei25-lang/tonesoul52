@@ -6,9 +6,7 @@ from typing import Dict, List, Optional
 from .issue_codes import IssueCode, issue
 
 __ts_layer__ = "shared"
-__ts_purpose__ = (
-    "Seed schema check: validate that seed data conforms to canonical schemas."
-)
+__ts_purpose__ = "Seed schema check: validate that seed data conforms to canonical schemas."
 
 REQUIRED_TOP = [
     "seed_version",

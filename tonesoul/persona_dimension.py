@@ -9,9 +9,7 @@ import yaml
 from .ystm.schema import utc_now
 
 __ts_layer__ = "evolution"
-__ts_purpose__ = (
-    "Persona dimension space for dynamic AI character adaptation."
-)
+__ts_purpose__ = "Persona dimension space for dynamic AI character adaptation."
 
 
 @dataclass

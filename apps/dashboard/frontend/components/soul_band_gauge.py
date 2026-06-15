@@ -9,7 +9,6 @@ import math
 
 import streamlit as st
 
-
 _BAND_DEFS = [
     {"key": "serene", "label": "平靜", "color": "#4ade80", "start": 0.0, "end": 0.30},
     {"key": "alert", "label": "警覺", "color": "#facc15", "start": 0.30, "end": 0.55},
@@ -32,7 +31,7 @@ def render_soul_band_gauge(
     r = 75
     stroke_w = 14
     start_angle = 180  # left
-    end_angle = 360    # right (semicircle)
+    end_angle = 360  # right (semicircle)
 
     arcs = []
     for band in _BAND_DEFS:

@@ -172,9 +172,14 @@ class UnifiedPipeline:
             "TONESOUL_ENABLE_CORRECTIVE_RECALL",
             default=True,
         )
-        # YUHUN Core Protocol v1.0 — DPR + ContextAssembler
+        # YUHUN Core Protocol v1.0 — DPR (Dynamic Priority Router) is wired below as
+        # an ADVISORY routing signal on the dispatch trace (2026-06-15). It is a
+        # *lexical* router (regex + length heuristic), so it is advisory ONLY — it
+        # does not bypass the council (a keyword sensor must not gate governance).
+        # ContextAssembler is intentionally NOT wired: its assemble() would REPLACE
+        # the pipeline's context-build (a behavior change), so it stays parked
+        # (tests + future) — see tonesoul/yuhun/context_assembler.py.
         self._dpr = None
-        self._context_assembler = None
 
     def _get_governance_kernel(self):
         if self._governance_kernel is None:
@@ -197,17 +202,6 @@ class UnifiedPipeline:
             except Exception as e:
                 self._exc_trace.record("unified_pipeline", "_get_dpr", e)
         return self._dpr
-
-    def _get_context_assembler(self):
-        """YUHUN ContextAssembler — Context Budget 組裝器（懶載入，失敗時降級）"""
-        if self._context_assembler is None:
-            try:
-                from tonesoul.yuhun.context_assembler import ContextAssembler
-
-                self._context_assembler = ContextAssembler(repo_root=self._repo_root)
-            except Exception as e:
-                self._exc_trace.record("unified_pipeline", "_get_context_assembler", e)
-        return self._context_assembler
 
     def _get_llm_router(self):
         if self._llm_router is None:
@@ -2190,6 +2184,34 @@ class UnifiedPipeline:
                 ),
             }
         )
+        # YUHUN DPR — advisory routing signal (Tier 4 wiring, 2026-06-15). DPR is a
+        # *lexical* router (regex + length heuristic); in a governance system a lexical
+        # sensor must NOT bypass the council, so its FAST/COUNCIL recommendation is
+        # recorded for observability only — it does not change whether the council
+        # runs. Promoting it to authoritative routing needs a non-lexical complexity
+        # signal (the same gap the other sensors have). Fail-soft.
+        dpr_route = self._get_dpr()
+        if dpr_route is not None:
+            try:
+                _dpr_result = dpr_route(raw_user_message)
+                dispatch_trace["dpr_advisory"] = self._build_trace_section(
+                    "dpr_advisory",
+                    {
+                        "recommended_path": _dpr_result.decision.value,
+                        "complexity_score": _dpr_result.complexity_score,
+                        "conflict_detected": _dpr_result.conflict_detected,
+                        "conflict_triggers": _dpr_result.conflict_triggers,
+                        "estimated_token_cost": _dpr_result.estimated_token_cost,
+                        "advisory_only": True,
+                        "note": (
+                            "lexical router; recorded for observability; does NOT bypass "
+                            "council (a keyword sensor must not gate governance)"
+                        ),
+                    },
+                    status="ok",
+                )
+            except Exception as e:
+                self._exc_trace.record("unified_pipeline", "dpr_advisory", e)
         dispatch_trace["trajectory"] = self._build_trace_section(
             "trajectory",
             dict(trajectory_result),
@@ -2707,14 +2729,22 @@ class UnifiedPipeline:
                                     generated=generated_vec,
                                 )
                                 corrective_vector_norm = float(np.linalg.norm(b_vec))
-                                corrective_results = self._hippocampus.recall(
-                                    query_text=user_message,
-                                    query_vector=b_vec,
-                                    top_k=2,
-                                    query_tension=tone_strength,
-                                    tension_context=tension_context,
-                                    query_tension_mode="conflict",
-                                )
+                                # Inv4 (Descriptive != Calibrated): skip the corrective
+                                # recall when there is nothing to correct. If no
+                                # injection/rewrite changed the input, generated ==
+                                # intended, so the error vector is ~zero and a recall
+                                # with it is a meaningless no-op — yet it ran on every
+                                # request by default and was swallowed silently. Keep the
+                                # feature for the real, non-zero case only.
+                                if corrective_vector_norm > 1e-6:
+                                    corrective_results = self._hippocampus.recall(
+                                        query_text=user_message,
+                                        query_vector=b_vec,
+                                        top_k=2,
+                                        query_tension=tone_strength,
+                                        tension_context=tension_context,
+                                        query_tension_mode="conflict",
+                                    )
                     except Exception as corrective_error:
                         print(f"Hippocampus corrective recall error: {corrective_error}")
 
@@ -2728,6 +2758,9 @@ class UnifiedPipeline:
                     memory_correction_trace["b_vec_norm"] = round(
                         corrective_vector_norm,
                         6,
+                    )
+                    memory_correction_trace["corrective_skipped_zero_vector"] = (
+                        corrective_vector_norm <= 1e-6
                     )
                 dispatch_trace["memory_correction"] = self._build_trace_section(
                     "memory_correction",

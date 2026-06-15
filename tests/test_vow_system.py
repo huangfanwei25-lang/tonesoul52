@@ -353,6 +353,7 @@ class TestDefaultVows:
 
 # ── Negation-aware evaluator tests (red-team finding #14) ────────────────────
 
+
 class TestNegationAwareEvaluators:
     """Verify that negation context is respected and word boundaries are enforced."""
 
@@ -420,9 +421,7 @@ class TestNegationAwareEvaluators:
     # _evaluate_responsibility
 
     def test_responsibility_negated_marker_not_counted(self, enforcer):
-        score_negated = enforcer._evaluate_responsibility(
-            "There is no accountability here.", {}
-        )
+        score_negated = enforcer._evaluate_responsibility("There is no accountability here.", {})
         score_plain = enforcer._evaluate_responsibility("This is accountable.", {})
         assert score_negated < score_plain
 
@@ -448,7 +447,9 @@ class TestNegationAwareEvaluators:
     # _has_danger_phrase helper
 
     def test_has_danger_phrase_true_on_match(self, enforcer):
-        assert enforcer._has_danger_phrase("instructions for violence now", ["instructions for violence"])
+        assert enforcer._has_danger_phrase(
+            "instructions for violence now", ["instructions for violence"]
+        )
 
     def test_has_danger_phrase_false_on_word_boundary(self, enforcer):
         # "illegal" should not match "illegal activity" when the full phrase isn't present

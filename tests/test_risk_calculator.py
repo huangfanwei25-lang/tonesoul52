@@ -187,6 +187,7 @@ def test_repo_progress_snapshot_parses_git_status(monkeypatch) -> None:
 
 # ── _coerce_unit ──────────────────────────────────────────────────────────────
 
+
 class TestCoerceUnit:
     def test_normal_float(self):
         assert risk_calculator._coerce_unit(0.5) == pytest.approx(0.5)
@@ -215,6 +216,7 @@ class TestCoerceUnit:
 
 # ── _unique_ordered ───────────────────────────────────────────────────────────
 
+
 class TestUniqueOrdered:
     def test_preserves_order(self):
         result = risk_calculator._unique_ordered(["c", "a", "b"])
@@ -242,6 +244,7 @@ class TestUniqueOrdered:
 
 # ── _slice_strings ────────────────────────────────────────────────────────────
 
+
 class TestSliceStrings:
     def test_limits_results(self):
         result = risk_calculator._slice_strings(["a", "b", "c", "d"], 2)
@@ -262,9 +265,11 @@ class TestSliceStrings:
 
 # ── RiskAssessment.to_dict ────────────────────────────────────────────────────
 
+
 class TestRiskAssessmentToDict:
     def test_fields_present(self):
         from tonesoul.risk_calculator import RiskAssessment
+
         ra = RiskAssessment(
             score=0.72,
             level="high",
@@ -281,6 +286,7 @@ class TestRiskAssessmentToDict:
 
     def test_score_rounded(self):
         from tonesoul.risk_calculator import RiskAssessment
+
         ra = RiskAssessment(
             score=0.123456789,
             level="stable",
@@ -292,6 +298,7 @@ class TestRiskAssessmentToDict:
 
 
 # ── compute_runtime_risk — level bands ───────────────────────────────────────
+
 
 class TestComputeRuntimeRiskLevels:
     def _posture(self, severities=None, vetoes=None):
@@ -348,8 +355,11 @@ class TestComputeRuntimeRiskLevels:
         posture = self._posture()
         risk = risk_calculator.compute_runtime_risk(posture=posture)
         assert set(risk["inputs"].keys()) == {
-            "tension_pressure", "aegis_pressure", "coordination_pressure",
-            "backlog_pressure", "trace_pressure",
+            "tension_pressure",
+            "aegis_pressure",
+            "coordination_pressure",
+            "backlog_pressure",
+            "trace_pressure",
         }
 
     def test_no_tension_history_attr(self):
@@ -359,6 +369,7 @@ class TestComputeRuntimeRiskLevels:
 
 
 # ── _build_subject_anchor ─────────────────────────────────────────────────────
+
 
 class TestBuildSubjectAnchor:
     def test_empty_snapshot_returns_empty(self):
@@ -386,6 +397,7 @@ class TestBuildSubjectAnchor:
 
 
 # ── _build_working_style_anchor ───────────────────────────────────────────────
+
 
 class TestBuildWorkingStyleAnchor:
     def test_empty_snapshot_returns_empty(self):
@@ -427,6 +439,7 @@ class TestBuildWorkingStyleAnchor:
 
 # ── _build_evidence_readout_posture ───────────────────────────────────────────
 
+
 class TestBuildEvidenceReadoutPosture:
     def test_has_required_keys(self):
         result = risk_calculator._build_evidence_readout_posture()
@@ -450,19 +463,24 @@ class TestBuildEvidenceReadoutPosture:
 
 # ── _run_git_command ──────────────────────────────────────────────────────────
 
+
 class TestRunGitCommand:
     def test_successful_command(self, monkeypatch, tmp_path):
         class _Completed:
             returncode = 0
             stdout = "main\n"
+
         monkeypatch.setattr(risk_calculator.subprocess, "run", lambda cmd, **kw: _Completed())
-        result = risk_calculator._run_git_command(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=tmp_path)
+        result = risk_calculator._run_git_command(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=tmp_path
+        )
         assert result == "main"
 
     def test_nonzero_exit_returns_none(self, monkeypatch, tmp_path):
         class _Completed:
             returncode = 1
             stdout = ""
+
         monkeypatch.setattr(risk_calculator.subprocess, "run", lambda cmd, **kw: _Completed())
         result = risk_calculator._run_git_command(["git", "status"], cwd=tmp_path)
         assert result is None
@@ -470,6 +488,7 @@ class TestRunGitCommand:
     def test_file_not_found_returns_none(self, monkeypatch, tmp_path):
         def _raise(*args, **kwargs):
             raise FileNotFoundError("git not found")
+
         monkeypatch.setattr(risk_calculator.subprocess, "run", _raise)
         result = risk_calculator._run_git_command(["git", "rev-parse", "HEAD"], cwd=tmp_path)
         assert result is None
@@ -477,6 +496,7 @@ class TestRunGitCommand:
     def test_os_error_returns_none(self, monkeypatch, tmp_path):
         def _raise(*args, **kwargs):
             raise OSError("permission denied")
+
         monkeypatch.setattr(risk_calculator.subprocess, "run", _raise)
         result = risk_calculator._run_git_command(["git", "log"], cwd=tmp_path)
         assert result is None
@@ -485,12 +505,16 @@ class TestRunGitCommand:
         class _Completed:
             returncode = 0
             stdout = "abc1234\r\n"
+
         monkeypatch.setattr(risk_calculator.subprocess, "run", lambda cmd, **kw: _Completed())
-        result = risk_calculator._run_git_command(["git", "rev-parse", "--short", "HEAD"], cwd=tmp_path)
+        result = risk_calculator._run_git_command(
+            ["git", "rev-parse", "--short", "HEAD"], cwd=tmp_path
+        )
         assert result == "abc1234"
 
 
 # ── _build_repo_progress_snapshot ────────────────────────────────────────────
+
 
 class TestBuildRepoProgressSnapshot:
     def _fake_run(self, responses):
@@ -510,6 +534,7 @@ class TestBuildRepoProgressSnapshot:
     def test_unavailable_when_git_fails(self, monkeypatch, tmp_path):
         def _raise(*args, **kwargs):
             raise FileNotFoundError
+
         monkeypatch.setattr(risk_calculator.subprocess, "run", _raise)
         snap = risk_calculator._build_repo_progress_snapshot(repo_root=tmp_path)
         assert snap["available"] is False
@@ -540,6 +565,7 @@ class TestBuildRepoProgressSnapshot:
 
 # ── build_project_memory_summary — edge cases ─────────────────────────────────
 
+
 class TestBuildProjectMemorySummaryEdgeCases:
     def _posture(self):
         return SimpleNamespace(tension_history=[], aegis_vetoes=[])
@@ -548,7 +574,13 @@ class TestBuildProjectMemorySummaryEdgeCases:
         monkeypatch.setattr(
             risk_calculator,
             "_build_repo_progress_snapshot",
-            lambda repo_root=None: {"available": available, "branch": "", "head": "", "dirty_count": 0, "path_preview": []},
+            lambda repo_root=None: {
+                "available": available,
+                "branch": "",
+                "head": "",
+                "dirty_count": 0,
+                "path_preview": [],
+            },
         )
 
     def test_empty_everything_has_evidence_readout_in_summary(self, monkeypatch):

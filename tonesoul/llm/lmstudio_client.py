@@ -14,9 +14,7 @@ import requests
 from tonesoul.schemas import LLMCallMetrics
 
 __ts_layer__ = "infrastructure"
-__ts_purpose__ = (
-    "LM Studio client: inference adapter for locally-hosted LM Studio endpoints."
-)
+__ts_purpose__ = "LM Studio client: inference adapter for locally-hosted LM Studio endpoints."
 
 if TYPE_CHECKING:
     from tonesoul.observability.token_meter import TokenMeter

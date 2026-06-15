@@ -22,9 +22,7 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any
 
 __ts_layer__ = "semantic"
-__ts_purpose__ = (
-    "Sleep bridge: transfer critical semantic state across session boundaries."
-)
+__ts_purpose__ = "Sleep bridge: transfer critical semantic state across session boundaries."
 
 if TYPE_CHECKING:
     from tonesoul.dream_engine import DreamEngine

@@ -13,9 +13,7 @@ from .subjectivity_triage import (
 )
 
 __ts_layer__ = "memory"
-__ts_purpose__ = (
-    "Subjectivity review batch: run batch triage on pending subjective memory entries."
-)
+__ts_purpose__ = "Subjectivity review batch: run batch triage on pending subjective memory entries."
 
 _RECOMMENDATION_PRIORITY = {
     "candidate_for_manual_review": 0,

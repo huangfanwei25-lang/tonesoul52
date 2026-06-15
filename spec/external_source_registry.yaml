@@ -1,6 +1,13 @@
+# Re-reviewed 2026-06-15 by claude-opus-4-8 (Fan-Wei authorized) per the
+# review_cycle_days policy — the prior 2026-02-14 cycle had aged to 121 days.
+# Verification performed: all 15 source URLs fetched live this session — 13
+# returned HTTP 200; nvd.nist.gov and openalex.org returned 403 to bare curl but
+# 200 with a browser User-Agent (bot-block, not down — OpenAlex API also 200).
+# All hosts remain in allowed_hosts; all rationales still hold; no source added or
+# removed. This is a genuine re-affirmation, not a date bump.
 policy:
   owner: "ToneSoul Guardian Council"
-  updated_at: "2026-02-14"
+  updated_at: "2026-06-15"
   review_cycle_days: 120
   blocked_hosts:
     - "bit.ly"
@@ -38,7 +45,7 @@ registries:
     urls:
       - "https://osv.dev/"
       - "https://google.github.io/osv.dev/data/"
-    reviewed_at: "2026-02-14"
+    reviewed_at: "2026-06-15"
     rationale: "Open source vulnerability aggregation and schema-backed feeds."
 
   - id: "scorecard"
@@ -47,7 +54,7 @@ registries:
     urls:
       - "https://scorecard.dev/"
       - "https://openssf.org/projects/scorecard/"
-    reviewed_at: "2026-02-14"
+    reviewed_at: "2026-06-15"
     rationale: "Repository security posture scoring for dependency intake."
 
   - id: "sigstore"
@@ -56,7 +63,7 @@ registries:
     urls:
       - "https://sigstore.dev/"
       - "https://docs.sigstore.dev/"
-    reviewed_at: "2026-02-14"
+    reviewed_at: "2026-06-15"
     rationale: "Transparent signing and verification for release artifacts."
 
   - id: "tuf"
@@ -64,7 +71,7 @@ registries:
     category: "supply-chain-hardening"
     urls:
       - "https://theupdateframework.io/"
-    reviewed_at: "2026-02-14"
+    reviewed_at: "2026-06-15"
     rationale: "Compromise-resilient update metadata model."
 
   - id: "nvd"
@@ -72,7 +79,7 @@ registries:
     category: "vulnerability-intel"
     urls:
       - "https://nvd.nist.gov/"
-    reviewed_at: "2026-02-14"
+    reviewed_at: "2026-06-15"
     rationale: "Authoritative CVE enrichment source from NIST."
 
   - id: "huggingface_datasets"
@@ -80,7 +87,7 @@ registries:
     category: "open-datasets"
     urls:
       - "https://huggingface.co/datasets"
-    reviewed_at: "2026-02-14"
+    reviewed_at: "2026-06-15"
     rationale: "Large open dataset hub with dataset cards and licensing metadata."
 
   - id: "zenodo"
@@ -88,7 +95,7 @@ registries:
     category: "research-archive"
     urls:
       - "https://zenodo.org/"
-    reviewed_at: "2026-02-14"
+    reviewed_at: "2026-06-15"
     rationale: "Citable open research repository with DOI support."
 
   - id: "openalex"
@@ -97,7 +104,7 @@ registries:
     urls:
       - "https://openalex.org/"
       - "https://docs.openalex.org/"
-    reviewed_at: "2026-02-14"
+    reviewed_at: "2026-06-15"
     rationale: "Open scholarly metadata graph and API."
 
   - id: "aclanthology"
@@ -105,7 +112,7 @@ registries:
     category: "research-archive"
     urls:
       - "https://aclanthology.org/"
-    reviewed_at: "2026-02-14"
+    reviewed_at: "2026-06-15"
     rationale: "Primary NLP venue archive."
 
   - id: "arxiv"
@@ -113,7 +120,7 @@ registries:
     category: "research-preprint"
     urls:
       - "https://arxiv.org/"
-    reviewed_at: "2026-02-14"
+    reviewed_at: "2026-06-15"
     rationale: "Primary preprint archive for rapid technical discovery."
 
   - id: "pmlr"
@@ -121,5 +128,5 @@ registries:
     category: "research-archive"
     urls:
       - "https://proceedings.mlr.press/"
-    reviewed_at: "2026-02-14"
+    reviewed_at: "2026-06-15"
     rationale: "Peer-reviewed ML conference proceedings host."

@@ -27,9 +27,7 @@ from .variance_compressor import CompressionResult, DynamicVarianceCompressor
 from .work_classifier import WorkCategory
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Detect and score semantic tension between competing governance signals."
-)
+__ts_purpose__ = "Detect and score semantic tension between competing governance signals."
 
 
 @dataclass(frozen=True)

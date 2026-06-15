@@ -18,9 +18,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 __ts_layer__ = "infrastructure"
-__ts_purpose__ = (
-    "Registry of semantic zones for world-map navigation."
-)
+__ts_purpose__ = "Registry of semantic zones for world-map navigation."
 
 _DEFAULT_REGISTRY_PATH = Path("memory/autonomous/zone_registry.json")
 _DEFAULT_TRACES_PATH = Path("memory/autonomous/session_traces.jsonl")

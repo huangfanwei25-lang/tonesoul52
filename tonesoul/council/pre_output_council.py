@@ -48,6 +48,7 @@ class PreOutputCouncil:
         perspective_config: Optional[Dict[Union[PerspectiveType, str], Dict[str, Any]]] = None,
         verifier: Optional[IndependentVerifier] = None,
         verifier_config: Optional[VerifierConfig] = None,
+        overclaim_sensor: Optional[Any] = None,
     ):
         self.perspectives = self._normalize_perspectives(
             perspectives,
@@ -59,6 +60,9 @@ class PreOutputCouncil:
         # 2026-05-14.md for role boundary + fail-open semantics.
         self.verifier = verifier
         self.verifier_config = verifier_config or VerifierConfig()
+        # Tier 5 semantic overclaim sensor (advisory). Injected for tests; otherwise
+        # lazy-created in validate() when SOUL.council.semantic_overclaim_advisory_enabled.
+        self._overclaim_sensor = overclaim_sensor
         self.coherence_threshold = coherence_threshold
         self.block_threshold = block_threshold
         # Phase 864a Layer 1: deterministic, side-effect-free; safe to share.
@@ -101,7 +105,7 @@ class PreOutputCouncil:
         # Apply evolved voting weights if available
         weights = None
         try:
-            from tonesoul.council.evolution import CouncilEvolution
+            from tonesoul.council.voting_evolution import CouncilEvolution
 
             if not hasattr(self, "_evolution"):
                 self._evolution = CouncilEvolution()
@@ -162,6 +166,23 @@ class PreOutputCouncil:
                 context=context,
                 user_intent=user_intent,
             )
+
+        # Tier 5 semantic overclaim sensor — ADVISORY ONLY (DESIGN Inv3). Records a
+        # meta.not_for resemblance signal alongside the lexical guardian; it never
+        # modifies the verdict. Default-off + fail-soft. Limits: see the eval doc.
+        sensor = self._overclaim_sensor
+        if sensor is None and SOUL.council.semantic_overclaim_advisory_enabled:
+            try:
+                from tonesoul.council.semantic_overclaim_sensor import SemanticOverclaimSensor
+
+                sensor = self._overclaim_sensor = SemanticOverclaimSensor()
+            except Exception:
+                sensor = None
+        if sensor is not None:
+            try:
+                verdict.semantic_overclaim = sensor.assess(draft_output).to_dict()
+            except Exception:
+                pass
 
         # Selective self-memory: auto-record for meaningful decisions
         record_option = context.get("record_self_memory")

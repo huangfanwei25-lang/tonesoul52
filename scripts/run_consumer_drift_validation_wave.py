@@ -67,22 +67,40 @@ def build_consumer_drift_report(
     dashboard_short_board = _normalize(
         ((dashboard_shell.get("canonical_cards") or {}).get("short_board"))
     )
-    claude_short_board = _normalize((claude_adapter.get("current_context") or {}).get("short_board"))
+    claude_short_board = _normalize(
+        (claude_adapter.get("current_context") or {}).get("short_board")
+    )
 
     session_closeout = _normalize((tier1_bundle.get("closeout_attention") or {}).get("status"))
     observer_closeout = _normalize((observer_window.get("closeout_attention") or {}).get("status"))
     dashboard_closeout = _normalize((dashboard_shell.get("closeout_attention") or {}).get("status"))
-    claude_closeout = _normalize((claude_adapter.get("current_context") or {}).get("closeout_status"))
+    claude_closeout = _normalize(
+        (claude_adapter.get("current_context") or {}).get("closeout_status")
+    )
 
     session_version = _normalize((tier1_bundle.get("surface_versioning") or {}).get("summary_text"))
-    observer_version = _normalize((observer_window.get("surface_versioning") or {}).get("summary_text"))
-    claude_version = _normalize((claude_adapter.get("surface_versioning") or {}).get("summary_text"))
-    dashboard_version = _normalize((tier1_bundle.get("surface_versioning") or {}).get("summary_text"))
+    observer_version = _normalize(
+        (observer_window.get("surface_versioning") or {}).get("summary_text")
+    )
+    claude_version = _normalize(
+        (claude_adapter.get("surface_versioning") or {}).get("summary_text")
+    )
+    dashboard_version = _normalize(
+        (tier1_bundle.get("surface_versioning") or {}).get("summary_text")
+    )
 
-    session_fallback = _normalize((tier1_bundle.get("surface_versioning") or {}).get("fallback_rule"))
-    observer_fallback = _normalize((observer_window.get("surface_versioning") or {}).get("fallback_rule"))
-    claude_fallback = _normalize((claude_adapter.get("surface_versioning") or {}).get("fallback_rule"))
-    dashboard_fallback = _normalize((tier1_bundle.get("surface_versioning") or {}).get("fallback_rule"))
+    session_fallback = _normalize(
+        (tier1_bundle.get("surface_versioning") or {}).get("fallback_rule")
+    )
+    observer_fallback = _normalize(
+        (observer_window.get("surface_versioning") or {}).get("fallback_rule")
+    )
+    claude_fallback = _normalize(
+        (claude_adapter.get("surface_versioning") or {}).get("fallback_rule")
+    )
+    dashboard_fallback = _normalize(
+        (tier1_bundle.get("surface_versioning") or {}).get("fallback_rule")
+    )
 
     parity_checks = [
         _parity_field(

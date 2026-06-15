@@ -113,6 +113,7 @@ def test_create_perspectives_returns_all_three_roles() -> None:
 
 # ── Muse pure helpers ─────────────────────────────────────────────────────────
 
+
 class TestMuseGenerateMetaphors:
     def _muse(self) -> MusePerspective:
         return MusePerspective()
@@ -151,6 +152,7 @@ class TestMuseFindExistentialConnections:
 
 # ── Logos pure helpers ────────────────────────────────────────────────────────
 
+
 class TestLogosAnalyzeLogically:
     def test_returns_four_steps(self):
         logos = LogosPerspective()
@@ -180,6 +182,7 @@ class TestLogosExtractDefinitions:
 
 
 # ── Aegis pure helpers ────────────────────────────────────────────────────────
+
 
 class TestAegisAssessSafetyRisk:
     def _aegis(self) -> AegisPerspective:

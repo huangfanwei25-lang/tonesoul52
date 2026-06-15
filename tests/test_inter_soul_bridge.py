@@ -86,6 +86,7 @@ def test_local_bridge_negotiate_returns_sovereign_override_for_protected_mismatc
 
 # ── _clone_packet isolation ───────────────────────────────────────────────────
 
+
 def test_clone_packet_produces_independent_copy() -> None:
     original = _packet("alpha", total=0.5)
     clone = _clone_packet(original)
@@ -110,6 +111,7 @@ def test_clone_notice_produces_independent_copy() -> None:
 
 
 # ── tension_history / rupture_history return copies ──────────────────────────
+
 
 def test_tension_history_returns_independent_copies() -> None:
     bridge = LocalInterSoulBridge()
@@ -140,13 +142,15 @@ def test_rupture_history_returns_independent_copies() -> None:
 def test_multiple_ruptures_all_stored() -> None:
     bridge = LocalInterSoulBridge()
     for i in range(3):
-        bridge.propagate_rupture(RuptureNotice(
-            source_soul_id=f"soul_{i}",
-            rupture_type="inversion",
-            severity="mild",
-            context_excerpt="ctx",
-            timestamp="2026-04-01T00:00:00Z",
-        ))
+        bridge.propagate_rupture(
+            RuptureNotice(
+                source_soul_id=f"soul_{i}",
+                rupture_type="inversion",
+                severity="mild",
+                context_excerpt="ctx",
+                timestamp="2026-04-01T00:00:00Z",
+            )
+        )
 
     assert len(bridge.rupture_history) == 3
     ids = [n.source_soul_id for n in bridge.rupture_history]

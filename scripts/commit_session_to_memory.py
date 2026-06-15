@@ -121,13 +121,13 @@ def main() -> None:
         f"{max_tension:.2f}",
         "--tag",
         ",".join(tags[:5]),
-        f"--wave-uncertainty",
+        "--wave-uncertainty",
         f"{waves['uncertainty']:.2f}",
-        f"--wave-divergence",
+        "--wave-divergence",
         f"{waves['divergence']:.2f}",
-        f"--wave-risk",
+        "--wave-risk",
         f"{waves['risk']:.2f}",
-        f"--wave-revision",
+        "--wave-revision",
         f"{waves['revision']:.2f}",
     ]
 

@@ -246,7 +246,8 @@ def build_tier2_deep_governance_drawer(bundle: dict[str, Any]) -> dict[str, Any]
         group_b_cards.append(
             {
                 "title": "compaction carry-forward",
-                "status": str(compaction_surface.get("receiver_obligation", "")).strip() or "advisory",
+                "status": str(compaction_surface.get("receiver_obligation", "")).strip()
+                or "advisory",
                 "summary": (
                     f"closeout={str(compaction_surface.get('closeout_status', '')).strip() or 'complete'}"
                 ),
@@ -308,7 +309,9 @@ def build_tier2_deep_governance_drawer(bundle: dict[str, Any]) -> dict[str, Any]
     if str(next_followup.get("command", "")).strip():
         next_pull_commands.append(str(next_followup.get("command", "")).strip())
     if str(publish_push_preflight.get("recommended_command", "")).strip():
-        next_pull_commands.append(str(publish_push_preflight.get("recommended_command", "")).strip())
+        next_pull_commands.append(
+            str(publish_push_preflight.get("recommended_command", "")).strip()
+        )
     if str(task_board_preflight.get("recommended_command", "")).strip():
         next_pull_commands.append(str(task_board_preflight.get("recommended_command", "")).strip())
 
@@ -356,7 +359,8 @@ def build_operator_walkthrough_pack(
             "stop_here_rule": (
                 "Stay in Tier 0 when the next move is clear and you do not need short-board archaeology or contested continuity review."
             ),
-            "next_move": str(next_followup.get("command", "")).strip() or "No bounded follow-up command is currently visible.",
+            "next_move": str(next_followup.get("command", "")).strip()
+            or "No bounded follow-up command is currently visible.",
             "escalate_when": (
                 "Pull Tier 1 if the short board is unclear, if the next step touches broader subsystem context, or if the bounded move no longer fits the task."
             ),
@@ -370,7 +374,8 @@ def build_operator_walkthrough_pack(
             "stop_here_rule": (
                 "Stay in Tier 1 when the short board, parity gaps, and observer shell are enough to orient bounded work."
             ),
-            "next_move": str(tier1_cards.get("short_board", "")).strip() or "Current short board not visible.",
+            "next_move": str(tier1_cards.get("short_board", "")).strip()
+            or "Current short board not visible.",
             "escalate_when": (
                 "Open Tier 2 only if closeout attention is present, subsystem gaps imply risky mutation, or the observer shell shows contested continuity that affects action."
             ),
@@ -428,7 +433,9 @@ def build_dashboard_command_shelf(
     next_followup = tier0_shell.get("next_followup") or {}
     deeper_pulls = list(tier2_drawer.get("next_pull_commands") or [])
     tier2_trigger_reasons = [
-        str(item).strip() for item in list(tier2_drawer.get("trigger_reasons") or []) if str(item).strip()
+        str(item).strip()
+        for item in list(tier2_drawer.get("trigger_reasons") or [])
+        if str(item).strip()
     ]
 
     commands = [

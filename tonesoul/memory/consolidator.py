@@ -17,9 +17,7 @@ from .subjectivity_reporting import summarize_subjectivity_distribution
 from .write_gateway import MemoryWriteGateway, MemoryWriteRejectedError
 
 __ts_layer__ = "memory"
-__ts_purpose__ = (
-    "Memory consolidator: merge short-term traces into durable long-term memory."
-)
+__ts_purpose__ = "Memory consolidator: merge short-term traces into durable long-term memory."
 
 
 @dataclass

@@ -5,9 +5,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Sequence, Tuple
 from .schema import Node
 
 __ts_layer__ = "domain"
-__ts_purpose__ = (
-    "YSTM render: produce SVG, PNG, and HTML terrain visualizations from grid data."
-)
+__ts_purpose__ = "YSTM render: produce SVG, PNG, and HTML terrain visualizations from grid data."
 
 if TYPE_CHECKING:
     from PIL import Image as PILImage

@@ -132,7 +132,9 @@ class TestRunRetro:
         assert result.crystals_promoted == 0
 
     def test_stale_crystal_increments_decayed(self):
-        crystal = SimpleNamespace(freshness_score=0.10, access_count=0, tags=[], freshness_status="fresh")
+        crystal = SimpleNamespace(
+            freshness_score=0.10, access_count=0, tags=[], freshness_status="fresh"
+        )
         result = run_retro(crystals=[crystal])
         assert result.crystals_decayed == 1
 
@@ -153,13 +155,17 @@ class TestRunRetro:
         assert result.crystals_promoted == 0
 
     def test_stale_crystal_tagged_in_non_dry_run(self):
-        crystal = SimpleNamespace(freshness_score=0.10, access_count=0, tags=[], freshness_status="fresh")
+        crystal = SimpleNamespace(
+            freshness_score=0.10, access_count=0, tags=[], freshness_status="fresh"
+        )
         run_retro(crystals=[crystal], dry_run=False)
         assert crystal.freshness_status == "stale"
         assert "stale" in crystal.tags
 
     def test_dry_run_does_not_mutate_crystal(self):
-        crystal = SimpleNamespace(freshness_score=0.10, access_count=0, tags=[], freshness_status="fresh")
+        crystal = SimpleNamespace(
+            freshness_score=0.10, access_count=0, tags=[], freshness_status="fresh"
+        )
         run_retro(crystals=[crystal], dry_run=True)
         assert crystal.freshness_status == "fresh"
 
@@ -204,7 +210,9 @@ class TestRunRetro:
 
     def test_total_actions_appears_in_notes(self):
         log = [{"step": "soul_band"}, {"step": "drift_caution_inject"}]
-        crystal = SimpleNamespace(freshness_score=0.10, access_count=0, tags=[], freshness_status="fresh")
+        crystal = SimpleNamespace(
+            freshness_score=0.10, access_count=0, tags=[], freshness_status="fresh"
+        )
         result = run_retro(enforcement_log=log, crystals=[crystal])
         combined_notes = " ".join(result.notes)
         assert "retro complete" in combined_notes
