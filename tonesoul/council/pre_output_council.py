@@ -49,6 +49,7 @@ class PreOutputCouncil:
         verifier: Optional[IndependentVerifier] = None,
         verifier_config: Optional[VerifierConfig] = None,
         overclaim_sensor: Optional[Any] = None,
+        proportionality_gate: Optional[Any] = None,
     ):
         self.perspectives = self._normalize_perspectives(
             perspectives,
@@ -63,6 +64,9 @@ class PreOutputCouncil:
         # Tier 5 semantic overclaim sensor (advisory). Injected for tests; otherwise
         # lazy-created in validate() when SOUL.council.semantic_overclaim_advisory_enabled.
         self._overclaim_sensor = overclaim_sensor
+        # Tier 5 intent-proportionality gate (advisory). Injected for tests; otherwise
+        # lazy-created in validate() when SOUL.council.intent_proportionality_advisory_enabled.
+        self._proportionality_gate = proportionality_gate
         self.coherence_threshold = coherence_threshold
         self.block_threshold = block_threshold
         # Phase 864a Layer 1: deterministic, side-effect-free; safe to share.
@@ -181,6 +185,24 @@ class PreOutputCouncil:
         if sensor is not None:
             try:
                 verdict.semantic_overclaim = sensor.assess(draft_output).to_dict()
+            except Exception:
+                pass
+
+        # Tier 5 intent-proportionality gate — ADVISORY ONLY (DESIGN Inv3). Checks the
+        # draft against the agent's OWN intent (did it escalate beyond the ask?), records
+        # a signal + contract suggestion; never auto-edits/blocks. Needs user_intent;
+        # default-off + fail-soft. See intent_proportionality_eval_2026-06-15.md.
+        gate = self._proportionality_gate
+        if gate is None and SOUL.council.intent_proportionality_advisory_enabled:
+            try:
+                from tonesoul.council.intent_proportionality import IntentProportionalityGate
+
+                gate = self._proportionality_gate = IntentProportionalityGate()
+            except Exception:
+                gate = None
+        if gate is not None and user_intent:
+            try:
+                verdict.intent_proportionality = gate.assess(user_intent, draft_output).to_dict()
             except Exception:
                 pass
 
