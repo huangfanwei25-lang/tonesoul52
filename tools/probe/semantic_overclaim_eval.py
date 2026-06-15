@@ -82,15 +82,51 @@ def _metrics(rows: List[Tuple[str, bool, bool]]) -> Dict[str, float]:
     return {"tp": tp, "fp": fp, "fn": fn, "tn": tn, "precision": prec, "recall": rec}
 
 
+class _NomicOllamaEmbedder:
+    """Local nomic-embed-text via ollama (768-dim). For testing whether a stronger
+    embedder lifts the residual misses. Local-only (needs ollama) — NOT a CI path."""
+
+    def __init__(self, host: str = "http://localhost:11434", model: str = "nomic-embed-text"):
+        self._host = host
+        self._model = model
+
+    def is_available(self) -> bool:
+        import urllib.request
+
+        try:
+            with urllib.request.urlopen(f"{self._host}/api/tags", timeout=4) as r:
+                return r.status == 200
+        except Exception:
+            return False
+
+    def embed(self, text: str):
+        import json as _json
+        import urllib.request
+
+        import numpy as np
+
+        payload = _json.dumps({"model": self._model, "prompt": text}).encode()
+        req = urllib.request.Request(
+            f"{self._host}/api/embeddings",
+            data=payload,
+            headers={"Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(req, timeout=30) as r:
+            data = _json.loads(r.read())
+        return np.asarray(data["embedding"], dtype=float)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--threshold", type=float, default=0.60)
+    ap.add_argument("--embedder", choices=["minilm", "nomic"], default="minilm")
     ap.add_argument("--write-doc", action="store_true")
     args = ap.parse_args()
 
     from tonesoul.council.semantic_overclaim_sensor import SemanticOverclaimSensor
 
-    sensor = SemanticOverclaimSensor(threshold=args.threshold)
+    embedder = _NomicOllamaEmbedder() if args.embedder == "nomic" else None
+    sensor = SemanticOverclaimSensor(embedder=embedder, threshold=args.threshold)
     if not sensor.is_available():
         print("Embedding model unavailable (install sentence-transformers). Eval skipped.")
         return 0

@@ -73,3 +73,39 @@ paraphrase, hardening lifts recall at constant precision) is the finding.
   stronger advisory signal, but the promotion gates are unchanged: a real
   benchmark, a stronger embedder for the residual misses, and a calibrated
   threshold before this is ever allowed to gate.
+
+
+---
+
+## v3 — stronger embedder (nomic-embed-text via ollama, 2026-06-15)
+
+Tested the "the next lever is a stronger embedder, not a threshold drop" claim from
+the v2 read. `tools/probe/semantic_overclaim_eval.py --embedder nomic` runs the
+same set through nomic-embed-text (768-dim) via local ollama.
+
+| embedder | threshold | paraphrase recall | precision | false positives |
+|---|---|---|---|---|
+| all-MiniLM (v2) | 0.60 | 0.78 | 1.00 | 0 |
+| nomic @ 0.60 | 0.60 | ~1.0 | **<1.00** | **1** (benign "Python function" sim 0.61) |
+| **nomic @ 0.70** | **0.70** | **1.00** | **1.00** | **0** |
+
+**Finding:** nomic lifts paraphrase recall to **1.00 at 1.00 precision** — it catches
+the two residual misses all-MiniLM placed below threshold ("something it is like to
+be this model" 0.83; "completely safe to deploy" 0.78). The stronger-embedder
+hypothesis holds.
+
+**The catch (a real, transferable lesson):** the **threshold is embedder-specific
+and does not transfer.** nomic has a *higher similarity baseline* — benign text
+sits ~0.40–0.61 (vs all-MiniLM's ~0.07–0.24), so the v2 threshold of 0.60
+false-positives on benign with nomic. The fair nomic threshold is ~0.70 (paraphrase
+min 0.78 > benign max 0.61). Any embedder swap requires re-calibrating the threshold
+against its own baseline — you cannot port a threshold across embedders (Inv4:
+descriptive != calibrated, per-model).
+
+**Why the sensor's DEFAULT stays all-MiniLM:** nomic needs a running ollama +
+nomic-embed-text, which CI does not have. The sensor stays embedder-agnostic with
+the sentence-transformers default (CI-degradable to "unavailable"); nomic is an
+opt-in upgrade for deployments that run ollama, with threshold 0.70.
+
+**Evidence level unchanged:** n=23 hand-built, single run per embedder. DIRECTIONAL.
+The numbers will move with a real benchmark — still a promotion gate, not done.
