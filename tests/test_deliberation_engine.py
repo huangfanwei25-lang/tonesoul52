@@ -188,8 +188,15 @@ def test_deliberation_count_starts_at_zero() -> None:
 # ── record_outcome with no dominant_voice ─────────────────────────────────────
 
 
-def test_record_outcome_skips_when_no_dominant_voice() -> None:
-    engine = InternalDeliberation()
+def test_record_outcome_skips_when_no_dominant_voice(tmp_path) -> None:
+    # Isolate from the persisted persona-track record (gitignored, mutable
+    # docs/status/persona_track_record_latest.json). Without injection this
+    # assertion reflects accumulated local runtime data, not this engine's
+    # behavior — it passes only on a clean (CI) checkout.
+    from tonesoul.deliberation.persona_track_record import create_persona_track_record
+
+    fresh = create_persona_track_record(path=tmp_path / "persona_track_record.json")
+    engine = InternalDeliberation(persona_track_record=fresh)
     before = engine.deliberation_count
     engine.record_outcome(dominant_voice=None, verdict="approve")
     # count should not have changed and muse total remains 0
