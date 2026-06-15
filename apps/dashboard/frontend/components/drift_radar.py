@@ -12,7 +12,6 @@ from typing import Dict
 
 import streamlit as st
 
-
 _AXES = [
     {"key": "caution_bias", "label": "謹慎度", "angle": 90},
     {"key": "innovation_bias", "label": "創意度", "angle": 210},

@@ -16,7 +16,9 @@ from pathlib import Path
 from typing import Optional
 
 __ts_layer__ = "infrastructure"
-__ts_purpose__ = "Soul persistence: JSONL-backed persistence for soul journal and governance traces."
+__ts_purpose__ = (
+    "Soul persistence: JSONL-backed persistence for soul journal and governance traces."
+)
 
 _DEFAULT_PATH = Path("memory/autonomous/soul_psi.json")
 

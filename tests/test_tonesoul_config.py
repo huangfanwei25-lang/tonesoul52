@@ -76,6 +76,7 @@ class TestEntryPoint:
     def test_frozen_dataclass_rejects_mutation(self):
         ep = EntryPoint(name="test", path="/some/path")
         import pytest
+
         with pytest.raises((AttributeError, TypeError)):
             ep.name = "changed"
 

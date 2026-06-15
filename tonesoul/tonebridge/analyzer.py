@@ -20,9 +20,7 @@ from .types import (
 )
 
 __ts_layer__ = "domain"
-__ts_purpose__ = (
-    "ToneBridge analyzer: run the 5-stage psychological analysis pipeline on a turn."
-)
+__ts_purpose__ = "ToneBridge analyzer: run the 5-stage psychological analysis pipeline on a turn."
 
 
 def generate_unique_id() -> str:

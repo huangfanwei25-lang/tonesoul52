@@ -4,16 +4,16 @@ HandoffBuilder
 Builds signed handoff packets for cross-agent session transfer.
 """
 
-import json
-import hmac
 import hashlib
-import secrets
-from datetime import datetime, timezone
-from typing import Optional, List, Dict, Any
-from dataclasses import dataclass, asdict
-from pathlib import Path
+import hmac
+import json
 import os
+import secrets
 import sys
+from dataclasses import asdict, dataclass
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 # Ensure we can import from repository root when executed directly.
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -206,6 +206,7 @@ class HandoffBuilder:
 
 # ToolResponse wrappers
 
+
 def build_tool_response(
     builder: "HandoffBuilder",
     source_model: str,
@@ -277,6 +278,7 @@ def load_tool_response(
             message=str(exc),
             genesis=genesis,
         )
+
 
 if __name__ == "__main__":
     builder = HandoffBuilder()

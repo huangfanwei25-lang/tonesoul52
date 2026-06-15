@@ -4,17 +4,17 @@ Screens a watchlist of stocks, filters out high structural risk early (save LLM 
 runs the Agent World Model only on survivors, and sorts by final Governance Friction.
 """
 
-import sys
 import os
+import sys
 from dataclasses import dataclass
 
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tonesoul.market.analyzer import (
-    SixStepAnalyzer,
-    QuarterlySnapshot,
     CyclicalTemplate,
+    QuarterlySnapshot,
+    SixStepAnalyzer,
     TechGrowthTemplate,
 )
 from tonesoul.market.world_model import MultiPerspectiveSimulator
@@ -151,7 +151,7 @@ class ScanResult:
 
 def main():
     print(f"\n{'=' * 80}")
-    print(f"ToneSoul Market Scanner — Multi-Stage Stock Screener")
+    print("ToneSoul Market Scanner — Multi-Stage Stock Screener")
     print(f"{'=' * 80}")
 
     watchlist = get_mock_watchlist()
@@ -183,7 +183,7 @@ def main():
 
         # 3. Decision to pass to LLM Phase
         if struct_friction <= STRUCTURAL_CUTOFF:
-            print(f"   ↳ ✅ Pass: Triggering AI World Model Debate")
+            print("   ↳ ✅ Pass: Triggering AI World Model Debate")
             context = simulator.run_simulation(f"{item.id}_{item.name}", item.snapshots)
             result.passed_filter = True
             result.perspective_friction = context.perspective_friction
@@ -200,7 +200,7 @@ def main():
         results.append(result)
 
     print(f"\n\n{'=' * 80}")
-    print(f"🏆 TONESOUL GOVERNANCE LEADERBOARD")
+    print("🏆 TONESOUL GOVERNANCE LEADERBOARD")
     print(f"{'=' * 80}")
 
     # Sort from Lowest Friction to Highest Friction

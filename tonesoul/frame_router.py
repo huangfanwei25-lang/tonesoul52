@@ -13,6 +13,7 @@ __ts_purpose__ = (
     "Frame router: scores and selects response frames based on context, roles, and council summary."
 )
 
+
 def _load_context(path: str) -> Dict[str, object]:
     with open(path, "r", encoding="utf-8") as handle:
         payload = yaml.safe_load(handle)

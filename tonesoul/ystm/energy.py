@@ -4,9 +4,7 @@ from typing import List, Sequence
 from .schema import Node
 
 __ts_layer__ = "domain"
-__ts_purpose__ = (
-    "YSTM energy: compute composite E_total from semantic field energy components."
-)
+__ts_purpose__ = "YSTM energy: compute composite E_total from semantic field energy components."
 
 
 @dataclass(frozen=True)

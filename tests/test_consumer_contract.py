@@ -50,9 +50,7 @@ class TestBuildMemoryConsumerContract:
         assert "readiness=pass" in result["summary_text"]
 
     def test_incomplete_closeout_in_summary_text(self):
-        result = build_memory_consumer_contract(
-            closeout_attention={"status": "pending"}
-        )
+        result = build_memory_consumer_contract(closeout_attention={"status": "pending"})
         assert "closeout=pending" in result["summary_text"]
 
     def test_short_board_visible_when_present(self):
@@ -66,9 +64,7 @@ class TestBuildMemoryConsumerContract:
         assert result["current_context"]["short_board_visible"] is False
 
     def test_priority_guard_selected_for_incomplete_closeout(self):
-        result = build_memory_consumer_contract(
-            closeout_attention={"status": "pending"}
-        )
+        result = build_memory_consumer_contract(closeout_attention={"status": "pending"})
         guard = result["priority_misread_guard"]
         assert guard.get("name") == "compaction_not_completion"
         assert "why_now" in guard

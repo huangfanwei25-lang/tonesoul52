@@ -1,12 +1,12 @@
 """Run ToneSoul Market Analyzer for 台化 (1326)."""
 
-import sys
 import os
+import sys
 
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from tonesoul.market.analyzer import SixStepAnalyzer, QuarterlySnapshot
+from tonesoul.market.analyzer import QuarterlySnapshot, SixStepAnalyzer
 
 
 def main():
@@ -94,13 +94,13 @@ def main():
 
     # Step 4: Trends
     trends = analyzer.analyze_trends(snapshots)
-    print(f"\n📈 Trends:")
+    print("\n📈 Trends:")
     for metric, trend in trends.items():
         print(f"   {metric}: {trend}")
 
     # Step 6: Scenarios
     scenarios = analyzer.build_scenarios(snapshots, current_price=41.5, annual_eps=0.06)
-    print(f"\n🎯 Investment scenarios:")
+    print("\n🎯 Investment scenarios:")
     for sc in scenarios:
         if sc.valuation_model == "PBR":
             print(
@@ -115,16 +115,16 @@ def main():
 
     # Final verdict
     print(f"\n{'=' * 60}")
-    print(f"ToneSoul GovernanceKernel Verdict for 台化 (1326):")
+    print("ToneSoul GovernanceKernel Verdict for 台化 (1326):")
     print(f"  Friction: {friction:.2f}")
     if friction < 0.3:
-        print(f"  Decision: BUY (low friction)")
+        print("  Decision: BUY (low friction)")
     elif friction < 0.6:
-        print(f"  Decision: BUY with conditions (moderate friction)")
+        print("  Decision: BUY with conditions (moderate friction)")
     elif friction < 0.8:
-        print(f"  Decision: WATCH — friction elevated, split entry")
+        print("  Decision: WATCH — friction elevated, split entry")
     else:
-        print(f"  Decision: HOLD — too much risk")
+        print("  Decision: HOLD — too much risk")
     print(f"{'=' * 60}")
 
 

@@ -52,6 +52,7 @@ def test_async_queue_properties_and_idempotent_close():
 
 # ─── Extended coverage ────────────────────────────────────────────────────────
 
+
 class TestAsyncQueueBuffer:
     def test_default_buffer_size_is_100(self):
         queue = AsyncQueue()

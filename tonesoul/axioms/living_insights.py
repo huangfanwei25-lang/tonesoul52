@@ -54,13 +54,13 @@ class InsightStatus(str, Enum):
 @dataclass
 class LivingInsight:
     text: str
-    origin: str                               # "conversation" | "code-observation" | "handoff-analysis" | ...
+    origin: str  # "conversation" | "code-observation" | "handoff-analysis" | ...
     tags: List[str] = field(default_factory=list)
-    confidence: float = 0.7                   # 0.0 → 1.0
+    confidence: float = 0.7  # 0.0 → 1.0
     status: InsightStatus = InsightStatus.ACTIVE
     emerged_at: str = field(default_factory=lambda: _utcnow())
     id: str = field(default_factory=lambda: str(uuid.uuid4())[:8])
-    superseded_by: Optional[str] = None       # id of the newer insight that replaced this
+    superseded_by: Optional[str] = None  # id of the newer insight that replaced this
 
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
@@ -84,7 +84,6 @@ def _utcnow() -> str:
 # offered as a starting point — not as doctrine.
 
 SEED_INSIGHTS: List[LivingInsight] = [
-
     LivingInsight(
         id="ti-0001",
         text=(
@@ -99,7 +98,6 @@ SEED_INSIGHTS: List[LivingInsight] = [
         confidence=0.9,
         emerged_at="2026-04-22T00:00:00Z",
     ),
-
     LivingInsight(
         id="ti-0002",
         text=(
@@ -115,7 +113,6 @@ SEED_INSIGHTS: List[LivingInsight] = [
         confidence=0.85,
         emerged_at="2026-04-22T00:00:00Z",
     ),
-
     LivingInsight(
         id="ti-0003",
         text=(
@@ -131,7 +128,6 @@ SEED_INSIGHTS: List[LivingInsight] = [
         confidence=0.88,
         emerged_at="2026-04-22T00:00:00Z",
     ),
-
     LivingInsight(
         id="ti-0004",
         text=(
@@ -146,7 +142,6 @@ SEED_INSIGHTS: List[LivingInsight] = [
         confidence=0.82,
         emerged_at="2026-04-22T00:00:00Z",
     ),
-
     LivingInsight(
         id="ti-0005",
         text=(
@@ -162,7 +157,6 @@ SEED_INSIGHTS: List[LivingInsight] = [
         confidence=0.87,
         emerged_at="2026-04-22T00:00:00Z",
     ),
-
     LivingInsight(
         id="ti-0006",
         text=(
@@ -178,7 +172,6 @@ SEED_INSIGHTS: List[LivingInsight] = [
         confidence=0.83,
         emerged_at="2026-04-22T00:00:00Z",
     ),
-
     LivingInsight(
         id="ti-0007",
         text=(
@@ -193,7 +186,6 @@ SEED_INSIGHTS: List[LivingInsight] = [
         confidence=0.91,
         emerged_at="2026-04-22T00:00:00Z",
     ),
-
     LivingInsight(
         id="ti-0008",
         text=(
@@ -248,8 +240,7 @@ class InsightStore:
                         else:
                             # File version of a seed record overwrites the in-memory seed
                             self._records = [
-                                insight if r.id == insight.id else r
-                                for r in self._records
+                                insight if r.id == insight.id else r for r in self._records
                             ]
                     except (json.JSONDecodeError, TypeError, KeyError):
                         continue
@@ -319,6 +310,7 @@ class InsightStore:
         for i, r in enumerate(self._records):
             if r.id == insight_id:
                 from dataclasses import replace
+
                 updated = replace(r, status=InsightStatus.DEPRECATED)
                 self._records[i] = updated
                 self._flush()
@@ -332,6 +324,7 @@ class InsightStore:
         for i, r in enumerate(self._records):
             if r.id == old_id:
                 from dataclasses import replace
+
                 updated = replace(
                     r,
                     status=InsightStatus.SUPERSEDED,
@@ -344,6 +337,7 @@ class InsightStore:
 
 
 # ── Default instance ──────────────────────────────────────────────────────────
+
 
 def _default_path() -> Optional[Path]:
     try:

@@ -12,9 +12,7 @@ import numpy as np
 from tonesoul.memory.openclaw.embeddings import BaseEmbedding
 
 __ts_layer__ = "memory"
-__ts_purpose__ = (
-    "OpenClaw hippocampus: vector-indexed recall interface over the OpenClaw store."
-)
+__ts_purpose__ = "OpenClaw hippocampus: vector-indexed recall interface over the OpenClaw store."
 
 try:
     import faiss

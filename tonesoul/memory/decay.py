@@ -7,9 +7,7 @@ from dataclasses import replace
 from typing import TYPE_CHECKING, Dict, List, Optional
 
 __ts_layer__ = "memory"
-__ts_purpose__ = (
-    "Memory decay: age and prune stale memory entries based on recency and relevance."
-)
+__ts_purpose__ = "Memory decay: age and prune stale memory entries based on recency and relevance."
 
 if TYPE_CHECKING:
     from .soul_db import MemoryRecord

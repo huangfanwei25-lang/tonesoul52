@@ -53,9 +53,7 @@ def run_publish_push_preflight(
         "bundle": "publish_push_preflight",
         "agent": agent,
         "readiness": str(readiness.get("status", "unknown") or "unknown"),
-        "repo_state": str(
-            repo_state_awareness.get("classification", "unknown") or "unknown"
-        ),
+        "repo_state": str(repo_state_awareness.get("classification", "unknown") or "unknown"),
         "launch_tier": str(
             (
                 ((import_posture.get("surfaces") or {}).get("launch_claims") or {}).get(

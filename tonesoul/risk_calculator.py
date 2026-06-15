@@ -18,9 +18,7 @@ from tonesoul.working_style import (
 )
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Compute composite risk score from drift, tone, and constraint signals."
-)
+__ts_purpose__ = "Compute composite risk score from drift, tone, and constraint signals."
 
 _PROMPT_STYLE_DEFAULTS = [
     "state the goal function before long transfer or extraction prompts",

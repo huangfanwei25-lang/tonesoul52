@@ -7,9 +7,7 @@ from typing import Any, Optional
 import yaml
 
 __ts_layer__ = "orchestration"
-__ts_purpose__ = (
-    "Schedule profile: define timing profiles for autonomous loop frequency."
-)
+__ts_purpose__ = "Schedule profile: define timing profiles for autonomous loop frequency."
 
 
 def _read_yaml(path: Path) -> Any:

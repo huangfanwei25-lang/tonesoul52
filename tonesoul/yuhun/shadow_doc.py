@@ -16,9 +16,7 @@ from enum import Enum
 from typing import Optional
 
 __ts_layer__ = "semantic"
-__ts_purpose__ = (
-    "Shadow doc: maintain a latent semantic shadow document alongside each session."
-)
+__ts_purpose__ = "Shadow doc: maintain a latent semantic shadow document alongside each session."
 
 # ─────────────────────────────────────────────
 # 枚舉類型

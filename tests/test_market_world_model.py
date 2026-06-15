@@ -105,6 +105,7 @@ def test_run_simulation_surfaces_strategy_plurality() -> None:
 
 # ── classify_persona_stance additional branches ───────────────────────────────
 
+
 def test_classify_persona_stance_detects_bearish_language() -> None:
     persona = InvestmentPersona(id="bear", name="Bear", system_prompt="")
     stance = classify_persona_stance(
@@ -140,6 +141,7 @@ def test_classify_persona_stance_error_narrative_returns_mixed() -> None:
 
 # ── build_strategy_plurality_report edge cases ────────────────────────────────
 
+
 def test_build_strategy_plurality_report_empty_input() -> None:
     report = build_strategy_plurality_report({})
     assert report.perspectives == []
@@ -171,6 +173,7 @@ def test_build_strategy_plurality_report_conviction_vs_patience() -> None:
 
 
 # ── format_snapshots_for_llm ─────────────────────────────────────────────────
+
 
 def test_format_snapshots_for_llm_empty_list() -> None:
     simulator = _DeterministicSimulator()

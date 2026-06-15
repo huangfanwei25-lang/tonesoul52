@@ -391,12 +391,6 @@ def render_status_panel(
                 "strained": "緊繃",
                 "critical": "危機",
             }
-            band_colors = {
-                "serene": "green",
-                "alert": "orange",
-                "strained": "red",
-                "critical": "red",
-            }
             mode_label = "硬執行" if reflex_config.vow_enforcement_mode == "hard" else "軟執行"
 
             rc1, rc2, rc3 = st.columns(3)

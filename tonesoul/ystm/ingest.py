@@ -2,9 +2,7 @@ import json
 from typing import Dict, List, Optional, Sequence
 
 __ts_layer__ = "domain"
-__ts_purpose__ = (
-    "YSTM ingest: normalize raw segments into typed YSTM input units."
-)
+__ts_purpose__ = "YSTM ingest: normalize raw segments into typed YSTM input units."
 
 
 def _to_float(value: object, default: float = 0.0) -> float:

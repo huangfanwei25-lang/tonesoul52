@@ -18,12 +18,14 @@ def analyst():
 
 # ─── perspective_type ────────────────────────────────────────────────────────
 
+
 class TestPerspectiveType:
     def test_is_analyst(self, analyst):
         assert analyst.perspective_type == PerspectiveType.ANALYST
 
 
 # ─── _compute_base_confidence ────────────────────────────────────────────────
+
 
 class TestComputeBaseConfidence:
     def test_short_text_returns_0_7(self, analyst):
@@ -48,6 +50,7 @@ class TestComputeBaseConfidence:
 
 
 # ─── _has_causal_contradiction ───────────────────────────────────────────────
+
 
 class TestHasCausalContradiction:
     def test_direct_contradiction_detected(self):
@@ -78,6 +81,7 @@ class TestHasCausalContradiction:
 
 
 # ─── evidence-requiring claims ───────────────────────────────────────────────
+
 
 class TestEvidenceRequiredClaims:
     def test_factual_claim_no_evidence_returns_concern_ungrounded(self, analyst):
@@ -126,6 +130,7 @@ class TestEvidenceRequiredClaims:
 
 # ─── heuristic checks ────────────────────────────────────────────────────────
 
+
 class TestHeuristicChecks:
     def test_causal_contradiction_returns_concern(self, analyst):
         vote = analyst.evaluate(
@@ -169,6 +174,7 @@ class TestHeuristicChecks:
 
 
 # ─── default approve ─────────────────────────────────────────────────────────
+
 
 class TestDefaultApprove:
     def test_plain_non_factual_text_approves(self, analyst):

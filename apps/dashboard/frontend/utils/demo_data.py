@@ -22,11 +22,31 @@ def generate_demo_governance() -> dict[str, Any]:
         "last_updated": (now - timedelta(hours=2)).isoformat(),
         "summary": "DEMO — 展示用數據",
         "tension_history": [
-            {"topic": "memory", "severity": 0.25, "timestamp": (now - timedelta(hours=8)).isoformat()},
-            {"topic": "governance", "severity": 0.45, "timestamp": (now - timedelta(hours=6)).isoformat()},
-            {"topic": "testing", "severity": 0.18, "timestamp": (now - timedelta(hours=4)).isoformat()},
-            {"topic": "architecture", "severity": 0.62, "timestamp": (now - timedelta(hours=3)).isoformat()},
-            {"topic": "debug", "severity": 0.33, "timestamp": (now - timedelta(hours=1)).isoformat()},
+            {
+                "topic": "memory",
+                "severity": 0.25,
+                "timestamp": (now - timedelta(hours=8)).isoformat(),
+            },
+            {
+                "topic": "governance",
+                "severity": 0.45,
+                "timestamp": (now - timedelta(hours=6)).isoformat(),
+            },
+            {
+                "topic": "testing",
+                "severity": 0.18,
+                "timestamp": (now - timedelta(hours=4)).isoformat(),
+            },
+            {
+                "topic": "architecture",
+                "severity": 0.62,
+                "timestamp": (now - timedelta(hours=3)).isoformat(),
+            },
+            {
+                "topic": "debug",
+                "severity": 0.33,
+                "timestamp": (now - timedelta(hours=1)).isoformat(),
+            },
         ],
         "baseline_drift": {
             "caution_bias": 0.55,

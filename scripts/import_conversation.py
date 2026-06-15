@@ -255,7 +255,6 @@ def parse_jsonl(text: str) -> list[dict]:
 def distill_conversation(conv: dict) -> dict:
     """Distill a conversation into a session_trace record."""
     messages = conv.get("messages", [])
-    all_text = " ".join(m.get("text", "") for m in messages)
 
     # Extract tension events from high-tension messages
     tension_events: list[dict[str, Any]] = []

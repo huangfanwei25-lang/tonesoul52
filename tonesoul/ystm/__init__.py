@@ -28,4 +28,6 @@ __all__ = [
 ]
 
 __ts_layer__ = "domain"
-__ts_purpose__ = "YSTM domain: semantic terrain model — segment ingestion, field computation, and rendering."
+__ts_purpose__ = (
+    "YSTM domain: semantic terrain model — segment ingestion, field computation, and rendering."
+)

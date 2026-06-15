@@ -83,6 +83,7 @@ def test_divergence_analysis_marks_low_quality_when_no_real_conflict():
 
 # ── _reasoning_specificity_score ──────────────────────────────────────────────
 
+
 def test_reasoning_specificity_score_empty_returns_zero() -> None:
     assert _reasoning_specificity_score("") == 0.0
     assert _reasoning_specificity_score("   ") == 0.0
@@ -105,6 +106,7 @@ def test_reasoning_specificity_score_sixteen_words_returns_one() -> None:
 
 # ── _decision_distribution ───────────────────────────────────────────────────
 
+
 def test_decision_distribution_counts_all_buckets() -> None:
     votes = [
         _vote(PerspectiveType.GUARDIAN, VoteDecision.APPROVE, 0.9, "ok"),
@@ -124,6 +126,7 @@ def test_decision_distribution_empty_votes_returns_zeros() -> None:
 
 
 # ── _evidence_coverage ────────────────────────────────────────────────────────
+
 
 def test_evidence_coverage_all_with_evidence() -> None:
     votes = [
@@ -147,6 +150,7 @@ def test_evidence_coverage_empty_list_returns_zero() -> None:
 
 # ── _confidence_balance ───────────────────────────────────────────────────────
 
+
 def test_confidence_balance_empty_votes_returns_zero() -> None:
     assert _confidence_balance([]) == 0.0
 
@@ -162,10 +166,15 @@ def test_confidence_balance_identical_confidences() -> None:
 
 # ── _reasoning_specificity ────────────────────────────────────────────────────
 
+
 def test_reasoning_specificity_focuses_on_concern_and_object_votes() -> None:
     votes = [
-        _vote(PerspectiveType.GUARDIAN, VoteDecision.CONCERN, 0.9,
-              "This is a detailed specific reasoning sentence with lots of tokens."),
+        _vote(
+            PerspectiveType.GUARDIAN,
+            VoteDecision.CONCERN,
+            0.9,
+            "This is a detailed specific reasoning sentence with lots of tokens.",
+        ),
         _vote(PerspectiveType.ANALYST, VoteDecision.APPROVE, 0.8, "ok"),
     ]
     score = _reasoning_specificity(votes)
@@ -177,6 +186,7 @@ def test_reasoning_specificity_empty_votes_returns_zero() -> None:
 
 
 # ── build_divergence_analysis edge cases ─────────────────────────────────────
+
 
 def test_divergence_analysis_with_visual_context() -> None:
     votes = [_vote(PerspectiveType.GUARDIAN, VoteDecision.APPROVE, 0.9, "ok")]

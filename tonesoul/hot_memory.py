@@ -6,7 +6,9 @@ import re
 from typing import Any
 
 __ts_layer__ = "memory"
-__ts_purpose__ = "Hot memory: in-session fast-access cache for canonical center, readiness, and delta feed."
+__ts_purpose__ = (
+    "Hot memory: in-session fast-access cache for canonical center, readiness, and delta feed."
+)
 
 _SHORT_BOARD_HEADERS = [
     "- Current short board:",

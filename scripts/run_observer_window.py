@@ -80,16 +80,12 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
     consumer_contract = anchor.get("consumer_contract") or {}
 
     lines.extend(["## Canonical Center", ""])
-    lines.append(
-        f"- Parent surfaces: `{', '.join(canonical_center.get('parent_surfaces') or [])}`"
-    )
+    lines.append(f"- Parent surfaces: `{', '.join(canonical_center.get('parent_surfaces') or [])}`")
     lines.append(
         "- Canonical anchor references: "
         f"`{', '.join(canonical_center.get('canonical_anchor_references') or [])}`"
     )
-    lines.append(
-        f"- Source precedence: `{canonical_center.get('source_precedence_summary', '')}`"
-    )
+    lines.append(f"- Source precedence: `{canonical_center.get('source_precedence_summary', '')}`")
     lines.append(f"- Receiver rule: `{canonical_center.get('receiver_rule', '')}`")
     correction = canonical_center.get("successor_correction") or {}
     if correction:
@@ -127,7 +123,9 @@ def _render_markdown(anchor: dict[str, Any]) -> str:
     lines.append(f"- Receiver note: `{hot_memory_decay_map.get('receiver_note', '')}`")
     lines.append("")
     for layer in hot_memory_decay_map.get("layers") or []:
-        lines.append(f"- `{layer.get('layer', 'unknown')}`: `{layer.get('use_posture', 'unknown')}`")
+        lines.append(
+            f"- `{layer.get('layer', 'unknown')}`: `{layer.get('use_posture', 'unknown')}`"
+        )
         lines.append(f"  - status: `{layer.get('status', 'unknown')}`")
         lines.append(f"  - decay_posture: `{layer.get('decay_posture', '')}`")
         lines.append(f"  - compression_posture: `{layer.get('compression_posture', '')}`")

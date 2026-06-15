@@ -6,9 +6,7 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 __ts_layer__ = "observability"
-__ts_purpose__ = (
-    "Tech trace capture: record low-level technical execution events."
-)
+__ts_purpose__ = "Tech trace capture: record low-level technical execution events."
 
 
 def utc_now() -> str:

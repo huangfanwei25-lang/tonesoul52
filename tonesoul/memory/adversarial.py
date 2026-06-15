@@ -7,9 +7,7 @@ from enum import Enum
 from typing import Dict, List, Optional
 
 __ts_layer__ = "memory"
-__ts_purpose__ = (
-    "Adversarial memory: store and retrieve adversarial probe results for calibration."
-)
+__ts_purpose__ = "Adversarial memory: store and retrieve adversarial probe results for calibration."
 
 _REPAIR_STRATEGIES: Dict[str, Dict[str, str]] = {
     "contradiction": {
@@ -151,9 +149,7 @@ class AdversarialReflector:
         """
         challenges: List[Challenge] = []
 
-        challenges.extend(
-            _challenges_from_list(contradictions, ChallengeType.CONTRADICTION)
-        )
+        challenges.extend(_challenges_from_list(contradictions, ChallengeType.CONTRADICTION))
 
         for commitment in commitments:
             if not isinstance(commitment, dict):
@@ -167,9 +163,7 @@ class AdversarialReflector:
             if not isinstance(value, dict):
                 continue
             if value.get("drift") or value.get("status") == "drifted":
-                challenges.extend(
-                    _challenges_from_list([value], ChallengeType.VALUE_DRIFT)
-                )
+                challenges.extend(_challenges_from_list([value], ChallengeType.VALUE_DRIFT))
 
         self._challenges = challenges
         return challenges
@@ -185,7 +179,9 @@ class AdversarialReflector:
             template = strategy.get(
                 "template", "Review '{description}' at {evidence} and address the issue."
             )
-            evidence_str = ", ".join(challenge.evidence) if challenge.evidence else "unknown location"
+            evidence_str = (
+                ", ".join(challenge.evidence) if challenge.evidence else "unknown location"
+            )
             explanation = template.format(
                 description=challenge.description,
                 evidence=evidence_str,

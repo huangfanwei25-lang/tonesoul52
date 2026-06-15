@@ -8,9 +8,7 @@ from typing import Dict, Iterable, List, Optional, Tuple
 from .embedder import SemanticEmbedder, cosine_similarity
 
 __ts_layer__ = "semantic"
-__ts_purpose__ = (
-    "Concept store: index and retrieve semantic concepts with relationship metadata."
-)
+__ts_purpose__ = "Concept store: index and retrieve semantic concepts with relationship metadata."
 
 
 @dataclass

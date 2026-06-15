@@ -70,6 +70,7 @@ def test_rank_returns_empty_for_non_positive_top_k(tmp_path):
 
 # ── Concept.to_text ───────────────────────────────────────────────────────────
 
+
 class TestConceptToText:
     def test_all_parts_joined(self):
         concept = Concept(
@@ -90,6 +91,7 @@ class TestConceptToText:
 
 
 # ── ConceptStore.load / get / all ─────────────────────────────────────────────
+
 
 def test_load_missing_root_is_empty(tmp_path):
     store = ConceptStore(tmp_path / "nonexistent")
@@ -113,6 +115,7 @@ def test_load_non_dict_payload_skipped(tmp_path):
 
 # ── ConceptStore._load_concept (private) ──────────────────────────────────────
 
+
 def test_load_concept_handles_broken_json(tmp_path):
     path = tmp_path / "broken.json"
     path.write_text("{broken json", encoding="utf-8")
@@ -130,7 +133,9 @@ def test_load_concept_missing_name_returns_none(tmp_path):
 def test_load_concept_valid_includes_optional_fields(tmp_path):
     path = tmp_path / "full.json"
     path.write_text(
-        json.dumps({"name": "alpha", "description": "desc", "examples": ["ex"], "keywords": ["kw"]}),
+        json.dumps(
+            {"name": "alpha", "description": "desc", "examples": ["ex"], "keywords": ["kw"]}
+        ),
         encoding="utf-8",
     )
     store = ConceptStore(tmp_path)

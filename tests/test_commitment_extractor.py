@@ -16,6 +16,7 @@ def extractor():
 
 # ─── CommitmentStructure.to_dict ─────────────────────────────────────────────
 
+
 class TestCommitmentStructureToDict:
     def test_returns_required_keys(self):
         cs = CommitmentStructure(
@@ -28,8 +29,15 @@ class TestCommitmentStructureToDict:
             extracted_commitment="run task",
         )
         d = cs.to_dict()
-        for key in ("raw_text", "core_verbs", "core_nouns", "commitment_type",
-                    "confidence", "temporal_weight", "extracted_commitment"):
+        for key in (
+            "raw_text",
+            "core_verbs",
+            "core_nouns",
+            "commitment_type",
+            "confidence",
+            "temporal_weight",
+            "extracted_commitment",
+        ):
             assert key in d
 
     def test_raw_text_truncated_to_100(self):
@@ -60,6 +68,7 @@ class TestCommitmentStructureToDict:
 
 # ─── _calculate_temporal_weight ──────────────────────────────────────────────
 
+
 class TestCalculateTemporalWeight:
     def test_zero_total_turns_returns_1(self, extractor):
         assert extractor._calculate_temporal_weight(0, 0) == 1.0
@@ -85,6 +94,7 @@ class TestCalculateTemporalWeight:
 
 
 # ─── _extract_verbs / _extract_nouns ─────────────────────────────────────────
+
 
 class TestExtractVerbs:
     def test_v_flag_extracted(self, extractor):
@@ -124,6 +134,7 @@ class TestExtractNouns:
 
 # ─── _classify_commitment_type ───────────────────────────────────────────────
 
+
 class TestClassifyCommitmentType:
     def test_boundary_verb_returns_boundary(self, extractor):
         ctype, conf = extractor._classify_commitment_type(["不會", "提供"], ["建議"])
@@ -162,6 +173,7 @@ class TestClassifyCommitmentType:
 
 # ─── _build_core_commitment ──────────────────────────────────────────────────
 
+
 class TestBuildCoreCommitment:
     def test_sentence_with_commitment_verb_returned(self, extractor):
         text = "我會完成這個任務。請繼續。"
@@ -186,6 +198,7 @@ class TestBuildCoreCommitment:
 
 # ─── extract (main method) ───────────────────────────────────────────────────
 
+
 class TestExtract:
     def test_empty_text_returns_none_type(self, extractor):
         result = extractor.extract("")
@@ -199,8 +212,15 @@ class TestExtract:
 
     def test_result_has_all_fields(self, extractor):
         result = extractor.extract("這是一段測試文字，用於驗證輸出結構。")
-        for attr in ("raw_text", "core_verbs", "core_nouns", "commitment_type",
-                     "confidence", "temporal_weight", "extracted_commitment"):
+        for attr in (
+            "raw_text",
+            "core_verbs",
+            "core_nouns",
+            "commitment_type",
+            "confidence",
+            "temporal_weight",
+            "extracted_commitment",
+        ):
             assert hasattr(result, attr)
 
     def test_raw_text_preserved(self, extractor):
@@ -224,6 +244,7 @@ class TestExtract:
 
 
 # ─── factory ─────────────────────────────────────────────────────────────────
+
 
 class TestCreateCommitmentExtractor:
     def test_returns_extractor_instance(self):

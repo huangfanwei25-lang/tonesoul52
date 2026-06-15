@@ -5,9 +5,7 @@ import numpy as np
 from .schema import Node
 
 __ts_layer__ = "domain"
-__ts_purpose__ = (
-    "YSTM projection: PCA-project node embeddings onto the P2 observational plane."
-)
+__ts_purpose__ = "YSTM projection: PCA-project node embeddings onto the P2 observational plane."
 
 
 def compute_pca_positions(

@@ -6,9 +6,7 @@ from typing import Any, Awaitable, Callable, Protocol
 from .session import GatewaySession
 
 __ts_layer__ = "infrastructure"
-__ts_purpose__ = (
-    "Gateway client: send governance payloads to remote ToneSoul gateway instances."
-)
+__ts_purpose__ = "Gateway client: send governance payloads to remote ToneSoul gateway instances."
 
 DEFAULT_GATEWAY_URI = "ws://127.0.0.1:18789"
 DEFAULT_CHANNEL_ROUTES: dict[str, str] = {

@@ -119,7 +119,11 @@ class TestQuickStatus:
         for _ in range(5):
             ws.observe(semantic_vector=_normal_vec(), tension_total=0.1)
         status = ws.quick_status()
-        assert status["advisory"] == "nominal" or "drift" in status["advisory"] or "inbreeding" in status["advisory"]
+        assert (
+            status["advisory"] == "nominal"
+            or "drift" in status["advisory"]
+            or "inbreeding" in status["advisory"]
+        )
         assert status["step"] == 5
 
     def test_status_includes_all_required_keys(self):

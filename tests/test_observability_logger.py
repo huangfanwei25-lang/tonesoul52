@@ -103,6 +103,7 @@ def test_configure_structlog_is_idempotent(tmp_path, reset_logger_state):
 
 # ── _default_log_dir ──────────────────────────────────────────────────────────
 
+
 def test_default_log_dir_ends_with_logs():
     path = logger_mod._default_log_dir()
     assert path.name == "logs"
@@ -110,6 +111,7 @@ def test_default_log_dir_ends_with_logs():
 
 
 # ── _ensure_log_dir ───────────────────────────────────────────────────────────
+
 
 def test_ensure_log_dir_creates_directory(tmp_path, reset_logger_state):
     target = tmp_path / "newdir"
@@ -133,6 +135,7 @@ def test_ensure_log_dir_sets_global_when_none(tmp_path, reset_logger_state):
 
 
 # ── _FallbackBoundLogger levels ───────────────────────────────────────────────
+
 
 def _make_capture_logger(name: str):
     captured = []
@@ -183,6 +186,7 @@ def test_fallback_bind_does_not_mutate_original():
 
 
 # ── _JsonlFileHandler.close ───────────────────────────────────────────────────
+
 
 def test_jsonl_handler_close_handles_no_file(tmp_path):
     handler = logger_mod._JsonlFileHandler(tmp_path)

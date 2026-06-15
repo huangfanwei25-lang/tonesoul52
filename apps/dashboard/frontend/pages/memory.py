@@ -228,6 +228,7 @@ def render():
         if axioms_path.exists():
             try:
                 import json as _json
+
                 axioms_data = _json.loads(axioms_path.read_text(encoding="utf-8"))
                 st.markdown("**七條公理** — AI 行為的不可變法則")
                 ep = axioms_data.get("existential_principle", {})
