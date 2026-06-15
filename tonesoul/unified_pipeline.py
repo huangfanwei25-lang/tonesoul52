@@ -2729,14 +2729,22 @@ class UnifiedPipeline:
                                     generated=generated_vec,
                                 )
                                 corrective_vector_norm = float(np.linalg.norm(b_vec))
-                                corrective_results = self._hippocampus.recall(
-                                    query_text=user_message,
-                                    query_vector=b_vec,
-                                    top_k=2,
-                                    query_tension=tone_strength,
-                                    tension_context=tension_context,
-                                    query_tension_mode="conflict",
-                                )
+                                # Inv4 (Descriptive != Calibrated): skip the corrective
+                                # recall when there is nothing to correct. If no
+                                # injection/rewrite changed the input, generated ==
+                                # intended, so the error vector is ~zero and a recall
+                                # with it is a meaningless no-op — yet it ran on every
+                                # request by default and was swallowed silently. Keep the
+                                # feature for the real, non-zero case only.
+                                if corrective_vector_norm > 1e-6:
+                                    corrective_results = self._hippocampus.recall(
+                                        query_text=user_message,
+                                        query_vector=b_vec,
+                                        top_k=2,
+                                        query_tension=tone_strength,
+                                        tension_context=tension_context,
+                                        query_tension_mode="conflict",
+                                    )
                     except Exception as corrective_error:
                         print(f"Hippocampus corrective recall error: {corrective_error}")
 
@@ -2750,6 +2758,9 @@ class UnifiedPipeline:
                     memory_correction_trace["b_vec_norm"] = round(
                         corrective_vector_norm,
                         6,
+                    )
+                    memory_correction_trace["corrective_skipped_zero_vector"] = (
+                        corrective_vector_norm <= 1e-6
                     )
                 dispatch_trace["memory_correction"] = self._build_trace_section(
                     "memory_correction",
