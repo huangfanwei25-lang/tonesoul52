@@ -1,6 +1,6 @@
 # Successor Cognitive Map — read this before deleting, refactoring, or "cleaning up"
 
-> Last Updated: 2026-06-13
+> Last Updated: 2026-06-15
 > Audience: the next AI agent (or human) who picks up this repo cold.
 > Purpose: the single page that prevents the failure that almost happened on
 > 2026-06-13 — a "consolidation" PR that nearly deleted `yss_gates`, a module
@@ -174,3 +174,48 @@ what's here nor deletes it thinking it's junk. Each is a pending owner decision
 - `memory/crystals.jsonl` — 82 crystallized principles (2026-03, confidence 0.8-1.0), **`access_count` all 0**: read by DreamEngine, never consumed by runtime decisions.
 
 Decision frame for all of the above: each is *revive*, *archive*, or *mark-and-wait* — not "is it good." Most are good and dormant. The honest risk is silent API drift (dormant code rotting against the live core) — so a dormant subsystem left in place should at least be on this map.
+
+---
+
+### 6a. Module-level dormancy markers (added 2026-06-15)
+
+A 37-agent adversarial verification sweep (each module independently checked
+unwired, then a second skeptic tried to *refute* dormancy — the exact discipline
+§0 demands) confirmed **18 modules** carry zero non-test live importers. They are
+now tagged in-file with a uniform, greppable marker:
+
+```
+# DORMANT (as of 2026-06-15): <reason>
+```
+
+Find them all at any time: `grep -rln "# DORMANT (as of" tonesoul/` (parallel to
+the older `# YSS-STATUS: unwired` convention). Full reachability evidence per
+module: `docs/architecture/architecture_legibility_2026-06-15.md`.
+
+| Module(s) | What it is | Why dormant (verified) |
+|---|---|---|
+| `council/atomic_claims.py` | atomic-claim extraction with source spans | tested, never wired into the verdict pathway |
+| `council/convergence.py` | deliberation-convergence scoring | tested; council `__init__`/runtime never call it |
+| `memory/freshness.py` | zone freshness / staleness decay | unwired; only named in sibling docstrings |
+| `memory/aaak.py` | AAAK compaction | never integrated into the session-end pipeline |
+| `memory/hybrid_search.py` | RRF keyword+vector fusion + rerank | prod memory uses direct recall, not fusion |
+| `memory/session_resonance.py` | cross-session tension-recurrence detector | parked staleness substrate |
+| `gse/registry.py` | GSE element registry (loads JSON clusters) | re-exported by `gse.__init__` but no live importer |
+| `observability/execution_honesty.py` | promise-validation framework | `observability` package never imported by live code |
+| `observability/self_claim_audit.py` | first-person claim reducer | same — package facade unused at runtime |
+| `inter_soul/{__init__,bridge,negotiation,sovereignty,types}.py` | cross-agent tension/sovereignty protocol | Phase-8 substrate; zero live importers (also the §6 row) |
+| `corpus/{__init__,consent,pipeline,storage}.py` | privacy-first training-data corpus | never wired; **DEAD-candidate** — wire-or-archive owner decision (do NOT blind-delete: a tested consent+storage unit) |
+
+**Caught as ACTUALLY LIVE — NOT marked dormant (the verification's safety win):**
+`gse/element.py` — the `GSEElement` dataclass is imported by `gse/registry.py`
+and `gse/__init__.py`. It is live *within* the (otherwise-parked) `gse` package,
+so it carries a `# PACKAGE-STATUS` note, not a `# DORMANT` one. This is the §0
+failure mode in miniature: "has importers" ≠ "live", but also ≠ "safe to call dead."
+
+**Correction to the YUHUN Core row above (2026-06-15, verified):** the
+`dpr` / `context_assembler` path is *imported* into `unified_pipeline.py:190-210`
+but **never invoked** — `_get_dpr()` / `_get_context_assembler()` have zero call
+sites repo-wide (a dead hook). "Import exists; invocation does not." This is a
+wire-or-remove **owner decision**, not a deletion. (`yuhun/dpr.py`'s
+`__ts_purpose__` was also corrected the same day — it claimed "Dense Passage
+Retrieval / semantic retrieval" but the code is a Dynamic Priority Router.)

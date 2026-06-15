@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): Re-exported by tonesoul.observability but that package is never imported by live code; only used in tests/test_self_claim_audit.py; see docs/architecture/architecture_legibility_2026-06-15.md
 """First-person claim reducer for bounded subjectivity tests.
 
 The reducer does not decide whether an AI has a mind. It checks whether a
@@ -13,9 +14,7 @@ from typing import Any, Iterable, Literal
 SelfClaimPosture = Literal["blocked", "needs_evidence", "bounded", "no_self_claim"]
 
 __ts_layer__ = "observability"
-__ts_purpose__ = (
-    "Self-claim audit: first-person claim reducer for bounded subjectivity tests."
-)
+__ts_purpose__ = "Self-claim audit: first-person claim reducer for bounded subjectivity tests."
 
 _FIRST_PERSON_MARKERS = (
     "i ",

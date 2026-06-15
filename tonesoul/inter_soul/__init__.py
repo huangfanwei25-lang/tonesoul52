@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): inter_soul package is unused—only imported by tests. No live code references it through direct imports, re-exports, class/function usages, dynamic imports, plugin registries, or entry points. Safe to deprecate or archive; see docs/architecture/architecture_legibility_2026-06-15.md
 """
 Inter-Soul Tension Protocol.
 

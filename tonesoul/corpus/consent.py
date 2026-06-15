@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): Consent manager for corpus collection—never wired into live runtime; only imported in tests (test_corpus_consent.py, test_security_memory_boundary.py). Re-exported by tonesoul.corpus.__init__ but corpus package itself has zero live importers (grep -rn "from tonesoul.corpus import\|import tonesoul.corpus" across non-test code yields no matches). No entry points, CLI commands, or API routes reference it; see docs/architecture/architecture_legibility_2026-06-15.md
 """
 ToneSoul Consent Manager
 
@@ -17,9 +18,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 __ts_layer__ = "evolution"
-__ts_purpose__ = (
-    "Corpus consent: record and verify data provenance before ingestion."
-)
+__ts_purpose__ = "Corpus consent: record and verify data provenance before ingestion."
 
 
 class ConsentType(Enum):

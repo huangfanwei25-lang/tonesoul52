@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): Module is completely unwired from any live runtime path — only imported by tests/test_corpus_pipeline.py, not re-exported by tonesoul/__init__.py, not referenced by any CLI entry point (tonesoul/cli/main.py), no dynamic imports via importlib/__import__, no plugin registries, no lazy loads in production code. Sibling corpus modules (consent, storage, consent) are also dormant; see docs/architecture/architecture_legibility_2026-06-15.md
 """
 ToneSoul Corpus Pipeline
 
@@ -18,9 +19,7 @@ from .consent import ConsentManager, ConsentType, UserConsent
 from .storage import CorpusStorage
 
 __ts_layer__ = "evolution"
-__ts_purpose__ = (
-    "Corpus pipeline: process raw text into structured evolution training examples."
-)
+__ts_purpose__ = "Corpus pipeline: process raw text into structured evolution training examples."
 
 
 @dataclass

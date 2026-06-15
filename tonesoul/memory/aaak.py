@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): AAAK compaction module not wired to any live runtime path — exists as planned design artifact but never integrated into session endgame pipeline or handoff system; see docs/architecture/architecture_legibility_2026-06-15.md
 """AAAK Memory Compaction — structured session compression for agent handoff.
 
 AAAK = Anchors · Arcs · Anomalies · Keys
@@ -48,10 +49,10 @@ _LABEL_WIDTH = 12
 class AAAKRecord:
     """A single AAAK-compressed session summary."""
 
-    anchors: List[str]     # what held (vows, axioms, stable facts)
-    arcs: List[str]        # what shifted (decisions, stance changes, drift events)
-    anomalies: List[str]   # what demands attention (unresolved tension, concerns)
-    keys: List[str]        # must-know for the next agent
+    anchors: List[str]  # what held (vows, axioms, stable facts)
+    arcs: List[str]  # what shifted (decisions, stance changes, drift events)
+    anomalies: List[str]  # what demands attention (unresolved tension, concerns)
+    keys: List[str]  # must-know for the next agent
 
     session_id: str = ""
     agent_id: str = ""
@@ -246,6 +247,7 @@ def format_handoff_block(record: AAAKRecord, *, label_width: int = _LABEL_WIDTH)
     The output is intentionally terse — a dense 5-line block that a cold
     reader can parse without any prior context.
     """
+
     def _fmt(label: str, items: List[str]) -> str:
         pad = label.ljust(label_width)
         if not items:
@@ -269,6 +271,7 @@ def merge_records(older: AAAKRecord, newer: AAAKRecord) -> AAAKRecord:
     Useful when a session was interrupted and resumed — merge the two partial
     records into a single one before writing to handoff.
     """
+
     def _merge_lists(a: List[str], b: List[str]) -> List[str]:
         combined = list(a)
         for item in b:

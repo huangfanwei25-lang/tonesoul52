@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): Module is tested (test_inter_soul_negotiation.py) but unreachable from live entry points: LocalInterSoulBridge.negotiate() (which imports TensionNegotiator) is never called from any live code, LocalInterSoulBridge is never instantiated, and inter_soul package is not imported by any non-test code; see docs/architecture/architecture_legibility_2026-06-15.md
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -5,9 +6,7 @@ from dataclasses import dataclass
 from .types import NegotiationOutcome, SovereigntyBoundary, TensionPacket
 
 __ts_layer__ = "surface"
-__ts_purpose__ = (
-    "Inter-soul negotiation: resolve value conflicts between collaborating agents."
-)
+__ts_purpose__ = "Inter-soul negotiation: resolve value conflicts between collaborating agents."
 
 
 def _resolve_field(packet: TensionPacket, field_path: str):

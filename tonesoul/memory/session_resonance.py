@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): parked staleness/compaction/retrieval substrate; staleness-defense story the project explicitly cares about but not yet wired into live runtime paths; see docs/architecture/architecture_legibility_2026-06-15.md
 """Session Resonance — detecting when the same tension returns in a different form.
 
 A system that never recognises its own recurring patterns is not learning.
@@ -54,7 +55,7 @@ DEFAULT_RESONANCE_THRESHOLD: float = 0.25
 
 # Time decay: resonance from an old session is less urgent than a recent one
 # Same λ as freshness.py (half-life 7 days)
-_HALF_LIFE_DAYS: float = 30.0   # longer window for cross-session patterns
+_HALF_LIFE_DAYS: float = 30.0  # longer window for cross-session patterns
 _LAMBDA: float = math.log(2) / _HALF_LIFE_DAYS
 
 # How many sessions constitute a "recurring" pattern
@@ -79,11 +80,11 @@ class SessionFingerprint:
     """
 
     session_id: str
-    topics: List[str]              # normalised topic keywords
-    tension_keywords: List[str]    # keywords from unresolved tension events
-    verdict: str                   # final council verdict (or "unknown")
-    drift_level: float             # peak drift during session (0.0–1.0)
-    timestamp: str                 # ISO-8601 of session end
+    topics: List[str]  # normalised topic keywords
+    tension_keywords: List[str]  # keywords from unresolved tension events
+    verdict: str  # final council verdict (or "unknown")
+    drift_level: float  # peak drift during session (0.0–1.0)
+    timestamp: str  # ISO-8601 of session end
     agent_id: str = ""
 
     @property
@@ -109,10 +110,10 @@ class ResonanceSignal:
     current_session_id: str
     matched_session_id: str
     matched_timestamp: str
-    topic_overlap: List[str]        # topics shared between both sessions
-    tension_echo: bool              # both had unresolved tension on a shared keyword
-    prior_outcome: str              # what happened in the matched session
-    resonance_score: float          # 0.0 (no echo) → 1.0 (strong echo)
+    topic_overlap: List[str]  # topics shared between both sessions
+    tension_echo: bool  # both had unresolved tension on a shared keyword
+    prior_outcome: str  # what happened in the matched session
+    resonance_score: float  # 0.0 (no echo) → 1.0 (strong echo)
     days_ago: float = 0.0
 
     def to_dict(self) -> Dict[str, Any]:
@@ -135,8 +136,8 @@ class RecurringPattern:
     topic: str
     occurrences: int
     session_ids: List[str]
-    typical_outcome: str            # most common verdict across these sessions
-    unresolved_fraction: float      # fraction of occurrences with unresolved verdict
+    typical_outcome: str  # most common verdict across these sessions
+    unresolved_fraction: float  # fraction of occurrences with unresolved verdict
     first_seen_at: str
     last_seen_at: str
 
@@ -161,22 +162,71 @@ class RecurringPattern:
 # ── Fingerprint extraction ────────────────────────────────────────────────────
 
 
-_STOP_WORDS = frozenset({
-    "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for",
-    "of", "with", "is", "are", "was", "were", "be", "been", "being",
-    "have", "has", "had", "do", "does", "did", "will", "would", "could",
-    "should", "may", "might", "shall", "can", "this", "that", "it", "its",
-    "we", "i", "you", "he", "she", "they", "their", "our", "your",
-    "from", "by", "as", "not", "no", "so", "if", "then", "also",
-})
+_STOP_WORDS = frozenset(
+    {
+        "the",
+        "a",
+        "an",
+        "and",
+        "or",
+        "but",
+        "in",
+        "on",
+        "at",
+        "to",
+        "for",
+        "of",
+        "with",
+        "is",
+        "are",
+        "was",
+        "were",
+        "be",
+        "been",
+        "being",
+        "have",
+        "has",
+        "had",
+        "do",
+        "does",
+        "did",
+        "will",
+        "would",
+        "could",
+        "should",
+        "may",
+        "might",
+        "shall",
+        "can",
+        "this",
+        "that",
+        "it",
+        "its",
+        "we",
+        "i",
+        "you",
+        "he",
+        "she",
+        "they",
+        "their",
+        "our",
+        "your",
+        "from",
+        "by",
+        "as",
+        "not",
+        "no",
+        "so",
+        "if",
+        "then",
+        "also",
+    }
+)
 
 
 def _tokenise(text: str) -> List[str]:
     """Split text into lowercase alpha tokens, filtering stop words."""
-    return [
-        t for t in re.findall(r"[a-zA-Z一-鿿]{2,}", text.lower())
-        if t not in _STOP_WORDS
-    ]
+    return [t for t in re.findall(r"[a-zA-Z一-鿿]{2,}", text.lower()) if t not in _STOP_WORDS]
 
 
 def _top_tokens(texts: List[str], limit: int = _MAX_TOPICS) -> List[str]:
@@ -304,9 +354,7 @@ def resonance_score(
     topic_overlap = list(set(current.topics) & set(historical.topics))
 
     # Tension echo: shared unresolved tension keyword
-    tension_echo = bool(
-        set(current.tension_keywords) & set(historical.tension_keywords)
-    )
+    tension_echo = bool(set(current.tension_keywords) & set(historical.tension_keywords))
 
     # Drift correlation bonus: both sessions showed elevated drift
     drift_bonus = 0.0
@@ -431,8 +479,7 @@ def background_tension_from_resonance(
         return 0.0
 
     signal_contribution = sum(
-        s.resonance_score * (1.5 if s.tension_echo else 1.0)
-        for s in signals
+        s.resonance_score * (1.5 if s.tension_echo else 1.0) for s in signals
     ) / max(1, len(signals))
 
     chronic_patterns = [p for p in patterns if p.is_chronic]

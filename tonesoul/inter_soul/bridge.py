@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): Only imported by tests/test_inter_soul_bridge.py and inter_soul/__init__.py; no live entry points (CLI/API/scripts) transitively import inter_soul package; protocol unused by any runtime code; see docs/architecture/architecture_legibility_2026-06-15.md
 from __future__ import annotations
 
 from collections import deque

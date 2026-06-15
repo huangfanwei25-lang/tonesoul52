@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): inter_soul package and sovereignty.py module are unwired from live runtime. Only imported by tests/test_inter_soul_sovereignty.py. Re-exported by tonesoul/inter_soul/__init__.py but that package is never imported by any live code (unified_pipeline.py, runtime_adapter.py, council/runtime.py, cli/main.py, api/server.py verified). No entry points, dynamic imports, or relative imports found. Safe to mark dormant; see docs/architecture/architecture_legibility_2026-06-15.md
 from __future__ import annotations
 
 import json

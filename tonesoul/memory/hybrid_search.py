@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): RRF fusion layer for hybrid keyword+vector search; designed to work with hippocampus but never wired — all production memory calls use direct hippocampus/semantic_graph/visual_chain, not fusion pipeline. Test-only import (tests/test_memory_hybrid_search.py); see docs/architecture/architecture_legibility_2026-06-15.md
 """Hybrid search with Reciprocal Rank Fusion (RRF).
 
 Two search modalities solve different problems:
@@ -75,12 +76,12 @@ class FusedResult:
     doc_id: str
     content: str
     rrf_score: float
-    final_score: float              # after reranking; equals rrf_score if no reranking
-    keyword_rank: Optional[int]     # None if not in keyword results
-    vector_rank: Optional[int]      # None if not in vector results
+    final_score: float  # after reranking; equals rrf_score if no reranking
+    keyword_rank: Optional[int]  # None if not in keyword results
+    vector_rank: Optional[int]  # None if not in vector results
     trust_score: float = 0.5
     freshness_score: float = 1.0
-    graph_depth: int = 0            # 0 = direct hit; >0 = graph-expanded neighbor
+    graph_depth: int = 0  # 0 = direct hit; >0 = graph-expanded neighbor
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     @property
@@ -94,7 +95,7 @@ class FusedResult:
     def to_dict(self) -> Dict[str, Any]:
         return {
             "doc_id": self.doc_id,
-            "content": self.content[:200],   # truncate for logging
+            "content": self.content[:200],  # truncate for logging
             "rrf_score": round(self.rrf_score, 6),
             "final_score": round(self.final_score, 6),
             "keyword_rank": self.keyword_rank,
@@ -202,10 +203,7 @@ def rerank_with_signals(
         graph_bonus = _GRAPH_BONUS_MAX / (1 + depth) if depth >= 0 else 0.0
 
         final = (
-            _BASE_WEIGHT * normalized_rrf
-            + _TRUST_WEIGHT * t
-            + _FRESHNESS_WEIGHT * f
-            + graph_bonus
+            _BASE_WEIGHT * normalized_rrf + _TRUST_WEIGHT * t + _FRESHNESS_WEIGHT * f + graph_bonus
         )
 
         reranked.append(

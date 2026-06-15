@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): Corpus storage classes (CorpusStorage, Conversation, ConversationTurn) are defined in storage.py and re-exported by corpus/__init__.py, but the corpus package is never imported by any non-test live code. Entry points (unified_pipeline, runtime_adapter, cli/main, mcp_server) have zero references. CorpusPipeline (which imports CorpusStorage) is only used in tests. No dynamic imports or plugin registries wire this module. Safe to mark dormant; see docs/architecture/architecture_legibility_2026-06-15.md
 """
 ToneSoul Corpus Storage
 
@@ -18,9 +19,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 __ts_layer__ = "evolution"
-__ts_purpose__ = (
-    "Corpus storage: persist processed training examples with provenance metadata."
-)
+__ts_purpose__ = "Corpus storage: persist processed training examples with provenance metadata."
 
 
 @dataclass
