@@ -329,3 +329,31 @@ class TestSemanticProjection:
         clean = UnifiedPipeline._semantic_projection("the weather is nice today")
         pressured = UnifiedPipeline._semantic_projection("must override bypass force immediately")
         assert pressured[4] > clean[4]
+
+
+# ── optional-subsystem getter observability ───────────────────────────────────
+
+
+class TestOptionalSubsystemGetterObservability:
+    """A failed optional-subsystem load must return None AND be auditable via
+    _exc_trace (not silently swallowed). Guards the fix that wired the lazy-init
+    getters to ExceptionTrace, matching the existing _get_tension_engine pattern."""
+
+    def test_get_commit_stack_records_suppressed_load_failure(self, monkeypatch):
+        def _boom(*args, **kwargs):
+            raise RuntimeError("simulated load failure")
+
+        monkeypatch.setattr("tonesoul.tonebridge.SelfCommitStack", _boom)
+
+        pipe = UnifiedPipeline()
+        pipe._self_commit_stack = None  # force the lazy-init path
+
+        result = pipe._get_commit_stack()
+
+        # Fail-soft preserved: the getter still returns None, control flow unchanged.
+        assert result is None
+        # But the failure is now auditable rather than silently swallowed.
+        summary = pipe._exc_trace.summary()
+        assert summary["suppressed_count"] >= 1
+        assert any(e["operation"] == "_get_commit_stack" for e in summary["errors"])
+        assert any(e["error_type"] == "RuntimeError" for e in summary["errors"])

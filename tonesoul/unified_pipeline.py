@@ -376,8 +376,8 @@ class UnifiedPipeline:
                 from tonesoul.tonebridge import SelfCommitStack
 
                 self._self_commit_stack = SelfCommitStack(max_size=20)
-            except Exception:
-                pass
+            except Exception as exc:
+                self._exc_trace.record("unified_pipeline", "_get_commit_stack", exc)
         return self._self_commit_stack
 
     def _get_commit_extractor(self):
@@ -387,8 +387,8 @@ class UnifiedPipeline:
                 from tonesoul.tonebridge import SelfCommitExtractor
 
                 self._commit_extractor = SelfCommitExtractor()
-            except Exception:
-                pass
+            except Exception as exc:
+                self._exc_trace.record("unified_pipeline", "_get_commit_extractor", exc)
         return self._commit_extractor
 
     def _get_rupture_detector(self):
@@ -398,8 +398,8 @@ class UnifiedPipeline:
                 from tonesoul.tonebridge import RuptureDetector
 
                 self._rupture_detector = RuptureDetector()
-            except Exception:
-                pass
+            except Exception as exc:
+                self._exc_trace.record("unified_pipeline", "_get_rupture_detector", exc)
         return self._rupture_detector
 
     def _get_value_accumulator(self):
@@ -409,8 +409,8 @@ class UnifiedPipeline:
                 from tonesoul.tonebridge import ValueAccumulator
 
                 self._value_accumulator = ValueAccumulator()
-            except Exception:
-                pass
+            except Exception as exc:
+                self._exc_trace.record("unified_pipeline", "_get_value_accumulator", exc)
         return self._value_accumulator
 
     def _get_semantic_graph(self):
@@ -420,8 +420,8 @@ class UnifiedPipeline:
                 from tonesoul.memory.semantic_graph import SemanticGraph
 
                 self._semantic_graph = SemanticGraph()
-            except Exception:
-                pass
+            except Exception as exc:
+                self._exc_trace.record("unified_pipeline", "_get_semantic_graph", exc)
         return self._semantic_graph
 
     def _get_visual_chain(self):
@@ -433,8 +433,8 @@ class UnifiedPipeline:
                 from tonesoul.memory.visual_chain import VisualChain
 
                 self._visual_chain = VisualChain(storage_path=Path("data/visual_chain.json"))
-            except Exception:
-                pass
+            except Exception as exc:
+                self._exc_trace.record("unified_pipeline", "_get_visual_chain", exc)
         return self._visual_chain
 
     def _get_tension_engine(self):
@@ -462,8 +462,8 @@ class UnifiedPipeline:
                     tension_engine=self._get_tension_engine(),
                     governance_kernel=self._get_governance_kernel(),
                 )
-            except Exception:
-                pass
+            except Exception as exc:
+                self._exc_trace.record("unified_pipeline", "_get_mirror", exc)
         return self._mirror
 
     def _get_friction_calculator(self):
