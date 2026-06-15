@@ -12,7 +12,6 @@ from .dossier import (
     derive_dissent_ratio,
     extract_minority_report,
 )
-from .evolution import CouncilEvolution, PerspectiveHistory
 from .pre_output_council import PreOutputCouncil
 from .runtime import CouncilRequest, CouncilRuntime
 from .swarm_framework import (
@@ -31,6 +30,7 @@ from .types import (
     VerdictType,
     VoteDecision,
 )
+from .voting_evolution import CouncilEvolution, PerspectiveHistory
 
 __all__ = [
     "PerspectiveHistory",

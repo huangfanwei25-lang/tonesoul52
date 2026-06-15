@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-06-15): off-thesis 台股 (Taiwan-stock) analysis. Reachable only via the CLI script scripts/run_market_scanner.py; zero core/governance importer; half-dismantled (forecaster/gold_detector removed). DECISION GATE: archive at the next consolidation unless a governance wire-in lands. See docs/plans/01_active/tier4_structural_decisions_2026-06-15.md.
 """ToneSoul Six-Step Financial Analyzer — Phase 2 Analysis Layer.
 
 Automates the user's six-step financial analysis framework:
@@ -17,9 +18,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
 __ts_layer__ = "domain"
-__ts_purpose__ = (
-    "Market analyzer: evaluate semantic field market signals for domain intelligence."
-)
+__ts_purpose__ = "Market analyzer: evaluate semantic field market signals for domain intelligence."
 
 logger = logging.getLogger(__name__)
 

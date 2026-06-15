@@ -101,7 +101,7 @@ class PreOutputCouncil:
         # Apply evolved voting weights if available
         weights = None
         try:
-            from tonesoul.council.evolution import CouncilEvolution
+            from tonesoul.council.voting_evolution import CouncilEvolution
 
             if not hasattr(self, "_evolution"):
                 self._evolution = CouncilEvolution()
