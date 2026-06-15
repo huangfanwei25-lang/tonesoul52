@@ -18,6 +18,7 @@ afterEach(() => {
     delete process.env.TONESOUL_ENABLE_CHAT_MOCK_FALLBACK;
     delete process.env.TONESOUL_BACKEND_CHAT_RETRY_MAX_ATTEMPTS;
     delete process.env.TONESOUL_BACKEND_CHAT_RETRY_BASE_DELAY_MS;
+    delete process.env.TONESOUL_WRITE_API_TOKEN;
     delete process.env.VERCEL;
     delete process.env.VERCEL_URL;
 });
@@ -470,5 +471,52 @@ describe("chat route transport fallback behavior", () => {
         expect(response.status).toBe(400);
         expect(payload.error).toBe("bad request");
         expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("forwards X-ToneSoul-Write-Token to the backend when configured", async () => {
+        process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5000";
+        process.env.TONESOUL_WRITE_API_TOKEN = "secret-write-token";
+        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify({ response: "ok" }), { status: 200 })
+        );
+
+        const response = await postChat(
+            makeRequest({
+                conversation_id: "c1",
+                message: "hello",
+                history: [],
+                full_analysis: false,
+            }) as never
+        );
+
+        expect(response.status).toBe(200);
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
+        const headers = requestInit.headers as Record<string, string>;
+        expect(headers["X-ToneSoul-Write-Token"]).toBe("secret-write-token");
+        expect(headers["Content-Type"]).toBe("application/json");
+    });
+
+    it("does not send an auth header when no backend token is configured", async () => {
+        process.env.TONESOUL_BACKEND_URL = "http://127.0.0.1:5000";
+        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify({ response: "ok" }), { status: 200 })
+        );
+
+        const response = await postChat(
+            makeRequest({
+                conversation_id: "c1",
+                message: "hello",
+                history: [],
+                full_analysis: false,
+            }) as never
+        );
+
+        expect(response.status).toBe(200);
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
+        const headers = requestInit.headers as Record<string, string>;
+        expect(headers["X-ToneSoul-Write-Token"]).toBeUndefined();
+        expect(headers.Authorization).toBeUndefined();
     });
 });
