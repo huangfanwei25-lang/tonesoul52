@@ -162,27 +162,19 @@ def build_search_context_boundary_cue(
     if enable_local and enable_web:
         mode = "local+web"
         summary = "Search is active for auxiliary repo + web context."
-        boundary = (
-            "Use search hits as secondary context only. They do not outrank readiness, short-board truth, closeout attention, or bounded runtime surfaces."
-        )
+        boundary = "Use search hits as secondary context only. They do not outrank readiness, short-board truth, closeout attention, or bounded runtime surfaces."
     elif enable_local:
         mode = "local"
         summary = "Local retrieval is active for auxiliary repo context."
-        boundary = (
-            "Local search can widen repo context, but it still stays below Tier 0 / Tier 1 operator truth."
-        )
+        boundary = "Local search can widen repo context, but it still stays below Tier 0 / Tier 1 operator truth."
     elif enable_web:
         mode = "web"
         summary = "Web retrieval is active for external context."
-        boundary = (
-            "Web search is the weakest surface here. Treat it as external context that must be re-checked against current runtime and canonical sources."
-        )
+        boundary = "Web search is the weakest surface here. Treat it as external context that must be re-checked against current runtime and canonical sources."
     else:
         mode = "off"
         summary = "Search is off by default."
-        boundary = (
-            "Start from Tier 0 / Tier 1 first. Turn search on only when operator truth is not enough and extra context is actually needed."
-        )
+        boundary = "Start from Tier 0 / Tier 1 first. Turn search on only when operator truth is not enough and extra context is actually needed."
     return {
         "mode": mode,
         "summary": summary,

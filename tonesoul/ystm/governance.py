@@ -18,9 +18,7 @@ from .schema import (
 )
 
 __ts_layer__ = "domain"
-__ts_purpose__ = (
-    "YSTM governance: update node what/where with decoupled change records."
-)
+__ts_purpose__ = "YSTM governance: update node what/where with decoupled change records."
 
 
 def _append_update(node: Node, update_id: str) -> Node:

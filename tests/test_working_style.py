@@ -65,7 +65,9 @@ class TestCollectSignalTexts:
         assert signals[0]["source"] == "next_actions"
 
     def test_routing_summary_text_added(self):
-        signals = _collect_signal_texts(routing_summary={"summary_text": "architecture scan complete"})
+        signals = _collect_signal_texts(
+            routing_summary={"summary_text": "architecture scan complete"}
+        )
         assert any(s["source"] == "routing_summary" for s in signals)
 
     def test_routing_summary_recent_events_limited_to_five(self):
@@ -127,9 +129,16 @@ class TestBuildWorkingStyleObservability:
         anchor = {"decision_preferences": ["evidence tracking"]}
         result = build_working_style_observability(anchor)
         for key in (
-            "status", "drift_risk", "trackable_item_count", "reinforced_item_count",
-            "signal_count", "signal_sources", "reinforced_items", "unreinforced_items",
-            "summary_text", "receiver_note",
+            "status",
+            "drift_risk",
+            "trackable_item_count",
+            "reinforced_item_count",
+            "signal_count",
+            "signal_sources",
+            "reinforced_items",
+            "unreinforced_items",
+            "summary_text",
+            "receiver_note",
         ):
             assert key in result
 
@@ -173,9 +182,7 @@ class TestBuildWorkingStyleImportLimits:
         result_high = build_working_style_import_limits(
             anchor, observability={"drift_risk": "high"}
         )
-        result_low = build_working_style_import_limits(
-            anchor, observability={"drift_risk": "low"}
-        )
+        result_low = build_working_style_import_limits(anchor, observability={"drift_risk": "low"})
         assert len(result_high["stop_conditions"]) > len(result_low["stop_conditions"])
 
     def test_decision_preferences_adds_scan_order_safe_apply(self):
@@ -187,8 +194,14 @@ class TestBuildWorkingStyleImportLimits:
     def test_result_contains_required_keys(self):
         anchor = {"decision_preferences": ["evidence tracking"]}
         result = build_working_style_import_limits(anchor)
-        for key in ("apply_posture", "safe_apply", "must_not_import", "stop_conditions",
-                    "receiver_guidance", "summary_text"):
+        for key in (
+            "apply_posture",
+            "safe_apply",
+            "must_not_import",
+            "stop_conditions",
+            "receiver_guidance",
+            "summary_text",
+        ):
             assert key in result
 
 

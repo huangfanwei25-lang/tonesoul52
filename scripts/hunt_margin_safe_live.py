@@ -7,15 +7,15 @@ Fetches real TWSE data via FinMind for a watchlist to find:
 - World Model Buy Consensus
 """
 
-import sys
 import os
+import sys
 from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from tonesoul.market.analyzer import SixStepAnalyzer, QuarterlySnapshot, TechGrowthTemplate
-from tonesoul.market.world_model import MultiPerspectiveSimulator
+from tonesoul.market.analyzer import QuarterlySnapshot, SixStepAnalyzer, TechGrowthTemplate
 from tonesoul.market.data_ingest import MarketDataIngestor
+from tonesoul.market.world_model import MultiPerspectiveSimulator
 
 
 def get_value(stimuli, target_type: str, fallback_types=None) -> float:
@@ -94,8 +94,8 @@ def convert_to_snapshots(income_data, balance_data, cash_data) -> list[Quarterly
 
 def main():
     print(f"\n{'=' * 80}")
-    print(f"ToneSoul LIVE Market Scanner — MARGIN-SAFE HUNTER (即時頂息尋寶器)")
-    print(f"Criteria: Price < 200 NTD | Yield > 4.0% | Live TWSE Data")
+    print("ToneSoul LIVE Market Scanner — MARGIN-SAFE HUNTER (即時頂息尋寶器)")
+    print("Criteria: Price < 200 NTD | Yield > 4.0% | Live TWSE Data")
     print(f"{'=' * 80}")
 
     ingestor = MarketDataIngestor()
@@ -122,7 +122,7 @@ def main():
         # 1. Fetch live valuation data
         val_data = ingestor.fetch_per_pbr(stock_id, start_date="2024-01-01")
         if not val_data:
-            print(f"   ❌ Rejected: No live valuation data found via API.")
+            print("   ❌ Rejected: No live valuation data found via API.")
             continue
 
         latest_val = val_data[-1].data
@@ -130,7 +130,7 @@ def main():
 
         price_data = ingestor.fetch_price(stock_id, start_date="2024-01-01")
         if not price_data:
-            print(f"   ❌ Rejected: No live price data found via API.")
+            print("   ❌ Rejected: No live price data found via API.")
             continue
 
         current_price = float(price_data[-1].data.get("close", 0.0))
@@ -155,7 +155,7 @@ def main():
         )
 
         if len(snapshots) < 4:
-            print(f"   ❌ Rejected: Not enough quarterly data to analyze trends.")
+            print("   ❌ Rejected: Not enough quarterly data to analyze trends.")
             continue
 
         # Get the latest 4-6 quarters to avoid LLM context overload
@@ -168,11 +168,11 @@ def main():
         print(f"   ↳ Live Structural Friction: {struct_friction:.2f}")
 
         if struct_friction > 0.4:
-            print(f"   ❌ Rejected: Structural math too risky. Skiping AI.")
+            print("   ❌ Rejected: Structural math too risky. Skiping AI.")
             continue
 
         # Filter 4: AI World Model
-        print(f"   ✅ Pass: Triggering Live AI World Model Debate")
+        print("   ✅ Pass: Triggering Live AI World Model Debate")
         context = simulator.run_simulation(f"{stock_id}_{stock_name}_LiveSafe", recent_snapshots)
         final_friction = (struct_friction * 0.7) + (context.perspective_friction * 0.3)
 
@@ -189,7 +189,7 @@ def main():
         )
 
     print(f"\n\n{'=' * 80}")
-    print(f"🏆 TOP LIVE MARGIN-SAFE PICKS (即時頂息最佳標的)")
+    print("🏆 TOP LIVE MARGIN-SAFE PICKS (即時頂息最佳標的)")
     print(f"{'=' * 80}")
 
     results.sort(key=lambda r: r["final_friction"])

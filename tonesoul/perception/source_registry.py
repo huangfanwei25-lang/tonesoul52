@@ -10,9 +10,7 @@ from urllib.parse import urlparse
 import yaml
 
 __ts_layer__ = "perception"
-__ts_purpose__ = (
-    "Source registry: enumerate and validate registered perception input sources."
-)
+__ts_purpose__ = "Source registry: enumerate and validate registered perception input sources."
 
 LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1"}
 

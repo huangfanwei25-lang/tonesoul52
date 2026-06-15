@@ -6,9 +6,7 @@ import numpy as np
 from .schema import Node
 
 __ts_layer__ = "domain"
-__ts_purpose__ = (
-    "YSTM terrain: compute KDE grid, contour levels, and marching-squares contours."
-)
+__ts_purpose__ = "YSTM terrain: compute KDE grid, contour levels, and marching-squares contours."
 
 
 @dataclass(frozen=True)

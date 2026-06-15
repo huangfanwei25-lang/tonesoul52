@@ -1,8 +1,9 @@
 import json
-import time
-import requests
 import os
 import sys
+import time
+
+import requests
 
 # Ensure we can import from repository root
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -47,7 +48,7 @@ class EntropyMonitor:
         return "DORMANT"
 
     def monitor_loop(self, interval=60):
-        print(f"[*] Starting Entropy Monitor Engine...")
+        print("[*] Starting Entropy Monitor Engine...")
         while True:
             # In a real scenario, this would poll the environment
             # For this prototype, we simulate a scan

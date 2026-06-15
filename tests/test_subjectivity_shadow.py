@@ -188,6 +188,7 @@ def test_shadow_pressure_report_aggregates_query_level_pressure_metrics(tmp_path
 
 # ── Private helpers ───────────────────────────────────────────────────────────
 
+
 def test_normalize_profile_accepts_valid_profiles() -> None:
     assert _normalize_profile("classified_first") == "classified_first"
     assert _normalize_profile("TENSION_FIRST") == "tension_first"

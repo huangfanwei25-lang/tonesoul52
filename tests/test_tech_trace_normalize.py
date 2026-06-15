@@ -210,6 +210,7 @@ def test_normalize_record_no_auto_claims_with_notes(monkeypatch) -> None:
 
 def test_build_arg_parser_returns_arg_parser() -> None:
     import argparse
+
     parser = normalize_mod.build_arg_parser()
     assert isinstance(parser, argparse.ArgumentParser)
     args = parser.parse_args(["--text", "hello"])

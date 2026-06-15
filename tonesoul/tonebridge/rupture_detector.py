@@ -19,9 +19,7 @@ from typing import List, Optional
 from .self_commit import SelfCommit, SelfCommitStack
 
 __ts_layer__ = "domain"
-__ts_purpose__ = (
-    "Rupture detector: identify semantic ruptures between user and AI registers."
-)
+__ts_purpose__ = "Rupture detector: identify semantic ruptures between user and AI registers."
 
 
 class RuptureSeverity(Enum):

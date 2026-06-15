@@ -28,4 +28,3 @@ from .kernel import GovernanceDecision, GovernanceKernel, LLMRouteDecision  # no
 
 __ts_layer__ = "governance"
 __ts_purpose__ = "Governance package: vow system, kernel, constraint stack, and policy exports."
-

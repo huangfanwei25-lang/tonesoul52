@@ -11,9 +11,7 @@ from typing import Any, Dict, List, Literal, Optional
 from .schema import Node, as_clean_dict, stable_hash, utc_now
 
 __ts_layer__ = "domain"
-__ts_purpose__ = (
-    "YSTM diff: compute structural differences between two YSTM node snapshots."
-)
+__ts_purpose__ = "YSTM diff: compute structural differences between two YSTM node snapshots."
 
 # Source grades for evidence tracking
 SourceGrade = Literal["A", "B", "C"]

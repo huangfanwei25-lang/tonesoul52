@@ -83,9 +83,7 @@ class TestAnalyze:
         assert result.requires_evidence is False
 
     def test_mixed_opinion_and_factual_requires_evidence(self):
-        result = self.detector.analyze(
-            "I think research shows 80% of users prefer this."
-        )
+        result = self.detector.analyze("I think research shows 80% of users prefer this.")
         assert result.requires_evidence is True
         assert result.confidence_cap == 0.6
         assert ClaimType.OPINION in result.claim_types
@@ -101,7 +99,9 @@ class TestAnalyze:
 
     def test_requires_evidence_method_matches_analyze(self):
         text = "Studies show that 90% improvement is possible."
-        assert self.detector.requires_evidence(text) == self.detector.analyze(text).requires_evidence
+        assert (
+            self.detector.requires_evidence(text) == self.detector.analyze(text).requires_evidence
+        )
 
     def test_chinese_factual_indicator_detected(self):
         result = self.detector.analyze("根據研究結果，效率提升了50%。")

@@ -18,9 +18,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
 __ts_layer__ = "domain"
-__ts_purpose__ = (
-    "ToneBridge personas: define and select tone persona configurations."
-)
+__ts_purpose__ = "ToneBridge personas: define and select tone persona configurations."
 
 
 class PersonaMode(Enum):

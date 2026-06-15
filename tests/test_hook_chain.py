@@ -53,8 +53,12 @@ def test_hook_chain_can_mark_current_recommendation() -> None:
 
 # ── _normalize_recommended_stage ──────────────────────────────────────────────
 
+
 def test_normalize_recommended_stage_maps_all_known_targets() -> None:
-    assert _normalize_recommended_stage("shared_code_edit.path_overlap_preflight") == "shared_edit_path_overlap"
+    assert (
+        _normalize_recommended_stage("shared_code_edit.path_overlap_preflight")
+        == "shared_edit_path_overlap"
+    )
     assert _normalize_recommended_stage("publish_push.posture_preflight") == "publish_push_posture"
     assert _normalize_recommended_stage("task_board.parking_preflight") == "task_board_parking"
 
@@ -66,10 +70,14 @@ def test_normalize_recommended_stage_returns_empty_for_unknown() -> None:
 
 
 def test_normalize_recommended_stage_strips_whitespace() -> None:
-    assert _normalize_recommended_stage("  shared_code_edit.path_overlap_preflight  ") == "shared_edit_path_overlap"
+    assert (
+        _normalize_recommended_stage("  shared_code_edit.path_overlap_preflight  ")
+        == "shared_edit_path_overlap"
+    )
 
 
 # ── build_hook_chain_readout extra branches ───────────────────────────────────
+
 
 def test_hook_chain_empty_agent_id_falls_back_to_placeholder() -> None:
     payload = build_hook_chain_readout(agent_id="")

@@ -130,6 +130,7 @@ def test_skill_parser_resolve_for_request_applies_l1_to_l3_flow(tmp_path: Path) 
 
 # ── private helpers ───────────────────────────────────────────────────────────
 
+
 def test_as_string_list_filters_non_strings_and_strips_blanks() -> None:
     assert _as_string_list(["  a  ", "b", "", 42, None]) == ["a", "b"]
     assert _as_string_list([]) == []
@@ -167,11 +168,14 @@ def test_skill_parser_returns_empty_for_no_matching_trigger(tmp_path: Path) -> N
     skill_path = tmp_path / ".agent" / "skills" / "local_llm" / "SKILL.md"
     _write_skill(skill_path, skill_id="local_llm", body="Body.")
     from scripts.verify_skill_registry import _normalize_sha256
+
     registry_path = _write_registry(
         tmp_path,
         skill_path=".agent/skills/local_llm/SKILL.md",
         sha256=_normalize_sha256(skill_path),
     )
     parser = SkillContractParser(repo_root=tmp_path, registry_path=registry_path)
-    matches = parser.resolve_for_request(query="something completely unrelated", execution_profile="engineering")
+    matches = parser.resolve_for_request(
+        query="something completely unrelated", execution_profile="engineering"
+    )
     assert matches == []

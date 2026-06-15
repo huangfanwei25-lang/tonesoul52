@@ -6,9 +6,7 @@ from typing import Dict, List, Set
 from ..issue_codes import IssueCode, issue
 
 __ts_layer__ = "observability"
-__ts_purpose__ = (
-    "Tech trace validate: verify that captured traces satisfy schema requirements."
-)
+__ts_purpose__ = "Tech trace validate: verify that captured traces satisfy schema requirements."
 
 
 def _load_json(path: str) -> Dict[str, object]:

@@ -9,9 +9,7 @@ from tonesoul.runtime_adapter_normalization import (
 )
 
 __ts_layer__ = "pipeline"
-__ts_purpose__ = (
-    "Refresh subject context within the runtime adapter lifecycle."
-)
+__ts_purpose__ = "Refresh subject context within the runtime adapter lifecycle."
 
 
 def _safe_parse_dt(

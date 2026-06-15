@@ -2,9 +2,7 @@ from enum import Enum
 from typing import Any
 
 __ts_layer__ = "shared"
-__ts_purpose__ = (
-    "Canonical issue code registry for structured error reporting."
-)
+__ts_purpose__ = "Canonical issue code registry for structured error reporting."
 
 
 class IssueCode(str, Enum):

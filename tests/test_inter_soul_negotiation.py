@@ -90,6 +90,7 @@ def test_negotiation_result_to_dict_exports_public_contract() -> None:
 
 # ── _resolve_field ────────────────────────────────────────────────────────────
 
+
 def test_resolve_field_reads_top_level_attribute() -> None:
     packet = _packet(total=0.5, zone="safe")
     assert _resolve_field(packet, "zone") == "safe"
@@ -113,6 +114,7 @@ def test_resolve_field_returns_none_for_missing_signal_key() -> None:
 
 # ── _compute_divergence_score and _compute_signal_gap ─────────────────────────
 
+
 def test_compute_divergence_score_identical_packets_returns_zero() -> None:
     packet = _packet(total=0.5, zone="safe", lambda_state="coherent", semantic_delta=0.3)
     score = TensionNegotiator._compute_divergence_score(packet, packet)
@@ -128,28 +130,31 @@ def test_compute_divergence_score_different_zone_adds_penalty() -> None:
 
 
 def test_compute_signal_gap_empty_signals_returns_zero() -> None:
-    p1 = TensionPacket(soul_id="s", timestamp="t", total=0.5, zone="z",
-                       lambda_state="l", signals={})
-    p2 = TensionPacket(soul_id="s", timestamp="t", total=0.5, zone="z",
-                       lambda_state="l", signals={})
+    p1 = TensionPacket(
+        soul_id="s", timestamp="t", total=0.5, zone="z", lambda_state="l", signals={}
+    )
+    p2 = TensionPacket(
+        soul_id="s", timestamp="t", total=0.5, zone="z", lambda_state="l", signals={}
+    )
     assert TensionNegotiator._compute_signal_gap(p1, p2) == 0.0
 
 
 def test_compute_signal_gap_missing_key_in_one_packet_uses_zero() -> None:
-    p1 = TensionPacket(soul_id="s", timestamp="t", total=0.5, zone="z",
-                       lambda_state="l", signals={"x": 0.8})
-    p2 = TensionPacket(soul_id="s", timestamp="t", total=0.5, zone="z",
-                       lambda_state="l", signals={})
+    p1 = TensionPacket(
+        soul_id="s", timestamp="t", total=0.5, zone="z", lambda_state="l", signals={"x": 0.8}
+    )
+    p2 = TensionPacket(
+        soul_id="s", timestamp="t", total=0.5, zone="z", lambda_state="l", signals={}
+    )
     gap = TensionNegotiator._compute_signal_gap(p1, p2)
     assert gap == 0.8  # (0.8 - 0.0) / 1
 
 
 # ── sovereign override on lambda_state ───────────────────────────────────────
 
+
 def test_negotiator_sovereign_override_on_lambda_state_difference() -> None:
-    negotiator = TensionNegotiator(
-        SovereigntyBoundary(frozenset({"lambda_state"}), frozenset())
-    )
+    negotiator = TensionNegotiator(SovereigntyBoundary(frozenset({"lambda_state"}), frozenset()))
     result = negotiator.negotiate(
         _packet(total=0.5, lambda_state="coherent"),
         _packet(total=0.5, lambda_state="fragmented"),

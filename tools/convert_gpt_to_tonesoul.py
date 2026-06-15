@@ -16,16 +16,16 @@ ToneSoul GPT 轉換工具
 
 from __future__ import annotations
 
+import argparse
+import hashlib
 import json
 import os
 import sys
 import time
-import hashlib
-import argparse
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import List, Dict, Any, Optional
-from dataclasses import dataclass, asdict
+from typing import Any, Dict, List, Optional
 
 # Ensure we can import from repository root when used as a tool.
 sys.path.append(str(Path(__file__).resolve().parents[1]))

@@ -12,9 +12,7 @@ from tonesoul.dream_observability import HTML_FILENAME, JSON_FILENAME, build_das
 from tonesoul.perception.source_registry import CuratedSourceSelection, select_curated_registry_urls
 
 __ts_layer__ = "orchestration"
-__ts_purpose__ = (
-    "Autonomous schedule: manage timed and triggered autonomous loop cycles."
-)
+__ts_purpose__ = "Autonomous schedule: manage timed and triggered autonomous loop cycles."
 
 SleepFunc = Callable[[float], None]
 

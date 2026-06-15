@@ -97,6 +97,7 @@ def test_build_subsystem_parity_readout_emits_expected_status_mix() -> None:
 
 # ── _family ──────────────────────────────────────────────────────────────────
 
+
 def test_family_returns_dict_with_all_required_keys() -> None:
     f = _family(
         "test_family",
@@ -117,6 +118,7 @@ def test_family_returns_dict_with_all_required_keys() -> None:
 
 
 # ── _class_counts ─────────────────────────────────────────────────────────────
+
 
 def test_class_counts_tallies_known_statuses() -> None:
     families = [
@@ -145,6 +147,7 @@ def test_class_counts_empty_list_returns_zeros() -> None:
 
 
 # ── _build_next_focus ─────────────────────────────────────────────────────────
+
 
 def test_build_next_focus_default_target_branch() -> None:
     focus = _build_next_focus(
@@ -191,10 +194,14 @@ def test_build_next_focus_non_matching_target_uses_generic_operator_action() -> 
     )
     assert focus["resolved_to"] == "some.other_target"
     assert "claim_recommendation" not in " ".join(focus["focus_pressures"])
-    assert "narrowest preflight" in focus["operator_action"] or "bounded hook" in focus["operator_action"]
+    assert (
+        "narrowest preflight" in focus["operator_action"]
+        or "bounded hook" in focus["operator_action"]
+    )
 
 
 # ── build_subsystem_parity_readout edge cases ─────────────────────────────────
+
 
 def test_build_subsystem_parity_readout_short_board_not_visible() -> None:
     payload = build_subsystem_parity_readout(

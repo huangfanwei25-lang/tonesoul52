@@ -23,9 +23,7 @@ from enum import Enum
 from typing import Dict, Optional
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Gate compute: evaluate YSS gate logic and emit pass/fail with justification."
-)
+__ts_purpose__ = "Gate compute: evaluate YSS gate logic and emit pass/fail with justification."
 
 
 class RoutingPath(Enum):

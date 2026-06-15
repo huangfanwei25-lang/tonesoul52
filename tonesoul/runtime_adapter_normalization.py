@@ -3,7 +3,9 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 
 __ts_layer__ = "pipeline"
-__ts_purpose__ = "Runtime adapter normalization: normalizes raw context payloads to canonical shape."
+__ts_purpose__ = (
+    "Runtime adapter normalization: normalizes raw context payloads to canonical shape."
+)
 
 _CLOSEOUT_STATUSES = {"complete", "partial", "blocked", "underdetermined"}
 _CLOSEOUT_STOP_REASONS = {

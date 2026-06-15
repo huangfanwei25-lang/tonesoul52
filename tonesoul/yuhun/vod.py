@@ -21,9 +21,7 @@ from .shadow_doc import (
 )
 
 __ts_layer__ = "semantic"
-__ts_purpose__ = (
-    "VOD (Voice-of-Design): encode and query design intent as semantic constraints."
-)
+__ts_purpose__ = "VOD (Voice-of-Design): encode and query design intent as semantic constraints."
 
 
 class TensionLevel(str, Enum):

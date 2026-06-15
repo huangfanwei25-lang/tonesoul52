@@ -6,7 +6,7 @@ import requests
 
 from memory.genesis import Genesis
 from tools.api_client import CredentialsResolver, MoltbookClient
-from tools.schema import ToolErrorCode, tool_error, tool_success, enforce_responsibility_tier
+from tools.schema import ToolErrorCode, enforce_responsibility_tier, tool_error, tool_success
 
 
 def _extract_post_id(payload: dict) -> str | None:

@@ -57,6 +57,7 @@ def test_inference_check_returns_timeout_when_selection_exhausts_budget(monkeypa
 
 # ── resolve_thinking_tier ────────────────────────────────────────────────────
 
+
 def test_resolve_thinking_tier_maps_l2_and_l3_to_cloud() -> None:
     assert resolve_thinking_tier("L2") is ThinkingTier.CLOUD
     assert resolve_thinking_tier("L3") is ThinkingTier.CLOUD
@@ -81,6 +82,7 @@ def test_resolve_thinking_tier_auto_tier_resolves_to_local_by_default() -> None:
 
 
 # ── LLMRouter static helpers ──────────────────────────────────────────────────
+
 
 def test_normalize_backend_name_lowercases_and_strips() -> None:
     assert LLMRouter._normalize_backend_name("  Ollama  ") == "ollama"
@@ -113,6 +115,7 @@ def test_coerce_tier_string_values() -> None:
 
 
 # ── LLMRouter.prime ───────────────────────────────────────────────────────────
+
 
 def test_prime_seeds_cached_client_and_backend() -> None:
     router = LLMRouter()

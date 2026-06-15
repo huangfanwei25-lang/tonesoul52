@@ -28,9 +28,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 __ts_layer__ = "perception"
-__ts_purpose__ = (
-    "Web ingest: fetch and parse web content into structured perception units."
-)
+__ts_purpose__ = "Web ingest: fetch and parse web content into structured perception units."
 
 
 @dataclass

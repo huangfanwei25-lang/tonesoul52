@@ -42,9 +42,7 @@ from tonesoul.drift_monitor import DriftMonitor, DriftSnapshot
 from tonesoul.jump_monitor import JumpMonitor, JumpSignal, LockdownStatus
 
 __ts_layer__ = "semantic"
-__ts_purpose__ = (
-    "World sense: integrate external world signals into the yuhun semantic model."
-)
+__ts_purpose__ = "World sense: integrate external world signals into the yuhun semantic model."
 
 # ─────────────────────────────────────────────
 # 感知快照結構

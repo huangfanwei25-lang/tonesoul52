@@ -3,9 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 __ts_layer__ = "observability"
-__ts_purpose__ = (
-    "True verification summary: aggregate and report verification pass/fail evidence."
-)
+__ts_purpose__ = "True verification summary: aggregate and report verification pass/fail evidence."
 
 
 def _is_scalar(value: Any) -> bool:

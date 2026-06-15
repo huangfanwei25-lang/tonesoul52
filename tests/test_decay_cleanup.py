@@ -57,12 +57,15 @@ def test_sqlite_cleanup_decayed_returns_integer_count(tmp_path):
 def test_jsonl_cleanup_with_only_recent_records_removes_none(tmp_path):
     source = MemorySource.SELF_JOURNAL
     db = JsonlSoulDB(source_map={source: tmp_path / "self_journal.jsonl"})
-    db.append(source, {
-        "timestamp": _iso_now(),
-        "statement": "fresh memory",
-        "relevance_score": 0.9,
-        "access_count": 5,
-    })
+    db.append(
+        source,
+        {
+            "timestamp": _iso_now(),
+            "statement": "fresh memory",
+            "relevance_score": 0.9,
+            "access_count": 5,
+        },
+    )
 
     cleaned = db.cleanup_decayed(source)
 
@@ -73,12 +76,15 @@ def test_jsonl_cleanup_with_only_recent_records_removes_none(tmp_path):
 def test_sqlite_cleanup_with_only_recent_records_removes_none(tmp_path):
     source = MemorySource.SELF_JOURNAL
     db = SqliteSoulDB(db_path=tmp_path / "soul.db")
-    db.append(source, {
-        "timestamp": _iso_now(),
-        "statement": "fresh memory",
-        "relevance_score": 0.9,
-        "access_count": 5,
-    })
+    db.append(
+        source,
+        {
+            "timestamp": _iso_now(),
+            "statement": "fresh memory",
+            "relevance_score": 0.9,
+            "access_count": 5,
+        },
+    )
 
     cleaned = db.cleanup_decayed(source)
 

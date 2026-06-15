@@ -24,9 +24,7 @@ from tonesoul.scribe.narrative_builder import (
 )
 
 __ts_layer__ = "domain"
-__ts_purpose__ = (
-    "Scribe engine: orchestrate the narrative and artifact generation pipeline."
-)
+__ts_purpose__ = "Scribe engine: orchestrate the narrative and artifact generation pipeline."
 
 logger = logging.getLogger(__name__)
 
