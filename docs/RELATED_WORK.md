@@ -273,6 +273,38 @@ level — both are deployment-level engineering, not theoretical advances:
 
 Neither requires adopting ToneSoul's vocabulary or thesis to reuse.
 
+## 5. Peer deployments (real systems, not papers)
+
+The academic anchors above show the *problems* are studied. A different kind of
+evidence: **other builders independently shipping the same governance pattern.**
+
+- **Eliyah Oren / alicken-lai — Ambient OS / SingleClaw-DMN**
+  (<https://github.com/alicken-lai/ambient-somatic-intelligence>,
+  <https://github.com/alicken-lai/SingleClaw-DMN>; framework site
+  <https://eliyahoren.com/>). Read at README level (E3), not a deep code audit.
+  A single-creator "Human-AI OS" whose governance core converges with ToneSoul's
+  on **structure**, not just vocabulary: a **Guardian gate** classifying actions
+  `ALLOW / REVIEW_REQUIRED / BLOCK` (≈ ToneSoul's verdict + reflex BLOCK); an
+  **append-only audit memory** ("DMN", no retroactive rewrite ≈ Aegis chain +
+  the `delete_memory` prohibition); **"better memory, not more agents"** (≈ the
+  single-creator, memory-centric, anti-swarm stance); regression-tested with
+  honest caveats ("replay PASS = bounded behavior under test, not proof of
+  real-world autonomy" ≈ the E1–E6 ladder); and — most strikingly — an
+  **advisory observability layer that explicitly does NOT override the gate**
+  (his v070–v077 "observational only"), an independent arrival at
+  **DESIGN Invariant 3 (Advisory ≠ Canonical)**.
+
+  **What this is and is NOT.** It is *evidence ToneSoul sits on a convergent
+  design point* (gate + append-only audit + advisory-not-canonical + test-bounded
+  honesty), reached independently — not validation, and **not the same system**.
+  Key differences, kept honest: his governance object is **agent ACTION
+  side-effects** (operational safety, approval routing) where ToneSoul's is **AI
+  OUTPUT honesty** (epistemic accountability); his framing adds an embodied/somatic
+  layer + a coaching/civilization program ToneSoul has none of; and maturity
+  differs (his = frozen-research / v0.1; ToneSoul = pip-installable + CI-gated).
+  His action-side-effect gating is a *complementary* axis ToneSoul does not
+  cover — prior art if ToneSoul ever governs actions, not just outputs.
+
 ---
 
 ## Verification provenance
