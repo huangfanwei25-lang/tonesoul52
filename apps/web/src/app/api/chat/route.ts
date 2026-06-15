@@ -660,6 +660,20 @@ function buildChatFallbackPayload(
     };
 }
 
+function buildBackendHeaders(): Record<string, string> {
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    // The Python chat endpoint (api/chat.py) enforces write-API auth via
+    // _require_write_api_auth, which is fail-closed in Vercel preview/production.
+    // It accepts "Authorization: Bearer <token>" or "X-ToneSoul-Write-Token".
+    // Forward the server-side token so a token-protected backend is reachable
+    // through this proxy. Read at request time (never exposed to the client).
+    const writeToken = process.env.TONESOUL_WRITE_API_TOKEN?.trim();
+    if (writeToken) {
+        headers["X-ToneSoul-Write-Token"] = writeToken;
+    }
+    return headers;
+}
+
 async function forwardToBackend(
     backendUrl: string,
     body: ChatRequestPayload,
@@ -667,6 +681,7 @@ async function forwardToBackend(
 ): Promise<Response> {
     const { retryMaxAttempts, retryBaseDelayMs, timeoutMs } = budget;
     let lastTransportError: unknown = null;
+    const backendHeaders = buildBackendHeaders();
 
     for (let attempt = 0; attempt < retryMaxAttempts; attempt++) {
         const controller = new AbortController();
@@ -674,7 +689,7 @@ async function forwardToBackend(
         try {
             const response = await fetch(`${backendUrl}/api/chat`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: backendHeaders,
                 body: JSON.stringify(body),
                 signal: controller.signal,
             });
