@@ -1,7 +1,7 @@
 # ToneSoul Design
 
 > Purpose: explain why ToneSoul is shaped this way, what its load-bearing invariants are, and how later agents should continue work without flattening the system into "prompts plus memory."
-> Last Updated: 2026-03-30
+> Last Updated: 2026-06-16
 > Status: current design center for whole-system reasoning. This file complements `README.md` and the deeper architecture contracts; it does not outrank runtime code, tests, or canonical governance files.
 
 > **⚠️ If your question is "what does `tonesoul/<x>.py` do / which layer is it in / who depends on it?"**
@@ -58,6 +58,14 @@ ToneSoul is not:
 - a claim that fluent self-description automatically proves full subjecthood
 
 Those distinctions matter because the repo contains all of these neighboring ideas, and ToneSoul only works if they stay separated.
+
+## Existential Ground: Choice Before Identity (E0)
+
+`AXIOMS.json` opens with E0 — **我選擇故我在 (Choice Before Identity)**, not 我思故我在. It sits beneath the eight axioms and it decides what "character" in the Core Design Claim is allowed to mean.
+
+ToneSoul does not infer character from any claim of awareness, sentience, or inner experience. It builds character from the accumulation of **traceable choice-points under conflict** — each Guardian refusal, council dissent, and de-escalation directive recorded on the immutable trace chain. The continuity of that visible decision pattern *is* what "character" means here: behavior made consistent and challengeable by a transparent, auditable substrate, not by a hidden or mythologized self.
+
+This is the load-bearing distinction for every later agent: **continuity of the record is real and buildable — that is E0; a continuous subjective self is neither claimed nor measured** (the "spark" question has been probed and returned null at this scale). A gate that asks *"is this draft escalating beyond my actual intent?"* (the advisory intent-proportionality sensor, below) is a **choice-point generator** — it manufactures the kind of recorded, accountable decision E0 is about. It does not make the system conscious; it makes the system's choices legible. Do not let this slide, in either direction, into a consciousness claim or its reflexive denial.
 
 ## The Load-Bearing Layers
 
@@ -173,6 +181,8 @@ Do not collapse those into one "confidence" story.
 Packet, checkpoint, compaction, subject snapshot, and working-style playbook exist to carry forward bounded residue.
 They do not authorize hidden-thought transfer or mythologized shared selfhood.
 
+This is the operational face of E0: what carries across sessions is the *record of accountable choices*, not a continuous subjective self.
+
 ### Invariant 3: Advisory Is Not Canonical
 
 Later agents may:
@@ -185,6 +195,8 @@ They may not silently promote advisory surfaces into:
 - canonical governance truth
 - durable identity
 - task scope or success criteria
+
+Concrete example: the intent-proportionality gate (advisory, 2026-06) *suggests* contracting a draft toward the intent when it detects escalation beyond the ask. It does **not** auto-edit and does **not** block. See "Tier-5 Advisory Sensors" below.
 
 ### Invariant 4: Descriptive Is Not Calibrated
 
@@ -210,6 +222,15 @@ The expected order remains:
 5. `task.md`
 6. optional deeper reads only after the bounded entry surfaces are understood
 
+## Tier-5 Advisory Sensors (measured before wired)
+
+Two sensors landed in 2026-06 as the first real-capability steps past the lexical guardian. Both are **advisory, default-OFF, record-only, and never block or auto-edit** (Invariant 3); both degrade to `unavailable` without an embedding model:
+
+- **`semantic_overclaim_sensor`** — embedding-based; flags when a draft resembles a `meta.not_for` forbidden claim class (consciousness / safety-certification / legal-proof) even under paraphrase the keyword guardian misses. It *extends past* the "truth sensors are lexical" line in `README.md`, so it is labeled explicitly: embedding-distance, Tier-5 prototype. Measured limits: `docs/status/semantic_overclaim_eval_2026-06-15.md`.
+- **`intent_proportionality`** (the "小天使") — checks whether a draft escalated *beyond the agent's own intent* (added harm/threat/coercion the ask did not contain) and, if so, suggests contracting to the faithful core. It is ToneSoul's first self-referential proportionality check — a choice-point generator in E0 terms. Measured limits: `docs/status/intent_proportionality_eval_2026-06-15.md`.
+
+Promotion from advisory-signal to actual gate has explicit prerequisites in those eval docs. Until they are met, treating either sensor as enforcement is exactly the Invariant 3 failure these notes exist to prevent.
+
 ## Why ToneSoul Keeps Adding These Contracts
 
 Many of the newer contracts exist because the default failure mode of powerful assistants is not "being too weak."
@@ -233,12 +254,13 @@ The goal is to make the system harder to flatter, easier to audit, and safer to 
 
 ## The Current Design Center
 
-As of 2026-03-30, ToneSoul should be read as:
+As of 2026-06-16, ToneSoul should be read as:
 
 - a strong internal / guided-beta continuity and governance system
 - with bounded later-agent entry surfaces
 - with explicit honesty about evidence and calibration gaps
 - with a growing operating-style continuity layer
+- with its first two semantic (embedding-based) advisory sensors landed but default-OFF and uncalibrated
 - but not yet a publicly mature, broadly proven, live shared-memory platform
 
 ## The Current Short Board

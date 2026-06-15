@@ -4,7 +4,7 @@
 > If you want AI output governance you can read, run, and challenge, start here. (It will not make your model truthful — current truth sensors are lexical heuristics; see "Evidence Honesty" below.)
 
 > Purpose: public repository entrypoint for ToneSoul's architecture, governance posture, and practical onboarding.
-> Last Updated: 2026-06-15
+> Last Updated: 2026-06-16
 >
 > Built by Fan-Wei Huang (黃梵威) with AI collaborators — Claude, Codex, Antigravity — whose contributions are traceable in the git history (`Co-Authored-By` trailers) and in `AXIOMS.json` lineage. Not a sole-creator artifact, and not a claim that the AI collaborators are conscious — an honest record of who did the work.
 
@@ -151,7 +151,7 @@ pip install tonesoul52[dev]
 pytest tests/ -v
 ```
 
-Current suite size: **7,772 tests collected, 7,770 passing** (1 skipped; verified clean-CI 2026-06-15, Python 3.10–3.13, Windows/Ubuntu). CI runs the blocking Python test gate on pull requests, and `master` **is** branch-protected (required checks: `Test Python 3.12` + `Commit Attribution Check`, strict up-to-date), so red commits are blocked at the machine level for both PRs and direct pushes.
+Current suite size: **7,778 tests collected, 7,777 passing** (1 skipped; verified clean-CI 2026-06-16, Python 3.10–3.13, Windows/Ubuntu). CI runs the blocking Python test gate on pull requests, and `master` **is** branch-protected (required checks: `Test Python 3.12` + `Commit Attribution Check`, strict up-to-date), so red commits are blocked at the machine level for both PRs and direct pushes.
 
 For local development, use `./test.sh` as the canonical core pre-commit check — it mirrors the core Python gates (ruff + bounded black gate + pytest), not every CI job. Modes: `./test.sh` (full), `lint` (only lint+format), `test` (only tests), `fast` (lint + tests with -x). CI also runs web quality, architecture/docs contracts, red-team, package integrity, and memory hygiene gates.
 
@@ -460,11 +460,11 @@ then crystallizes repeated high-value patterns into durable rules.
 In plain words: important things are auto-kept, chatter is auto-forgotten.
 </details>
 
-## Quality Snapshot (2026-04-13)
+## Quality Snapshot (2026-06-16)
 
 | Metric | Value |
 |---|---|
-| Tests | 7,772 collected / 7,770 passing (1 skipped) |
+| Tests | 7,778 collected / 7,777 passing (1 skipped) |
 | Tested `tonesoul/` modules | 166 / 204 (81%) |
 | Code lines | 72,631 across 235 files |
 | Bare `except:` / TODO / FIXME | 0 / 0 / 0 |

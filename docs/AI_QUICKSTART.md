@@ -1,7 +1,7 @@
 # ToneSoul AI Quickstart
 
 > Purpose: give later AI agents the minimum operational entry surface before they read the repo in bulk.
-> Last Updated: 2026-04-14
+> Last Updated: 2026-06-16
 > Status: operational first-hop owner; subordinate to `AXIOMS.json`, executable code, tests, `task.md`, and canonical architecture contracts.
 > Use When: first minute of a session, before touching code or making architecture claims.
 
@@ -80,6 +80,7 @@ If you claimed a task, release it after the handoff path is complete.
 - `docs/foundation/README.md` = thin project packet
 - `docs/README.md` = curated docs gateway
 - `docs/INDEX.md` = exhaustive registry only when needed
+- Optional advisory sensors (Tier-5, default-OFF): semantic overclaim + intent proportionality — see `tonesoul/council/` + the evals in `docs/status/` only if working on output honesty/refinement
 
 ## Canonical Handoff Line
 
