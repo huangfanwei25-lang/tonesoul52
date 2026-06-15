@@ -252,6 +252,24 @@ def full_diagnostic(agent_id: str = "unknown") -> str:
                     f"  Chain errors: {len(audit.get('chain_errors', []))}",
                 ]
             )
+            # Explain a 'compromised' verdict instead of leaving it bare on the main
+            # screen: distinguish tamper evidence (signature failures) from a
+            # head/tail re-anchor gap, which is typically a local/historical trace
+            # artifact (traces appended without re-anchoring the stored head), not a
+            # tamper. The verdict itself is unchanged (still honest) — this only adds
+            # context so an outside reader does not misread it as a live breach.
+            if str(audit.get("integrity")) != "intact":
+                if len(audit.get("signature_failures", [])) > 0:
+                    lines.append("  ⚠ Cause: signature failure(s) — possible tamper; investigate.")
+                elif audit.get("chain_valid") and not audit.get("head_matches_tail"):
+                    lines.append(
+                        "  Note: 'compromised' here = stored chain head not re-anchored to the "
+                        "current log tail (0 signature failures, chain otherwise valid) — "
+                        "typically a local/historical re-anchor gap, NOT tamper. A fresh clone "
+                        "with no local trace store will not show this."
+                    )
+                else:
+                    lines.append("  Note: chain structurally invalid — inspect chain_errors.")
         except ImportError:
             lines.append("[Aegis Shield] Not available (PyNaCl not installed)")
         except Exception as exc:
