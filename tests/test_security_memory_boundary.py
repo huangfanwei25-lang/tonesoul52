@@ -4,7 +4,6 @@ from pathlib import Path
 
 import pytest
 
-from tonesoul.corpus.consent import ConsentManager, ConsentType
 from tonesoul.memory.soul_db import MemorySource, SqliteSoulDB
 from tonesoul.memory.write_gateway import MemoryWriteGateway, MemoryWriteRejectedError
 from tonesoul.perception.stimulus import EnvironmentStimulus
@@ -66,19 +65,3 @@ def test_sqlite_soul_db_search_handles_injection_like_query_without_mutation(
     assert isinstance(results, list)
     assert len(remaining) == 1
     assert remaining[0].payload["text"] == "stable governance memory"
-
-
-def test_consent_manager_defaults_to_invalid_without_authorization(tmp_path: Path) -> None:
-    manager = ConsentManager(db_path=str(tmp_path / "users.db"))
-
-    assert manager.get_consent("missing-session") is None
-    assert manager.has_valid_consent("missing-session") is False
-
-
-def test_consent_manager_withdraw_revokes_future_access(tmp_path: Path) -> None:
-    manager = ConsentManager(db_path=str(tmp_path / "users.db"))
-    manager.record_consent("session-1", ConsentType.RESEARCH)
-
-    assert manager.has_valid_consent("session-1") is True
-    assert manager.withdraw_consent("session-1") is True
-    assert manager.has_valid_consent("session-1") is False

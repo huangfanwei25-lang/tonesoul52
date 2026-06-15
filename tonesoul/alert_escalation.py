@@ -17,9 +17,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Alert escalation: route unresolved governance alerts to the appropriate handler."
-)
+__ts_purpose__ = "Alert escalation: route unresolved governance alerts to the appropriate handler."
 
 
 class AlertLevel(str, Enum):

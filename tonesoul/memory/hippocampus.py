@@ -1,3 +1,4 @@
+# PARTIAL-LIVE (as of 2026-06-15): of THIS root module, only the static compute_error_vector is live (used by the openclaw recall path). recall / recall_corrective / _apply_tension_context_boost are tested-but-NO-live-caller (parked RFC-012); the class is never instantiated at runtime. The default-ON corrective-recall branch (unified_pipeline.py) computes a ~zero error vector in the no-rewrite case (silent near-no-op). Do NOT delete as redundant — distinct from memory/openclaw/hippocampus.py (the primary recall). See docs/plans/01_active/tier4_structural_decisions_2026-06-15.md.
 import json
 import os
 from datetime import datetime
@@ -6,9 +7,7 @@ from typing import Any, Dict, List
 import numpy as np
 
 __ts_layer__ = "memory"
-__ts_purpose__ = (
-    "Hippocampus: short-to-long-term memory consolidation and indexed recall."
-)
+__ts_purpose__ = "Hippocampus: short-to-long-term memory consolidation and indexed recall."
 
 try:
     import faiss

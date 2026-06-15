@@ -240,11 +240,14 @@ def test_summarize_subjectivity_distribution_empty_db_returns_zeros(tmp_path) ->
 def test_list_subjectivity_records_with_limit(tmp_path) -> None:
     db, source = _build_db(tmp_path)
     for i in range(5):
-        db.append(source, {
-            "summary": f"Event record {i}",
-            "subjectivity_layer": "event",
-            "timestamp": f"2026-03-10T0{i}:00:00Z",
-        })
+        db.append(
+            source,
+            {
+                "summary": f"Event record {i}",
+                "subjectivity_layer": "event",
+                "timestamp": f"2026-03-10T0{i}:00:00Z",
+            },
+        )
 
     rows = list_subjectivity_records(db, source=source, limit=2)
     assert len(rows) == 2
@@ -252,10 +255,23 @@ def test_list_subjectivity_records_with_limit(tmp_path) -> None:
 
 def test_list_subjectivity_records_all_layers_when_no_filter(tmp_path) -> None:
     db, source = _build_db(tmp_path)
-    db.append(source, {"summary": "A tension record", "subjectivity_layer": "tension",
-                       "promotion_gate": {"status": "candidate"}, "timestamp": "2026-03-01T01:00:00Z"})
-    db.append(source, {"summary": "An event record", "subjectivity_layer": "event",
-                       "timestamp": "2026-03-01T02:00:00Z"})
+    db.append(
+        source,
+        {
+            "summary": "A tension record",
+            "subjectivity_layer": "tension",
+            "promotion_gate": {"status": "candidate"},
+            "timestamp": "2026-03-01T01:00:00Z",
+        },
+    )
+    db.append(
+        source,
+        {
+            "summary": "An event record",
+            "subjectivity_layer": "event",
+            "timestamp": "2026-03-01T02:00:00Z",
+        },
+    )
 
     rows = list_subjectivity_records(db, source=source)
     layers = {row["subjectivity_layer"] for row in rows}
@@ -265,10 +281,22 @@ def test_list_subjectivity_records_all_layers_when_no_filter(tmp_path) -> None:
 
 def test_list_subjectivity_records_filters_by_subjectivity_layer(tmp_path) -> None:
     db, source = _build_db(tmp_path)
-    db.append(source, {"summary": "A vow record", "subjectivity_layer": "vow",
-                       "timestamp": "2026-03-01T01:00:00Z"})
-    db.append(source, {"summary": "An event record", "subjectivity_layer": "event",
-                       "timestamp": "2026-03-01T02:00:00Z"})
+    db.append(
+        source,
+        {
+            "summary": "A vow record",
+            "subjectivity_layer": "vow",
+            "timestamp": "2026-03-01T01:00:00Z",
+        },
+    )
+    db.append(
+        source,
+        {
+            "summary": "An event record",
+            "subjectivity_layer": "event",
+            "timestamp": "2026-03-01T02:00:00Z",
+        },
+    )
 
     rows = list_subjectivity_records(db, source=source, subjectivity_layer="vow")
     assert len(rows) == 1

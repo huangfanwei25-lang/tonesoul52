@@ -7,9 +7,7 @@ from typing import Dict, List, Optional
 from .capture import load_text, normalize_tags, stable_hash, utc_now
 
 __ts_layer__ = "observability"
-__ts_purpose__ = (
-    "Tech trace normalize: standardize raw tech trace events into canonical format."
-)
+__ts_purpose__ = "Tech trace normalize: standardize raw tech trace events into canonical format."
 
 
 def _workspace_root() -> str:

@@ -20,7 +20,9 @@ def _load_json(path: Path) -> Optional[Dict]:
 
 def _load_session_traces() -> List[Dict]:
     """Load session traces from JSONL file."""
-    traces_path = Path(__file__).resolve().parents[3] / "memory" / "autonomous" / "session_traces.jsonl"
+    traces_path = (
+        Path(__file__).resolve().parents[3] / "memory" / "autonomous" / "session_traces.jsonl"
+    )
     traces: List[Dict] = []
     if not traces_path.exists():
         return traces
@@ -281,7 +283,9 @@ def render():
                 with st.expander("對話追蹤", expanded=False):
                     rows = []
                     for entry in reversed(conversations):
-                        context = entry.get("context") if isinstance(entry.get("context"), dict) else {}
+                        context = (
+                            entry.get("context") if isinstance(entry.get("context"), dict) else {}
+                        )
                         rows.append(
                             {
                                 "時間": _format_timestamp(entry.get("timestamp")),
@@ -401,10 +405,14 @@ def render():
                         when = st.text_input("使用時機", user_message or "對話追蹤轉存")
                         steps_text = st.text_area("步驟（每行一項）", "", height=100)
                         success_rate = st.slider("成功率", 0.0, 1.0, 0.8, 0.05)
-                        last_used = st.text_input("最後使用日期", datetime.now().strftime("%Y-%m-%d"))
+                        last_used = st.text_input(
+                            "最後使用日期", datetime.now().strftime("%Y-%m-%d")
+                        )
                         submit_pattern = st.form_submit_button("儲存策略模式")
                         if submit_pattern:
-                            steps = [line.strip() for line in steps_text.splitlines() if line.strip()]
+                            steps = [
+                                line.strip() for line in steps_text.splitlines() if line.strip()
+                            ]
                             if not name.strip():
                                 st.warning("請先填寫名稱。")
                             elif not steps:
@@ -460,7 +468,9 @@ def render():
                 )
                 entry = persona_traces[selection]
                 shadow = entry.get("shadow") if isinstance(entry.get("shadow"), dict) else {}
-                persona_meta = shadow.get("persona") if isinstance(shadow.get("persona"), dict) else {}
+                persona_meta = (
+                    shadow.get("persona") if isinstance(shadow.get("persona"), dict) else {}
+                )
                 vector = (
                     shadow.get("vector_estimate")
                     if isinstance(shadow.get("vector_estimate"), dict)

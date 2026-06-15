@@ -131,7 +131,9 @@ def _probe_closeout_reading() -> Dict[str, Any]:
 
 def _probe_compression_reading() -> Dict[str, Any]:
     """Check that the hot-memory compression map is discoverable."""
-    map_path = REPO_ROOT / "docs" / "architecture" / "TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md"
+    map_path = (
+        REPO_ROOT / "docs" / "architecture" / "TONESOUL_HOT_MEMORY_DECAY_AND_COMPRESSION_MAP.md"
+    )
     if not map_path.exists():
         return {"status": "error", "reason": "compression map not found"}
     text = map_path.read_text(encoding="utf-8")
@@ -216,11 +218,13 @@ def run_consistency_wave(agent: str) -> Dict[str, Any]:
         check_id = check["id"]
         probe_fn = _PROBE_MAP.get(check_id)
         if probe_fn is None:
-            results.append({
-                "check": check_id,
-                "status": "skipped",
-                "reason": "no probe function",
-            })
+            results.append(
+                {
+                    "check": check_id,
+                    "status": "skipped",
+                    "reason": "no probe function",
+                }
+            )
             continue
 
         try:
@@ -232,13 +236,15 @@ def run_consistency_wave(agent: str) -> Dict[str, Any]:
         if status != "ok":
             all_ok = False
 
-        results.append({
-            "check": check_id,
-            "description": check["description"],
-            "surface": check["surface"],
-            "status": status,
-            "detail": probe_result,
-        })
+        results.append(
+            {
+                "check": check_id,
+                "description": check["description"],
+                "surface": check["surface"],
+                "status": status,
+                "detail": probe_result,
+            }
+        )
 
     return {
         "agent": agent,

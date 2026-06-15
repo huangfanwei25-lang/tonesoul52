@@ -34,9 +34,7 @@ from tonesoul.store_keys import (
 )
 
 __ts_layer__ = "infrastructure"
-__ts_purpose__ = (
-    "Redis-backed key-value store: fast in-memory persistence with pub/sub support."
-)
+__ts_purpose__ = "Redis-backed key-value store: fast in-memory persistence with pub/sub support."
 
 
 class RedisStore:

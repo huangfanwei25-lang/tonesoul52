@@ -1,3 +1,10 @@
+# DORMANT (as of 2026-06-15): PARKED, not superseded. Wiring `assemble()` would
+# REPLACE the live pipeline's context-build (a behavior change), and the
+# `validate_context_sources` egress denylist has no context-source path-list to
+# guard in the current pipeline flow — so it is deliberately NOT wired. Its sibling
+# `dpr.py` IS wired (as an advisory signal in unified_pipeline.py); this is the half
+# of the old hook that could not be wired additively. Test-covered substrate +
+# future work; do not delete as redundant. See docs/plans/01_active/tier4_structural_decisions_2026-06-15.md.
 """
 YUHUN Core Protocol v1.0 — Context Assembler
 上下文組裝器

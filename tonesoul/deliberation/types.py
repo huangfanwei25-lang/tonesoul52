@@ -13,9 +13,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 
 __ts_layer__ = "governance"
-__ts_purpose__ = (
-    "Deliberation type definitions: round, vote, and outcome data structures."
-)
+__ts_purpose__ = "Deliberation type definitions: round, vote, and outcome data structures."
 
 
 class PerspectiveType(Enum):

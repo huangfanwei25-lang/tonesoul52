@@ -14,9 +14,7 @@ Usage:
 """
 
 __ts_layer__ = "shared"
-__ts_purpose__ = (
-    "Shared error types: canonical exception hierarchy for structured error handling."
-)
+__ts_purpose__ = "Shared error types: canonical exception hierarchy for structured error handling."
 
 
 class ToneSoulError(Exception):

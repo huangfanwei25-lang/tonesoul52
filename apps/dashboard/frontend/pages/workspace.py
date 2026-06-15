@@ -99,15 +99,19 @@ def render():
     seeds = list_seeds()
     skills = list_skills()
     latest = _latest_run_summary()
-    tier0_bundle = run_session_start_bundle(agent_id=WORKSPACE_AGENT_ID, tier=0, repo_root=workspace)
-    tier1_bundle = run_session_start_bundle(agent_id=WORKSPACE_AGENT_ID, tier=1, repo_root=workspace)
-    tier2_bundle = run_session_start_bundle(agent_id=WORKSPACE_AGENT_ID, tier=2, repo_root=workspace)
+    tier0_bundle = run_session_start_bundle(
+        agent_id=WORKSPACE_AGENT_ID, tier=0, repo_root=workspace
+    )
+    tier1_bundle = run_session_start_bundle(
+        agent_id=WORKSPACE_AGENT_ID, tier=1, repo_root=workspace
+    )
+    tier2_bundle = run_session_start_bundle(
+        agent_id=WORKSPACE_AGENT_ID, tier=2, repo_root=workspace
+    )
     tier0_shell = build_tier0_start_strip(tier0_bundle) if tier0_bundle.get("present") else {}
     tier1_shell = build_tier1_orientation_shell(tier1_bundle) if tier1_bundle.get("present") else {}
     tier2_drawer = (
-        build_tier2_deep_governance_drawer(tier2_bundle)
-        if tier2_bundle.get("present")
-        else {}
+        build_tier2_deep_governance_drawer(tier2_bundle) if tier2_bundle.get("present") else {}
     )
     walkthrough_pack = build_operator_walkthrough_pack(
         tier0_shell=tier0_shell,
@@ -222,8 +226,7 @@ def render():
         else:
             if tier2_drawer.get("recommended_open"):
                 st.warning(
-                    "建議開啟深層審查: "
-                    + ", ".join(tier2_drawer.get("trigger_reasons") or [])
+                    "建議開啟深層審查: " + ", ".join(tier2_drawer.get("trigger_reasons") or [])
                 )
             else:
                 st.caption("目前不需要深層審查。僅在有爭議或高風險操作時開啟。")
@@ -232,9 +235,7 @@ def render():
             for group in tier2_drawer.get("groups") or []:
                 st.markdown(f"**{group['name']}**")
                 for card in group.get("cards") or []:
-                    st.markdown(
-                        f"- `{card['title']}` [{card['status']}] — {card['summary']}"
-                    )
+                    st.markdown(f"- `{card['title']}` [{card['status']}] — {card['summary']}")
 
             commands = tier2_drawer.get("next_pull_commands") or []
             if commands:
@@ -276,16 +277,16 @@ def render():
 
             search_col1, search_col2 = st.columns(2)
             with search_col1:
-                use_local_search = st.checkbox("本地檢索", value=False, key="workspace_local_search")
+                use_local_search = st.checkbox(
+                    "本地檢索", value=False, key="workspace_local_search"
+                )
             with search_col2:
                 use_web_search = st.checkbox("網路檢索", value=False, key="workspace_web_search")
             search_boundary_cue = build_search_context_boundary_cue(
                 enable_local=use_local_search,
                 enable_web=use_web_search,
             )
-            st.caption(
-                f"{search_boundary_cue['summary']} {search_boundary_cue['boundary']}"
-            )
+            st.caption(f"{search_boundary_cue['summary']} {search_boundary_cue['boundary']}")
             search_preview = st.session_state.get("search_preview") or {}
             if search_preview.get("present"):
                 st.markdown("**Retrieval Preview**")

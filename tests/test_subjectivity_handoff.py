@@ -61,6 +61,7 @@ def test_markdown_helpers_render_handoff_and_status_lines_sections() -> None:
 
 # ── normalize_status_lines ────────────────────────────────────────────────────
 
+
 def test_normalize_status_lines_rejects_non_iterables() -> None:
     assert normalize_status_lines("a string") == []
     assert normalize_status_lines(b"bytes") == []
@@ -80,6 +81,7 @@ def test_normalize_status_lines_from_generator() -> None:
 
 # ── primary_status_line ───────────────────────────────────────────────────────
 
+
 def test_primary_status_line_returns_empty_for_empty_input() -> None:
     assert primary_status_line([]) == ""
     assert primary_status_line("not a list") == ""
@@ -90,6 +92,7 @@ def test_primary_status_line_returns_first_non_blank() -> None:
 
 
 # ── build_handoff_surface ─────────────────────────────────────────────────────
+
 
 def test_build_handoff_surface_without_extra_fields() -> None:
     result = build_handoff_surface(
@@ -116,6 +119,7 @@ def test_build_handoff_surface_ignores_non_mapping_extra_fields() -> None:
 
 # ── extend_handoff_markdown ───────────────────────────────────────────────────
 
+
 def test_extend_handoff_markdown_skips_non_mapping_handoff() -> None:
     lines: list[str] = ["before"]
     extend_handoff_markdown(lines, handoff=None)
@@ -135,6 +139,7 @@ def test_extend_handoff_markdown_without_extra_fields() -> None:
 
 
 # ── extend_status_lines_markdown ──────────────────────────────────────────────
+
 
 def test_extend_status_lines_markdown_renders_none_when_empty() -> None:
     lines: list[str] = []

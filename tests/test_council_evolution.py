@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from tonesoul.council.evolution import CouncilEvolution, PerspectiveHistory
+from tonesoul.council.voting_evolution import CouncilEvolution, PerspectiveHistory
 
 
 @pytest.fixture

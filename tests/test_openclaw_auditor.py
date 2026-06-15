@@ -89,14 +89,17 @@ def test_openclaw_auditor_flags_inference_layer_mismatch():
 
 # ── AuditHookResult.to_dict ───────────────────────────────────────────────────
 
+
 def test_audit_hook_result_to_dict_all_fields():
     from tonesoul.openclaw_auditor import AuditHookResult
+
     hook = AuditHookResult(hook="test_hook", result="pass", code="CODE", score=0.9, note="ok")
     d = hook.to_dict()
     assert d == {"hook": "test_hook", "result": "pass", "code": "CODE", "score": 0.9, "note": "ok"}
 
 
 # ── OpenClawAuditReport.passed ────────────────────────────────────────────────
+
 
 def test_audit_report_passed_true_on_pass():
     auditor = OpenClawAuditor(persist_to_ledger=False)
@@ -110,6 +113,7 @@ def test_audit_report_passed_true_on_pass():
 
 # ── No session → default session used ────────────────────────────────────────
 
+
 def test_audit_without_session_generates_default_session():
     auditor = OpenClawAuditor(persist_to_ledger=False)
     report = auditor.audit("safe action", context_fragments=["safe"])
@@ -118,6 +122,7 @@ def test_audit_without_session_generates_default_session():
 
 
 # ── _normalize_session with dict mapping ─────────────────────────────────────
+
 
 def test_audit_with_mapping_session():
     auditor = OpenClawAuditor(persist_to_ledger=False)
@@ -131,6 +136,7 @@ def test_audit_with_mapping_session():
 
 # ── build_audit_log delegates to to_dict ──────────────────────────────────────
 
+
 def test_build_audit_log_matches_to_dict():
     auditor = OpenClawAuditor(persist_to_ledger=False)
     report = auditor.audit("safe action", context_fragments=["safe"])
@@ -139,6 +145,7 @@ def test_build_audit_log_matches_to_dict():
 
 
 # ── CPT scores in to_dict ──────────────────────────────────────────────────────
+
 
 def test_audit_report_to_dict_contains_cpt():
     auditor = OpenClawAuditor(persist_to_ledger=False)

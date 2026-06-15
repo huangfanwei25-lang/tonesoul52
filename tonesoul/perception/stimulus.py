@@ -15,9 +15,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 __ts_layer__ = "perception"
-__ts_purpose__ = (
-    "Stimulus: normalize and classify incoming sensory signals for the pipeline."
-)
+__ts_purpose__ = "Stimulus: normalize and classify incoming sensory signals for the pipeline."
 
 VALID_OBSERVATION_MODES = {
     "remote_feed",

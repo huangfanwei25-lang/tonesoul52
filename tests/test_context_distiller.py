@@ -209,6 +209,7 @@ def test_distiller_handles_corrupted_cache_file(tmp_path: Path):
 
 # ── _to_float ─────────────────────────────────────────────────────────────────
 
+
 def test_to_float_converts_numeric_types() -> None:
     assert _to_float(1) == 1.0
     assert _to_float(0.5) == 0.5
@@ -222,6 +223,7 @@ def test_to_float_returns_none_for_invalid() -> None:
 
 
 # ── _parse_timestamp ──────────────────────────────────────────────────────────
+
 
 def test_parse_timestamp_parses_z_suffix() -> None:
     from datetime import timezone
@@ -241,6 +243,7 @@ def test_parse_timestamp_returns_none_for_invalid() -> None:
 
 # ── _normalize_string_list ────────────────────────────────────────────────────
 
+
 def test_normalize_string_list_from_list() -> None:
     result = _normalize_string_list(["  alpha  ", "beta", "  "])
     assert result == ["alpha", "beta"]
@@ -258,6 +261,7 @@ def test_normalize_string_list_from_empty() -> None:
 
 # ── _unique_preserve_order ────────────────────────────────────────────────────
 
+
 def test_unique_preserve_order_removes_duplicates() -> None:
     result = _unique_preserve_order(["a", "b", "a", "c", "b"])
     assert result == ["a", "b", "c"]
@@ -269,6 +273,7 @@ def test_unique_preserve_order_ignores_blank() -> None:
 
 
 # ── ContextPattern.to_dict ────────────────────────────────────────────────────
+
 
 def test_context_pattern_to_dict_round_trip() -> None:
     now = _utc_now()
@@ -289,6 +294,7 @@ def test_context_pattern_to_dict_round_trip() -> None:
 
 # ── DistillationResult.to_dict ────────────────────────────────────────────────
 
+
 def test_distillation_result_to_dict_structure() -> None:
     now = _utc_now()
     pattern = ContextPattern("value", "v", [], 0.5, now)
@@ -308,6 +314,7 @@ def test_distillation_result_to_dict_structure() -> None:
 
 # ── extract_decision_patterns ─────────────────────────────────────────────────
 
+
 def test_extract_decision_patterns_empty_returns_empty(tmp_path: Path) -> None:
     distiller = ContextDistiller(object(), cache_path=tmp_path / "c.json")
     assert distiller.extract_decision_patterns([]) == []
@@ -315,9 +322,24 @@ def test_extract_decision_patterns_empty_returns_empty(tmp_path: Path) -> None:
 
 def test_extract_decision_patterns_identifies_high_tension(tmp_path: Path) -> None:
     logs = [
-        {"conversation_id": "c1", "gate_decision": "block", "delta_t": 0.85, "created_at": "2026-01-01T00:00:00Z"},
-        {"conversation_id": "c2", "gate_decision": "block", "delta_t": 0.90, "created_at": "2026-01-01T00:01:00Z"},
-        {"conversation_id": "c3", "gate_decision": "approve", "delta_t": 0.20, "created_at": "2026-01-01T00:02:00Z"},
+        {
+            "conversation_id": "c1",
+            "gate_decision": "block",
+            "delta_t": 0.85,
+            "created_at": "2026-01-01T00:00:00Z",
+        },
+        {
+            "conversation_id": "c2",
+            "gate_decision": "block",
+            "delta_t": 0.90,
+            "created_at": "2026-01-01T00:01:00Z",
+        },
+        {
+            "conversation_id": "c3",
+            "gate_decision": "approve",
+            "delta_t": 0.20,
+            "created_at": "2026-01-01T00:02:00Z",
+        },
     ]
     distiller = ContextDistiller(object(), cache_path=tmp_path / "c.json")
     patterns = distiller.extract_decision_patterns(logs)
@@ -328,6 +350,7 @@ def test_extract_decision_patterns_identifies_high_tension(tmp_path: Path) -> No
 
 
 # ── extract_tone_evolution ────────────────────────────────────────────────────
+
 
 def test_extract_tone_evolution_positive_shift(tmp_path: Path) -> None:
     conversations = [
@@ -343,7 +366,9 @@ def test_extract_tone_evolution_positive_shift(tmp_path: Path) -> None:
     distiller = ContextDistiller(object(), cache_path=tmp_path / "c.json")
     patterns = distiller.extract_tone_evolution(conversations)
     assert len(patterns) >= 1
-    assert any("positive" in p.description.lower() or "improve" in p.description.lower() for p in patterns)
+    assert any(
+        "positive" in p.description.lower() or "improve" in p.description.lower() for p in patterns
+    )
 
 
 def test_extract_tone_evolution_no_patterns_for_single_message(tmp_path: Path) -> None:
@@ -353,6 +378,7 @@ def test_extract_tone_evolution_no_patterns_for_single_message(tmp_path: Path) -
 
 
 # ── extract_conflict_resolutions ──────────────────────────────────────────────
+
 
 def test_extract_conflict_resolutions_resolved(tmp_path: Path) -> None:
     conversations = [
@@ -369,17 +395,22 @@ def test_extract_conflict_resolutions_resolved(tmp_path: Path) -> None:
     patterns = distiller.extract_conflict_resolutions(conversations)
     assert len(patterns) == 1
     assert patterns[0].pattern_type == "conflict_resolution"
-    assert "tension" in patterns[0].description.lower() or "recover" in patterns[0].description.lower()
+    assert (
+        "tension" in patterns[0].description.lower() or "recover" in patterns[0].description.lower()
+    )
 
 
 def test_extract_conflict_resolutions_empty(tmp_path: Path) -> None:
-    conversations = [{"id": "c1", "messages": [{"role": "user", "content": "everything is great!"}]}]
+    conversations = [
+        {"id": "c1", "messages": [{"role": "user", "content": "everything is great!"}]}
+    ]
     distiller = ContextDistiller(object(), cache_path=tmp_path / "c.json")
     # No negative tone → no conflict patterns
     assert distiller.extract_conflict_resolutions(conversations) == []
 
 
 # ── _conversation_has_repair_signal ──────────────────────────────────────────
+
 
 def test_conversation_has_repair_signal_true(tmp_path: Path) -> None:
     messages = [
@@ -403,6 +434,7 @@ def test_conversation_has_repair_signal_false_no_recovery(tmp_path: Path) -> Non
 
 # ── _load_conversations with broken persistence ────────────────────────────────
 
+
 def test_load_conversations_missing_method_returns_empty(tmp_path: Path) -> None:
     distiller = ContextDistiller(object(), cache_path=tmp_path / "c.json")
     result = distiller._load_conversations(10)
@@ -419,6 +451,7 @@ def test_load_audit_logs_exception_returns_empty(tmp_path: Path) -> None:
 
 
 # ── get_patterns without distillation ─────────────────────────────────────────
+
 
 def test_get_patterns_returns_empty_when_no_result(tmp_path: Path) -> None:
     distiller = ContextDistiller(object(), cache_path=tmp_path / "c.json")

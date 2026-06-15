@@ -668,6 +668,7 @@ def test_run_resumes_consecutive_failures_from_persisted_state(tmp_path: Path) -
 
 # ── Module-level helpers ──────────────────────────────────────────────────────
 
+
 def test_coerce_float_converts_numeric() -> None:
     assert _coerce_float(1) == 1.0
     assert _coerce_float("3.14") == 3.14
@@ -679,6 +680,7 @@ def test_coerce_float_returns_none_for_invalid() -> None:
 
 
 # ── WakeupRuntimeState ────────────────────────────────────────────────────────
+
 
 def test_wakeup_runtime_state_to_dict_round_trip() -> None:
     state = WakeupRuntimeState(
@@ -703,18 +705,21 @@ def test_wakeup_runtime_state_from_dict_defaults() -> None:
 
 
 def test_wakeup_runtime_state_from_dict_preserves_values() -> None:
-    state = WakeupRuntimeState.from_dict({
-        "session_id": "wakeup_xyz",
-        "next_cycle": 5,
-        "consecutive_failures": 2,
-        "last_status": "ok",
-    })
+    state = WakeupRuntimeState.from_dict(
+        {
+            "session_id": "wakeup_xyz",
+            "next_cycle": 5,
+            "consecutive_failures": 2,
+            "last_status": "ok",
+        }
+    )
     assert state.session_id == "wakeup_xyz"
     assert state.next_cycle == 5
     assert state.consecutive_failures == 2
 
 
 # ── WakeupScribeState ─────────────────────────────────────────────────────────
+
 
 def test_wakeup_scribe_state_to_dict_and_from_dict() -> None:
     original = WakeupScribeState(
@@ -731,6 +736,7 @@ def test_wakeup_scribe_state_to_dict_and_from_dict() -> None:
 
 
 # ── WakeupCycleResult ─────────────────────────────────────────────────────────
+
 
 def test_wakeup_cycle_result_to_dict() -> None:
     result = WakeupCycleResult(
@@ -750,6 +756,7 @@ def test_wakeup_cycle_result_to_dict() -> None:
 
 
 # ── AutonomousWakeupLoop static helpers ───────────────────────────────────────
+
 
 def _make_cycle_result(summary: dict) -> WakeupCycleResult:
     return WakeupCycleResult(
@@ -800,8 +807,9 @@ def test_build_scribe_signal_signature_is_deterministic() -> None:
 def test_build_scribe_signal_signature_differs_with_different_summary() -> None:
     r1 = _make_cycle_result({"collision_count": 1})
     r2 = _make_cycle_result({"collision_count": 2})
-    assert AutonomousWakeupLoop._build_scribe_signal_signature(r1) != \
-           AutonomousWakeupLoop._build_scribe_signal_signature(r2)
+    assert AutonomousWakeupLoop._build_scribe_signal_signature(
+        r1
+    ) != AutonomousWakeupLoop._build_scribe_signal_signature(r2)
 
 
 def test_summarize_empty_dream_result() -> None:

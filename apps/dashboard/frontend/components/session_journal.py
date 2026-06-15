@@ -42,7 +42,7 @@ def render_session_journal(traces: List[Dict[str, Any]]) -> None:
             color = topic_colors.get(topic, "#6b7c8d")
             topic_badges += (
                 f'<span style="display:inline-block;padding:2px 8px;border-radius:10px;'
-                f'font-size:11px;background:{color}18;color:{color};border:1px solid {color}33;'
+                f"font-size:11px;background:{color}18;color:{color};border:1px solid {color}33;"
                 f'margin-right:4px">{topic}</span>'
             )
 
@@ -51,7 +51,9 @@ def render_session_journal(traces: List[Dict[str, Any]]) -> None:
         if decisions:
             for d in decisions[:4]:
                 short = str(d)[:80]
-                decisions_html += f'<div style="font-size:12px;color:#2c3e50;margin:2px 0">· {short}</div>'
+                decisions_html += (
+                    f'<div style="font-size:12px;color:#2c3e50;margin:2px 0">· {short}</div>'
+                )
 
         # Tension indicators
         tension_html = ""
@@ -62,7 +64,7 @@ def render_session_journal(traces: List[Dict[str, Any]]) -> None:
                 sev_color = "#ef4444" if sev >= 0.7 else "#f97316" if sev >= 0.4 else "#3a6b9f"
                 tension_html += (
                     f'<span style="font-size:11px;color:{sev_color}">'
-                    f'{topic_t} ({sev:.2f})</span> '
+                    f"{topic_t} ({sev:.2f})</span> "
                 )
 
         # Stance shift

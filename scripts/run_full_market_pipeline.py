@@ -1,15 +1,15 @@
 """Run ToneSoul Full Market Pipeline (Phase 2 + 3) for targeted stocks."""
 
-import sys
 import os
+import sys
 
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tonesoul.market.analyzer import (
-    SixStepAnalyzer,
-    QuarterlySnapshot,
     CyclicalTemplate,
+    QuarterlySnapshot,
+    SixStepAnalyzer,
     TechGrowthTemplate,
 )
 from tonesoul.market.world_model import MultiPerspectiveSimulator

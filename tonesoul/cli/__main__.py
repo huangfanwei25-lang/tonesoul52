@@ -3,9 +3,7 @@
 import sys
 
 __ts_layer__ = "surface"
-__ts_purpose__ = (
-    "CLI __main__ entry: allows `python -m tonesoul.cli <command>` invocation."
-)
+__ts_purpose__ = "CLI __main__ entry: allows `python -m tonesoul.cli <command>` invocation."
 
 from .main import main
 

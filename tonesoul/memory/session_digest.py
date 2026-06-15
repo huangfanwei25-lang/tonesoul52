@@ -11,9 +11,7 @@ from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
 __ts_layer__ = "memory"
-__ts_purpose__ = (
-    "Session digest: produce a compact summary of session memory for handoff."
-)
+__ts_purpose__ = "Session digest: produce a compact summary of session memory for handoff."
 
 
 def _utcnow_iso() -> str:

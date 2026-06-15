@@ -12,9 +12,7 @@ from tonesoul.schemas import (
 )
 
 __ts_layer__ = "evolution"
-__ts_purpose__ = (
-    "Mirror subsystem: reflect user emotional state back with calibration."
-)
+__ts_purpose__ = "Mirror subsystem: reflect user emotional state back with calibration."
 
 
 def _utcnow_iso() -> str:

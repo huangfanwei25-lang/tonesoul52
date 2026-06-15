@@ -5,9 +5,7 @@ from typing import Optional
 import numpy as np
 
 __ts_layer__ = "semantic"
-__ts_purpose__ = (
-    "Semantic embedder: convert text into dense vector representations."
-)
+__ts_purpose__ = "Semantic embedder: convert text into dense vector representations."
 
 DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 

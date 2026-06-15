@@ -6,7 +6,6 @@ from typing import Any, Dict, List
 
 import streamlit as st
 
-
 _ROLE_COLORS = {
     "guardian": "#2a9d8f",
     "analyst": "#e9c46a",
@@ -37,7 +36,6 @@ def render_council_timeline(traces: List[Dict[str, Any]]) -> None:
 
         # Extract verdict if present
         verdict = dossier.get("verdict", "")
-        coherence = dossier.get("coherence", "")
         votes = dossier.get("votes", [])
 
         # Build role indicators

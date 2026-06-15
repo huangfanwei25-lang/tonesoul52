@@ -414,6 +414,7 @@ def test_record_evolution_result_writes_payload_to_evolution_results():
 
 # ── _trim_text ────────────────────────────────────────────────────────────────
 
+
 def test_trim_text_short_returns_unchanged() -> None:
     assert _trim_text("hello") == "hello"
 
@@ -428,6 +429,7 @@ def test_trim_text_none_returns_empty() -> None:
 
 
 # ── _sanitize_limit ───────────────────────────────────────────────────────────
+
 
 def test_sanitize_limit_returns_default_for_zero() -> None:
     assert _sanitize_limit(0) == 20
@@ -449,6 +451,7 @@ def test_sanitize_limit_returns_default_for_invalid() -> None:
 
 # ── SupabasePersistence._as_float ─────────────────────────────────────────────
 
+
 def test_as_float_converts_numeric() -> None:
     assert SupabasePersistence._as_float(1) == 1.0
     assert SupabasePersistence._as_float("3.14") == 3.14
@@ -460,6 +463,7 @@ def test_as_float_returns_none_for_none_and_invalid() -> None:
 
 
 # ── disabled-path shortcuts ───────────────────────────────────────────────────
+
 
 def test_record_consent_returns_false_when_disabled() -> None:
     store = SupabasePersistence(url="", key="")
@@ -489,10 +493,9 @@ def test_get_conversation_returns_none_when_disabled() -> None:
 
 # ── record_consent happy path ─────────────────────────────────────────────────
 
+
 def test_record_consent_writes_to_memory() -> None:
-    fake_session = _FakeSession(
-        responses=[_FakeResponse(payload=None)]
-    )
+    fake_session = _FakeSession(responses=[_FakeResponse(payload=None)])
     store = SupabasePersistence(url="https://example.supabase.co", key="k", session=fake_session)
 
     ok = store.record_consent("session_1", "opt_in")
@@ -504,6 +507,7 @@ def test_record_consent_writes_to_memory() -> None:
 
 
 # ── record_chat_audit happy path ──────────────────────────────────────────────
+
 
 def test_record_chat_audit_writes_audit_log() -> None:
     fake_session = _FakeSession(

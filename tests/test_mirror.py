@@ -266,6 +266,7 @@ def test_pipeline_mirror_enforce_mode_can_apply_governed_response(monkeypatch) -
 
 # ── Module-level helpers ──────────────────────────────────────────────────────
 
+
 def test_safe_float_converts_numeric() -> None:
     assert _safe_float(1) == 1.0
     assert _safe_float("0.5") == 0.5
@@ -283,12 +284,14 @@ def test_get_field_from_dict() -> None:
 
 def test_get_field_from_object() -> None:
     from types import SimpleNamespace
+
     obj = SimpleNamespace(x=42)
     assert _get_field(obj, "x") == 42
     assert _get_field(obj, "missing", "fallback") == "fallback"
 
 
 # ── ToneSoulMirror static helpers ─────────────────────────────────────────────
+
 
 def test_resolve_confidence_clamps_to_range() -> None:
     assert ToneSoulMirror._resolve_confidence({"confidence": 1.5}) == 1.0
@@ -303,6 +306,7 @@ def test_build_evidence_deduplicates_and_truncates() -> None:
 
 def test_extract_total_clamps_to_range() -> None:
     from types import SimpleNamespace
+
     obj = SimpleNamespace(total=1.5)
     assert ToneSoulMirror._extract_total(obj) == 1.0
     assert ToneSoulMirror._extract_total(SimpleNamespace(total=-0.1)) == 0.0
@@ -310,6 +314,7 @@ def test_extract_total_clamps_to_range() -> None:
 
 def test_extract_cognitive_friction_from_dict_signals() -> None:
     from types import SimpleNamespace
+
     obj = SimpleNamespace(signals={"cognitive_friction": 0.72})
     assert ToneSoulMirror._extract_cognitive_friction(obj) == 0.72
 

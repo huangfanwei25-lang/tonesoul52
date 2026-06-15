@@ -292,7 +292,7 @@ def main() -> None:
 
         # Governance Retro — entropy discharge valve
         try:
-            from tonesoul.governance.retro import should_run_retro, run_retro, persist_retro_result
+            from tonesoul.governance.retro import persist_retro_result, run_retro, should_run_retro
             from tonesoul.runtime_adapter import load as load_posture
 
             posture = load_posture()

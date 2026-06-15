@@ -477,7 +477,7 @@ class CouncilRuntime:
 
         # ========== Council Evolution Tracking ==========
         try:
-            from .evolution import CouncilEvolution
+            from .voting_evolution import CouncilEvolution
 
             if not hasattr(self, "_evolution"):
                 self._evolution = CouncilEvolution()

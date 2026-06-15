@@ -24,9 +24,15 @@ class TestToneAnalysis:
     def test_to_dict_contains_required_keys(self):
         d = ToneAnalysis().to_dict()
         for key in (
-            "tone_strength", "tone_direction", "tone_variability",
-            "emotion_prediction", "impact_level", "trigger_keywords",
-            "modulation_sensitivity", "semantic_intent", "emotional_depth",
+            "tone_strength",
+            "tone_direction",
+            "tone_variability",
+            "emotion_prediction",
+            "impact_level",
+            "trigger_keywords",
+            "modulation_sensitivity",
+            "semantic_intent",
+            "emotional_depth",
             "tone_uncertainty",
         ):
             assert key in d
@@ -53,8 +59,13 @@ class TestMotivePrediction:
 
     def test_to_dict_contains_required_keys(self):
         d = MotivePrediction().to_dict()
-        for key in ("motive_category", "likely_motive", "trigger_context",
-                    "echo_potential", "resonance_chain_hint"):
+        for key in (
+            "motive_category",
+            "likely_motive",
+            "trigger_context",
+            "echo_potential",
+            "resonance_chain_hint",
+        ):
             assert key in d
 
     def test_to_dict_values_preserved(self):
@@ -78,8 +89,13 @@ class TestCollapseRisk:
 
     def test_to_dict_contains_required_keys(self):
         d = CollapseRisk().to_dict()
-        for key in ("collapse_risk_level", "collapse_type_hint", "contributing_factors",
-                    "warning_indicators", "intervention_urgency"):
+        for key in (
+            "collapse_risk_level",
+            "collapse_type_hint",
+            "contributing_factors",
+            "warning_indicators",
+            "intervention_urgency",
+        ):
             assert key in d
 
     def test_high_risk_level_preserved(self):
@@ -123,8 +139,16 @@ class TestMeminiUnit:
 
     def test_to_dict_contains_all_keys(self):
         d = MeminiUnit().to_dict()
-        for key in ("id", "input_text", "tone_analysis", "predicted_motive",
-                    "collapse_forecast", "resonance_traceback", "memory_status", "timestamp"):
+        for key in (
+            "id",
+            "input_text",
+            "tone_analysis",
+            "predicted_motive",
+            "collapse_forecast",
+            "resonance_traceback",
+            "memory_status",
+            "timestamp",
+        ):
             assert key in d
 
 

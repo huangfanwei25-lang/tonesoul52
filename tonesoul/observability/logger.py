@@ -19,9 +19,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 __ts_layer__ = "observability"
-__ts_purpose__ = (
-    "Observability logger: structured event logger for runtime and governance signals."
-)
+__ts_purpose__ = "Observability logger: structured event logger for runtime and governance signals."
 
 try:
     import structlog
