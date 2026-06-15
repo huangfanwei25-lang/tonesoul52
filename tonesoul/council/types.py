@@ -133,6 +133,10 @@ class CouncilVerdict:
     # docs/architecture/independent_verifier_spec_2026-05-14.md §2.2 (report
     # schema) and §2.5 (fail-open semantics).
     verifier_report: Optional["VerifierReport"] = None
+    # Tier 5 semantic overclaim sensor (advisory). Attached only when the council is
+    # built with overclaim_sensor= or SOUL.council.semantic_overclaim_advisory_enabled
+    # is True. None otherwise. A RECORDED signal, never a gate (DESIGN Inv3).
+    semantic_overclaim: Optional[dict] = None
 
     def to_dict(self) -> dict:
         """
@@ -210,4 +214,5 @@ class CouncilVerdict:
                 if self.deliberation_trace and hasattr(self.deliberation_trace, "to_dict")
                 else None
             ),
+            "semantic_overclaim": self.semantic_overclaim,
         }

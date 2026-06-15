@@ -102,6 +102,10 @@ class CouncilConfig:
     block_threshold: float = 0.3  # below = BLOCK
     high_risk_coherence: float = 0.65  # stricter threshold under high risk
     high_risk_block: float = 0.4  # stricter block threshold under high risk
+    # Tier 5 semantic overclaim sensor (advisory). Default OFF: it needs an embedding
+    # model and is a RECORDED signal only (DESIGN Inv3 — Advisory != Canonical), never
+    # a gate. Measured limits: docs/status/semantic_overclaim_eval_2026-06-15.md.
+    semantic_overclaim_advisory_enabled: bool = False
 
 
 # ---------------------------------------------------------------------------
