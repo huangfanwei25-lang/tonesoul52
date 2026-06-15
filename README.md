@@ -151,7 +151,7 @@ pip install tonesoul52[dev]
 pytest tests/ -v
 ```
 
-Current suite size: **~3,137 tests passing** (Python 3.13, Windows/Ubuntu — see the Quality Snapshot below). CI runs the blocking Python test gate on pull requests, and `master` **is** branch-protected (required checks: `Test Python 3.12` + `Commit Attribution Check`, strict up-to-date), so red commits are blocked at the machine level for both PRs and direct pushes. (An earlier "7,652 collected" figure in this spot was inconsistent with the Quality Snapshot — collected ≠ passing — and is pending re-confirmation.)
+Current suite size: **7,772 tests collected, 7,770 passing** (1 skipped; verified clean-CI 2026-06-15, Python 3.10–3.13, Windows/Ubuntu). CI runs the blocking Python test gate on pull requests, and `master` **is** branch-protected (required checks: `Test Python 3.12` + `Commit Attribution Check`, strict up-to-date), so red commits are blocked at the machine level for both PRs and direct pushes.
 
 For local development, use `./test.sh` as the canonical core pre-commit check — it mirrors the core Python gates (ruff + bounded black gate + pytest), not every CI job. Modes: `./test.sh` (full), `lint` (only lint+format), `test` (only tests), `fast` (lint + tests with -x). CI also runs web quality, architecture/docs contracts, red-team, package integrity, and memory hygiene gates.
 
@@ -464,7 +464,7 @@ In plain words: important things are auto-kept, chatter is auto-forgotten.
 
 | Metric | Value |
 |---|---|
-| Tests passing | 3,137 (Python 3.13, Windows/Ubuntu) |
+| Tests | 7,772 collected / 7,770 passing (1 skipped) |
 | Tested `tonesoul/` modules | 166 / 204 (81%) |
 | Code lines | 72,631 across 235 files |
 | Bare `except:` / TODO / FIXME | 0 / 0 / 0 |
