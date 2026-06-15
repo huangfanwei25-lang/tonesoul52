@@ -24,6 +24,8 @@ The slogan version: *most AI safety work optimizes; ToneSoul defends.*
 
 For a worked contrast against probabilistic-optimization tooling (e.g. Andrej Karpathy's "ghost engineering" framing, or prompt-level confidence-scoring projects like WFGY/CFV), see `docs/status/calibration_sprint_2026-05-04_synthesis.md` — it captures both what ToneSoul has been verified to do and what remains gated on external validity.
 
+**Where this sits in the literature:** ToneSoul is a *deployment instantiation* of a convergent AI-governance / accountability trend, **not** a novel thesis — provenance-as-accountability, deontological refusal, runtime gating, and machine honesty all predate it. [`docs/RELATED_WORK.md`](docs/RELATED_WORK.md) maps the anchors **and** the strongest published challenges to its design (each independently re-verified; one withdrawn paper was dropped), and is explicit that none of them *validate* ToneSoul.
+
 ---
 
 **The real question this project is asking:**
