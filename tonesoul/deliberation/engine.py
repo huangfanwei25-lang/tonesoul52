@@ -50,11 +50,14 @@ class InternalDeliberation:
         result = engine.deliberate_sync(context)
     """
 
-    def __init__(self):
+    def __init__(self, persona_track_record=None):
         # Initialize three perspectives
         self._perspectives = create_perspectives()
 
-        self._persona_track_record = create_persona_track_record()
+        # Persona-track record is injectable so tests can isolate from the
+        # persisted (gitignored, mutable) docs/status/persona_track_record_latest.json.
+        # Default preserves production behavior: load-or-create the canonical record.
+        self._persona_track_record = persona_track_record or create_persona_track_record()
 
         # Initialize synthesis engine
         self._gravity = create_semantic_gravity(track_record=self._persona_track_record)

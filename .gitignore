@@ -60,6 +60,7 @@ memory/soul.db
 
 # Runtime Logs
 ledger.jsonl
+/error_ledger.jsonl
 bridge_debug.log
 .conversion_checkpoint.json
 memory/provenance_ledger.jsonl
