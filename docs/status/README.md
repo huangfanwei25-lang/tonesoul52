@@ -2,6 +2,21 @@
 
 This folder is the repository status source for machine-generated governance snapshots.
 
+## Canonical vs Generated (read this first)
+
+**Nothing in this folder is architecture truth.** Every `*_latest.*` file is a generated, point-in-time snapshot of *current state* — never the design's *intent*. Do not let an agent or test treat a status report here as canonical.
+
+- **Canonical (the architecture truth):** `README.md`, `DESIGN.md`, `docs/SUCCESSOR_MAP.md`, `AXIOMS.json`. These are hand-authored and reviewed; they say what the system *should* be.
+- **Generated (here):** everything under `docs/status/*latest*`. These say what the system *measured* at a moment, and go stale the instant the code moves.
+
+So machine consumers can tell without reading this README, generated artifacts may carry a fixed self-declaration block (no framework — exactly these four keys):
+
+```json
+"doc_provenance": { "generated": true, "canonical": false, "source_command": "<how to regenerate>", "updated_at": "<iso timestamp>" }
+```
+
+First adopter: `codebase_graph_latest.json` (via `scripts/analyze_codebase_graph.py`). Other generators may adopt the same shape; the rule is the point, not bulk retrofitting. When a generated snapshot disagrees with a canonical doc, the canonical doc wins on *intent*; the snapshot wins only on *current measured state* (and re-run it before trusting the number).
+
 ## How To Read This Folder
 
 - Read markdown with UTF-8 in PowerShell:

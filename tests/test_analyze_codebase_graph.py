@@ -593,3 +593,15 @@ class TestLiveCodebaseAnnotationGuard:
             "Add __ts_layer__ = '<layer>' and __ts_purpose__ = '...' to each module "
             "AFTER all import statements."
         )
+
+
+def test_doc_provenance_declares_generated_and_noncanonical() -> None:
+    """Generated status artifacts self-declare non-canonical (fixed 4-key shape)."""
+    meta = acg._doc_provenance("python scripts/analyze_codebase_graph.py", "2026-06-16T00:00:00Z")
+
+    assert meta == {
+        "generated": True,
+        "canonical": False,
+        "source_command": "python scripts/analyze_codebase_graph.py",
+        "updated_at": "2026-06-16T00:00:00Z",
+    }
