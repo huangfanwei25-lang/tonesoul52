@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tonesoul52"
 version = "1.0.0"
-description = "AI Governance Toolkit - Make LLM decisions auditable, traceable, and trustworthy"
+description = "AI output governance toolkit with auditable gates, council dissent, and evidence-bounded claims"
 readme = "README.md"
 license = {text = "Apache-2.0"}
 authors = [

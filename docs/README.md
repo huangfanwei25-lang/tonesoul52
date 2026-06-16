@@ -1,7 +1,7 @@
 # ToneSoul Documentation Index
 
 > Purpose: documentation entrypoint and guided index for ToneSoul architecture, status artifacts, and convergence surfaces.
-> Last Updated: 2026-04-10
+> Last Updated: 2026-06-17
 > Status: guided docs entrypoint. Use this after `README.md` or `docs/foundation/README.md` when you still need help choosing a lane.
 > Not This: not the exhaustive registry. Use `docs/INDEX.md` when you already know you need broader coverage.
 ---
@@ -411,65 +411,34 @@ Treat these as entry-cleanup aids. They help later agents choose the right first
 
 Treat these as prompt-adoption aids. They help later agents avoid reopening finished waves and point them toward the current short board, but they do not outrank live prompt code or tests.
 
-## ? 敹恍?憪?
-1. [AI_ONBOARDING.md](../AI_ONBOARDING.md) ??蝯行 AI ??撠?2. [terminology.md](terminology.md) ??**?詨?銵?摰儔**
-3. [core_concepts.md](core_concepts.md) ???詨?璁艙隤芣?
+## Compact Companion Pointers
 
----
+This file is the guided documentation entrypoint. It is intentionally curated and does not try to list every file.
 
+Use these companion surfaces when the guided route is not enough:
 
-## ?? ??蝯?
+- [docs/INDEX.md](INDEX.md) - comprehensive flat registry for broader lookup.
+- [AI_ONBOARDING.md](../AI_ONBOARDING.md) - active routing map for AI agents after the operational first hop.
+- [terminology.md](terminology.md) - term lookup for ToneSoul vocabulary.
+- [core_concepts.md](core_concepts.md) - compact concept explanations.
+- [WHITEPAPER.md](WHITEPAPER.md) - longer conceptual and research-facing narrative.
+- [faq.md](faq.md) - common reader questions.
 
-| 憿 | 瑼? | 隤芣? |
-|------|------|------|
-| **?仿?** | `core_concepts.md` | ?詨?璁艙 |
-| **銵?** | `terminology.md` | TSR, STREI, POAV 蝑?蝢?|
-| **?賜??* | `WHITEPAPER.md` | 摰?銵?格 |
-| **FAQ** | `faq.md` | 撣貉??? |
+## Legacy And Lineage Areas
 
----
+These directories remain discoverable, but they are not the default first hop:
 
+| Area | Use it for |
+|---|---|
+| `philosophy/` | founding ideas, axioms, and worldview notes |
+| `engineering/` | engineering mirrors and older implementation notes |
+| `governance/` | governance protocols and historical operational notes |
+| `research/` | background research maps, evidence notes, and exploratory planning |
 
-## ?? 摮??
-### `/philosophy/` ???脣飛撅?
-| 瑼? | 隤芣? |
-|------|------|
-| `axioms.md` | Axiom 蝟餌絞閰唾圾 |
-| `truth_vector_architecture.md` | ?????嗆? |
-| `collective_consciousness.md` | ????璁艙 |
-| `manifesto.md` | ?摰?? |
-
-### `/engineering/` ??撌亦?撅?
-| 瑼? | 隤芣? |
-|------|------|
-| `OVERVIEW.md` | 撌亦?璁汗 |
-
-### `/governance/` ??瘝餌?撅?
-| 瑼? | 隤芣? |
-|------|------|
-| `STREI_OPERATIONAL_PROTOCOL.md` | STREI ???降 |
-
-### `/research/` Research Notes
-| File | Purpose |
-|------|------|
-| `RESEARCH_CONTEXT_2.0.md` | older research context bundle and exploratory framing |
-| `experimental_design.md` | experiment-design scratch surface for research planning |
-| `multi_agent_architecture_patterns.md` | external architecture-pattern notes kept as background material |
-| `tonesoul_l7_l8_open_source_evidence_map_2026-03-22.md` | L7/L8 evidence map from the earlier open-source review |
-| `tonesoul_multi_agent_semantic_field_evidence_map_2026-03-26.md` | official-source evidence map for multi-agent semantic-field claims |
-| `tonesoul_llm_classic_paper_map_2026-03-30.md` | selective map of classic LLM papers that still matter for ToneSoul architecture, continuity, retrieval, governance, and adaptation |
-| `../plans/tonesoul_agent_os_pattern_distillation_2026-04-01.md` | distilled Agent-OS patterns ToneSoul should learn without importing a foreign naming universe |
-| `../plans/tonesoul_successor_collaboration_and_hot_memory_program_2026-04-02.md` | successor/hot-memory planning that translates useful external frameworks into ToneSoul-native workstreams |
-
----
+Historical and lineage documents should stay labeled as lineage. Do not treat them as higher authority than runtime code, tests, `AXIOMS.json`, or the current architecture contracts.
 
 ## Related Root Documents
 
-- [/spec/council_spec.md](../spec/council_spec.md) canonical council protocol source note
-- [/AXIOMS.json](../AXIOMS.json) core axioms in JSON form
-- [/README.md](../README.md) public repo entrypoint
-
----
-
-
-*Last updated: 2026-03-30*
+- [spec/council_spec.md](../spec/council_spec.md) - canonical council protocol source note.
+- [AXIOMS.json](../AXIOMS.json) - core axiom definitions and enforcement reconciliation.
+- [README.md](../README.md) - public repository entrypoint.

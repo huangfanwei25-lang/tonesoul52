@@ -1,48 +1,70 @@
 # ToneSoul / 語魂
 
-> 這不是只會回答的 AI。它會先檢查語義偏移、記住真正重要的事，並留下可追溯紀錄。
-> 如果你要的是「AI 不要一本正經亂講話」，這個專案就是為這件事做的。
->
-> ToneSoul 是一套外部化認知治理架構，關心的是可挑戰、可追溯、可稽核的 AI，而不是只追求更順的回答。
->
-> Purpose: 語魂公開倉庫中文入口，說明整體架構、治理姿態與實作入口。
-> Last Updated: 2026-06-16
+> ToneSoul 是一套 AI 輸出治理與問責層。
+> 它不承諾讓模型變成真理來源；它把模型輸出放進可讀、可跑、可追溯的治理流程裡。
+
+> Purpose: 語魂公開倉庫中文入口，說明目前架構、治理姿態、證據邊界與實作入口。
+> Last Updated: 2026-06-17
 
 [English](README.md)
 
-## 30 秒看懂它做什麼
+## 90 秒看懂
 
-| 功能 | 你實際得到什麼 |
+ToneSoul 的核心不是「讓 AI 更會回答」，而是讓 AI 的輸出在送出前留下可審查的痕跡：誰反對、為什麼反對、哪些 claim 超過邊界、哪些只是 advisory 訊號。
+
+它目前做三件事：
+
+- **邊界檢查**：`AXIOMS.json` 宣告不應靜默跨越的 claim 類型，例如意識宣稱、安全認證、法律證明語言。
+- **保留分歧**：Council 會保留 Guardian、Analyst、Critic、Advocate、Axiomatic 的意見和 evidence-chain branch，而不是把分歧磨平成一段順滑答案。
+- **證據分級**：文件與 status artifact 會區分已測試、runtime 已存在、文件約束、哲學命題，避免把設計願望說成已驗證能力。
+
+## 它不是什麼
+
+ToneSoul 不能被描述成：
+
+- 真理神諭
+- 防越獄保證
+- 內建道德編譯器
+- AI 協作者有意識的證明
+- model-side alignment、人類審查、domain verifier 的替代品
+
+目前的真實邊界很窄：許多 gate 仍是 lexical / heuristic；較新的 semantic overclaim 與 intent-proportionality 類訊號是 advisory、record-only；`AXIOMS.json` 目前沒有任何 axiom class 達到最強執行層級。egress gate characterization 是測量目前 gate 行為，不是安全宣稱。
+
+## 目前已有的東西
+
+| Surface | 目前姿態 |
 |---|---|
-| 🧠 會遺忘的記憶系統 | 指數衰減 + 結晶化，重點留下、雜訊淡出 |
-| ⚡ 張力引擎 | 每次輸出前都會評分語義偏移（評分供審議，不是硬性攔截） |
-| 🎭 多角色審議 | 守護者、分析師、批評者、倡議者先辯論，再給答案 |
-| 🛡️ 自我治理 | 高風險或不一致輸出會被阻擋（換成拒絕訊息），全程留稽核痕跡——沒有生成式改寫路徑 |
-| 📊 即時儀表板 | 看結晶規則、共鳴統計、記憶與修復訊號 |
+| Council deliberation | runtime 已存在，機制層有測試；五個 perspective 是同一 draft 上的 heuristic voters，不是五個獨立心智。 |
+| Output gates | 依 gate 類型可 block、refine、record；有些是 required，有些只是 telemetry 或 advisory。 |
+| Evidence chains | verdict 會留下 branch label，讓 reviewer 看得出 gate 為什麼反應。 |
+| Memory / continuity | decay、crystallization、handoff、session surface 已存在，但效果宣稱要保持保守。 |
+| Advisory sensors | semantic overclaim、intent proportionality 類訊號預設只記錄，不自動阻擋。 |
+| Egress characterization | 用 sanitized fixtures 測目前 gate 行為；生成報告在 `docs/status/egress_gate_characterization_latest.json`。 |
 
-## 5 分鐘快速啟動
+## 快速開始
 
-### 1) 安裝
+先看瀏覽器 demo：
+
+[https://fan1234-1.github.io/tonesoul52/demo/](https://fan1234-1.github.io/tonesoul52/demo/)
+
+安裝：
 
 ```bash
 pip install tonesoul52
-```
 
-或從原始碼安裝：
-
-```bash
+# 若你要使用這個 repo 的最新狀態，改用 source install
 git clone --depth 1 https://github.com/Fan1234-1/tonesoul52.git
 cd tonesoul52
 pip install -e .
 ```
 
-### 2) 跑 demo
+跑機制層 demo：
 
 ```bash
 python examples/quickstart.py
 ```
 
-### 3) 驗證治理狀態有載入
+確認 governance state 可載入：
 
 ```python
 from tonesoul.runtime_adapter import load
@@ -52,87 +74,43 @@ print(f"Soul Integral: {posture.soul_integral}")
 print(f"Active Vows: {len(posture.active_vows)}")
 ```
 
-### 4) 啟動儀表板（選用）
-
-```bash
-pip install tonesoul52[dashboard]
-python scripts/tension_dashboard.py --work-category research
-```
-
-### 5) 跑測試
+開發測試：
 
 ```bash
 pip install tonesoul52[dev]
 pytest tests/ -v
 ```
 
-## 30 秒系統地圖
-
-ToneSoul 不是單一 prompt，也不是單純的記憶外掛。
-它比較像一套把治理、審議、連續性、證據與觀測外部化的 AI 架構。
-
-```text
-使用者輸入
-    ↓
-[ToneBridge] 解析語氣、意圖與脈絡
-    ↓
-[TensionEngine] 計算語義偏移
-    ↓
-[Council] 守護者 / 分析師 / 批評者 / 倡議者審議
-    ↓
-[ComputeGate] approve / block / rewrite
-    ↓
-[Journal + Crystallizer] 重要的留下，雜訊慢慢忘掉
-    ↓
-最終輸出
-```
-
-如果你只想看一份能解釋整個堆疊的文件，先開 [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md)。
-如果你要看設計中心與不該漂移的 invariant，先開 [DESIGN.md](DESIGN.md)。
-如果你要先看最薄、最適合人類與 AI 重新進場的專案 packet，先開 [docs/foundation/README.md](docs/foundation/README.md)。
-
 ## 選你的入口
 
-| 讀者 | 先讀 | 再讀 | 為什麼 |
+| 讀者 | 先看 | 再看 | 原因 |
 |---|---|---|---|
-| 開發者 | [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) | [docs/foundation/README.md](docs/foundation/README.md) -> [docs/README.md](docs/README.md) | 先安裝，再讀薄 packet，還不清楚時才進 curated docs gateway |
-| 研究者 | [DESIGN.md](DESIGN.md) | [docs/foundation/README.md](docs/foundation/README.md) -> [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) | 先抓設計中心，再補 bounded packet，最後看整體地圖 |
-| AI 代理 | [docs/AI_QUICKSTART.md](docs/AI_QUICKSTART.md) | `python scripts/start_agent_session.py --agent <your-id>` -> [AI_ONBOARDING.md](AI_ONBOARDING.md) | 先走 operational first hop，再做 session handshake，最後才進 routing map |
-| 一般讀者 | [README.md](README.md) | [SOUL.md](SOUL.md) -> [LETTER_TO_AI.md](LETTER_TO_AI.md) | 先看公共入口，再看身份與意圖層 |
-
-一次只先開一個 owner surface，不要整列一起讀。
-[docs/README.md](docs/README.md) 是策展式入口。
-[docs/INDEX.md](docs/INDEX.md) 是完整索引，只有在策展入口還不夠時再開。
+| 開發者 | [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) | [docs/foundation/README.md](docs/foundation/README.md)、[docs/README.md](docs/README.md) | 先安裝，再讀最薄 project packet，最後走策展式 docs gateway。 |
+| 研究者 | [DESIGN.md](DESIGN.md) | [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) | 先抓設計中心，再看完整 subsystem map。 |
+| AI agent | [docs/AI_QUICKSTART.md](docs/AI_QUICKSTART.md) | `python scripts/start_agent_session.py --agent <your-id>`、[AI_ONBOARDING.md](AI_ONBOARDING.md) | 先走 operational first hop，再做 session handshake，避免直接 bulk-read 或亂改共享路徑。 |
+| 一般讀者 | 這份 README | [SOUL.md](SOUL.md)、[LETTER_TO_AI.md](LETTER_TO_AI.md) | 先看公開姿態，再看身份與意圖層。 |
 
 ## 證據誠實
 
-當 README 說 ToneSoul「有某個能力」時，請用這個濾鏡讀：
+當這個 repo 說 ToneSoul「有某能力」時，請用這個分級讀：
 
-- `E1 test-backed`：有回歸測試支撐，CI 能抓到退化
-- `E3 runtime-present`：程式存在也能跑，但測試深度還不夠
-- `E4 document-backed`：有 contract / spec 描述，但 runtime 仍未完全證明
-- `E5 philosophical`：是設計命題或哲學壓力，不是已驗證機制
+- `E1 test-backed`：有回歸測試支撐，CI 應能抓到退化。
+- `E3 runtime-present`：程式存在且能跑，但測試深度或真實使用證據仍薄。
+- `E4 document-backed`：contract / spec 描述了意圖，但 runtime 尚未證明。
+- `E5 philosophical`：設計命題或哲學壓力，不是已驗證機制。
 
-如果這個差異很重要，先開 [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md)。
+如果這個區分很重要，先讀 [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md)。
 
-## 公式誠實
-
-入口文件裡出現的公式或符號，預設都只是 orientation aid，不是 executable owner。
-如果你需要知道某個公式到底是 rigorous、heuristic 還是 conceptual，先看 [docs/GLOSSARY.md](docs/GLOSSARY.md) 和 [docs/MATH_FOUNDATIONS.md](docs/MATH_FOUNDATIONS.md)。
-
-## 品質快照（2026-06-16）
+## 品質快照
 
 | 指標 | 數值 |
 |---|---|
-| 測試 | 7,778 收集 / 7,777 通過（1 略過；2026-06-16 clean-CI 驗證） |
-| `tonesoul/` 已測模組 | 166 / 204（81%） |
-| 程式碼行數 | 72,631 行 / 235 檔 |
+| 測試 | 7,778 collected / 7,777 passing / 1 skipped，2026-06-16 clean-CI 驗證 |
+| `tonesoul/` 已測模組 | 166 / 204 |
+| 程式碼行數 | 72,631 across 235 files |
 | bare `except:` / TODO / FIXME | 0 / 0 / 0 |
-| 紅隊發現 | 18 個，已修 17 個，1 個延後（semantic analysis） |
-| RDD 狀態 | `tests/red_team/` baseline 已啟用，但仍低於 full blocking maturity |
-| DDD 狀態 | hygiene + curated audit 已啟用；freshness 仍是明確分階段規則 |
-| 機器可讀狀態 | `docs/status/repo_healthcheck_latest.json`、`docs/status/7d_snapshot.json`、`docs/status/architecture_audit_2026-04-08.md` |
-| 預設 CI 檢查 | `ruff check tonesoul tests` + `pytest tests/ -x --tb=short -q` |
+| 紅隊發現 | 18 found, 17 fixed, 1 deferred |
+| 預設 CI gate | `ruff check tonesoul tests` + `pytest tests/ -x --tb=short -q` |
 
 ## 授權
 

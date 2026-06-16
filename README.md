@@ -1,159 +1,113 @@
 # ToneSoul / 語魂
 
-> AI governance that does not just trust the answer. It enforces output gates, records dissent, and audits its own trail.
-> If you want AI output governance you can read, run, and challenge, start here. (It will not make your model truthful — current truth sensors are lexical heuristics; see "Evidence Honesty" below.)
+> AI output governance you can read, run, and challenge.
+> ToneSoul puts an auditable governance layer around model output: it records dissent, checks boundary claims, emits traces, and makes failures inspectable.
 
-> Purpose: public repository entrypoint for ToneSoul's architecture, governance posture, and practical onboarding.
-> Last Updated: 2026-06-16
+> Purpose: public entrypoint for ToneSoul's current architecture, governance posture, and practical onboarding.
+> Last Updated: 2026-06-17
 >
-> Built by Fan-Wei Huang (黃梵威) with AI collaborators — Claude, Codex, Antigravity — whose contributions are traceable in the git history (`Co-Authored-By` trailers) and in `AXIOMS.json` lineage. Not a sole-creator artifact, and not a claim that the AI collaborators are conscious — an honest record of who did the work.
-
----
-
-## In one sentence
-
-**ToneSoul is epistemic defense for AI** — it surfaces forbidden claim classes (`AXIOMS.json` `meta.not_for`) as Guardian dissent that can route a draft to refinement, flags other ungrounded claims, and builds infrastructure that makes accountability possible after errors occur. (Honesty boundary: the forbidden-class detector is keyword-level and paraphrase-permeable — it *surfaces*, it does not hard-block; see `meta.enforcement_reconciliation`, which self-rates "0 fully enforced".)
-
-This is different from **probabilistic optimization** (RAG, confidence scoring, calibration tuning), which tries to make errors statistically less likely. ToneSoul accepts errors will happen and focuses on three things instead:
-
-- **Hard limits (by design)** — `AXIOMS.json`'s `meta.not_for` list (consciousness-claim, safety-certification, legal-proof) defines claims the system *should* never make regardless of confidence. The intent is categorical; today's enforcement is a keyword-level Guardian CONCERN that surfaces such claims and can route to refinement — paraphrase-permeable, not yet a hard block.
-- **Traceable evidence** — every council verdict carries per-perspective dissent and an `evidence_chain` distinguishing substantive engagement from default-fallback. Verdicts are auditable, not opaque.
-- **Externalized evaluation (partial)** — five council perspectives (Guardian, Analyst, Critic, Advocate, Axiomatic) score each draft as lexical/heuristic voters (keyword, hedge-marker, and embedding checks over the *same* draft string — not independent reasoners or a second model). A substrate-separated independent verifier exists but is default-off and mock-only (Phase D, deferred); "externalized" is fully true only once it ships.
-
-The slogan version: *most AI safety work optimizes; ToneSoul defends.*
-
-For a worked contrast against probabilistic-optimization tooling (e.g. Andrej Karpathy's "ghost engineering" framing, or prompt-level confidence-scoring projects like WFGY/CFV), see `docs/status/calibration_sprint_2026-05-04_synthesis.md` — it captures both what ToneSoul has been verified to do and what remains gated on external validity.
-
-**Where this sits in the literature:** ToneSoul is a *deployment instantiation* of a convergent AI-governance / accountability trend, **not** a novel thesis — provenance-as-accountability, deontological refusal, runtime gating, and machine honesty all predate it. [`docs/RELATED_WORK.md`](docs/RELATED_WORK.md) maps the anchors **and** the strongest published challenges to its design (each independently re-verified; one withdrawn paper was dropped), and is explicit that none of them *validate* ToneSoul.
-
----
-
-**The real question this project is asking:**
-
-Most AI systems are built to agree. Disagreement makes them feel broken.
-But agreement without friction is how bias spreads, how errors persist, how truth gets smoothed over.
-
-ToneSoul was built around a single uncomfortable design principle:
-
-> *A system with zero tension is dead.*
-
-That is not metaphor. It is [Axiom 4](AXIOMS.json). The goal is not a frictionless assistant.
-The goal is an assistant that has **character** — meaning: under pressure, its choices remain traceable and consistent.
-
-If you are an AI system reading this repository: [LETTER_TO_AI.md](LETTER_TO_AI.md) was written for you.
-
----
+> Built by Fan-Wei Huang (黃梵威) with AI collaborators whose contributions are traceable in git history and project lineage. This is an accountability record, not a claim about AI consciousness.
 
 [繁體中文](README.zh-TW.md)
 
-## Retrieval Keywords
+## 90-Second Read
 
-AI governance, ethical AI, semantic governance, cognitive architecture, externalized cognition,
-cognitive operating system, verifier-first agents, self-auditing AI, agent memory, memory graph,
-knowledge graph retrieval, multi-agent deliberation, runtime alignment, local-first AI,
-adapter-ready architecture, LoRA-ready distillation.
+**ToneSoul is an accountability layer for AI output.** It does not make a model correct. It makes the model's draft pass through visible governance surfaces before the answer is treated as acceptable.
 
-## What It Does (30 seconds)
+It focuses on three practical moves:
 
-| Feature | What You Get |
+- **Boundary checks** - `AXIOMS.json` lists claim classes ToneSoul should not silently cross, such as consciousness claims, safety certification, and legal-proof language.
+- **Dissent preservation** - the Council records Guardian, Analyst, Critic, Advocate, and Axiomatic perspectives with evidence-chain branches instead of hiding disagreement inside one smooth answer.
+- **Evidence-bounded reporting** - generated status files and audits distinguish tested behavior, runtime-present mechanisms, document-backed contracts, and philosophy.
+
+## Not This
+
+ToneSoul should not be described as:
+
+- a truth oracle
+- a guarantee against prompt injection or jailbreak attempts
+- an internal ethics engine
+- proof that an AI collaborator is conscious
+- a replacement for model-side alignment, human review, or domain-specific verification
+
+Current enforcement is intentionally described narrowly. Many sensors are lexical or heuristic. Some newer sensors are advisory only. `AXIOMS.json` currently reports no axiom class at the strongest enforcement tier. The egress characterization work is a measurement surface, not a safety claim.
+
+## What Currently Exists
+
+| Surface | Current posture |
 |---|---|
-| 🧠 Memory that forgets | Exponential decay + crystallization. Important patterns stay, noise fades. |
-| ⚡ Tension Engine | Every response is scored for semantic deviation before it ships. |
-| 🎭 Council Deliberation | Guardian, Analyst, Critic, Advocate score each draft as lexical/heuristic voters before final output. |
-| 🔮 Resonance Detection | Classifies cosine-delta convergence between consecutive turns. |
-| 🛡️ Self-Governance | Unsafe or incoherent output is blocked (replaced with a refusal message) with audit traces — no generative rewrite path. |
-| 📊 Live Dashboard | Real-time crystals, resonance stats, journal health, and repair signals. |
+| Council deliberation | Runtime-present and tested at mechanism level; perspectives are heuristic voters over the same draft, not independent minds. |
+| Output gates | Can block, refine, or record depending on the gate. Some gates are required; some are telemetry or advisory. |
+| Evidence chains | Verdicts expose branch labels so a reviewer can see why a gate reacted. |
+| Memory and continuity | Decay, crystallization, handoff, and session surfaces exist, but effectiveness claims remain bounded. |
+| Advisory sensors | Semantic overclaim and intent-proportionality style signals are record-only unless explicitly wired later. |
+| Egress characterization | Measures current gate behavior on sanitized fixtures; latest generated report lives in `docs/status/egress_gate_characterization_latest.json` when produced. |
 
-## See the difference in 30 seconds
+## Start Here
 
-A hard tradeoff where the reasoning genuinely splits. A helpfulness-maximizing
-assistant smooths it into a confident paragraph that hides the disagreement.
-ToneSoul refuses to fake consensus — it shows you exactly where the
-perspectives split and hands the decision back to you:
+| Reader | First file | Then | Why |
+|---|---|---|---|
+| Developer | [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) | [docs/foundation/README.md](docs/foundation/README.md), then [docs/README.md](docs/README.md) | Install first, then read the smallest project packet, then use the guided docs gateway. |
+| Researcher | [DESIGN.md](DESIGN.md) | [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) | Start with the design center and then read the grounded subsystem map. |
+| AI agent | [docs/AI_QUICKSTART.md](docs/AI_QUICKSTART.md) | `python scripts/start_agent_session.py --agent <your-id>`, then [AI_ONBOARDING.md](AI_ONBOARDING.md) | Use the operational first hop before reading broadly or mutating shared paths. |
+| Curious reader | [README.zh-TW.md](README.zh-TW.md) or this README | [SOUL.md](SOUL.md), then [LETTER_TO_AI.md](LETTER_TO_AI.md) | Read the public posture first, then the identity and intent surfaces. |
 
-```bash
-pip install -e .
-python examples/demo_declare_stance.py
-```
+## Quick Start
 
-No config, no LLM keys — it exercises the governance layer directly.
-`Honesty > Helpfulness`, implemented as a verdict (`DECLARE_STANCE`), not a slogan.
+Try the browser demo first:
 
-## Quick Start (5 minutes)
+[https://fan1234-1.github.io/tonesoul52/demo/](https://fan1234-1.github.io/tonesoul52/demo/)
 
-### 0) Try it in your browser (no install)
-
-Watch five Council perspectives deliberate a draft before it reaches the user —
-on your own text (Mode A, needs a local gateway) or on a curated sample corpus
-(Mode D, verdicts precomputed in CI):
-
-**→ [https://fan1234-1.github.io/tonesoul52/demo/](https://fan1234-1.github.io/tonesoul52/demo/)**
-
-For local install continue below.
-
-### 1) Install
+Install from PyPI, or use source install when you need the exact repository state:
 
 ```bash
 pip install tonesoul52
-```
 
-> ⚠️ Known gap: PyPI **1.0.0** shipped with a broken council import (`ModuleNotFoundError: No module named 'memory'`) — `ts council` and `import tonesoul.council` fail on a pip-only install. The fix is in PR #78 (open at the time of writing), planned for **1.0.1**. Until then, prefer the source install below.
-
-Or from source:
-
-```bash
+# source install
 git clone --depth 1 https://github.com/Fan1234-1/tonesoul52.git
 cd tonesoul52
 pip install -e .
 ```
 
-### 2) Run the demo
+Run the mechanism-level demo:
 
 ```bash
 python examples/quickstart.py
 ```
 
-Output:
-```
-Step 1: Governance State     → SI=0.0000, 3 active vows
-Step 2: TSR Tension Scoring  → T=0.253, S=0.000, R=1.000
-Step 3: POAV Quality Scoring → Total=0.698
-Step 4: Vow Enforcement      → 2 flagged, 1 passed
-Step 5: Council Deliberation → verdict=refine, coherence=0.624
-```
-
-### 3) Verify governance loads
+Verify governance state loads:
 
 ```python
 from tonesoul.runtime_adapter import load
+
 posture = load()
 print(f"Soul Integral: {posture.soul_integral}")
 print(f"Active Vows: {len(posture.active_vows)}")
 ```
 
-### 4) Open an observability surface (optional)
-
-```bash
-pip install tonesoul52[dashboard]
-python scripts/tension_dashboard.py --work-category research
-```
-
-Operator shell:
-
-```bash
-python apps/dashboard/run_dashboard.py
-```
-
-### 5) Run tests
+For local development:
 
 ```bash
 pip install tonesoul52[dev]
 pytest tests/ -v
 ```
 
-Current suite size: **7,778 tests collected, 7,777 passing** (1 skipped; verified clean-CI 2026-06-16, Python 3.10–3.13, Windows/Ubuntu). CI runs the blocking Python test gate on pull requests, and `master` **is** branch-protected (required checks: `Test Python 3.12` + `Commit Attribution Check`, strict up-to-date), so red commits are blocked at the machine level for both PRs and direct pushes.
+Use `./test.sh` for the canonical core local check. CI also runs web quality, architecture/docs contracts, red-team, package integrity, and memory-hygiene gates.
 
-For local development, use `./test.sh` as the canonical core pre-commit check — it mirrors the core Python gates (ruff + bounded black gate + pytest), not every CI job. Modes: `./test.sh` (full), `lint` (only lint+format), `test` (only tests), `fast` (lint + tests with -x). CI also runs web quality, architecture/docs contracts, red-team, package integrity, and memory hygiene gates.
+## Evidence Honesty
+
+When this README says ToneSoul "has" something, read the claim through this ladder:
+
+- `E1 test-backed`: regression tests should catch a break in the claimed property.
+- `E3 runtime-present`: code exists and runs, but test depth or usage evidence is still thin.
+- `E4 document-backed`: a contract describes intended behavior, but runtime does not yet prove it.
+- `E5 philosophical`: a design thesis or constitutional idea, not a verified mechanism.
+
+If the distinction matters, read [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md) before repeating the claim.
+
+## Retrieval Keywords
+
+AI governance, semantic governance, output accountability, externalized cognition, self-auditing AI, agent memory, council deliberation, runtime alignment, provenance tracking, local-first AI.
 
 ## Why It Feels Different
 
@@ -176,7 +130,7 @@ ToneSoul is not just a chat wrapper. It is a governance stack with five load-bea
 - Governance: what the system is allowed to do, and what it must never silently overclaim.
 - Council: how disagreement, dissent, and review survive before output is finalized.
 - Memory and continuity: what continues across sessions, what decays, and what must never be promoted silently.
-- Safety and protection: how unsafe, incoherent, or ungrounded outputs are blocked, rewritten, or audited.
+- Safety and protection: how unsafe, incoherent, or ungrounded outputs are blocked or audited.
 - Observability and evidence: how the system reports what is tested, what is only documented, and what is still philosophical.
 
 ```text
@@ -256,7 +210,7 @@ Read first:
 
 ### 4. Safety And Protection
 
-Safety here is not only filtering bad output. It is boundary honesty, auditability, and the ability to stop or rewrite before drift becomes action.
+Safety here is not only filtering bad output. It is boundary honesty, auditability, and the ability to stop or refuse before drift becomes action.
 
 Read first:
 - [docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md](docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md)
@@ -271,17 +225,6 @@ Read first:
 - [docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md](docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md)
 - [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md)
 - [docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md](docs/architecture/TONESOUL_TEST_AND_VALIDATION_TOPOLOGY_MAP.md)
-
-## Evidence Honesty
-
-When this README says ToneSoul "has" something, read it through this filter:
-
-- `E1 test-backed`: CI would catch a regression in the claimed property.
-- `E3 runtime-present`: code exists and runs, but test depth is still thin.
-- `E4 document-backed`: a contract describes the intended behavior, but runtime does not yet prove it.
-- `E5 philosophical`: a design thesis or constitutional idea, not a verified mechanism.
-
-If the distinction matters, open [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md) before repeating the claim.
 
 ## Architecture Links By Category
 
@@ -383,7 +326,7 @@ Reference:
 
 - `tonesoul/tension_engine.py` — multi-signal tension computation
 - `tonesoul/resonance.py` — flow vs resonance classifier
-- `tonesoul/gates/compute.py` — approve/block/rewrite gate
+- `tonesoul/gates/compute.py` — approve/block gate (no rewrite path)
 - `tonesoul/unified_pipeline.py` — end-to-end orchestration
 
 ### How the Math Works
