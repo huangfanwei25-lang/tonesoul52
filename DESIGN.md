@@ -243,6 +243,10 @@ Rule of thumb: a bare swallow is only ever correct for `telemetry`, and even the
 
 The anti-pattern to guard against: recording a *required* failure as `optional` to make it look "handled". An `optional` event with no real fallback is fail-silent wearing a label — if the path is load-bearing, it must raise, not record. `optional` is a promise that the system genuinely keeps working degraded, not permission to ignore.
 
+**Which components are categorically `required` (never `optional`).** The fail-closed governance and safety gates: the POAV / governance gate, vow-violation (harm) checks, the memory-egress sovereignty gate (Axiom 8), Aegis chain integrity, and the write-API auth gate. If one of these cannot complete, the system must refuse or block — never `record-and-continue`.
+
+*Why this is written down for whoever comes next (and not left to per-site judgement):* the tier system has exactly one catastrophic failure mode — a **safety** gate wrapped in `except: record(tier="optional"); continue`, so it fails **open** while looking handled. At every other site, degrading-visibly is the right default; at these gates, that default is precisely the bug the whole system exists to prevent. A later agent reading only "fail-soft is good" could rationalize downgrading a governance gate to keep output flowing — this paragraph exists to stop that. The list is a floor, not a ceiling: for a new gate, classify it `required` and make someone argue it *down*, never *up*.
+
 ## Why ToneSoul Keeps Adding These Contracts
 
 Many of the newer contracts exist because the default failure mode of powerful assistants is not "being too weak."
