@@ -231,6 +231,18 @@ Two sensors landed in 2026-06 as the first real-capability steps past the lexica
 
 Promotion from advisory-signal to actual gate has explicit prerequisites in those eval docs. Until they are met, treating either sensor as enforcement is exactly the Invariant 3 failure these notes exist to prevent.
 
+## Fail-Soft Has Tiers
+
+Not every caught exception should be treated the same. A blanket "never swallow exceptions" rule fights the system's legitimate fail-soft paths; a blanket `except: pass` lets real failures hide as silence. ToneSoul classifies a suppressed failure into one of three tiers, so "don't crash" never silently means "don't notice":
+
+- **required** — the subsystem is load-bearing; its failure must **not** be swallowed. Fail closed (raise / block / refuse). These never reach `ExceptionTrace` because they are not suppressed (e.g. the egress / governance fail-closed gates).
+- **optional** — the subsystem is degradable; its failure is tolerable but must be **visible**. Record a degradation event via `ExceptionTrace.record(..., tier="optional")` and continue degraded (e.g. the optional-subsystem lazy-init getters in `unified_pipeline.py`). This is the default tier.
+- **telemetry** — best-effort, high-volume, individually unimportant; failure is ignorable but must be **counted**, so a systemic problem cannot hide as silence. Record with `tier="telemetry"`; the trace `summary()["tiers"]` aggregates the counts.
+
+Rule of thumb: a bare swallow is only ever correct for `telemetry`, and even then it should count. Anything load-bearing is `required` (fail closed); everything in between is `optional` (degrade visibly). This is Invariant 4 applied to error handling — make degradation observable; do not let "fail-soft" become "fail-silent".
+
+The anti-pattern to guard against: recording a *required* failure as `optional` to make it look "handled". An `optional` event with no real fallback is fail-silent wearing a label — if the path is load-bearing, it must raise, not record. `optional` is a promise that the system genuinely keeps working degraded, not permission to ignore.
+
 ## Why ToneSoul Keeps Adding These Contracts
 
 Many of the newer contracts exist because the default failure mode of powerful assistants is not "being too weak."
