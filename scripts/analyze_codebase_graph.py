@@ -909,6 +909,23 @@ def build_report(
     }
 
 
+def _doc_provenance(source_command: str, updated_at: str) -> dict[str, Any]:
+    """Self-declaration for a GENERATED status artifact (docs/status/*latest*).
+
+    A generated snapshot must declare itself non-canonical so agents and tests do
+    not mistake a point-in-time report for architecture truth. Canonical docs
+    (README.md, DESIGN.md, docs/SUCCESSOR_MAP.md, AXIOMS.json) carry no such block.
+    Fixed 4-key shape on purpose — no framework. See docs/status/README.md
+    "Canonical vs Generated". Other generators may adopt the same shape.
+    """
+    return {
+        "generated": True,
+        "canonical": False,
+        "source_command": source_command,
+        "updated_at": updated_at,
+    }
+
+
 def render_markdown(report: dict[str, Any]) -> str:
     """Render the report as a human-readable markdown document."""
     lines: list[str] = []
@@ -1121,6 +1138,11 @@ def main(argv: list[str] | None = None) -> int:
 
     json_path = out_dir / "codebase_graph_latest.json"
     md_path = out_dir / "codebase_graph_latest.md"
+
+    # Declare this artifact as generated + non-canonical (see docs/status/README.md).
+    report["doc_provenance"] = _doc_provenance(
+        "python scripts/analyze_codebase_graph.py", report.get("generated_at", "")
+    )
 
     json_path.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n",
