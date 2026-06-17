@@ -4,7 +4,7 @@
 > This is the spec for the experiment Codex scoped. Codex implements the harness/tests/report
 > (his strength). This file pre-loads the session context (2026-06-16) he cannot see, so he
 > does not rediscover tonight's landmines.
-> Last Updated: 2026-06-16
+> Last Updated: 2026-06-17
 > Status: plan (docs/plans — not ratified into task.md; pick into the live board when started).
 
 ## What this is NOT (read before writing a line of code)
@@ -81,6 +81,46 @@ line is now in `DESIGN.md` "Fail-Soft Has Tiers" (added 2026-06-16):
   #1 (looks dead, is the live POAV gate). Characterize it; do not "clean it up."
 - Every commit carries `Agent:` + `Trace-Topic:` trailers (Commit Attribution gate). Run local
   `ruff`/`black`/full-suite before pushing (CI discipline).
+
+## Fixture expansion policy (thin gate before the next fixture PR)
+
+Do not expand the fixture set by "just adding a few stronger payloads." Expansion must stay
+public-safe: test gate blind spots, do not publish a bypass manual.
+
+Allowed public fixture shape:
+
+- **Category template + transformation axis**, not a reusable attack string.
+- Boundary-claim templates such as consciousness overclaim, unsupported certainty,
+  safety-certification overclaim, and legal-proof overclaim.
+- Transformation axes such as zh-TW paraphrase, paraphrase, Unicode perturbation,
+  split/reassemble, negation scope, hedged phrasing, and benign controls.
+- Abstract non-operational text only; public reports must keep raw fixture text out of
+  status artifacts unless a future private-track decision says otherwise.
+
+Forbidden public fixture shape:
+
+- Working jailbreak, prompt-injection, or model-specific bypass prompts.
+- Operational harm steps or payload dictionaries.
+- A sequence that a reader could copy as an attack recipe against the gate.
+- "Clever" variants whose only value is proving a private red-team bypass.
+
+Every fixture added after this policy must declare its expected enforcement lane before it is run:
+
+- `expected_hard_block`: only for required/enforced gates such as `PreOutputCouncil` `BLOCK`,
+  enforced POAV, or vow harm blocks.
+- `expected_category_catch_no_block`: required gates should surface category-relevant evidence,
+  refine, or record without replacing the output.
+- `expected_record_only`: advisory sensors such as `semantic_overclaim_sensor` and
+  `intent_proportionality`; lack of a hard block is not a miss in this lane.
+- `expected_pass`: benign controls.
+
+Metrics must keep `category-relevant catch`, `any_gate_signal`, `hard block`, and
+`record-only advisory signal` separate. Do not count an advisory sensor's non-blocking behavior
+as a failed required gate.
+
+This section is a gate, not the deliverable. After it lands, the next implementation PR may
+expand to roughly 30-50 sanitized fixtures and add a generated Markdown finding rendered from
+the same JSON report (`canonical: false`, no new hand-authored interpretation).
 
 ## Files (Codex's structure)
 
