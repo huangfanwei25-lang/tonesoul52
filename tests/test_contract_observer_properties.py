@@ -15,6 +15,7 @@ from tonesoul.contract_observer import (
 )
 
 FLOAT_TOLERANCE = 1e-4
+pytestmark = pytest.mark.slow
 
 
 # === Strategies ===

@@ -19,6 +19,8 @@ from tonesoul.vow_system import (
     VowRegistry,
 )
 
+pytestmark = pytest.mark.slow
+
 # === Strategies ===
 
 

@@ -4,10 +4,13 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from tonesoul.memory.soul_db import JsonlSoulDB, MemorySource
+
+pytestmark = pytest.mark.slow
 
 
 def _db_path(tmpdir: str) -> Path:

@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from tonesoul.tension_engine import ResistanceVector, TensionConfig, TensionEngine
+
+pytestmark = pytest.mark.slow
 
 
 def _unit_float():
