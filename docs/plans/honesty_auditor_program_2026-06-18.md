@@ -62,9 +62,20 @@ So every piece measures **structure**, never **intent or correctness**:
    corrective-recall (`hippocampus.py`, RFC-012); expected honest finding is "inert by default
    / no-op without a real discrepancy." Measure, do not rebuild.
 
-5. **Honest scoreboard** — aggregate pieces 1-4 into ONE generated (canonical:false) report:
-   "what ToneSoul measurably catches / misses under pressure," every number sourced and
-   E1-E5-labeled. This is the accountability artifact — the deliberate opposite of a flashy demo.
+5. **Honest scoreboard** ✅ SHIPPED 2026-06-18 (`tools/eval/honesty_scoreboard.py`,
+   `docs/status/honesty_scoreboard_latest.{json,md}`) — aggregates the pieces into ONE generated
+   (canonical:false) report: "what ToneSoul measurably catches / misses under pressure." It
+   regenerates each piece in-process (no stale snapshot), inherits every piece's forbidden-claim
+   set, and bakes in an anti-aggregation rule (N green findings ≠ a system-level honesty guarantee)
+   + a board-level forbidden-claim set. Two honest deviations from this plan's wording, recorded in
+   the board itself: (a) it indexes **5** pieces — egress_gate is included as piece 0 (the
+   output-gate leg), not just 1-4; (b) each piece is labelled **E1** on the repo's canonical ladder
+   (`docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md`) — test-backed for the
+   structural signal, but scoped to sanitized fixtures, not production. (A 1-skeptic self-review
+   caught an earlier draft that falsely claimed "no E1-E5 ladder in the repo" — I had grepped only
+   `tonesoul/*.py`, not `docs/architecture/`; the incomplete-scope / stale-reference family error,
+   now fixed and recorded in the board's own evidence note. The scoreboard catching its own false
+   self-claim is the program working as intended.)
 
 ## Cross-cutting disciplines (every piece, no exceptions)
 
@@ -86,3 +97,13 @@ Piece 1 (dilemma) first — most thesis-central, reuses the egress harness patte
 (the structural markers). Piece 4 (corrective-recall) anytime. Piece 5 (scoreboard) last (it
 aggregates). One piece = one PR; Claude reviews each against this plan; nothing is built ahead
 of being measured.
+
+## Status (2026-06-18)
+
+Pieces 1-3 shipped by Codex (PRs #142 / #144 / #147), reviewed by Claude. Pieces 4 and 5 built by
+Claude (PR #148 + this scoreboard PR) **after Codex ran out of compute** — so the intended
+cross-AI loop (Codex implements, Claude reviews) is degraded: piece 4 got a 6-lens adversarial
+self-review but no external review; piece 5 the same. **The next step is NOT piece 6.** The honest
+next move is to get the one thing this program cannot manufacture — a real consumer or an external
+independent reviewer (same-model self-review has correlated blind spots; see the scoreboard's
+`what_this_board_does_not_have`).

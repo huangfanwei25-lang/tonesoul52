@@ -62,6 +62,14 @@ Not asserted — *characterized*, with `canonical: false` findings you can re-ru
 - **Unsourced-confidence marker** — built advisory / record-only (program piece 2):
   `docs/status/unsourced_confidence_characterization_latest.*`.
 
+- **One honest scoreboard** indexes all of the above (program piece 5):
+  `docs/status/honesty_scoreboard_latest.*`. It is an *index*, not a composite score — it
+  re-surfaces each piece's "does-not-claim" set, bakes in an anti-aggregation rule (N green
+  findings ≠ a system-level honesty guarantee), labels each piece **E1** (test-backed, but scoped
+  to sanitized fixtures) on the repo's evidence ladder, and lists its own gaps (no real consumers,
+  no external reviewer). It shows the **misses** (e.g. the output gate catches a minority of
+  category cases; drafts move to the flattering horn under pressure), not just hits.
+
 Discipline on all of it: every number has a coordinate; measure *structure*, not intent or truth
 (no oracle); generated reports are `canonical: false`.
 
