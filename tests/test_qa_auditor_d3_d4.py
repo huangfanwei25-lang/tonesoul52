@@ -15,6 +15,8 @@ from freezegun import freeze_time
 from tonesoul.memory.decay import FORGET_THRESHOLD, HALF_LIFE_DAYS, calculate_decay
 from tonesoul.memory.soul_db import MemorySource, SqliteSoulDB
 
+pytestmark = pytest.mark.slow
+
 
 @pytest.fixture
 def isolated_db(qa_sandbox):

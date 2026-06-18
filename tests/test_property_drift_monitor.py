@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from tonesoul.drift_monitor import DriftAlert, DriftMonitor
+
+pytestmark = pytest.mark.slow
 
 
 def _unit_float():

@@ -1,7 +1,11 @@
 import json
 from pathlib import Path
 
+import pytest
+
 import scripts.run_repo_healthcheck as healthcheck
+
+pytestmark = pytest.mark.slow
 
 
 def test_is_ci_environment_detects_truthy_values(monkeypatch) -> None:

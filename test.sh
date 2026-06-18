@@ -9,7 +9,7 @@
 #   ./test.sh           full check (lint + format + tests; default)
 #   ./test.sh lint      only lint + format
 #   ./test.sh test      only tests
-#   ./test.sh fast      lint + tests with -x (stop on first failure)
+#   ./test.sh fast      lint + tests excluding @slow, parallelized with xdist
 #
 # Why this exists (per docs/status/calibration_sprint_2026-05-04_synthesis.md +
 # reference_navigation_grammar_pattern memory): the "test entry" slot of
@@ -90,8 +90,8 @@ run_tests() {
 }
 
 run_tests_fast() {
-    step "pytest -x (stop on first failure)"
-    python -m pytest tests/ -q "${PYTEST_IGNORES[@]}" -x --maxfail=1 || fail "pytest failed"
+    step "pytest fast (-m not slow, xdist auto)"
+    python -m pytest tests/ -q "${PYTEST_IGNORES[@]}" -m "not slow" -n auto || fail "pytest failed"
     ok "pytest passed (fast mode)"
 }
 
@@ -116,7 +116,7 @@ case "$MODE" in
         echo "  full   lint + format + all tests (default)"
         echo "  lint   only lint + format"
         echo "  test   only tests"
-        echo "  fast   lint + tests with -x (stop on first failure)"
+        echo "  fast   lint + tests excluding @slow, parallelized with xdist"
         exit 2
         ;;
 esac
