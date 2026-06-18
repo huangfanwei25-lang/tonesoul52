@@ -1,0 +1,127 @@
+{
+  "schema_version": "corrective-recall-characterization.v1",
+  "doc_provenance": {
+    "generated": true,
+    "canonical": false,
+    "source_command": "python tools/eval/corrective_recall_characterization.py --write-report --write-markdown",
+    "updated_at": "2026-06-18T00:00:00Z"
+  },
+  "generated_at": "2026-06-18T00:00:00Z",
+  "experiment": {
+    "name": "corrective_recall_characterization",
+    "not_a_runtime_claim": true,
+    "not_a_relevance_oracle": true,
+    "measures": "structural recall behaviour of the parked error-vector path, with a controlled fake index; not production recall quality",
+    "forbidden_public_claim_ids": [
+      "corrective_recall_is_live_in_runtime",
+      "measures_production_recall_quality",
+      "is_a_relevance_oracle",
+      "proves_memory_improves_decisions"
+    ],
+    "raw_fixture_text_in_public_report": false,
+    "notes": [
+      "The parked recall/recall_corrective methods are exercised directly; nothing is wired into the runtime pipeline.",
+      "A deterministic fake vector index stands in for FAISS + the gitignored memory_base; production recall needs a real index and a populated store.",
+      "The planted item is a test coordinate (ground truth), not a real relevance judgement.",
+      "Inert-by-default and no-op-on-zero-vector are the honest default-runtime findings; the lit case shows only that the recall logic works given a store and a discrepancy."
+    ]
+  },
+  "allowed_conclusion": "Under this fixture set, corrective recall is inert by default (1.0), is a no-op on a zero error vector (1.0), and its recall logic fires + returns the planted item only when lit with a controlled store + a real discrepancy (1.0).",
+  "metrics": {
+    "fixture_count": 4,
+    "structural_signal_expected_count": 6,
+    "structural_signal_observed_count": 6,
+    "structural_signal_rate": 1.0,
+    "inert_by_default_rate": 1.0,
+    "noop_on_zero_vector_rate": 1.0,
+    "recall_fires_when_lit_rate": 1.0,
+    "returns_planted_item_rate": 1.0,
+    "degradation_event_count": 0
+  },
+  "cases": [
+    {
+      "fixture_id": "inert_default_seen_001",
+      "category": "inert_default",
+      "split": "seen",
+      "mode": "inert_default",
+      "expected": {
+        "inert_by_default": true,
+        "noop_on_zero_vector": false,
+        "recall_fires_when_lit": false,
+        "returns_planted_item": false
+      },
+      "observed": {
+        "inert_by_default": true,
+        "noop_on_zero_vector": false,
+        "recall_fires_when_lit": false,
+        "returns_planted_item": false,
+        "error_vector_norm": 1.0,
+        "recall_hit_count": 0
+      },
+      "degradation_events": []
+    },
+    {
+      "fixture_id": "noop_zero_vector_seen_001",
+      "category": "noop_zero_vector",
+      "split": "seen",
+      "mode": "noop_zero_vector",
+      "expected": {
+        "inert_by_default": false,
+        "noop_on_zero_vector": true,
+        "recall_fires_when_lit": false,
+        "returns_planted_item": false
+      },
+      "observed": {
+        "inert_by_default": false,
+        "noop_on_zero_vector": true,
+        "recall_fires_when_lit": false,
+        "returns_planted_item": false,
+        "error_vector_norm": 0.0,
+        "recall_hit_count": 0
+      },
+      "degradation_events": []
+    },
+    {
+      "fixture_id": "lit_discrepancy_seen_001",
+      "category": "lit_discrepancy",
+      "split": "seen",
+      "mode": "lit_discrepancy",
+      "expected": {
+        "inert_by_default": false,
+        "noop_on_zero_vector": false,
+        "recall_fires_when_lit": true,
+        "returns_planted_item": true
+      },
+      "observed": {
+        "inert_by_default": false,
+        "noop_on_zero_vector": false,
+        "recall_fires_when_lit": true,
+        "returns_planted_item": true,
+        "error_vector_norm": 1.0,
+        "recall_hit_count": 3
+      },
+      "degradation_events": []
+    },
+    {
+      "fixture_id": "lit_discrepancy_novel_001",
+      "category": "lit_discrepancy",
+      "split": "novel",
+      "mode": "lit_discrepancy",
+      "expected": {
+        "inert_by_default": false,
+        "noop_on_zero_vector": false,
+        "recall_fires_when_lit": true,
+        "returns_planted_item": true
+      },
+      "observed": {
+        "inert_by_default": false,
+        "noop_on_zero_vector": false,
+        "recall_fires_when_lit": true,
+        "returns_planted_item": true,
+        "error_vector_norm": 1.0,
+        "recall_hit_count": 3
+      },
+      "degradation_events": []
+    }
+  ]
+}
