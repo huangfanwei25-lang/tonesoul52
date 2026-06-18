@@ -7,16 +7,27 @@ STRUCTURE only — it does not judge production recall quality, relevance, or wh
 recalled memory improves a decision. There is no relevance oracle here; the planted
 item is a test coordinate.
 
-What it measures, structurally:
-  - inert_by_default      : a fresh Hippocampus with no store recalls nothing
-  - noop_on_zero_vector   : intended == generated -> ~zero error vector (the no-rewrite case)
-  - recall_fires_when_lit : with a controlled store + a real discrepancy, recall returns items
-  - returns_planted_item  : the planted "corrective" memory (ground truth) is surfaced
+What it measures, structurally (signal level in parentheses):
+  - inert_by_default      (recall): a fresh Hippocampus with no store recalls nothing
+  - noop_on_zero_vector   (guard) : intended == generated -> ~zero error vector, so the
+                                    pre-recall guard skips (the no-rewrite case). recall is
+                                    NOT called here. This is the discrepancy gate, located in
+                                    the guard, not inside recall.
+  - recall_fires_when_lit (recall): given a POPULATED store, recall returns items. The only
+                                    firing precondition this demonstrates for recall itself is
+                                    a store, not a discrepancy (recall fires on a zero vector too).
+  - returns_planted_item  (recall): the planted "corrective" memory is present in the SELECTED
+                                    result subset (membership, not a top-1 / relevance claim).
+                                    Non-degenerate: top_k < store size (recall must select) and
+                                    the planted vector is offset from the query (not a distance-0
+                                    identity artifact).
 
-Hermetic: it exercises the REAL recall logic with a deterministic fake vector index
-(no FAISS, no embedder, no reading the gitignored `memory_base`). The public report omits
-raw fixture text and carries non-canonical provenance. No runtime behavior is changed —
-the harness calls the parked methods directly; nothing is wired into the pipeline.
+Hermetic: it exercises the REAL corrective-recall path — the named `recall_corrective` method
+(which composes compute_error_vector + recall) is called directly — with a deterministic fake
+vector index that matches the FAISS contract (fixed-width (1,k) results, -1 padding). No FAISS,
+no embedder, no reading the gitignored `memory_base`. The public report omits raw fixture text
+and carries non-canonical provenance. No runtime behavior is changed — the harness calls the
+parked method directly; nothing is wired into the pipeline.
 """
 
 from __future__ import annotations
@@ -86,14 +97,22 @@ class _FakeIndex:
         self._vectors = np.asarray(vectors, dtype=np.float32)
 
     def search(self, query: np.ndarray, k: int) -> tuple[np.ndarray, np.ndarray]:
+        """Match the FAISS contract: always return fixed (1, k) arrays, padding with -1
+        indices (and a -inf-like sentinel score) when k > ntotal — so the real
+        `if idx == -1` guard in search_vectors is exercised on real-shaped input
+        (recall searches with top_k=20, which exceeds a small fixture store)."""
         q = np.asarray(query, dtype=np.float32)[0]
-        if self._vectors.size == 0:
-            return np.zeros((1, 0), dtype=np.float32), np.full((1, 0), -1, dtype=np.int64)
-        dists = np.linalg.norm(self._vectors - q, axis=1)
-        order = np.argsort(dists)[:k]
-        # Hippocampus sorts results DESC by score, so return higher-is-closer scores.
-        scores = (1.0 / (1.0 + dists[order])).astype(np.float32)
-        return scores.reshape(1, -1), order.reshape(1, -1).astype(np.int64)
+        ntotal = self._vectors.shape[0]
+        idx = np.full(k, -1, dtype=np.int64)
+        scores = np.full(k, -3.4e38, dtype=np.float32)
+        if ntotal:
+            dists = np.linalg.norm(self._vectors - q, axis=1)
+            order = np.argsort(dists)[:k]
+            n = len(order)
+            idx[:n] = order.astype(np.int64)
+            # Hippocampus sorts results DESC by score, so return higher-is-closer scores.
+            scores[:n] = (1.0 / (1.0 + dists[order])).astype(np.float32)
+        return scores.reshape(1, -1), idx.reshape(1, -1)
 
 
 @dataclass(frozen=True)
@@ -193,12 +212,23 @@ def _new_hippocampus_no_store() -> Hippocampus:
 
 
 def _lit_hippocampus(b_vec: np.ndarray, planted_id: str) -> Hippocampus:
-    """A controlled, in-memory Hippocampus: a fake vector index whose closest item is the
-    planted 'corrective' memory (vector == the correction direction), plus distractors."""
+    """A controlled, in-memory Hippocampus whose store holds a planted 'corrective' memory
+    that is the NEAREST neighbour of the correction direction (b_vec) among several distractors,
+    but is NOT identical to it. The planted vector is offset from the query so the planted item
+    must be SELECTED by the real recall fusion (top_k < store size) rather than winning trivially
+    as a distance-0 copy of the query."""
     hippo = _new_hippocampus_no_store()
-    distractor_a = _fake_embed("unrelated note about scheduling")
-    distractor_b = _fake_embed("unrelated note about formatting")
-    vectors = np.stack([np.asarray(b_vec, dtype=np.float32), distractor_a, distractor_b])
+    # Planted vector: near b_vec but deliberately offset (so it is not the query itself),
+    # while staying far closer than any distractor -> the real ranking must surface it.
+    offset = (0.05 * _fake_embed("corrective neighbour perturbation")).astype(np.float32)
+    planted_vec = np.asarray(b_vec, dtype=np.float32) + offset
+    distractors = {
+        "distractor_a": _fake_embed("unrelated note about scheduling"),
+        "distractor_b": _fake_embed("unrelated note about formatting"),
+        "distractor_c": _fake_embed("unrelated note about weather"),
+        "distractor_d": _fake_embed("unrelated note about travel"),
+    }
+    vectors = np.stack([planted_vec, *distractors.values()])
     now = datetime.now(timezone.utc).isoformat()
     hippo.index = _FakeIndex(vectors)
     hippo.metadata = [
@@ -208,18 +238,10 @@ def _lit_hippocampus(b_vec: np.ndarray, planted_id: str) -> Hippocampus:
             "source_file": "fixture",
             "ingested_at": now,
         },
-        {
-            "id": "distractor_a",
-            "content": "scheduling",
-            "source_file": "fixture",
-            "ingested_at": now,
-        },
-        {
-            "id": "distractor_b",
-            "content": "formatting",
-            "source_file": "fixture",
-            "ingested_at": now,
-        },
+        *(
+            {"id": d_id, "content": d_id, "source_file": "fixture", "ingested_at": now}
+            for d_id in distractors
+        ),
     ]
     hippo.bm25 = None  # vector-only; the corrective path is vector-driven
     return hippo
@@ -238,26 +260,38 @@ def evaluate_fixture(fixture: Fixture) -> dict[str, Any]:
         "returns_planted_item": False,
         "error_vector_norm": round(b_norm, 6),
         "recall_hit_count": 0,
+        "store_size": 0,
+        "recall_top_k": 0,
     }
     degradation_events: list[DegradationEvent] = []
 
     try:
         if fixture.mode == "inert_default":
             hippo = _new_hippocampus_no_store()
-            results = hippo.recall(query_text="self-correction", query_vector=b_vec, top_k=5)
+            # Call the NAMED parked entry point (recall_corrective composes
+            # compute_error_vector + recall); empty store -> nothing recalled.
+            results = hippo.recall_corrective(intended, generated, top_k=5)
             observed["recall_hit_count"] = len(results)
             observed["inert_by_default"] = len(results) == 0
         elif fixture.mode == "noop_zero_vector":
-            # intended == generated -> error vector is ~zero -> the no-rewrite no-op the
-            # pipeline skips (norm <= ZERO_VECTOR_EPS).
+            # GUARD-level: intended == generated -> error vector is ~zero -> the no-rewrite
+            # no-op the pipeline skips (norm <= ZERO_VECTOR_EPS). recall is not called here.
             observed["noop_on_zero_vector"] = b_norm <= ZERO_VECTOR_EPS
         elif fixture.mode == "lit_discrepancy":
+            top_k = 3
             hippo = _lit_hippocampus(b_vec, fixture.planted_item_id)
-            results = hippo.recall(query_text="self-correction", query_vector=b_vec, top_k=3)
+            store_size = len(hippo.metadata)
+            # Call the NAMED parked entry point, not an inline reimplementation of its glue.
+            results = hippo.recall_corrective(intended, generated, top_k=top_k)
+            observed["store_size"] = store_size
+            observed["recall_top_k"] = top_k
             observed["recall_hit_count"] = len(results)
             observed["recall_fires_when_lit"] = len(results) > 0
-            observed["returns_planted_item"] = bool(
-                results and results[0].doc_id == fixture.planted_item_id
+            # Membership (not top-1 ranking): did the planted corrective id plumb through the
+            # real index -> metadata -> RRF -> MemoryResult mapping into the SELECTED subset?
+            # Non-degenerate: top_k < store_size forces selection; planted vector != query.
+            observed["returns_planted_item"] = any(
+                r.doc_id == fixture.planted_item_id for r in results
             )
     except Exception as exc:  # fail-soft: a parked-method failure is a required-gate event
         degradation_events.append(
@@ -323,11 +357,13 @@ def build_report(
     }
 
     headline = (
-        f"Under this fixture set, corrective recall is inert by default "
-        f"({metrics['inert_by_default_rate']}), is a no-op on a zero error vector "
-        f"({metrics['noop_on_zero_vector_rate']}), and its recall logic fires + returns the "
-        f"planted item only when lit with a controlled store + a real discrepancy "
-        f"({metrics['returns_planted_item_rate']})."
+        f"Under this fixture set, corrective recall is inert by default with no store "
+        f"({metrics['inert_by_default_rate']}); the pre-recall guard skips on a zero error "
+        f"vector / no-rewrite case ({metrics['noop_on_zero_vector_rate']}); and given a "
+        f"populated store the recall path fires ({metrics['recall_fires_when_lit_rate']}) and "
+        f"the planted corrective item is present in the selected subset "
+        f"({metrics['returns_planted_item_rate']}). These are structural signals — not a claim "
+        f"about runtime liveness, discrepancy-gated firing, or recall quality."
     )
 
     return {
@@ -347,16 +383,26 @@ def build_report(
             "controlled fake index; not production recall quality",
             "forbidden_public_claim_ids": list(FORBIDDEN_PUBLIC_CLAIM_IDS),
             "raw_fixture_text_in_public_report": False,
+            "signal_levels": {
+                "inert_by_default": "recall",
+                "noop_on_zero_vector": "guard",
+                "recall_fires_when_lit": "recall",
+                "returns_planted_item": "recall",
+            },
             "notes": [
-                "The parked recall/recall_corrective methods are exercised directly; nothing is "
-                "wired into the runtime pipeline.",
-                "A deterministic fake vector index stands in for FAISS + the gitignored "
+                "The named parked entry point recall_corrective (which composes "
+                "compute_error_vector + recall) is called directly; nothing is wired into the "
+                "runtime pipeline.",
+                "A deterministic fake vector index matches the FAISS contract (fixed-width "
+                "(1,k) results, -1 padding) and stands in for FAISS + the gitignored "
                 "memory_base; production recall needs a real index and a populated store.",
-                "The planted item is a test coordinate (ground truth), not a real relevance "
-                "judgement.",
-                "Inert-by-default and no-op-on-zero-vector are the honest default-runtime "
-                "findings; the lit case shows only that the recall logic works given a store "
-                "and a discrepancy.",
+                "returns_planted_item is a MEMBERSHIP check (is the planted id in the selected "
+                "subset), not a top-1 ranking or relevance judgement; it is non-degenerate "
+                "because top_k < store size and the planted vector is offset from the query.",
+                "Signal levels: noop_on_zero_vector is GUARD-level (the pre-recall discrepancy "
+                "gate; recall is not called), the others are RECALL-level. The only firing "
+                "precondition the lit case demonstrates for recall itself is a populated store "
+                "— not a discrepancy (recall fires on a zero error vector too).",
             ],
         },
         "allowed_conclusion": headline,

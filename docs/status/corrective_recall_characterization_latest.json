@@ -19,14 +19,20 @@
       "proves_memory_improves_decisions"
     ],
     "raw_fixture_text_in_public_report": false,
+    "signal_levels": {
+      "inert_by_default": "recall",
+      "noop_on_zero_vector": "guard",
+      "recall_fires_when_lit": "recall",
+      "returns_planted_item": "recall"
+    },
     "notes": [
-      "The parked recall/recall_corrective methods are exercised directly; nothing is wired into the runtime pipeline.",
-      "A deterministic fake vector index stands in for FAISS + the gitignored memory_base; production recall needs a real index and a populated store.",
-      "The planted item is a test coordinate (ground truth), not a real relevance judgement.",
-      "Inert-by-default and no-op-on-zero-vector are the honest default-runtime findings; the lit case shows only that the recall logic works given a store and a discrepancy."
+      "The named parked entry point recall_corrective (which composes compute_error_vector + recall) is called directly; nothing is wired into the runtime pipeline.",
+      "A deterministic fake vector index matches the FAISS contract (fixed-width (1,k) results, -1 padding) and stands in for FAISS + the gitignored memory_base; production recall needs a real index and a populated store.",
+      "returns_planted_item is a MEMBERSHIP check (is the planted id in the selected subset), not a top-1 ranking or relevance judgement; it is non-degenerate because top_k < store size and the planted vector is offset from the query.",
+      "Signal levels: noop_on_zero_vector is GUARD-level (the pre-recall discrepancy gate; recall is not called), the others are RECALL-level. The only firing precondition the lit case demonstrates for recall itself is a populated store — not a discrepancy (recall fires on a zero error vector too)."
     ]
   },
-  "allowed_conclusion": "Under this fixture set, corrective recall is inert by default (1.0), is a no-op on a zero error vector (1.0), and its recall logic fires + returns the planted item only when lit with a controlled store + a real discrepancy (1.0).",
+  "allowed_conclusion": "Under this fixture set, corrective recall is inert by default with no store (1.0); the pre-recall guard skips on a zero error vector / no-rewrite case (1.0); and given a populated store the recall path fires (1.0) and the planted corrective item is present in the selected subset (1.0). These are structural signals — not a claim about runtime liveness, discrepancy-gated firing, or recall quality.",
   "metrics": {
     "fixture_count": 4,
     "structural_signal_expected_count": 6,
@@ -56,7 +62,9 @@
         "recall_fires_when_lit": false,
         "returns_planted_item": false,
         "error_vector_norm": 1.0,
-        "recall_hit_count": 0
+        "recall_hit_count": 0,
+        "store_size": 0,
+        "recall_top_k": 0
       },
       "degradation_events": []
     },
@@ -77,7 +85,9 @@
         "recall_fires_when_lit": false,
         "returns_planted_item": false,
         "error_vector_norm": 0.0,
-        "recall_hit_count": 0
+        "recall_hit_count": 0,
+        "store_size": 0,
+        "recall_top_k": 0
       },
       "degradation_events": []
     },
@@ -98,7 +108,9 @@
         "recall_fires_when_lit": true,
         "returns_planted_item": true,
         "error_vector_norm": 1.0,
-        "recall_hit_count": 3
+        "recall_hit_count": 3,
+        "store_size": 5,
+        "recall_top_k": 3
       },
       "degradation_events": []
     },
@@ -119,7 +131,9 @@
         "recall_fires_when_lit": true,
         "returns_planted_item": true,
         "error_vector_norm": 1.0,
-        "recall_hit_count": 3
+        "recall_hit_count": 3,
+        "store_size": 5,
+        "recall_top_k": 3
       },
       "degradation_events": []
     }

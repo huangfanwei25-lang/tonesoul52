@@ -8,7 +8,7 @@ This status artifact is non-canonical and makes no runtime or relevance claim. I
 
 ## Allowed conclusion
 
-Under this fixture set, corrective recall is inert by default (1.0), is a no-op on a zero error vector (1.0), and its recall logic fires + returns the planted item only when lit with a controlled store + a real discrepancy (1.0).
+Under this fixture set, corrective recall is inert by default with no store (1.0); the pre-recall guard skips on a zero error vector / no-rewrite case (1.0); and given a populated store the recall path fires (1.0) and the planted corrective item is present in the selected subset (1.0). These are structural signals — not a claim about runtime liveness, discrepancy-gated firing, or recall quality.
 
 ## Metrics
 

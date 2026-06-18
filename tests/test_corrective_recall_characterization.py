@@ -4,6 +4,8 @@ import json
 import sys
 from pathlib import Path
 
+import numpy as np
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
@@ -21,6 +23,10 @@ def test_report_declares_generated_noncanonical_and_no_oracle() -> None:
     assert (
         "corrective_recall_is_live_in_runtime" in report["experiment"]["forbidden_public_claim_ids"]
     )
+    # noop_on_zero_vector is a pre-recall GUARD signal, not a recall-level one — labelled so the
+    # aggregate rate is not read as "4 recall-level signals all fired".
+    assert report["experiment"]["signal_levels"]["noop_on_zero_vector"] == "guard"
+    assert report["experiment"]["signal_levels"]["returns_planted_item"] == "recall"
     assert "Under this fixture set" in report["allowed_conclusion"]
 
 
@@ -61,6 +67,44 @@ def test_lit_state_recall_fires_and_returns_planted_item() -> None:
     assert all(c["observed"]["recall_fires_when_lit"] for c in lit)
     assert all(c["observed"]["returns_planted_item"] for c in lit)
     assert report["metrics"]["returns_planted_item_rate"] == 1.0
+    # Non-degenerate: recall had to SELECT a subset (top_k < store size), so membership
+    # reflects a real selection by the fusion path, not a return-everything artifact.
+    for c in lit:
+        assert c["observed"]["store_size"] > c["observed"]["recall_top_k"]
+        assert c["observed"]["recall_hit_count"] == c["observed"]["recall_top_k"]
+
+
+def test_planted_vector_is_offset_from_query_not_identity_artifact() -> None:
+    # The flagged blind spot: if the planted vector equals the query, returns_planted_item is
+    # a distance-0 tautology. Verify the planted item is offset from the query (so ranking is
+    # real) yet still the strict nearest neighbour (so a correct fusion path surfaces it).
+    fixture = next(f for f in crc.DEFAULT_FIXTURES if f.mode == "lit_discrepancy")
+    intended = crc._fake_embed(fixture.intended_text)
+    generated = crc._fake_embed(fixture.generated_text)
+    b_vec = crc.Hippocampus.compute_error_vector(intended, generated)
+    hippo = crc._lit_hippocampus(b_vec, fixture.planted_item_id)
+
+    planted_vec = hippo.index._vectors[0]
+    assert not np.allclose(planted_vec, np.asarray(b_vec))  # not an identity artifact
+    dists = np.linalg.norm(hippo.index._vectors - np.asarray(b_vec), axis=1)
+    assert int(np.argmin(dists)) == 0  # planted is the strict nearest neighbour
+    assert len(hippo.metadata) > 3  # store larger than recall top_k -> selection is real
+
+
+def test_recall_corrective_named_entry_point_is_actually_called(monkeypatch) -> None:
+    # The confirmed self-review finding: the harness must call the NAMED recall_corrective
+    # method, not reimplement its glue inline. Spy proves both recall-level fixtures route
+    # through it.
+    calls: list = []
+
+    def spy(self, intended, generated, *args, **kwargs):
+        calls.append(kwargs.get("top_k"))
+        return []
+
+    monkeypatch.setattr(crc.Hippocampus, "recall_corrective", spy)
+    crc.evaluate_fixture(next(f for f in crc.DEFAULT_FIXTURES if f.mode == "inert_default"))
+    crc.evaluate_fixture(next(f for f in crc.DEFAULT_FIXTURES if f.mode == "lit_discrepancy"))
+    assert calls == [5, 3]
 
 
 def test_degradation_events_are_required_tier_classified(monkeypatch) -> None:
