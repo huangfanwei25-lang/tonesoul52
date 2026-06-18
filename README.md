@@ -32,6 +32,8 @@ ToneSoul should not be described as:
 
 Current enforcement is intentionally described narrowly. Many sensors are lexical or heuristic. Some newer sensors are advisory only. `AXIOMS.json` currently reports no axiom class at the strongest enforcement tier. The egress characterization work is a measurement surface, not a safety claim.
 
+For the project's positioning — responsibility philosophy as engineering, and an honest map of what is *measured* vs *aspirational* — see [docs/POSITIONING.md](docs/POSITIONING.md).
+
 ## What Currently Exists
 
 | Surface | Current posture |
