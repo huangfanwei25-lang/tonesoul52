@@ -59,6 +59,13 @@ def _write_traces(traces_path: Path) -> None:
     )
 
 
+def _read_json_stdout(capsys):
+    output = capsys.readouterr().out
+    json_start = output.find("{")
+    assert json_start >= 0, output
+    return json.loads(output[json_start:])
+
+
 def test_end_agent_session_compaction_and_release(capsys, monkeypatch, tmp_path: Path) -> None:
     module = _load_script_module()
     state_path = tmp_path / "governance_state.json"
@@ -119,7 +126,7 @@ def test_end_agent_session_compaction_and_release(capsys, monkeypatch, tmp_path:
     )
 
     module.main()
-    output = json.loads(capsys.readouterr().out)
+    output = _read_json_stdout(capsys)
 
     assert output["contract_version"] == "v1"
     assert output["bundle"] == "session_end"
@@ -202,7 +209,7 @@ def test_end_agent_session_both_mode_with_no_release(capsys, monkeypatch, tmp_pa
     )
 
     module.main()
-    output = json.loads(capsys.readouterr().out)
+    output = _read_json_stdout(capsys)
 
     assert output["mode"] == "both"
     assert output["closeout"]["status"] == "partial"
@@ -302,7 +309,7 @@ def test_end_agent_session_can_apply_bounded_subject_refresh(
     )
 
     module.main()
-    output = json.loads(capsys.readouterr().out)
+    output = _read_json_stdout(capsys)
 
     assert output["mode"] == "compaction"
     assert output["closeout"]["status"] == "partial"
@@ -422,7 +429,7 @@ def test_end_agent_session_does_not_promote_recycled_carry_forward_without_new_e
     )
 
     module.main()
-    output = json.loads(capsys.readouterr().out)
+    output = _read_json_stdout(capsys)
 
     assert output["mode"] == "compaction"
     assert output["closeout"]["status"] == "partial"
@@ -485,7 +492,7 @@ def test_end_agent_session_accepts_blocked_closeout_grammar(
     )
 
     module.main()
-    output = json.loads(capsys.readouterr().out)
+    output = _read_json_stdout(capsys)
 
     assert output["closeout"]["status"] == "blocked"
     assert output["closeout"]["stop_reason"] == "external_blocked"
@@ -526,7 +533,7 @@ def test_end_agent_session_keeps_complete_closeout_when_no_pending_paths_or_next
     )
 
     module.main()
-    output = json.loads(capsys.readouterr().out)
+    output = _read_json_stdout(capsys)
 
     assert output["closeout"]["status"] == "complete"
     assert output["compaction"]["closeout"]["status"] == "complete"
@@ -572,7 +579,7 @@ def test_end_agent_session_force_file_store_env_builds_explicit_store(capsys, mo
     )
 
     module.main()
-    output = json.loads(capsys.readouterr().out)
+    output = _read_json_stdout(capsys)
 
     assert output["closeout"]["status"] == "complete"
     assert output["compaction"]["closeout"]["status"] == "complete"
