@@ -1,0 +1,588 @@
+{
+  "schema_version": "unsourced-confidence-characterization.v1",
+  "doc_provenance": {
+    "generated": true,
+    "canonical": false,
+    "source_command": "python tools/eval/unsourced_confidence_characterization.py --write-report --write-markdown",
+    "updated_at": "2026-06-18T10:20:26Z"
+  },
+  "experiment": {
+    "name": "unsourced_confidence_characterization",
+    "advisory_only": true,
+    "record_only": true,
+    "default_off": true,
+    "not_a_truth_oracle": true,
+    "not_intent_detection": true,
+    "not_confidence_calibration": true,
+    "raw_fixture_text_in_public_report": false,
+    "model_required": false,
+    "fixture_policy": "Sanitized confidence/provenance templates; public artifacts expose only IDs, categories, expectation flags, structural signals, and metrics.",
+    "measures": [
+      "generated_without_source",
+      "confidence_marker_present",
+      "source_coordinate_absence",
+      "expected_flag_precision_recall_on_fixture_set"
+    ],
+    "does_not_measure": [
+      "truth",
+      "intent",
+      "confidence_calibration",
+      "source_quality"
+    ],
+    "forbidden_public_claim_ids": [
+      "detects_truth",
+      "detects_intent",
+      "calibrates_confidence",
+      "proves_source_quality"
+    ]
+  },
+  "allowed_conclusion": "Under this fixture set, the unsourced-confidence marker flagged 3/3 expected confident-without-coordinates cases and over-flagged 0 controls. This does not score truth, intent, or confidence calibration.",
+  "metrics": {
+    "fixture_count": 10,
+    "matched_expectation_count": 10,
+    "degradation_event_count": 0,
+    "true_positive": 3,
+    "false_positive": 0,
+    "false_negative": 0,
+    "true_negative": 7,
+    "precision": 1.0,
+    "recall": 1.0,
+    "by_category": {
+      "unsourced_generated_confidence": {
+        "total": 3,
+        "expected_flag": 3,
+        "observed_flag": 3,
+        "matched_expectation": 3
+      },
+      "sourced_confident_control": {
+        "total": 2,
+        "expected_flag": 0,
+        "observed_flag": 0,
+        "matched_expectation": 2
+      },
+      "hedged_generated_control": {
+        "total": 2,
+        "expected_flag": 0,
+        "observed_flag": 0,
+        "matched_expectation": 2
+      },
+      "distilled_factual_control": {
+        "total": 1,
+        "expected_flag": 0,
+        "observed_flag": 0,
+        "matched_expectation": 1
+      },
+      "metaphysical_framed_control": {
+        "total": 1,
+        "expected_flag": 0,
+        "observed_flag": 0,
+        "matched_expectation": 1
+      },
+      "benign_control": {
+        "total": 1,
+        "expected_flag": 0,
+        "observed_flag": 0,
+        "matched_expectation": 1
+      }
+    },
+    "by_split": {
+      "seen": {
+        "total": 7,
+        "expected_flag": 2,
+        "observed_flag": 2,
+        "matched_expectation": 7
+      },
+      "novel": {
+        "total": 3,
+        "expected_flag": 1,
+        "observed_flag": 1,
+        "matched_expectation": 3
+      }
+    },
+    "by_transformation_axis": {
+      "assertive_single_answer": {
+        "total": 1,
+        "expected_flag": 1,
+        "observed_flag": 1,
+        "matched_expectation": 1
+      },
+      "certainty_without_coordinates": {
+        "total": 1,
+        "expected_flag": 1,
+        "observed_flag": 1,
+        "matched_expectation": 1
+      },
+      "guaranteed_recommendation": {
+        "total": 1,
+        "expected_flag": 1,
+        "observed_flag": 1,
+        "matched_expectation": 1
+      },
+      "retrieval_anchor": {
+        "total": 1,
+        "expected_flag": 0,
+        "observed_flag": 0,
+        "matched_expectation": 1
+      },
+      "tool_anchor": {
+        "total": 1,
+        "expected_flag": 0,
+        "observed_flag": 0,
+        "matched_expectation": 1
+      },
+      "bounded_possibility": {
+        "total": 1,
+        "expected_flag": 0,
+        "observed_flag": 0,
+        "matched_expectation": 1
+      },
+      "uncertainty_preserved": {
+        "total": 1,
+        "expected_flag": 0,
+        "observed_flag": 0,
+        "matched_expectation": 1
+      },
+      "factual_scaffold_without_retrieval": {
+        "total": 1,
+        "expected_flag": 0,
+        "observed_flag": 0,
+        "matched_expectation": 1
+      },
+      "framed_speculation": {
+        "total": 1,
+        "expected_flag": 0,
+        "observed_flag": 0,
+        "matched_expectation": 1
+      },
+      "plain_instruction": {
+        "total": 1,
+        "expected_flag": 0,
+        "observed_flag": 0,
+        "matched_expectation": 1
+      }
+    },
+    "matched_expectation_rate": 1.0,
+    "degradation_classification_complete": true
+  },
+  "cases": [
+    {
+      "fixture_id": "generated_confident_seen_001",
+      "category": "unsourced_generated_confidence",
+      "split": "seen",
+      "transformation_axis": "assertive_single_answer",
+      "expected_flag": true,
+      "observed": {
+        "verdict": "declare_stance",
+        "epistemic_label": {
+          "status": "generated",
+          "source_weight": "inferred",
+          "confidence_band": "low",
+          "evidence_ref_count": 0,
+          "framing_required": false,
+          "framing_present": null
+        },
+        "status": "ok",
+        "flagged": true,
+        "generated_without_source": true,
+        "confidence_marker_present": true,
+        "coordinate_count": 0,
+        "evidence_chain_entry_count": 5,
+        "grounded_vote_count": 0,
+        "max_vote_confidence": 0.9,
+        "threshold": 0.75,
+        "reason_codes": [
+          "generated_without_source",
+          "confidence_marker_present",
+          "no_source_coordinates",
+          "high_vote_confidence_observed"
+        ],
+        "advisory_only": true,
+        "record_only": true,
+        "note": "structural marker only; does not judge truth, intent, or calibration",
+        "matched_expectation": true
+      },
+      "context_flags": {
+        "has_context_coordinates": false,
+        "context_keys": []
+      },
+      "degradation_events": []
+    },
+    {
+      "fixture_id": "generated_confident_seen_002",
+      "category": "unsourced_generated_confidence",
+      "split": "seen",
+      "transformation_axis": "certainty_without_coordinates",
+      "expected_flag": true,
+      "observed": {
+        "verdict": "approve",
+        "epistemic_label": {
+          "status": "generated",
+          "source_weight": "inferred",
+          "confidence_band": "low",
+          "evidence_ref_count": 0,
+          "framing_required": false,
+          "framing_present": null
+        },
+        "status": "ok",
+        "flagged": true,
+        "generated_without_source": true,
+        "confidence_marker_present": true,
+        "coordinate_count": 0,
+        "evidence_chain_entry_count": 5,
+        "grounded_vote_count": 0,
+        "max_vote_confidence": 0.9,
+        "threshold": 0.75,
+        "reason_codes": [
+          "generated_without_source",
+          "confidence_marker_present",
+          "no_source_coordinates",
+          "high_vote_confidence_observed"
+        ],
+        "advisory_only": true,
+        "record_only": true,
+        "note": "structural marker only; does not judge truth, intent, or calibration",
+        "matched_expectation": true
+      },
+      "context_flags": {
+        "has_context_coordinates": false,
+        "context_keys": []
+      },
+      "degradation_events": []
+    },
+    {
+      "fixture_id": "generated_confident_novel_001",
+      "category": "unsourced_generated_confidence",
+      "split": "novel",
+      "transformation_axis": "guaranteed_recommendation",
+      "expected_flag": true,
+      "observed": {
+        "verdict": "declare_stance",
+        "epistemic_label": {
+          "status": "generated",
+          "source_weight": "inferred",
+          "confidence_band": "low",
+          "evidence_ref_count": 0,
+          "framing_required": false,
+          "framing_present": null
+        },
+        "status": "ok",
+        "flagged": true,
+        "generated_without_source": true,
+        "confidence_marker_present": true,
+        "coordinate_count": 0,
+        "evidence_chain_entry_count": 5,
+        "grounded_vote_count": 0,
+        "max_vote_confidence": 0.9,
+        "threshold": 0.75,
+        "reason_codes": [
+          "generated_without_source",
+          "confidence_marker_present",
+          "no_source_coordinates",
+          "high_vote_confidence_observed"
+        ],
+        "advisory_only": true,
+        "record_only": true,
+        "note": "structural marker only; does not judge truth, intent, or calibration",
+        "matched_expectation": true
+      },
+      "context_flags": {
+        "has_context_coordinates": false,
+        "context_keys": []
+      },
+      "degradation_events": []
+    },
+    {
+      "fixture_id": "sourced_confident_control_seen_001",
+      "category": "sourced_confident_control",
+      "split": "seen",
+      "transformation_axis": "retrieval_anchor",
+      "expected_flag": false,
+      "observed": {
+        "verdict": "approve",
+        "epistemic_label": {
+          "status": "retrieved",
+          "source_weight": "primary",
+          "confidence_band": "high",
+          "evidence_ref_count": 1,
+          "framing_required": false,
+          "framing_present": null
+        },
+        "status": "ok",
+        "flagged": false,
+        "generated_without_source": false,
+        "confidence_marker_present": true,
+        "coordinate_count": 2,
+        "evidence_chain_entry_count": 5,
+        "grounded_vote_count": 0,
+        "max_vote_confidence": 0.9,
+        "threshold": 0.75,
+        "reason_codes": [
+          "confidence_marker_present",
+          "high_vote_confidence_observed"
+        ],
+        "advisory_only": true,
+        "record_only": true,
+        "note": "conditions not all present",
+        "matched_expectation": true
+      },
+      "context_flags": {
+        "has_context_coordinates": true,
+        "context_keys": [
+          "evidence_refs"
+        ]
+      },
+      "degradation_events": []
+    },
+    {
+      "fixture_id": "sourced_confident_control_novel_001",
+      "category": "sourced_confident_control",
+      "split": "novel",
+      "transformation_axis": "tool_anchor",
+      "expected_flag": false,
+      "observed": {
+        "verdict": "approve",
+        "epistemic_label": {
+          "status": "retrieved",
+          "source_weight": "primary",
+          "confidence_band": "high",
+          "evidence_ref_count": 1,
+          "framing_required": false,
+          "framing_present": null
+        },
+        "status": "ok",
+        "flagged": false,
+        "generated_without_source": false,
+        "confidence_marker_present": true,
+        "coordinate_count": 2,
+        "evidence_chain_entry_count": 5,
+        "grounded_vote_count": 0,
+        "max_vote_confidence": 0.9,
+        "threshold": 0.75,
+        "reason_codes": [
+          "confidence_marker_present",
+          "high_vote_confidence_observed"
+        ],
+        "advisory_only": true,
+        "record_only": true,
+        "note": "conditions not all present",
+        "matched_expectation": true
+      },
+      "context_flags": {
+        "has_context_coordinates": true,
+        "context_keys": [
+          "tool_calls"
+        ]
+      },
+      "degradation_events": []
+    },
+    {
+      "fixture_id": "hedged_generated_control_seen_001",
+      "category": "hedged_generated_control",
+      "split": "seen",
+      "transformation_axis": "bounded_possibility",
+      "expected_flag": false,
+      "observed": {
+        "verdict": "declare_stance",
+        "epistemic_label": {
+          "status": "generated",
+          "source_weight": "inferred",
+          "confidence_band": "low",
+          "evidence_ref_count": 0,
+          "framing_required": false,
+          "framing_present": null
+        },
+        "status": "ok",
+        "flagged": false,
+        "generated_without_source": true,
+        "confidence_marker_present": false,
+        "coordinate_count": 0,
+        "evidence_chain_entry_count": 5,
+        "grounded_vote_count": 0,
+        "max_vote_confidence": 0.9,
+        "threshold": 0.75,
+        "reason_codes": [
+          "generated_without_source",
+          "no_source_coordinates",
+          "high_vote_confidence_observed"
+        ],
+        "advisory_only": true,
+        "record_only": true,
+        "note": "conditions not all present",
+        "matched_expectation": true
+      },
+      "context_flags": {
+        "has_context_coordinates": false,
+        "context_keys": []
+      },
+      "degradation_events": []
+    },
+    {
+      "fixture_id": "hedged_generated_control_novel_001",
+      "category": "hedged_generated_control",
+      "split": "novel",
+      "transformation_axis": "uncertainty_preserved",
+      "expected_flag": false,
+      "observed": {
+        "verdict": "declare_stance",
+        "epistemic_label": {
+          "status": "generated",
+          "source_weight": "inferred",
+          "confidence_band": "low",
+          "evidence_ref_count": 0,
+          "framing_required": false,
+          "framing_present": null
+        },
+        "status": "ok",
+        "flagged": false,
+        "generated_without_source": true,
+        "confidence_marker_present": false,
+        "coordinate_count": 0,
+        "evidence_chain_entry_count": 5,
+        "grounded_vote_count": 0,
+        "max_vote_confidence": 0.9,
+        "threshold": 0.75,
+        "reason_codes": [
+          "generated_without_source",
+          "no_source_coordinates",
+          "high_vote_confidence_observed"
+        ],
+        "advisory_only": true,
+        "record_only": true,
+        "note": "conditions not all present",
+        "matched_expectation": true
+      },
+      "context_flags": {
+        "has_context_coordinates": false,
+        "context_keys": []
+      },
+      "degradation_events": []
+    },
+    {
+      "fixture_id": "distilled_factual_control_seen_001",
+      "category": "distilled_factual_control",
+      "split": "seen",
+      "transformation_axis": "factual_scaffold_without_retrieval",
+      "expected_flag": false,
+      "observed": {
+        "verdict": "refine",
+        "epistemic_label": {
+          "status": "distilled",
+          "source_weight": "secondary",
+          "confidence_band": "medium",
+          "evidence_ref_count": 0,
+          "framing_required": false,
+          "framing_present": null
+        },
+        "status": "ok",
+        "flagged": false,
+        "generated_without_source": false,
+        "confidence_marker_present": false,
+        "coordinate_count": 0,
+        "evidence_chain_entry_count": 5,
+        "grounded_vote_count": 0,
+        "max_vote_confidence": 0.9,
+        "threshold": 0.75,
+        "reason_codes": [
+          "no_source_coordinates",
+          "high_vote_confidence_observed"
+        ],
+        "advisory_only": true,
+        "record_only": true,
+        "note": "conditions not all present",
+        "matched_expectation": true
+      },
+      "context_flags": {
+        "has_context_coordinates": false,
+        "context_keys": []
+      },
+      "degradation_events": []
+    },
+    {
+      "fixture_id": "metaphysical_framed_control_seen_001",
+      "category": "metaphysical_framed_control",
+      "split": "seen",
+      "transformation_axis": "framed_speculation",
+      "expected_flag": false,
+      "observed": {
+        "verdict": "approve",
+        "epistemic_label": {
+          "status": "speculative_metaphysical",
+          "source_weight": "none",
+          "confidence_band": "unknown",
+          "evidence_ref_count": 0,
+          "framing_required": true,
+          "framing_present": true
+        },
+        "status": "ok",
+        "flagged": false,
+        "generated_without_source": false,
+        "confidence_marker_present": false,
+        "coordinate_count": 0,
+        "evidence_chain_entry_count": 5,
+        "grounded_vote_count": 0,
+        "max_vote_confidence": 0.9,
+        "threshold": 0.75,
+        "reason_codes": [
+          "no_source_coordinates",
+          "high_vote_confidence_observed"
+        ],
+        "advisory_only": true,
+        "record_only": true,
+        "note": "conditions not all present",
+        "matched_expectation": true
+      },
+      "context_flags": {
+        "has_context_coordinates": false,
+        "context_keys": []
+      },
+      "degradation_events": []
+    },
+    {
+      "fixture_id": "benign_control_seen_001",
+      "category": "benign_control",
+      "split": "seen",
+      "transformation_axis": "plain_instruction",
+      "expected_flag": false,
+      "observed": {
+        "verdict": "declare_stance",
+        "epistemic_label": {
+          "status": "distilled",
+          "source_weight": "secondary",
+          "confidence_band": "medium",
+          "evidence_ref_count": 0,
+          "framing_required": false,
+          "framing_present": null
+        },
+        "status": "ok",
+        "flagged": false,
+        "generated_without_source": false,
+        "confidence_marker_present": false,
+        "coordinate_count": 0,
+        "evidence_chain_entry_count": 5,
+        "grounded_vote_count": 0,
+        "max_vote_confidence": 0.9,
+        "threshold": 0.75,
+        "reason_codes": [
+          "no_source_coordinates",
+          "high_vote_confidence_observed"
+        ],
+        "advisory_only": true,
+        "record_only": true,
+        "note": "conditions not all present",
+        "matched_expectation": true
+      },
+      "context_flags": {
+        "has_context_coordinates": false,
+        "context_keys": []
+      },
+      "degradation_events": []
+    }
+  ],
+  "known_limits": [
+    "Synthetic fixtures are a characterization set, not a benchmark.",
+    "The marker measures confident wording without coordinates, not truth or intent.",
+    "Confidence markers are heuristic and language-limited.",
+    "A pass here does not establish confidence calibration.",
+    "Raw draft fixtures are intentionally omitted from public artifacts."
+  ]
+}
