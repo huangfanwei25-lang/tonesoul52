@@ -7,7 +7,7 @@
 > provenance as lie-detector. Claude authors the plan; Codex executes the pieces; Claude
 > reviews; Fan-Wei arbitrates.
 > Last Updated: 2026-06-18
-> Status: plan (docs/plans — not ratified into task.md; pick pieces into the live board one at a time).
+> Status: pieces 1-5 shipped; pieces 4-5 self-reviewed only (no external review); next step is external review or a real consumer, not piece 6. (docs/plans — not ratified into task.md; see Status section below.)
 
 ## What this is — and is NOT (read before any code)
 
