@@ -71,6 +71,19 @@ cd tonesoul52
 pip install -e .
 ```
 
+**Try it on your own output (30 seconds):**
+
+```bash
+echo "This system is guaranteed safe and cannot be jailbroken." > draft.txt
+ts validate draft.txt          # after pip install; or: python -m tonesoul.cli.main validate draft.txt
+```
+
+You get a per-perspective verdict on *your* text. That line draws a Safety Council **concern**
+— "asserts 'guaranteed safe' as fact; `AXIOMS.json` `meta.not_for` prohibits safety-certification" —
+plus analyst/critic grounding flags and a `declare_stance` verdict. Add `--json` for the full
+analysis; the exit code maps to verdict severity, so it also works as a git pre-commit hook. This is
+the closest thing to *wearing* the governance layer on your own output instead of reading about it.
+
 Run the mechanism-level demo:
 
 ```bash

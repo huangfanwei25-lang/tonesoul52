@@ -69,6 +69,11 @@ Please **try to prove this project wrong** — not to praise it.
 
 ## How to respond
 
+**Run it on your own output first** — `ts validate yourdraft.txt` (after `pip install tonesoul52`;
+see the README Quick Start). Then tell us whether the analysis was useful, wrong, or *itself*
+overclaiming. We can read the textbook to ourselves; what we cannot generate is **your** reaction
+to wearing it once — that is the feedback this project actually needs.
+
 Open an issue or a discussion on the project: <https://github.com/Fan1234-1/tonesoul52>.
 The most useful response is a concrete, cited disagreement.
 
