@@ -11,6 +11,13 @@
 > Ratified by owner 2026-06-13 after the 2026-06-12 eleven-agent external audit.
 > The constraint set below is an **active vow set**, not a task checklist — every
 > agent working any Reality Sync PR is bound by it.
+>
+> **STATUS (2026-06-20): SHIPPED / complete.** The PR sequence below landed (PRs #78–#84;
+> master green + branch-protected). Work since then — the honesty-auditor program (pieces 0–5),
+> the front-door artifacts (`CALL_FOR_REVIEW.md`, `CANONICAL_SCOPE.md`, `docs/illustrations/`),
+> and the `ts validate` try-it surfacing — lives in `docs/plans/honesty_auditor_program_2026-06-18.md`
+> and `CANONICAL_SCOPE.md`. That work is **not yet ratified into a new Active Program here** —
+> ratification is an owner act (see the Scope Guard above); this note is status-only.
 
 - Program Goal: bring public claims, packaging, runtime gates, CI, and privacy
   labels back to verifiable consistency. No new capability.

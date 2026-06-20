@@ -1,5 +1,9 @@
 # 企劃書 — 2026-05-17 整理後規劃
 
+> ⚠️ **STALE（標記 2026-06-20）**：這是 2026-05-17 的 snapshot，引用約一個月前的 PR 與狀態
+> （例如 PR #69–#77 早已 merge、master 已超過 70 個 commit）。**不要照它的 priorities 行動**，
+> 除非先對當前狀態重新 verify。保留作歷史。
+>
 > 性質：roadmap / planning doc
 > 範圍：multi-session intensive work 後的 state snapshot + 卡點 + priorities
 > 對象：Fan-Wei 自己 planning use（不對外、不 publish）

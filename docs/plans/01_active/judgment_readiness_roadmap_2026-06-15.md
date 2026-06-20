@@ -46,6 +46,13 @@ SUCCESSOR_MAP §0 says it has bitten the repo 5+ times). The audit caught a 6th.
 
 ## Tier 1 — Highest leverage, AWAITING YOUR REVIEW (public-face honesty downgrades)
 
+> ⚠️ **TIER 1 RESOLVED (verified 2026-06-20).** The README overclaims below (T1.1–T1.6) are no
+> longer present in the current README — addressed by subsequent README revisions. Verified by
+> grepping each flagged claim's distinctive terms (categorical / debate / rewritten / genuine
+> understanding / resonance detection / test counts / branch protection / Axiom 6 / safety
+> overrides); none remain. **Do NOT re-attempt these downgrades** — a 2026-06-20 pass nearly
+> "fixed" already-correct text by trusting this stale list. Kept for history.
+
 **This is the #1 finding (hit by all 5 judgment lenses).** These edit the README
 hero — your public face, which you own (you just decided #75). I did **not**
 auto-edit them overnight; they go in an open PR with recommended wording for your
