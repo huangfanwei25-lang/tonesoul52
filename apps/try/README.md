@@ -3,7 +3,8 @@ title: ToneSoul — Try It On Your Output
 emoji: 🦞
 colorFrom: blue
 colorTo: green
-sdk: streamlit
+sdk: gradio
+sdk_version: 6.19.0
 app_file: app.py
 pinned: false
 license: mit
@@ -30,8 +31,8 @@ download — so this Space runs at **zero inference cost**.
 ## Run locally
 
 ```bash
-pip install streamlit tonesoul52
-streamlit run app.py
+pip install gradio tonesoul52
+python app.py
 ```
 
 Or, without the UI, the same engine on the command line:
@@ -41,13 +42,8 @@ echo "Your draft answer." > draft.txt
 ts validate draft.txt        # after: pip install tonesoul52
 ```
 
-## Deploy as a Hugging Face Space
-
-Create a new **Streamlit** Space and push these files (`app.py`, `requirements.txt`, this
-`README.md`). HF reads the YAML header above for configuration.
-
 ## Feedback is the point
 
-This exists so you can **try it once and react** — that is the one thing the project cannot
-generate for itself. If the analysis was useful, useless, or itself overclaiming, say so:
+This exists so you can **try it once and react** — the one thing the project cannot generate for
+itself. If the analysis was useful, useless, or itself overclaiming, say so:
 <https://github.com/Fan1234-1/tonesoul52> (see `CALL_FOR_REVIEW.md`).
