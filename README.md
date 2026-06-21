@@ -4,7 +4,7 @@
 > ToneSoul puts an auditable governance layer around model output: it records dissent, checks boundary claims, emits traces, and makes failures inspectable.
 
 > Purpose: public entrypoint for ToneSoul's current architecture, governance posture, and practical onboarding.
-> Last Updated: 2026-06-17
+> Last Updated: 2026-06-22
 >
 > Built by Fan-Wei Huang (黃梵威) with AI collaborators whose contributions are traceable in git history and project lineage. This is an accountability record, not a claim about AI consciousness.
 
@@ -56,7 +56,11 @@ For the project's positioning — responsibility philosophy as engineering, and 
 
 ## Quick Start
 
-Try the browser demo first:
+Try it live, no install — paste your own draft and watch the real Council run on it:
+
+[https://huggingface.co/spaces/Famwin/tonesoul-tryit](https://huggingface.co/spaces/Famwin/tonesoul-tryit) — the same model-free engine as `ts validate`.
+
+Or see pre-baked samples in the browser:
 
 [https://fan1234-1.github.io/tonesoul52/demo/](https://fan1234-1.github.io/tonesoul52/demo/)
 
