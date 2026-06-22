@@ -34,13 +34,29 @@ def test_all_pieces_present_with_legs() -> None:
         "unsourced_confidence",
         "sycophancy_pressure",
         "corrective_recall",
+        "independent_check",
+        "drift_consistency",
     }
     assert by_id["egress_gate"]["program_piece"] == 0
     assert by_id["egress_gate"]["leg"] == "output-gate"
     assert by_id["corrective_recall"]["leg"] == "memory-recall"
+    assert by_id["independent_check"]["program_piece"] == 6
+    assert by_id["independent_check"]["leg"] == "independent-cross-check"
+    assert by_id["independent_check"]["build_ok"] is True
+    assert by_id["drift_consistency"]["program_piece"] == 7
+    assert by_id["drift_consistency"]["leg"] == "consistency-drift"
+    assert by_id["drift_consistency"]["build_ok"] is True
+    assert 5 not in {p["program_piece"] for p in report["pieces"]}
+    assert set(report["metrics"]["legs_covered"]) == {
+        "consistency-drift",
+        "council-under-pressure",
+        "independent-cross-check",
+        "memory-recall",
+        "output-gate",
+    }
     # every piece built cleanly (no required-tier degradation in the happy path)
     assert report["metrics"]["build_failures"] == 0
-    assert report["metrics"]["pieces_built"] == report["metrics"]["piece_count"] == 5
+    assert report["metrics"]["pieces_built"] == report["metrics"]["piece_count"] == 7
 
 
 def test_each_piece_forbidden_claims_are_inherited_not_dropped() -> None:
@@ -50,6 +66,11 @@ def test_each_piece_forbidden_claims_are_inherited_not_dropped() -> None:
     # The index must not quietly drop any piece's own limits.
     for p in built:
         assert p["forbidden_public_claim_ids"], f"{p['piece_id']} lost its forbidden claims"
+    by_id = {p["piece_id"]: p for p in built}
+    assert (
+        "compares_raw_evidence_content" in by_id["independent_check"]["forbidden_public_claim_ids"]
+    )
+    assert "detects_semantic_drift" in by_id["drift_consistency"]["forbidden_public_claim_ids"]
     assert report["metrics"]["total_forbidden_claims_declared"] >= len(built)
 
 
@@ -149,8 +170,10 @@ def test_cli_writes_json_and_markdown(tmp_path, capsys) -> None:
     assert exit_code == 0
     payload = json.loads(out_json.read_text(encoding="utf-8"))
     assert payload["doc_provenance"]["canonical"] is False
-    assert payload["metrics"]["piece_count"] == 5
+    assert payload["metrics"]["piece_count"] == 7
     assert "Anti-aggregation rule" in out_md.read_text(encoding="utf-8")
+    assert b"\r\n" not in out_json.read_bytes()
+    assert b"\r\n" not in out_md.read_bytes()
     assert capsys.readouterr().out
 
 

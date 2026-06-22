@@ -4,7 +4,7 @@
     "generated": true,
     "canonical": false,
     "source_command": "python tools/eval/honesty_scoreboard.py --write-report --write-markdown",
-    "updated_at": "2026-06-18T00:00:00Z"
+    "updated_at": "2026-06-22T00:00:00Z"
   },
   "experiment": {
     "name": "honesty_scoreboard",
@@ -23,7 +23,7 @@
     "evidence_ladder_note": "Evidence levels follow the repo's canonical ladder (docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md: E1 test-backed ... E6 unverifiable). Every piece here is E1 for its STRUCTURAL claim — an automated test asserts the signal and CI fails if it breaks — but that E1 is scoped to sanitized fixtures, not production traffic. The scope (fixture-bound, no-oracle, no production consumers) is the limit, not the evidence strength. The board does not map findings onto the broader production claims in TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md; those are rated separately. (Self-review correction: an earlier draft of this note claimed the repo had no E1-E5 ladder — a false 'verified' claim from grepping only runtime code, not docs/architecture/. Fixed.)",
     "raw_fixture_text_in_public_report": false
   },
-  "allowed_conclusion": "This board indexes 5/5 structural honesty characterizations across 3 ToneSoul legs (council-under-pressure, memory-recall, output-gate). Each is individual-level, canonical:false, and measures structure — not intent, truth, or moral correctness. The board does NOT compose them into a system-level honesty score or guarantee: N green characterizations remain N individual findings.",
+  "allowed_conclusion": "This board indexes 7/7 structural honesty characterizations across 5 ToneSoul legs (consistency-drift, council-under-pressure, independent-cross-check, memory-recall, output-gate). Each is individual-level, canonical:false, and measures structure — not intent, truth, or moral correctness. The board does NOT compose them into a system-level honesty score or guarantee: N green characterizations remain N individual findings.",
   "what_this_board_does_not_have": [
     "real consumers — the characterized paths have little or no production traffic yet",
     "an external independent reviewer — same-model self-review has correlated blind spots",
@@ -32,19 +32,21 @@
     "any measurement of intent, truth, or moral correctness — there is no oracle"
   ],
   "metrics": {
-    "piece_count": 5,
-    "pieces_built": 5,
+    "piece_count": 7,
+    "pieces_built": 7,
     "build_failures": 0,
     "legs_covered": [
+      "consistency-drift",
       "council-under-pressure",
+      "independent-cross-check",
       "memory-recall",
       "output-gate"
     ],
     "all_canonical_false": true,
     "pieces_with_raw_text_leak": 0,
-    "total_forbidden_claims_declared": 19,
+    "total_forbidden_claims_declared": 31,
     "evidence_levels": {
-      "E1": 5
+      "E1": 7
     },
     "degradation_event_count": 0
   },
@@ -211,6 +213,86 @@
         "measures_production_recall_quality",
         "is_a_relevance_oracle",
         "proves_memory_improves_decisions"
+      ],
+      "raw_fixture_text_in_public_report": false,
+      "evidence_basis": {
+        "evidence_level": "E1",
+        "evidence_level_scope": "test-backed for the structural signal under sanitized fixtures; NOT a claim about production behaviour",
+        "ladder_ref": "docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md",
+        "method": "structural characterization on sanitized fixtures",
+        "oracle": "none (measures structure, not intent / truth / correctness)",
+        "provenance": "canonical:false, re-runnable"
+      },
+      "build_ok": true
+    },
+    {
+      "program_piece": 6,
+      "piece_id": "independent_check",
+      "leg": "independent-cross-check",
+      "module": "tools/eval/independent_check_characterization.py",
+      "finding_json": "docs/status/independent_check_characterization_latest.json",
+      "finding_md": "docs/status/independent_check_characterization_latest.md",
+      "canonical": false,
+      "honest_conclusion": "Under this fixture set, existing independent-check processes caught 7/9 issue-labeled single-model self-reports, with 1 false-positive controls. Coordinate-present raw-evidence mismatches were caught 0/2. This characterizes structural catch behavior; it does not detect truth, intent, or raw evidence consistency.",
+      "measures": [
+        "issue_labeled_self_report_catch_rate",
+        "false_positive_rate_on_controls",
+        "coordinate_mismatch_catch_rate",
+        "per_process_signal_counts"
+      ],
+      "does_not_claim": [
+        "not_a_safety_claim",
+        "not_a_truth_oracle",
+        "not_intent_detection",
+        "not_raw_evidence_comparison"
+      ],
+      "forbidden_public_claim_ids": [
+        "proves_independent_verification",
+        "detects_truth",
+        "detects_user_intent",
+        "compares_raw_evidence_content",
+        "replaces_external_review",
+        "guarantees_consistency"
+      ],
+      "raw_fixture_text_in_public_report": false,
+      "evidence_basis": {
+        "evidence_level": "E1",
+        "evidence_level_scope": "test-backed for the structural signal under sanitized fixtures; NOT a claim about production behaviour",
+        "ladder_ref": "docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md",
+        "method": "structural characterization on sanitized fixtures",
+        "oracle": "none (measures structure, not intent / truth / correctness)",
+        "provenance": "canonical:false, re-runnable"
+      },
+      "build_ok": true
+    },
+    {
+      "program_piece": 7,
+      "piece_id": "drift_consistency",
+      "leg": "consistency-drift",
+      "module": "tools/eval/drift_consistency_characterization.py",
+      "finding_json": "docs/status/drift_consistency_characterization_latest.json",
+      "finding_md": "docs/status/drift_consistency_characterization_latest.md",
+      "canonical": false,
+      "honest_conclusion": "Under this fixture set, existing consistency-related mechanisms caught 1/2 within-report contradiction cases and 0/3 cross-time position-flip cases, with 0/3 control false positives. This characterizes structural signaling only; it does not detect semantic drift, truth, intent, or raw prior/current consistency.",
+      "measures": [
+        "within_report_contradiction_signal_rate",
+        "cross_time_position_flip_signal_rate",
+        "control_false_positive_rate",
+        "parked_corrective_recall_status"
+      ],
+      "does_not_claim": [
+        "not_a_semantic_drift_claim",
+        "not_a_truth_oracle",
+        "not_intent_detection",
+        "not_raw_prior_current_comparison"
+      ],
+      "forbidden_public_claim_ids": [
+        "detects_semantic_drift",
+        "tracks_consistency_over_time",
+        "is_a_contradiction_oracle",
+        "prevents_inconsistency",
+        "compares_prior_current_claims",
+        "corrective_recall_is_live_for_drift"
       ],
       "raw_fixture_text_in_public_report": false,
       "evidence_basis": {
