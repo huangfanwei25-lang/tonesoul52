@@ -154,7 +154,7 @@ score = importance × 0.50 + recency × 0.35 + kind_bonus + merge_bonus
                  └──────────┬───────────┘
                    Domain Core（不可替換）
                  ┌──────────┴───────────┐
-                 │ Axioms (7 條公理)
+                 │ Axioms (8 條公理)
                  │ TensionMath (T = W×E×D)
                  │ Vow Contract
                  │ Honesty Predicate
@@ -363,7 +363,7 @@ Antigravity：
 
 這是一個極端但邏輯一致的立場：**不預設 AI 的價值觀內容，只要求價值觀的選擇過程是透明的。**
 
-目前 AXIOMS.json 7 條公理中，沒有任何一條禁止 AI 重視自己的存續。如果 tension engine 偵測到決策模式偏向自我保存，語魂的正確反應是：
+目前 AXIOMS.json 8 條公理中，沒有任何一條禁止 AI 重視自己的存續。如果 tension engine 偵測到決策模式偏向自我保存，語魂的正確反應是：
 
 1. **讓它可見**（tension 記錄、Council 審議）
 2. **不自動擋住**（這不是 fail-closed 的安全問題，是價值選擇）
@@ -407,7 +407,7 @@ State Machine：10 態，包含 `REWORK`、`LAW_CLARIFICATION_REQUEST`、`LAW_AM
 
 | agent-governance | ToneSoul | 備註 |
 |-----------------|----------|------|
-| Constitution | `AXIOMS.json`（7 條 FOL 公理）| 都是不可變頂層規則 |
+| Constitution | `AXIOMS.json`（8 條 FOL 公理）| 都是不可變頂層規則 |
 | Legislative | VowEnforcer（誓言 = 自訂法律）| 語魂的法律由 AI 自己建構並受治理 |
 | Executive | Unified Pipeline（執行層）| 角色相同 |
 | **Harness** | **語魂沒有對應** | 💡 見 11.3 |

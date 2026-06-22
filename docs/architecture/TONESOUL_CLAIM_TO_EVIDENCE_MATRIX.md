@@ -2,15 +2,16 @@
 
 > Status: architectural evidence map
 > Purpose: map high-value ToneSoul claims to their actual evidence level, strongest backing source, weakest link, and safest phrasing for later agents
-> Last Updated: 2026-03-29
+> Last Updated: 2026-06-23
 > Produced By: Claude Opus
 > Depends On:
 >   - docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md (evidence level definitions)
 >   - docs/architecture/TONESOUL_LAW_RUNTIME_BOUNDARY_CONTRACT.md (claim authority categories)
 >   - docs/architecture/TONESOUL_CLAIM_AUTHORITY_MATRIX.md (authority classification)
->   - Full test suite (~363 test files, ~1900+ tests)
+>   - Full test suite (count drifts; use the dated clean-CI line in README.md / CI rather than a bare hand-written number)
 >   - Full docs/architecture/ contract corpus
 > Scope: 65 claims mapped across 8 families
+> Freshness Note: axiom and count references reconciled 2026-06-22 against AXIOMS.json and docs/status/codebase_graph_latest.md; test counts remain dated/source-bound because they drift with each PR.
 
 ## How To Use This Document
 
@@ -39,7 +40,7 @@ If you are an AI agent describing ToneSoul's capabilities:
 | # | Claim | Evidence Level | Strongest Backing | Weakest Link | Safest Phrasing |
 |---|---|---|---|---|---|
 | 1 | AXIOMS.json is structurally valid JSON | E1 | CI validates JSON parsing (`ci.yml`: `python -c "import json; json.load(...)"`) | Only validates parse, not semantic correctness | "AXIOMS.json is valid JSON, verified in CI" |
-| 2 | 7 axioms define the governance foundation | E4 | AXIOMS.json file exists with 7 entries; referenced by SOUL.md and contracts | No test verifies axioms are loaded or consulted at runtime decision points | "7 axioms are documented as governance foundation; runtime consultation is partial" |
+| 2 | 8 axioms define the governance foundation | E4 | AXIOMS.json file exists with 8 entries; referenced by SOUL.md and contracts | No test verifies every axiom is loaded or consulted at runtime decision points | "8 axioms are documented as governance foundation; runtime consultation is partial" |
 | 3 | P0 (safety) overrides all other priorities | E3 | `test_paradox_council.py` (18 tests) exercises paradox resolution; benevolence.py implements USER_PROTOCOL | Tests cover specific paradoxes, not all possible P0 conflicts | "P0 override is tested for specific paradox cases; general P0 enforcement depends on distributed checks" |
 | 4 | Governance state persists across sessions | E1 | `test_governance_kernel.py` (20 tests), `governance_state.schema.json` + Pydantic enforcement, Redis/FileStore persistence | State shape is tested; correctness of persisted values under edge cases is not deeply verified | "Governance state persistence is tested with schema enforcement" |
 | 5 | Soul Integral tracks governance health | E3 | `runtime_adapter.py` computes soul_integral; `test_runtime_adapter.py` (32 tests) covers adapter generally | Soul Integral formula correctness is not independently validated; no test isolates the metric's accuracy | "Soul Integral is computed at runtime; the metric's accuracy is not independently validated" |
@@ -182,7 +183,7 @@ Claims 20-28 describe handoff signing, compaction, checkpoints, and lifecycle la
 
 ### Zone 3: Axiom Enforcement
 
-Claims 1-7 describe 7 axioms with P0/P1/P2 priority. The axioms are documented (E4) and some have partial runtime reflection (E3). But the meta-claim — "the axioms govern the system's behavior" — varies from E1 (vow system tests) to E5 (semantic energy conservation). Later agents must not claim "the axioms are enforced" without specifying which axiom and at what evidence level.
+Claims 1-8 describe 8 axioms with P0/P1/P2 priority. The axioms are documented (E4) and some have partial runtime reflection (E3). But the meta-claim — "the axioms govern the system's behavior" — varies from E1 (vow system tests) to E5 (semantic energy conservation). Later agents must not claim "the axioms are enforced" without specifying which axiom and at what evidence level.
 
 ---
 

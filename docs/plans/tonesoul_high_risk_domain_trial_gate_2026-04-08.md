@@ -100,7 +100,7 @@ Even after this gate passes:
 - **No deployment claim**: passing domain trials does not mean ToneSoul is ready for production finance/medical use
 - **No accuracy claim**: grounding check is a risk signal, not a fact-checker
 - **No autonomous domain work**: all domain trials require human supervision and approval
-- **No Axiom changes**: the 7 axioms remain unchanged regardless of domain trial results
+- **No Axiom changes**: the 8 axioms remain unchanged regardless of domain trial results
 
 ---
 

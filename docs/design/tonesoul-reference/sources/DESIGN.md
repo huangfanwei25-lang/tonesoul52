@@ -1,11 +1,11 @@
 # ToneSoul Design
 
 > Purpose: explain why ToneSoul is shaped this way, what its load-bearing invariants are, and how later agents should continue work without flattening the system into "prompts plus memory."
-> Last Updated: 2026-03-30
+> Last Updated: 2026-06-23
 > Status: current design center for whole-system reasoning. This file complements `README.md` and the deeper architecture contracts; it does not outrank runtime code, tests, or canonical governance files.
 
 > **⚠️ If your question is "what does `tonesoul/<x>.py` do / which layer is it in / who depends on it?"**
-> Go to [docs/status/codebase_graph_latest.md](docs/status/codebase_graph_latest.md) (auto-generated body map, 254 modules, with `__ts_layer__` / `__ts_purpose__` self-declarations, layer, coupling, imports).
+> Go to [docs/status/codebase_graph_latest.md](docs/status/codebase_graph_latest.md) (auto-generated body map; the live module count is in that file's summary header, with `__ts_layer__` / `__ts_purpose__` self-declarations, layer, coupling, imports).
 > For the import / layer rules themselves, see [docs/ARCHITECTURE_BOUNDARIES.md](docs/ARCHITECTURE_BOUNDARIES.md).
 > This file is for *why the system is shaped this way at all* — not file-level lookup.
 

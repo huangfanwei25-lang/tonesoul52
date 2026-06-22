@@ -49,7 +49,7 @@ function HomePage({ onGo }) {
     ↓
 [Council] Guardian / Analyst / Critic / Advocate deliberate
     ↓
-[ComputeGate] Approve / Block / Rewrite
+[ComputeGate] Approve / Block (no generative rewrite path)
     ↓
 [Crystallizer] Remember what matters, forget the rest
     ↓

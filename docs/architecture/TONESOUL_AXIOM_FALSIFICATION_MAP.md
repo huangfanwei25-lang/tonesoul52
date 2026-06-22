@@ -2,12 +2,13 @@
 
 > Status: methodological boundary map
 > Purpose: make ToneSoul axioms challengeable by explicit support and weakening conditions without mutating AXIOMS.json prematurely
-> Last Updated: 2026-03-28
+> Last Updated: 2026-06-23
 > Depends On:
 >   - AXIOMS.json
 >   - docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md
 >   - docs/architecture/TONESOUL_CLAIM_AUTHORITY_MATRIX.md
-> Scope: the 7 axioms in AXIOMS.json and the minimum evidence posture for supporting or challenging them
+> Scope: the 8 axioms in AXIOMS.json and the minimum evidence posture for supporting or challenging them
+> Freshness Note: axiom count reconciled 2026-06-22 against AXIOMS.json.
 
 ## How To Use This Document
 

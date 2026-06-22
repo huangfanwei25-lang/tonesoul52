@@ -1,7 +1,7 @@
 # ToneSoul Codex Reading
 
 > Purpose: record Codex's own structural reading of what ToneSoul is, what holds it together, and which parts of the repository carry the real load-bearing meaning.
-> Last Updated: 2026-03-26
+> Last Updated: 2026-06-23
 > Author: Codex
 > Status: interpretive-but-grounded narrative map; not a replacement for canonical contracts
 > Use When: after the canonical architecture anchor is clear, but the deeper load-bearing shape still feels diffuse.
@@ -80,11 +80,12 @@ That matters because it downgrades three seductive shortcuts:
 ToneSoul does not grant identity because the system claims inner experience.
 It grants identity only where a choice can be traced back through conflict, boundary, and consequence.
 
-The seven axioms then distribute this into a real hierarchy:
+The eight axioms then distribute this into a real hierarchy:
 
 - `#6 User Sovereignty Constraint` and `#3 Governance Gate` are the hard red lines
 - `#1 Continuity` and `#2 Responsibility Threshold` are what make choices reviewable
 - `#7 Semantic Field Conservation` prevents the system from treating interaction as free semantic destruction
+- `#8 Memory Sovereignty` keeps memory transfer and replication consent-bound
 - `#4 Non-Zero Tension` and `#5 Mirror Recursion` prevent the system from collapsing into dead calm or static self-sameness
 
 So the order is not "philosophy first, implementation later."

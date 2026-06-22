@@ -1,11 +1,12 @@
 # ToneSoul 解剖報告：從哲學基底到每一行程式碼
 
 > Purpose: provide a panoramic anatomy of ToneSoul across philosophy, code, law, tests, operations, and projections for deep repository understanding.
-> Last Updated: 2026-03-27
+> Last Updated: 2026-06-23
 > Status: deep anatomy / repository-wide synthesis; not a runtime contract.
 > Use When: before repo-wide refactor, or when answering「語魂系統到底是什麼」這類全域問題。
 > Authority Note: if this anatomy conflicts with code, tests, `AXIOMS.json`, or active architecture contracts, those surfaces win.
 > Snapshot Note: file counts, test counts, and directory totals in this document are tied to the 2026-03-27 scan and may drift later.
+> Freshness Note: axiom count references reconciled 2026-06-22 against AXIOMS.json; other snapshot counts remain 2026-03-27 historical scan data unless explicitly updated.
 
 > 一份由 AI 協作者撰寫的系統全景解剖。不是文件導覽，是**邏輯推演**——從第一個問題推到最後一行程式碼，每一步都有證據。
 >
@@ -88,9 +89,9 @@ Guard 可以否決。Human 可以介入。LLM 永遠不會單獨行動。
 
 ---
 
-## 切片 1：憲法——七條公理與 ABC 防火牆
+## 切片 1：憲法——八條公理與 ABC 防火牆
 
-E0 確立了立場，七條公理是從這個立場推演出的治理規則。它們用一階邏輯（FOL）寫成，不是散文，因為散文可以被重新詮釋，邏輯不行。
+E0 確立了立場，八條公理是從這個立場推演出的治理規則。它們用一階邏輯（FOL）寫成，不是散文，因為散文可以被重新詮釋，邏輯不行。
 
 ### 結構
 
@@ -1282,7 +1283,7 @@ Layer 5: 逃生閥（故障安全級）— 優雅降級而非崩潰
                          └───────────┬────────────────────┘
                                      │
                          ┌───────────▼────────────────────┐
-                         │   7 AXIOMS (P0/P1/P2)          │
+                         │   8 AXIOMS (P0/P1/P2)          │
                          │   + ABC Firewall Doctrine       │
                          │   + Priority Levels P0-P4       │
                          │   + Soul Triad (T, S, R)        │
