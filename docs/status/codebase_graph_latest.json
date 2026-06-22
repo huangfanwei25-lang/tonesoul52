@@ -1,26 +1,26 @@
 {
-  "generated_at": "2026-06-13T03:27:27Z",
+  "generated_at": "2026-06-22T16:26:26Z",
   "source": "scripts/analyze_codebase_graph.py",
   "root_package": "tonesoul",
   "summary": {
-    "total_modules": 280,
-    "total_lines": 86383,
-    "total_classes": 532,
-    "total_functions": 2915,
-    "total_edges": 499,
+    "total_modules": 283,
+    "total_lines": 86972,
+    "total_classes": 539,
+    "total_functions": 2916,
+    "total_edges": 507,
     "total_cycles": 0,
     "total_layer_violations": 0,
     "total_orphans": 1,
-    "total_community_drifts": 23,
-    "self_declared_layer_count": 280,
+    "total_community_drifts": 28,
+    "self_declared_layer_count": 283,
     "self_declared_layer_ratio": 1.0,
-    "purpose_count": 278,
+    "purpose_count": 281,
     "purpose_ratio": 0.9929
   },
   "annotation_coverage": {
-    "self_declared_layer_count": 280,
+    "self_declared_layer_count": 283,
     "self_declared_layer_ratio": 1.0,
-    "purpose_count": 278,
+    "purpose_count": 281,
     "purpose_ratio": 0.9929
   },
   "god_nodes": [
@@ -28,11 +28,11 @@
       "module": "tonesoul.unified_pipeline",
       "path": "tonesoul/unified_pipeline.py",
       "in_degree": 0,
-      "out_degree": 34,
-      "total_degree": 34,
-      "lines": 3630,
+      "out_degree": 35,
+      "total_degree": 35,
+      "lines": 3686,
       "classes": 2,
-      "functions": 78,
+      "functions": 77,
       "layer": "pipeline",
       "layer_source": "self_declared",
       "purpose": "Top-level runtime pipeline that wires perception, council, and output surfaces."
@@ -51,6 +51,19 @@
       "purpose": "YSTM pure-data schema: Node, WhereTime, and stable_hash used across governance, memory, and observability."
     },
     {
+      "module": "tonesoul.council.types",
+      "path": "tonesoul/council/types.py",
+      "in_degree": 24,
+      "out_degree": 1,
+      "total_degree": 25,
+      "lines": 223,
+      "classes": 7,
+      "functions": 2,
+      "layer": "shared",
+      "layer_source": "self_declared",
+      "purpose": "Shared type primitives (PerspectiveType, VoteDecision, verdicts) for the council subsystem."
+    },
+    {
       "module": "tonesoul.yss_pipeline",
       "path": "tonesoul/yss_pipeline.py",
       "in_degree": 0,
@@ -64,25 +77,12 @@
       "purpose": "Compose YSS gates, action set, and audit into one semantic-field pipeline pass."
     },
     {
-      "module": "tonesoul.council.types",
-      "path": "tonesoul/council/types.py",
-      "in_degree": 23,
-      "out_degree": 1,
-      "total_degree": 24,
-      "lines": 206,
-      "classes": 7,
-      "functions": 2,
-      "layer": "shared",
-      "layer_source": "self_declared",
-      "purpose": "Shared type primitives (PerspectiveType, VoteDecision, verdicts) for the council subsystem."
-    },
-    {
       "module": "tonesoul.runtime_adapter",
       "path": "tonesoul/runtime_adapter.py",
       "in_degree": 5,
-      "out_degree": 17,
-      "total_degree": 22,
-      "lines": 2547,
+      "out_degree": 19,
+      "total_degree": 24,
+      "lines": 2563,
       "classes": 3,
       "functions": 54,
       "layer": "pipeline",
@@ -116,6 +116,19 @@
       "purpose": "SQLite-backed memory store with decay, layered retrieval, and source attribution."
     },
     {
+      "module": "tonesoul.council.pre_output_council",
+      "path": "tonesoul/council/pre_output_council.py",
+      "in_degree": 3,
+      "out_degree": 15,
+      "total_degree": 18,
+      "lines": 426,
+      "classes": 1,
+      "functions": 9,
+      "layer": "governance",
+      "layer_source": "self_declared",
+      "purpose": "Convene the pre-output council: run perspectives, compute coherence, emit verdict and transcript."
+    },
+    {
       "module": "tonesoul.autonomous_cycle",
       "path": "tonesoul/autonomous_cycle.py",
       "in_degree": 1,
@@ -127,19 +140,6 @@
       "layer": "orchestration",
       "layer_source": "self_declared",
       "purpose": "Drive the autonomous wake/sense/dream loop without a human trigger."
-    },
-    {
-      "module": "tonesoul.council.pre_output_council",
-      "path": "tonesoul/council/pre_output_council.py",
-      "in_degree": 3,
-      "out_degree": 12,
-      "total_degree": 15,
-      "lines": 326,
-      "classes": 1,
-      "functions": 8,
-      "layer": "governance",
-      "layer_source": "self_declared",
-      "purpose": "Convene the pre-output council: run perspectives, compute coherence, emit verdict and transcript."
     },
     {
       "module": "tonesoul.council.perspective_factory",
@@ -293,91 +293,85 @@
   "subpackage_stats": {
     "(root)": {
       "files": 96,
-      "lines": 39947,
+      "lines": 40095,
       "classes": 192,
       "functions": 1180
     },
     "axioms": {
       "files": 2,
-      "lines": 380,
+      "lines": 376,
       "classes": 3,
       "functions": 14
     },
     "backends": {
       "files": 2,
-      "lines": 909,
+      "lines": 905,
       "classes": 2,
       "functions": 72
     },
     "cli": {
       "files": 3,
-      "lines": 285,
+      "lines": 283,
       "classes": 0,
       "functions": 10
     },
-    "corpus": {
-      "files": 4,
-      "lines": 877,
-      "classes": 8,
-      "functions": 37
-    },
     "council": {
-      "files": 36,
-      "lines": 10299,
-      "classes": 55,
-      "functions": 329
+      "files": 40,
+      "lines": 11240,
+      "classes": 67,
+      "functions": 355
     },
     "deliberation": {
       "files": 7,
-      "lines": 1921,
+      "lines": 1922,
       "classes": 18,
       "functions": 86
     },
     "evolution": {
       "files": 4,
-      "lines": 1146,
+      "lines": 1155,
       "classes": 5,
       "functions": 46
     },
     "gates": {
       "files": 2,
-      "lines": 408,
+      "lines": 406,
       "classes": 6,
       "functions": 13
     },
     "gateway": {
       "files": 3,
-      "lines": 200,
+      "lines": 198,
       "classes": 4,
       "functions": 16
     },
     "governance": {
-      "files": 5,
-      "lines": 1615,
+      "files": 7,
+      "lines": 1795,
       "classes": 12,
-      "functions": 42
+      "functions": 48
     },
     "gse": {
       "files": 8,
-      "lines": 1028,
+      "lines": 1030,
       "classes": 7,
       "functions": 69
     },
     "inter_soul": {
       "files": 5,
-      "lines": 495,
+      "lines": 496,
       "classes": 9,
       "functions": 40
     },
     "llm": {
       "files": 5,
-      "lines": 1398,
+      "lines": 1457,
       "classes": 7,
       "functions": 73
     },
     "loop": {
       "files": 4,
-      "lines": 640,
+      "lines": 634,
       "classes": 16,
       "functions": 23
     },
@@ -388,62 +382,62 @@
       "functions": 35
     },
     "memory": {
-      "files": 32,
-      "lines": 10572,
-      "classes": 52,
-      "functions": 420
+      "files": 33,
+      "lines": 10775,
+      "classes": 55,
+      "functions": 426
     },
     "observability": {
       "files": 7,
-      "lines": 1147,
+      "lines": 1143,
       "classes": 10,
       "functions": 42
     },
     "perception": {
       "files": 4,
-      "lines": 1036,
+      "lines": 1030,
       "classes": 5,
       "functions": 30
     },
     "scribe": {
       "files": 4,
-      "lines": 1819,
+      "lines": 1815,
       "classes": 7,
       "functions": 61
     },
     "semantic": {
       "files": 3,
-      "lines": 197,
+      "lines": 193,
       "classes": 3,
       "functions": 18
     },
     "shared": {
       "files": 4,
-      "lines": 293,
+      "lines": 289,
       "classes": 7,
       "functions": 8
     },
     "tech_trace": {
       "files": 4,
-      "lines": 596,
+      "lines": 590,
       "classes": 0,
       "functions": 29
     },
     "tonebridge": {
       "files": 12,
-      "lines": 3563,
+      "lines": 3543,
       "classes": 39,
       "functions": 130
     },
     "ystm": {
       "files": 13,
-      "lines": 2227,
+      "lines": 2215,
       "classes": 21,
       "functions": 60
     },
     "yuhun": {
       "files": 7,
-      "lines": 2043,
+      "lines": 2045,
       "classes": 28,
       "functions": 32
     }
@@ -451,8 +445,8 @@
   "subpackage_coupling": {
     "(root)": {
       "ystm": 24,
-      "(root)": 102,
-      "governance": 9,
+      "(root)": 103,
+      "governance": 12,
       "llm": 3,
       "memory": 18,
       "perception": 3,
@@ -463,7 +457,7 @@
       "backends": 3,
       "gates": 1,
       "tonebridge": 1,
-      "yuhun": 2,
+      "yuhun": 1,
       "deliberation": 2,
       "tech_trace": 3
     },
@@ -479,24 +473,21 @@
       "council": 3,
       "ystm": 1
     },
-    "corpus": {
-      "corpus": 5,
-      "deliberation": 1
-    },
     "council": {
-      "council": 70,
+      "council": 74,
       "(root)": 8,
+      "semantic": 4,
       "memory": 5,
       "shared": 2,
       "llm": 1,
-      "semantic": 2,
       "gse": 2
     },
     "deliberation": {
       "deliberation": 14
     },
     "evolution": {
-      "evolution": 4
+      "evolution": 4,
+      "memory": 1
     },
     "gates": {
       "gates": 1
@@ -506,7 +497,7 @@
       "shared": 1
     },
     "governance": {
-      "(root)": 8,
+      "(root)": 10,
       "governance": 1,
       "gates": 1,
       "llm": 2,
@@ -531,8 +522,8 @@
       "market": 1
     },
     "memory": {
-      "memory": 52,
-      "(root)": 4,
+      "memory": 53,
+      "(root)": 5,
       "shared": 1
     },
     "observability": {
@@ -622,6 +613,11 @@
       "community": "(root)"
     },
     {
+      "module": "tonesoul.governance.de_escalation",
+      "directory": "governance",
+      "community": "(root)"
+    },
+    {
       "module": "tonesoul.governance.kernel",
       "directory": "governance",
       "community": "(root)"
@@ -633,6 +629,11 @@
     },
     {
       "module": "tonesoul.governance.reflex_config",
+      "directory": "governance",
+      "community": "(root)"
+    },
+    {
+      "module": "tonesoul.governance.responsibility_audit",
       "directory": "governance",
       "community": "(root)"
     },
@@ -667,6 +668,21 @@
       "community": "council"
     },
     {
+      "module": "tonesoul.semantic",
+      "directory": "semantic",
+      "community": "council"
+    },
+    {
+      "module": "tonesoul.semantic.concept_store",
+      "directory": "semantic",
+      "community": "council"
+    },
+    {
+      "module": "tonesoul.semantic.embedder",
+      "directory": "semantic",
+      "community": "council"
+    },
+    {
       "module": "tonesoul.shared.genesis",
       "directory": "shared",
       "community": "council"
@@ -686,5 +702,11 @@
       "directory": "(root)",
       "community": "ystm"
     }
-  ]
+  ],
+  "doc_provenance": {
+    "generated": true,
+    "canonical": false,
+    "source_command": "python scripts/analyze_codebase_graph.py",
+    "updated_at": "2026-06-22T16:26:26Z"
+  }
 }
