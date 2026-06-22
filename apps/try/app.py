@@ -203,10 +203,12 @@ def _locale_from_request(request: object | None) -> str:
     return DEFAULT_LOCALE
 
 
-def _ui(key: str) -> object:
-    if I18N is None:
-        return _text(key, DEFAULT_LOCALE)
-    return I18N(key)
+def _ui(key: str) -> str:
+    # gradio 6.19.0 gr.Interface runs remove_html_tags() over title/description and
+    # raises TypeError on an I18nData object, so the Interface chrome uses plain
+    # default-locale strings (the known-good pre-i18n pattern). run_council still
+    # localizes its OUTPUT labels per request via _locale_from_request below.
+    return _text(key, DEFAULT_LOCALE)
 
 
 def run_council(draft: str, intent: str, request: gr.Request = None) -> str:
@@ -246,7 +248,6 @@ def run_council(draft: str, intent: str, request: gr.Request = None) -> str:
 
 
 _validate_i18n_coverage()
-I18N = gr.I18n(**I18N_TRANSLATIONS) if gr is not None else None
 
 if gr is not None:
     demo = gr.Interface(
@@ -271,4 +272,4 @@ if __name__ == "__main__":
         raise ModuleNotFoundError(
             "gradio is required to launch the Space UI"
         ) from _GRADIO_IMPORT_ERROR
-    demo.launch(i18n=I18N)
+    demo.launch()
