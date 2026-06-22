@@ -201,7 +201,7 @@
 
 | 概念 | 授信文件 |
 |------|---------|
-| 七條公理（AXIOMS） | `AXIOMS.json` |
+| 八條公理（AXIOMS） | `AXIOMS.json` |
 | 八層架構（L1-L8） | `docs/architecture/TONESOUL_EIGHT_LAYER_CONVERGENCE_MAP.md` |
 | Agent 協作規則 | `AGENTS.md` |
 | API 規格 | `docs/API_SPEC.md` |

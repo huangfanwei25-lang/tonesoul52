@@ -49,7 +49,7 @@ v10 寫於 v8 review 之後 1h13min、但**朋友是否看過 review 未知**、
 - Finding 3（over-claim 動詞）：未動
 - Finding 4（SaaS landing format）：未動
 - Finding 5（Audience tension）：未動
-- Finding 6（7 vs 8 axioms）：未動
+- Finding 6（7 vs 8 axioms）：已在公開 docs freshness reconciliation 中修正（2026-06-22 對 AXIOMS.json）
 
 時序與內容兩條 evidence 都支持「v10 跟 review 是 parallel artifact」、但**不能單從這 2 條 evidence 排除 (B) implicit pushback**。
 

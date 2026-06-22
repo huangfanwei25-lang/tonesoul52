@@ -16,7 +16,7 @@ ToneSoul 既有 memory 系統的 schema diversity（per `MEMORY.md` index + `doc
 | User-level auto-memory（feedback / user / project / reference）| Rule + **Why** + **How to apply** | 缺「結果」「失敗原因」「下次建議」explicit field |
 | Council verdict（`tonesoul/council/`）| `chosen_verdict / chosen_because / alternatives / deciding_factors` | 缺「結果」（驗證後的事實）|
 | Session traces / soul.db | append-only event log | 沒 structured reflection |
-| AXIOMS.json | 7 條 categorical 規則 | immutable、不該成長 |
+| AXIOMS.json | 8 條 categorical 規則 | immutable、不該成長 |
 
 中間缺一層：**「策略性決策的 closed-loop 記錄」**——記決定怎麼下、後來證實對不對、下次該怎麼做。
 

@@ -84,9 +84,9 @@ function CodeBlock({ children }) {
 function ComparisonTable() {
   const rows = [
     ['Memory',      'Session-only', 'Manual wiring',    'Auto decay + crystallize'],
-    ['Consistency', 'Best effort',  'Prompt-dependent', '7 Axioms + governance'],
+    ['Consistency', 'Best effort',  'Prompt-dependent', '8 Axioms + governance'],
     ['Self-check',  'None',         'Optional',         'Every response scored'],
-    ['Enforcement', 'None',         'None',             'Block / Rewrite / Audit'],
+    ['Enforcement', 'None',         'None',             'Block / Bounded refusal / Audit'],
     ['Identity',    'Stateless',    'Persona prompt',   'Accountable choice history'],
   ];
   return (

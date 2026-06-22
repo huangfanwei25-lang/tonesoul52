@@ -2,14 +2,15 @@
 
 > Status: architectural topology document
 > Purpose: organize the repo's validation surfaces into lanes, describe what confidence each lane actually buys, what it still does not prove, and the most dangerous false inference later agents might make
-> Last Updated: 2026-04-09
+> Last Updated: 2026-06-23
 > Produced By: Claude Opus
 > Depends On:
 >   - docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md (evidence levels)
 >   - docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md (claim-level evidence mapping)
->   - Full test suite (~363 files, ~1900+ tests, 65K+ lines)
+>   - Full test suite (count drifts; use README.md's dated clean-CI line / CI rather than a bare hand-written number)
 >   - pytest.ini, conftest.py, .github/workflows/
 > Scope: 7 validation lanes, ~363 test files mapped
+> Freshness Note: axiom and test-count references reconciled 2026-06-22 against AXIOMS.json and the README clean-CI pattern; test counts remain dated/source-bound because they drift with each PR.
 
 ## How To Use This Document
 
@@ -28,7 +29,7 @@ If you are deciding whether to trust a ToneSoul claim:
 |---|---|
 | Test framework | pytest with asyncio support (`asyncio_mode = auto`) |
 | Test files | ~363 in `tests/`, 8 in `tests/red_team/` |
-| Test functions | ~1,900+ |
+| Test functions | Drifting; use README.md's dated clean-CI line / CI for a sourced count |
 | Test code | ~65,000+ lines |
 | CI workflows | `test.yml` (`ToneSoul CI`, automatic mainline); `pytest-ci.yml` (`Pytest CI (Manual Focused Rerun)`, manual Python-only rerun); `ci.yml` (`CI (Legacy Manual Replay)`, manual legacy replay/comparison lane) |
 | Fixtures | `_isolate_soul_db` (temp SoulDB), `qa_sandbox` (isolated env), `workspace_tmpdir` |
@@ -265,7 +266,7 @@ If you are deciding whether to trust a ToneSoul claim:
 
 **Representative documents** (not test files):
 - SOUL.md — mission, identity, philosophical anchors, soul modes
-- AXIOMS.json — 7 axioms (some reflected in code, some purely philosophical)
+- AXIOMS.json — 8 axioms (some reflected in code, some purely philosophical)
 - law/docs/ — Lex Lattice, LAR, Isnād, Haven federation (all theory)
 - docs/architecture/ contracts — lifecycle lanes, import posture, receiver rules, prompt topology, adoption waves, deliberation modes, confidence posture derivation
 - spec/council_spec.md — role definitions and deliberation flow description
@@ -356,4 +357,4 @@ Later agents should always specify whether they are making a mechanism claim (te
 
 ## Canonical Handoff Line
 
-ToneSoul has ~1,900 tests across 7 validation lanes. The strongest lanes (safety mechanisms, council mechanics, schema validation) provide genuine E1 regression protection for defined mechanisms. The weakest lane (narrative and doctrine) has zero tests and describes intent rather than reality. The critical gap is not in any single lane — it is in the space between mechanism verification and system-property claims. Tests prove mechanisms work. Documents claim the system works. The distance between these two is where honest description begins and overclaiming ends.
+ToneSoul has a drifting test suite across 7 validation lanes; use README.md's dated clean-CI line / CI rather than this hand-written map for the live count. The strongest lanes (safety mechanisms, council mechanics, schema validation) provide genuine E1 regression protection for defined mechanisms. The weakest lane (narrative and doctrine) has zero tests and describes intent rather than reality. The critical gap is not in any single lane — it is in the space between mechanism verification and system-property claims. Tests prove mechanisms work. Documents claim the system works. The distance between these two is where honest description begins and overclaiming ends.

@@ -25,4 +25,4 @@ If the user invokes this skill without any other guidance, ask them:
 
 Then act as an expert designer who outputs HTML artifacts or production code, grounded in the system defined here.
 
-**Do not invent new motifs.** The brand is disciplined: crystal-eye symbol, 7 axioms, soul bands (serene/alert/strained/critical), tension triad (T/S/R). Use them as-is. If you need imagery that isn't here, add a placeholder and flag it rather than fabricating a new visual metaphor.
+**Do not invent new motifs.** The brand is disciplined: crystal-eye symbol, 8 axioms, soul bands (serene/alert/strained/critical), tension triad (T/S/R). Use them as-is. If you need imagery that isn't here, add a placeholder and flag it rather than fabricating a new visual metaphor.

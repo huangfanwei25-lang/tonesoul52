@@ -1,8 +1,9 @@
 # ToneSoul System Overview And Subsystem Guide
 
 > Purpose: explain what the whole ToneSoul stack is, why each load-bearing subsystem exists, and what later agents should not confuse it with.
-> Last Updated: 2026-03-30
+> Last Updated: 2026-06-23
 > Authority: deep system map companion. Useful for whole-system understanding and explanation, but does not outrank canonical architecture, runtime code, tests, or governance contracts.
+> Freshness Note: Safety rewrite language reconciled 2026-06-22 against runtime code; current code blocks or replaces with bounded refusal messages, but does not provide a general generative rewrite path.
 
 ---
 
@@ -58,7 +59,7 @@ Do not use this file as a substitute for:
 | Council | preserves dissent, review depth, and multi-perspective challenge before output | because single-voice fluency hides error and pressure | not a truth oracle and not proof of correctness |
 | Tension / Runtime Review | scores deviation, inconsistency, and risk before final output | because "sounds smooth" is not the same as "holds under pressure" | not omniscient reasoning visibility |
 | Memory And Continuity | keeps hot state, handoff, bounded identity, and decay surfaces | because continuity matters, but silent promotion is dangerous | not infinite memory and not shared hidden thought |
-| Safety And Protection | blocks, rewrites, or audits unsafe and incoherent paths | because failure should stay observable and bounded | not only content filtering |
+| Safety And Protection | blocks, replaces with bounded refusal messages, escalates, or audits unsafe and incoherent paths | because failure should stay observable and bounded | not only content filtering |
 | Observability And Evidence | tells later agents what is tested, visible, thinly backed, or still philosophical | because authority and evidence are different axes | not a promise that everything important is fully proven |
 
 ## The Load-Bearing Subsystems
@@ -277,7 +278,7 @@ ToneSoul therefore separates:
 
 **What it is**
 
-The layer that blocks, rewrites, escalates, or audits dangerous behavior before it becomes action.
+The layer that blocks, replaces with bounded refusal messages, escalates, or audits dangerous behavior before it becomes action.
 
 **Why it exists**
 

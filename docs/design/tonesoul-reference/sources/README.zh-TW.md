@@ -6,7 +6,7 @@
 > ToneSoul 是一套外部化認知治理架構，關心的是可挑戰、可追溯、可稽核的 AI，而不是只追求更順的回答。
 >
 > Purpose: 語魂公開倉庫中文入口，說明整體架構、治理姿態與實作入口。
-> Last Updated: 2026-04-14
+> Last Updated: 2026-06-23
 
 [English](README.md)
 
@@ -80,7 +80,7 @@ ToneSoul 不是單一 prompt，也不是單純的記憶外掛。
     ↓
 [Council] 守護者 / 分析師 / 批評者 / 倡議者審議
     ↓
-[ComputeGate] approve / block / rewrite
+[ComputeGate] approve / block（沒有一般化的生成式 rewrite 路徑）
     ↓
 [Journal + Crystallizer] 重要的留下，雜訊慢慢忘掉
     ↓

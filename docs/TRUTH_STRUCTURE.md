@@ -2,7 +2,7 @@
 
 Purpose: unify governance (Soul) and the thinking engine (YuHun) into a single,
 auditable structure for collaboration.
-Last Updated: 2026-03-23
+Last Updated: 2026-06-23
 
 Status: draft; updated as more theory/value/structure sources are read.
 
@@ -312,7 +312,7 @@ From archived_docs/GOVERNANCE.md:
 - Chronicle includes Journal.md and DNA history for traceable evolution.
 
 From archived_docs/AXIOMS.md:
-- Matches the 7 axioms (continuity, responsibility threshold, POAV gate, etc).
+- Matches the 8 axioms (continuity, responsibility threshold, POAV gate, memory sovereignty, etc.).
 
 From archived_docs/AI_PERSPECTIVE.md:
 - AI-endorsed value proposition: traceability, P0-P4, and responsibility residue.

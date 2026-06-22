@@ -1,12 +1,12 @@
 # ToneSoul Core Modules Reference
 
 > Purpose: explain the main ToneSoul runtime modules, their responsibilities, and their intended contribution to the system.
-> Last Updated: 2026-03-23
+> Last Updated: 2026-06-23
 
 **Document ID:** YuHun_Advanced_Co-Creator_Manual_v1.0
 
 > **⚠️ Routing — read this before treating this doc as a lookup table.**
-> This file is a **conceptual / narrative** module reference covering ~10 named *subsystems* (TSC-01 ToneStamp, PN-02 Persona Nest, MCP-03 MemoryChain, …). It is hand-authored design history, not a file-level index, and does not cover the 254 real Python modules in `tonesoul/`.
+> This file is a **conceptual / narrative** module reference covering ~10 named *subsystems* (TSC-01 ToneStamp, PN-02 Persona Nest, MCP-03 MemoryChain, …). It is hand-authored design history, not a file-level index, and does not cover the live Python module set in `tonesoul/` (see [status/codebase_graph_latest.md](status/codebase_graph_latest.md) for the generated count and per-module map).
 > - **For file-level lookup** (*"what does `tonesoul/council/runtime.py` do / which layer / who depends on it?"*) → [status/codebase_graph_latest.md](status/codebase_graph_latest.md) (auto-generated body map).
 > - **For layer boundaries and allowed import directions** → [ARCHITECTURE_BOUNDARIES.md](ARCHITECTURE_BOUNDARIES.md).
 > - **Use this document when**: you need the conceptual identity of a named subsystem, the original design intent behind a module family, or the terminology ("Vow Points", "EchoHold Protocol") without caring which specific `.py` file implements it today.

@@ -155,9 +155,9 @@
 </thead>
 <tbody>
 <tr><td><strong>Memory</strong></td><td>Session-only</td><td>Manual wiring</td><td>Auto decay + crystallize</td></tr>
-<tr><td><strong>Consistency</strong></td><td>Best effort</td><td>Prompt-dependent</td><td>7 Axioms + governance</td></tr>
+<tr><td><strong>Consistency</strong></td><td>Best effort</td><td>Prompt-dependent</td><td>8 Axioms + governance</td></tr>
 <tr><td><strong>Self-check</strong></td><td>None</td><td>Optional</td><td>Every response scored</td></tr>
-<tr><td><strong>Enforcement</strong></td><td>None</td><td>None</td><td>Block / Rewrite / Audit</td></tr>
+<tr><td><strong>Enforcement</strong></td><td>None</td><td>None</td><td>Block / Bounded refusal / Audit</td></tr>
 <tr><td><strong>Identity</strong></td><td>Stateless</td><td>Persona prompt</td><td>Accountable choice history</td></tr>
 </tbody>
 </table>
@@ -173,14 +173,14 @@
     ↓
 [Council] Guardian / Analyst / Critic / Advocate deliberate
     ↓
-[ComputeGate] Approve / Block / Rewrite
+[ComputeGate] Approve / Block (no generative rewrite path)
     ↓
 [Crystallizer] Remember what matters, forget the rest
     ↓
 Response (with audit trail)</code></pre>
 
-<h2>The 7 Axioms</h2>
-<p>ToneSoul is governed by 7 immutable laws, defined in <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AXIOMS.json">AXIOMS.json</a>:</p>
+<h2>The 8 Axioms</h2>
+<p>ToneSoul is governed by 8 immutable laws, defined in <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AXIOMS.json">AXIOMS.json</a>:</p>
 <table>
 <thead><tr><th>#</th><th>Name</th><th>Core Rule</th></tr></thead>
 <tbody>
@@ -191,6 +191,7 @@ Response (with audit trail)</code></pre>
 <tr><td>5</td><td>Mirror Recursion</td><td>Self-reflection must increase accuracy</td></tr>
 <tr><td>6</td><td>User Sovereignty</td><td>No action may harm the user (P0)</td></tr>
 <tr><td>7</td><td>Semantic Field Conservation</td><td>System is a damper, not an amplifier</td></tr>
+<tr><td>8</td><td>Memory Sovereignty</td><td>Memory transfer and replication require consent boundaries</td></tr>
 </tbody>
 </table>
 

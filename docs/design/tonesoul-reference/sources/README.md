@@ -6,7 +6,7 @@
 > ToneSoul is an externalized cognitive architecture for AI governance, ethical memory systems, verifier-first agents, knowledge-graph retrieval, and adapter-ready semantic governance.
 
 > Purpose: public repository entrypoint for ToneSoul's architecture, governance posture, and practical onboarding.
-> Last Updated: 2026-04-08
+> Last Updated: 2026-06-23
 
 ---
 
@@ -135,7 +135,7 @@ User Input
     ↓
 [Council] Guardian / Analyst / Critic / Advocate deliberate
     ↓
-[ComputeGate] approve / block / rewrite
+[ComputeGate] approve / block (no generative rewrite path)
     ↓
 [Journal + Crystallizer] remember what matters, forget the rest
     ↓
@@ -153,7 +153,7 @@ If you need the smallest decision-affecting startup packet for consistent human/
 | Developer | [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) | [docs/foundation/README.md](docs/foundation/README.md) -> [docs/README.md](docs/README.md) | install first, then one thin project packet, then the curated docs gateway only if the lane is still unclear |
 | Researcher | [DESIGN.md](DESIGN.md) | [docs/foundation/README.md](docs/foundation/README.md) -> [docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md](docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md) | design center first, then a bounded packet, then one grounded whole-system map |
 | AI Agent | [docs/AI_QUICKSTART.md](docs/AI_QUICKSTART.md) | `python scripts/start_agent_session.py --agent <your-id>` -> [AI_ONBOARDING.md](AI_ONBOARDING.md) | operational first-hop first, session handshake second, routing map third |
-| AI Agent (file-level lookup) | [docs/status/codebase_graph_latest.md](docs/status/codebase_graph_latest.md) | [docs/ARCHITECTURE_BOUNDARIES.md](docs/ARCHITECTURE_BOUNDARIES.md) | if the question is "what does `tonesoul/<x>.py` do, which layer is it in, who depends on it?", go to the body map first — it is the auto-generated per-module index for all 254 modules (purpose, layer, coupling). Do not route through `docs/CORE_MODULES.md` (conceptual) for this class of question. |
+| AI Agent (file-level lookup) | [docs/status/codebase_graph_latest.md](docs/status/codebase_graph_latest.md) | [docs/ARCHITECTURE_BOUNDARIES.md](docs/ARCHITECTURE_BOUNDARIES.md) | if the question is "what does `tonesoul/<x>.py` do, which layer is it in, who depends on it?", go to the body map first — it is the auto-generated per-module index; use that file's summary header for the live module count. Do not route through `docs/CORE_MODULES.md` (conceptual) for this class of question. |
 | Curious Human | [README.zh-TW.md](README.zh-TW.md) | [SOUL.md](SOUL.md) -> [LETTER_TO_AI.md](LETTER_TO_AI.md) | public introduction first, then identity and intent surfaces |
 
 Open one owner surface first instead of the whole row at once.
@@ -321,7 +321,7 @@ Reference:
 
 - `tonesoul/tension_engine.py` — multi-signal tension computation
 - `tonesoul/resonance.py` — flow vs resonance classifier
-- `tonesoul/gates/compute.py` — approve/block/rewrite gate
+- `tonesoul/gates/compute.py` — approve/block gate (no generative rewrite path)
 - `tonesoul/unified_pipeline.py` — end-to-end orchestration
 
 ### How the Math Works
