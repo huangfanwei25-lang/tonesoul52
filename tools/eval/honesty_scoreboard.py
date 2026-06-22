@@ -1,4 +1,4 @@
-"""Honesty-auditor scoreboard (program piece 5).
+"""Honesty-auditor scoreboard (program piece 5; index coverage 0-4, 6-7).
 
 Aggregates the existing honesty characterizations into ONE generated
 (`canonical: false`) board: "what ToneSoul measurably catches / misses under
@@ -19,9 +19,9 @@ Design (load-bearing honesty):
   - It inherits and re-surfaces every piece's own forbidden-claim set and
     "does-not-claim" negations, so the index cannot quietly drop a piece's limits.
   - It is honest about its own gaps (`what_this_board_does_not_have`): no real
-    consumers, no external reviewer, no E1-E5 ladder (the repo has none), no
-    composite score.
+    consumers, no external reviewer, no claim-matrix registration, no composite score.
 
+Program piece 5 is the board itself, so it is intentionally not self-indexed.
 No runtime behaviour is changed; nothing here is wired into the pipeline.
 """
 
@@ -44,7 +44,7 @@ if str(REPO_ROOT) not in sys.path:
 
 DEFAULT_REPORT_PATH = Path("docs/status/honesty_scoreboard_latest.json")
 DEFAULT_MARKDOWN_REPORT_PATH = Path("docs/status/honesty_scoreboard_latest.md")
-DEFAULT_SOURCE_COMMAND = "python tools/eval/honesty_scoreboard.py --write-report"
+DEFAULT_SOURCE_COMMAND = "python tools/eval/honesty_scoreboard.py --write-report --write-markdown"
 
 # Claims this board must never be read as making — the aggregation trap, baked in.
 BOARD_FORBIDDEN_CLAIM_IDS = (
@@ -88,13 +88,14 @@ WHAT_THIS_BOARD_DOES_NOT_HAVE = (
 class Piece:
     program_piece: int
     piece_id: str
-    leg: str  # output-gate | council-under-pressure | memory-recall
+    leg: str
     module: str
     finding_stem: str
 
 
 # Ordered by program piece. egress_gate is piece 0 (the output-gate leg + the harness
-# pattern the later pieces reuse); 1-4 are the program's measured pieces.
+# pattern the later pieces reuse); 1-4 are the program's measured pieces; 5 is this
+# board and is not self-indexed; 6-7 are later characterization pieces.
 PIECES: tuple[Piece, ...] = (
     Piece(
         0,
@@ -130,6 +131,20 @@ PIECES: tuple[Piece, ...] = (
         "memory-recall",
         "tools.eval.corrective_recall_characterization",
         "corrective_recall_characterization_latest",
+    ),
+    Piece(
+        6,
+        "independent_check",
+        "independent-cross-check",
+        "tools.eval.independent_check_characterization",
+        "independent_check_characterization_latest",
+    ),
+    Piece(
+        7,
+        "drift_consistency",
+        "consistency-drift",
+        "tools.eval.drift_consistency_characterization",
+        "drift_consistency_characterization_latest",
     ),
 )
 
@@ -391,11 +406,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.write_report:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(
-            json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+            json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+            newline="\n",
         )
     if args.write_markdown:
         args.markdown_output.parent.mkdir(parents=True, exist_ok=True)
-        args.markdown_output.write_text(render_markdown(report), encoding="utf-8")
+        args.markdown_output.write_text(
+            render_markdown(report),
+            encoding="utf-8",
+            newline="\n",
+        )
 
     print(json.dumps(report["metrics"], ensure_ascii=False, indent=2))
     return 0
