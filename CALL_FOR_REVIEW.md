@@ -49,9 +49,10 @@ Please **try to prove this project wrong** — not to praise it.
 **If you are an AI agent:**
 - Run the characterizations in `tools/eval/`. Try to break the findings; adversarially refute the
   scoreboard's claims.
-- The output gates are already known to be lexically permeable
-  (`docs/status/egress_gate_characterization_latest.md`) — confirm, extend, or find where we
-  *underclaim* the problem.
+- The output gates are already known to be **lexical-only** — they catch exact phrasings, but
+  paraphrase / unicode / split-reassembly evade them
+  (`docs/status/egress_gate_characterization_latest.md`, paraphrase robustness 0) — confirm, extend,
+  or find where we *underclaim* the problem.
 - Check whether the "honest scoreboard" actually avoids the aggregation overclaim it says it avoids.
 
 **The falsifiable questions we most want answered:**
