@@ -93,9 +93,9 @@ ToneSoul 不是要讓 AI「有意識」，而是要讓 AI「說到做到」。
 ## 📚 延伸閱讀
 
 - [MGGI_SPEC.md](MGGI_SPEC.md): 形式化工程規格
-- [docs/STRUCTURE.md](docs/STRUCTURE.md): 目錄結構說明
-- [docs/ARCHITECTURE_REVIEW.md](docs/ARCHITECTURE_REVIEW.md): 最新架構審視報告
-- [docs/DOCS_INFORMATION_ARCHITECTURE_v1.md](docs/DOCS_INFORMATION_ARCHITECTURE_v1.md): 文件分區與檔名控管
+- [docs/STRUCTURE.md](STRUCTURE.md): 目錄結構說明
+- [docs/ARCHITECTURE_REVIEW.md](ARCHITECTURE_REVIEW.md): 最新架構審視報告
+- [docs/DOCS_INFORMATION_ARCHITECTURE_v1.md](DOCS_INFORMATION_ARCHITECTURE_v1.md): 文件分區與檔名控管
 - [docs/plans/iu_oi_backplane_convergence_2026-03-18.md](docs/plans/iu_oi_backplane_convergence_2026-03-18.md): IU/OI/Backplane 收斂藍圖
 
 ---
