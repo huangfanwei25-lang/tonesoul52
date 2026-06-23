@@ -24,7 +24,7 @@ It focuses on three practical moves:
 
 ToneSoul should not be described as:
 
-- a truth oracle
+- a source of truth
 - a guarantee against prompt injection or jailbreak attempts
 - an internal ethics engine
 - proof that an AI collaborator is conscious
@@ -33,6 +33,12 @@ ToneSoul should not be described as:
 Current enforcement is intentionally described narrowly. Many sensors are lexical or heuristic. Some newer sensors are advisory only. `AXIOMS.json` currently reports no axiom class at the strongest enforcement tier. The egress characterization work is a measurement surface, not a safety claim.
 
 For the project's positioning — responsibility philosophy as engineering, and an honest map of what is *measured* vs *aspirational* — see [docs/POSITIONING.md](docs/POSITIONING.md).
+
+## External Review Path
+
+The goal is not to prove ToneSoul works. The goal is to make ToneSoul easy to inspect, easy to falsify, and hard to overclaim.
+
+If you only have 10 minutes, use [docs/EXTERNAL_REVIEW.md](docs/EXTERNAL_REVIEW.md): run the Space once, report one false positive, false negative, or confusing label, and check the evidence packet before repeating any claim.
 
 ## What Currently Exists
 
@@ -59,6 +65,8 @@ For the project's positioning — responsibility philosophy as engineering, and 
 Try it live, no install — paste your own draft and watch the real Council run on it:
 
 [https://huggingface.co/spaces/Famwin/tonesoul-tryit](https://huggingface.co/spaces/Famwin/tonesoul-tryit) — the same model-free engine as `ts validate`.
+
+If your goal is to refute or inspect ToneSoul rather than use it, start with the [10-minute reviewer path](docs/EXTERNAL_REVIEW.md).
 
 Or see pre-baked samples in the browser:
 

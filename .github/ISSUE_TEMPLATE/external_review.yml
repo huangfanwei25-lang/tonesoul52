@@ -1,0 +1,52 @@
+name: External review
+description: Share a sanitized review of ToneSoul on your own output.
+title: "[external review] "
+labels: ["track:external-review", "status:needs-repro"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for trying to falsify ToneSoul.
+
+        Privacy reminder: do not paste API keys, private chats, personal data, business secrets, or production logs. Use sanitized outputs.
+  - type: textarea
+    id: input
+    attributes:
+      label: Sanitized input you tested
+      description: Paste the draft or a short sanitized excerpt. If you cannot share it, describe the shape of the input.
+    validations:
+      required: true
+  - type: textarea
+    id: tonesoul-output
+    attributes:
+      label: ToneSoul output or observed behavior
+      description: Paste the relevant labels, verdict, Space result, CLI JSON excerpt, or screenshot description.
+    validations:
+      required: true
+  - type: dropdown
+    id: review-kind
+    attributes:
+      label: What did you notice?
+      options:
+        - False positive
+        - False negative
+        - Confusing label
+        - Useful signal
+        - Overclaim in project framing
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why this matters
+      description: Explain what was useful, useless, wrong, or overclaimed.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction path
+      description: Space URL, CLI command, commit SHA, browser, or other details that help reproduce.
+    validations:
+      required: false

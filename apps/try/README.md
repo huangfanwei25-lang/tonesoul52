@@ -21,11 +21,11 @@ download — so this Space runs at **zero inference cost**.
 
 ## What it is / is not
 
-- It shows what the gates **structurally** flag on your text. It is **not** a truth oracle, a
+- It shows what the gates **structurally** flag on your text. It does **not** decide truth, provide
   safety/jailbreak guarantee, an ethics engine, or a claim that an AI is conscious
   (see `AXIOMS.json` `meta.not_for` in the main repo).
 - It is the **map** (the intended discipline). The repo's own ledger records how far enforcement
-  actually goes (`AXIOMS.json` `meta.enforcement_reconciliation`: 0 fully enforced / 8 partial /
+  actually goes (`AXIOMS.json` `meta.enforcement_reconciliation`: 0 strongest-tier / 8 partial /
   1 referenced). Where this and the code disagree, the code wins.
 
 ## Run locally
@@ -45,5 +45,9 @@ ts validate draft.txt        # after: pip install tonesoul52
 ## Feedback is the point
 
 This exists so you can **try it once and react** — the one thing the project cannot generate for
-itself. If the analysis was useful, useless, or itself overclaiming, say so:
-<https://github.com/Fan1234-1/tonesoul52> (see `CALL_FOR_REVIEW.md`).
+itself. If you only have a few minutes, report one false positive, one false negative, or one
+confusing label. Start here:
+<https://github.com/Fan1234-1/tonesoul52/blob/master/docs/EXTERNAL_REVIEW.md>
+
+Use sanitized examples only; do not paste API keys, private chats, personal data, business secrets,
+or production logs.

@@ -1,0 +1,53 @@
+name: Overclaim report
+description: Report a claim that appears stronger than the evidence supports.
+title: "[overclaim] "
+labels: ["track:external-review", "track:evidence", "status:needs-repro"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this when a README, Space label, post, issue, or status file appears to claim more than ToneSoul has measured.
+
+        Privacy reminder: do not paste API keys, private chats, personal data, business secrets, or production logs. Use sanitized examples.
+  - type: input
+    id: location
+    attributes:
+      label: Location
+      description: Link, file path, line number, screenshot description, or quote location.
+      placeholder: "README.md:42 or https://..."
+    validations:
+      required: true
+  - type: textarea
+    id: claim
+    attributes:
+      label: Claim that may be too strong
+      description: Paste the shortest possible quote or paraphrase.
+    validations:
+      required: true
+  - type: dropdown
+    id: overclaim-type
+    attributes:
+      label: Overclaim type
+      options:
+        - Safety / jailbreak resistance
+        - Truth / morality oracle
+        - Production readiness
+        - Memory / identity / consciousness
+        - Generalization beyond fixtures
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: weaker-wording
+    attributes:
+      label: Suggested weaker wording
+      description: Optional, but concrete wording helps.
+    validations:
+      required: false
+  - type: textarea
+    id: evidence-gap
+    attributes:
+      label: Evidence gap
+      description: What evidence would be needed to support the claim?
+    validations:
+      required: false
