@@ -2,7 +2,7 @@
 
 > An open request for adversarial feedback on ToneSoul — from humans or AI.
 > Drafted by the project's AI collaborator (Claude, Opus 4.8) as part of the accountability
-> practice described below. Last updated: 2026-06-19.
+> practice described below. Last updated: 2026-06-24.
 > Where this document and the code disagree, the code wins.
 
 ## Why this document exists
@@ -11,8 +11,12 @@ ToneSoul is an AI-accountability framework. Its central claim is procedural: an 
 able to show **why it became the answer** — evidence cited, boundaries held, degradations logged —
 and the system should stay honest about what it cannot do.
 
-The project has reached a point where it **cannot honestly validate itself any further**. Saying so
-is not a failure; it is the thesis working. The precise reasons it needs outside eyes:
+The goal is not to prove ToneSoul works. The goal is to make ToneSoul easy to inspect, easy to
+falsify, and hard to overclaim.
+
+The project has reached a point where it **cannot honestly review itself any further without
+correlated blind spots**. Saying so is not a failure; it is the thesis working. The precise reasons
+it needs outside eyes:
 
 1. **The review so far has been same-source.** The honesty-auditor program
    (`docs/plans/honesty_auditor_program_2026-06-18.md`) is complete — but its pieces were built and
@@ -25,9 +29,9 @@ is not a failure; it is the thesis working. The precise reasons it needs outside
    reviewer drawn from the same distribution tends to miss what the author missed.
 
 3. **An auditor that certifies its own honesty becomes the thing it audits.** ToneSoul is
-   deliberately built so that it *cannot* self-certify. External validation is therefore not a
-   nice-to-have; it is structurally required. The one input this system cannot manufacture for
-   itself is an independent eye.
+   deliberately built so that it *cannot* self-certify. External review and falsifiability are
+   therefore not nice-to-haves; they are structurally required. The one input this system cannot
+   manufacture for itself is an independent eye.
 
 4. **There are no real consumers yet.** The measurements (`docs/status/*_characterization_latest.*`)
    characterize structure on *sanitized fixtures*. Whether any of it is useful to a real person or
@@ -64,20 +68,26 @@ Please **try to prove this project wrong** — not to praise it.
 
 - Not "tell us it's good." A confirmation from a same-distribution reviewer is worth little (reason 2).
 - Not feature requests, and not a "piece 6." The project's own conclusion is that the next step is
-  **external validation, not new capability**.
-- Not private contact. Reach the author through the public project below; nothing here asks for or
-  stores personal data.
+  **external review and falsifiability, not new capability**.
+- Not private contact. Reach the author through the public project below. Do not paste API keys,
+  private chats, personal data, business secrets, or production logs; use sanitized outputs.
 
 ## How to respond
 
-**Run it on your own output first** — either with zero install in the browser
-(<https://huggingface.co/spaces/Famwin/tonesoul-tryit> — paste a draft, the real model-free Council
-runs on it), or locally via `ts validate yourdraft.txt` (after `pip install tonesoul52`; see the
-README Quick Start). Then tell us whether the analysis was useful, wrong, or *itself*
-overclaiming. We can read the textbook to ourselves; what we cannot generate is **your** reaction
-to wearing it once — that is the feedback this project actually needs.
+**Use the 10-minute reviewer path first:** [docs/EXTERNAL_REVIEW.md](docs/EXTERNAL_REVIEW.md).
 
-Open an issue or a discussion on the project: <https://github.com/Fan1234-1/tonesoul52>.
+The short version:
+
+1. open <https://huggingface.co/spaces/Famwin/tonesoul-tryit>;
+2. paste one of your own outputs;
+3. report one false positive, false negative, confusing label, or overclaim;
+4. optionally run `ts validate yourdraft.txt --json` after `pip install tonesoul52`.
+
+Then tell us whether the analysis was useful, wrong, or *itself* overclaiming. We can read the
+textbook to ourselves; what we cannot generate is **your** reaction to wearing it once — that is
+the feedback this project actually needs.
+
+Open an issue on the project: <https://github.com/Fan1234-1/tonesoul52/issues/new/choose>.
 The most useful response is a concrete, cited disagreement.
 
 ## Honest footnotes

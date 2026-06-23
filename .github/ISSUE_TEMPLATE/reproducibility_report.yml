@@ -1,0 +1,53 @@
+name: Reproducibility report
+description: Report a failed Space, CLI, pytest, or evaluation reproduction path.
+title: "[repro] "
+labels: ["track:reviewer-tooling", "status:needs-repro"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this when the 10-minute reviewer path, Space, CLI, pytest, or eval harness does not reproduce.
+
+        Privacy reminder: do not paste API keys, private chats, personal data, business secrets, or production logs. Use sanitized commands and outputs.
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Surface
+      options:
+        - Hugging Face Space
+        - CLI ts validate
+        - Python API
+        - pytest
+        - tools/eval harness
+        - Documentation link
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command or steps
+      description: Paste the exact command or browser steps.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+      description: What did the docs or post say should happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      description: Paste a short sanitized error, output excerpt, or screenshot description.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, browser, package version, or commit SHA.
+    validations:
+      required: false

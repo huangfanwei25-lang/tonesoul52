@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 10-minute reviewer path
+    url: https://github.com/Fan1234-1/tonesoul52/blob/master/docs/EXTERNAL_REVIEW.md
+    about: Start here if you want to try ToneSoul once and report a falsifiable issue.
