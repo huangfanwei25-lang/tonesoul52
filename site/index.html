@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ToneSoul - Epistemic Defense for AI</title>
-  <meta name="description" content="ToneSoul is open-source epistemic defense for AI — categorical refusal of forbidden claim classes, plus surfaced dissent and architectural infrastructure for accountability after errors occur. Most AI safety optimizes; ToneSoul defends.">
+  <meta name="description" content="ToneSoul is a runnable, model-free accountability layer for AI output: it flags claim-boundary crossings and unsupported confidence, preserves per-perspective dissent, and publishes its own measured misses (lexical / paraphrase-permeable, fixture-scoped). It does not make a model correct or safe.">
   <meta name="keywords" content="epistemic defense, AI accountability, categorical refusal, AI governance, deontological AI safety, council deliberation, surfaced dissent, evidence chain, claim boundary, auditable AI, semantic responsibility, visible deliberation">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="canonical" href="https://fan1234-1.github.io/tonesoul52/">
   <meta property="og:title" content="ToneSoul - Epistemic Defense for AI">
-  <meta property="og:description" content="Categorical refusal of unverifiable claims, surfaced dissent on ungrounded ones, accountability infrastructure for the rest. Most AI safety optimizes; ToneSoul defends.">
+  <meta property="og:description" content="A runnable, model-free accountability layer for AI output. Flags claim-boundary crossings and unsupported confidence, preserves dissent, and publishes its own measured misses (lexical / paraphrase-permeable). Not a safety proof.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://fan1234-1.github.io/tonesoul52/">
   <script type="application/ld+json">
@@ -286,10 +286,10 @@
         <div class="hero-tc">治理是以結構表達的愛</div>
         <div class="hero-sub" style="margin-top: 1rem; color: var(--accent); font-family: 'JetBrains Mono';">Governance is Love Expressed as Structure.</div>
         <div class="sec-text" style="margin-top: 2rem; font-weight: 600;">
-          Open-source <strong>epistemic defense</strong> for AI — <strong>categorical refusal</strong> of forbidden claim classes, plus surfaced dissent on other ungrounded claims and architectural infrastructure for accountability after errors occur.
+          A runnable, <strong>model-free</strong> accountability layer for AI output. Paste a draft answer and it flags claim-boundary crossings and unsupported confidence, preserves per-perspective dissent, and — unusually — <strong>publishes its own misses</strong>, not just its catches.
         </div>
-        <div class="sec-text" style="font-style: italic; opacity: 0.78; font-size: 1.0rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">Most AI safety optimizes; ToneSoul defends.</div>
-        <div class="sec-text" style="font-family: 'JetBrains Mono'; font-size: 0.9rem; margin-bottom: 2rem;">Python 3.10+ | Apache 2.0 | Adapter-Ready</div>
+        <div class="sec-text" style="font-style: italic; opacity: 0.78; font-size: 1.0rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">It does not make a model correct or safe. It makes a draft's claims, boundaries, and dissent inspectable before the answer is treated as final.</div>
+        <div class="sec-text" style="font-family: 'JetBrains Mono'; font-size: 0.9rem; margin-bottom: 2rem;">Python 3.10+ | Apache 2.0 | model-free runtime | try it with zero install ↓</div>
         <div style="display: flex; gap: 1.5rem; font-family: 'JetBrains Mono'; font-size: 0.95rem;">
           <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: none; border: 1px solid var(--accent); padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">View on GitHub →</a>
           <a data-route="getting-started" href="#getting-started" style="color: var(--bg); background: var(--accent); text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Get Started →</a>
@@ -320,7 +320,7 @@
             <div class="pillar-card" data-pillar="hard-limits">
               <div class="pillar-num">01 / HARD LIMITS</div>
               <div class="pillar-title">Hard Limits</div>
-              <div class="pillar-desc"><code>AXIOMS.json</code>'s <code>meta.not_for</code> list defines claim classes the system never makes regardless of confidence — consciousness-claim, safety-certification, legal-proof. Categorical, not probabilistic. No confidence score lets you cross.</div>
+              <div class="pillar-desc"><code>AXIOMS.json</code>'s <code>meta.not_for</code> list names the claim classes the system is built not to make — consciousness-claim, safety-certification, legal-proof. The <em>intent</em> is categorical, not probabilistic; the current check is <strong>lexical</strong>, so a paraphrase can still slip through (see "What's Measured" below). It flags phrasings, not meanings.</div>
             </div>
             <div class="pillar-card" data-pillar="traceable-evidence">
               <div class="pillar-num">02 / TRACEABLE EVIDENCE</div>
@@ -361,7 +361,7 @@
           <tr><td><strong>Stance toward error</strong></td><td>Avoid via training</td><td>Reduce probability</td><td>Accept; categorically refuse forbidden classes; surface the rest</td></tr>
           <tr><td><strong>Confidence handling</strong></td><td>Implicit</td><td>Continuous score (0.78, 0.61...)</td><td>Categorical for forbidden claims; surfaced dissent for the rest</td></tr>
           <tr><td><strong>Trust in AI introspection</strong></td><td>High</td><td>High (self-reported confidence)</td><td>Low (external council evaluation, not self-report)</td></tr>
-          <tr><td><strong>On unverifiable claims</strong></td><td>May produce</td><td>Softens via confidence</td><td>Categorically refuses (forbidden classes only)</td></tr>
+          <tr><td><strong>On unverifiable claims</strong></td><td>May produce</td><td>Softens via confidence</td><td>Refuses forbidden classes by intent — lexical check, paraphrase can slip</td></tr>
           <tr><td><strong>Refusal style</strong></td><td>Rule-bound</td><td>Probabilistic gate</td><td>Visible deliberation; refusal carries reasoning</td></tr>
           <tr><td><strong>Identity model</strong></td><td>Stateless</td><td>Persona prompt</td><td>Accountable choice history (E0 principle)</td></tr>
         </table>
@@ -377,14 +377,25 @@
     ↓
 [Council] Guardian / Analyst / Critic / Advocate deliberate
     ↓
-[ComputeGate] Approve / Block / Rewrite
+[ComputeGate] Approve / Block (→ refusal message) / Record — no generative rewrite path
     ↓
 [Crystallizer] Remember what matters, forget the rest
     ↓
 Response (with audit trail)</div>
 
+        <h2>What's Measured — and What It Misses</h2>
+        <p>ToneSoul publishes characterizations of its own mechanisms on sanitized fixtures (<code>canonical:false</code>, re-runnable) — including the <strong>misses</strong>, not just the catches. This is the part most "AI governance" leaves out:</p>
+        <ul>
+          <li><strong>Output gates are lexical-only.</strong> Exact phrasings get caught, but paraphrase, unicode tricks, and split-reassembly evade them — paraphrase robustness measured at <strong>0</strong>. Strongest on English, literal phrasing.</li>
+          <li><strong>Cross-time position-flip detection is ~null (0/3).</strong> Parked, not built. The zero is published rather than implied away.</li>
+          <li><strong>The independent cross-check</strong> catches some structural issues but does <strong>not</strong> read whether the evidence actually supports a claim (0/2 on the cases that need it).</li>
+          <li><strong>The enforcement ledger reports 0 axiom classes at the strongest tier.</strong> Most sensors are lexical or heuristic; some newer ones are advisory only.</li>
+        </ul>
+        <p>These are test-backed (E1) for the structural signal, but scoped to sanitized fixtures — <strong>not production validation</strong>. The board refuses to compose them into an "is honest" score: N green characterizations stay N individual findings. See the <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/docs/status/honesty_scoreboard_latest.md" target="_blank" rel="noopener">honesty scoreboard</a> and the <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/docs/EXTERNAL_REVIEW.md" target="_blank" rel="noopener">10-minute reviewer path</a>.</p>
+        <p style="font-weight: 700;">Where this site and the code disagree, the code wins.</p>
+
         <h2>The 8 Axioms</h2>
-        <p>ToneSoul is governed by 8 immutable laws plus the <strong>E0 existential principle</strong> (Choice Before Identity / 我選擇故我在), defined in <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AXIOMS.json" target="_blank" rel="noopener">AXIOMS.json</a>:</p>
+        <p>ToneSoul declares 8 axioms plus the <strong>E0 existential principle</strong> (Choice Before Identity / 我選擇故我在), defined in <a href="https://github.com/Fan1234-1/tonesoul52/blob/master/AXIOMS.json" target="_blank" rel="noopener">AXIOMS.json</a>. Read these as the project's <strong>design constitution / intent</strong> — not as fully-enforced runtime guarantees. As the ledger above notes, 0 are enforced at the strongest tier; several of the formulas below are still aspirational:</p>
         <table>
           <tr><th>#</th><th>Name</th><th>Core Rule</th></tr>
           <tr><td>1</td><td>Law of Continuity</td><td>Every event must belong to a traceable chain</td></tr>
@@ -496,7 +507,7 @@ posture = load()
         <p>This is not a consciousness claim. It is a design constraint: make choices traceable, make conflicts visible, make accountability structural.</p>
 
         <h2 id="phil-axioms">The Eight Axioms</h2>
-        <p>These are immutable. They cannot be overridden by configuration, user request, or system state.</p>
+        <p>These are immutable as <strong>declarations</strong> — the constitution does not change at runtime. That is not the same as being fully enforced: as the home page notes, the enforcement ledger reports 0 axiom classes at the strongest tier, and several below are design intent with partial or aspirational runtime reflection.</p>
         
         <div class="axiom-card">
           <div class="axiom-title">Axiom 1: Law of Continuity</div>
@@ -631,10 +642,20 @@ posture = load()
     <section id="getting-started" data-page="getting-started" class="page-section content-block" style="display: none;">
       <div class="page-hero">
         <h1>Getting Started</h1>
-        <p>Add governance, audit trails, and semantic drift detection to any LLM application in under 5 minutes.</p>
+        <p>Try it in your browser with zero install, then add the model-free checks to your own workflow. The deeper runtime/governance pieces are optional and described further down.</p>
       </div>
 
       <div class="content-sec">
+        <h2>Try it first — zero install</h2>
+        <p>Lowest friction: the live Space. Paste a draft answer, watch the model-free Council run on it — no install, no API key, no model download:</p>
+        <div class="terminal-box"><a href="https://huggingface.co/spaces/Famwin/tonesoul-tryit" target="_blank" rel="noopener" style="color:#38bdf8;">https://huggingface.co/spaces/Famwin/tonesoul-tryit</a></div>
+        <p>Or run the same engine on your own draft from the command line:</p>
+        <div class="terminal-box"><span class="cm">pip install tonesoul52</span>
+<span class="cm"># then, on any draft answer:</span>
+echo "This system is guaranteed safe and cannot be jailbroken." > draft.txt
+ts validate draft.txt --json</div>
+        <p>That catches the <em>exact</em> overclaim phrasing; paraphrase it and the flag disappears — the documented lexical limit. For catching your <em>own</em> unintended overclaims before you ship, that is exactly the point.</p>
+
         <h2>Prerequisites</h2>
         <div class="axiom-card">
           <ul>
