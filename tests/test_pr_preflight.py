@@ -64,3 +64,21 @@ def test_assess_scope_clean_when_github_matches():
     r = assess_scope(["a.md", "b.md"], ["claude-opus-4-8"], gh_files=["b.md", "a.md"])
     assert r["ok"] is True
     assert r["warnings"] == []
+
+
+def test_git_capture_uses_utf8_with_replacement_errors(monkeypatch):
+    calls = []
+
+    class Result:
+        stdout = "ok\n"
+
+    def fake_run(*args, **kwargs):
+        calls.append((args, kwargs))
+        return Result()
+
+    monkeypatch.setattr(pr_preflight.subprocess, "run", fake_run)
+
+    assert pr_preflight._git("log", "--oneline") == "ok"
+    kwargs = calls[0][1]
+    assert kwargs["encoding"] == "utf-8"
+    assert kwargs["errors"] == "replace"
