@@ -4,6 +4,7 @@ Subcommands
 -----------
   ts diagnose      Runtime health, drift, vow state (wraps tonesoul.diagnose)
   ts council       Run council deliberation on a draft (wraps council.council_cli)
+  ts review        Review a file for claim-to-evidence mismatch risks
   ts context       Compile a context.yaml for pipeline runs
   ts heartbeat     Emit a heartbeat pulse and show status
   ts ystm          Run the YSTM terrain demo pipeline
@@ -212,10 +213,62 @@ def _cmd_validate(argv: List[str]) -> int:
     return 0
 
 
+def _cmd_review(argv: List[str]) -> int:
+    """Review a file for claim-to-evidence overclaim risks.
+
+    Phase 1 is deterministic and local: it emits candidate findings for explicit claim-risk
+    wording. Findings are reviewer aids, not a runtime gate, so successful review exits 0 even
+    when findings are present.
+    """
+    import json
+    from pathlib import Path
+
+    parser = argparse.ArgumentParser(
+        prog="ts review",
+        description="Review a file for claim-to-evidence mismatch risks.",
+    )
+    parser.add_argument("file", type=Path, help="Path to the text or markdown file to review")
+    parser.add_argument("--json", action="store_true", help="Emit machine-readable report JSON")
+    args = parser.parse_args(argv)
+
+    if not args.file.exists():
+        print(f"ts review: file not found: {args.file}", file=sys.stderr)
+        return 3
+    if not args.file.is_file():
+        print(f"ts review: not a regular file: {args.file}", file=sys.stderr)
+        return 3
+
+    try:
+        from tonesoul.reviewer.report import review_file
+
+        report = review_file(args.file)
+    except UnicodeDecodeError as exc:
+        print(f"ts review: cannot decode {args.file} as UTF-8: {exc}", file=sys.stderr)
+        return 3
+
+    def _emit(text: str) -> None:
+        """UTF-8-safe stdout write -- handles Windows cp950 console gracefully."""
+        if hasattr(sys.stdout, "buffer"):
+            sys.stdout.buffer.write((text + "\n").encode("utf-8", errors="replace"))
+            sys.stdout.buffer.flush()
+        else:
+            print(text)
+
+    if args.json:
+        _emit(json.dumps(report, ensure_ascii=False, indent=2))
+    else:
+        count = len(report["findings"])
+        _emit(f"claim-to-evidence findings: {count}")
+        if count:
+            _emit("Run with --json for structured details.")
+    return 0
+
+
 _SUBCOMMANDS = {
     "diagnose": (_cmd_diagnose, "Runtime health, drift, and vow state"),
     "council": (_cmd_council, "Run council deliberation on a draft output"),
     "validate": (_cmd_validate, "Validate a draft file against the council (operator-friendly)"),
+    "review": (_cmd_review, "Review a file for claim-to-evidence mismatch risks"),
     "context": (_cmd_context, "Compile a context.yaml for pipeline runs"),
     "heartbeat": (_cmd_heartbeat, "Emit a heartbeat pulse and show file-backed status"),
     "ystm": (_cmd_ystm, "Run the YSTM terrain visualization demo"),
