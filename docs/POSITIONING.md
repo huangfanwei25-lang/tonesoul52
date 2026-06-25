@@ -1,9 +1,15 @@
 # ToneSoul — Responsibility Philosophy as Engineering
 
+> **語義責任:當被問「你為什麼這樣說」,輸出的每一步都能回溯到證據與方法——這是科學、法律、醫療早就在用的標準,只是被帶進「AI 該為自己負責」的那些主張裡。**
+>
+> *Semantic responsibility: when challenged "why did you say this?", every step of the output traces back to evidence and method — the standard science, law, and medicine already use, brought into the claims an AI should be accountable for.*
+>
+> (This is the **standard the document holds itself to** — its definition of the goal, and the same conviction first written down in `docs/philosophy/principle_engineering.md`. The ledger below records how far the *measured* reality has come; where they disagree, **the code wins**.)
+
 > Purpose: the project's positioning + an honest map of what is *measured* vs *aspirational*,
 > and where it is going. Read alongside `DESIGN.md` (the architectural why) and
 > `RELATED_WORK.md` (the field it sits in).
-> Last Updated: 2026-06-18
+> Last Updated: 2026-06-25
 > Status: positioning + state-of-measurement. The map below is **intent**; the ledger says how
 > far the **reality** has come. Where this doc and the code/findings disagree, the code wins.
 
