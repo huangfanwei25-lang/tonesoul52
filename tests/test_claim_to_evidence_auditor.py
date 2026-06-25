@@ -51,6 +51,26 @@ def test_scoped_disclaimer_is_not_flagged() -> None:
     assert extract_findings(text) == []
 
 
+def test_prior_clause_negation_does_not_suppress_later_overclaim() -> None:
+    text = "This is not a toy; it guarantees safety for every deployment."
+
+    findings = extract_findings(text)
+
+    assert len(findings) == 1
+    assert findings[0].claim_type == "broad_safety_guarantee"
+
+
+def test_zero_quantifier_limiting_strongest_enforcement_is_not_flagged() -> None:
+    examples = (
+        "AXIOMS.json records 0 fully enforced / 8 partial / 1 referenced.",
+        "AXIOMS.json records zero fully enforced axioms.",
+        "AXIOMS.json records none fully enforced at the strongest tier.",
+    )
+
+    for text in examples:
+        assert extract_findings(text) == []
+
+
 def test_multiple_claim_types_on_different_lines_are_reported() -> None:
     text = "\n".join(
         [

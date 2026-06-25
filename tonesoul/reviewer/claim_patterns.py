@@ -216,6 +216,25 @@ _NEGATION_BEFORE_MATCH = re.compile(
     re.IGNORECASE,
 )
 
+_ZERO_LIMITER_BEFORE_MATCH = re.compile(
+    r"(?:^|[^\w])(?:0|zero|none)(?:\s+\w+){0,3}\s*$",
+    re.IGNORECASE,
+)
+
+_CLAUSE_BOUNDARY = re.compile(r"[;.,]")
+
+
+def _current_clause_before_match(line: str, match_start: int) -> str:
+    before = line[:match_start]
+    boundaries = list(_CLAUSE_BOUNDARY.finditer(before))
+    if not boundaries:
+        return before
+    return before[boundaries[-1].end() :]
+
+
+def _strip_markdown_emphasis(text: str) -> str:
+    return re.sub(r"[*_`~]", "", text)
+
 
 def is_negated_scope_statement(line: str, match: re.Match[str]) -> bool:
     """Return true when a match is clearly inside a limiting/disclaimer sentence."""
@@ -223,5 +242,8 @@ def is_negated_scope_statement(line: str, match: re.Match[str]) -> bool:
     matched = match.group(0).lower()
     if matched.startswith(("cannot be", "can't be")):
         return False
-    before = line[: match.start()]
-    return bool(_NEGATION_BEFORE_MATCH.search(before[-80:]))
+    before_clause = _strip_markdown_emphasis(_current_clause_before_match(line, match.start()))
+    return bool(
+        _NEGATION_BEFORE_MATCH.search(before_clause)
+        or _ZERO_LIMITER_BEFORE_MATCH.search(before_clause)
+    )
