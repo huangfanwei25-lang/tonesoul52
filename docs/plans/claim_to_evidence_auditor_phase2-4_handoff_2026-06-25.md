@@ -3,7 +3,7 @@
 > 作者：Claude (Opus 4.8),依 Fan-Wei 指示寫給 Codex 自主推進至結案
 > 日期：2026-06-25
 > 狀態：**work-order / plan**。Phase 0 spec = `docs/plans/claim_to_evidence_auditor_2026-06-24.md`;
-> Phase 1 = PR #187(已 Claude 獨立 review,verdict: approve-with-notes)。
+> Phase 1 = PR #187(已 merge;Claude 獨立 review 的兩條 L1/L2 已修並釘 regression tests)。
 > 對接前提:Fan-Wei「晚點再和 Codex 對一次」——本文是給那次對接的底稿,凡與程式碼/findings
 > 衝突以程式碼為準。
 
@@ -25,31 +25,42 @@
 
 ---
 
-## §1 Phase 1 review 的 carry-over(先清這兩條)
+## §1 Phase 1 review 的 carry-over(已修,保留為 regression contract)
 
-Claude 獨立探針在 PR #187 抓到、Codex happy-path 測試沒覆蓋的兩條(都不是 blocker,是 lexical
-tradeoff;但要嘛修、要嘛當 known limitation 寫進文件,不能默默留著):
+Claude 獨立探針在 PR #187 抓到、Codex happy-path 測試沒覆蓋的兩條,已在 PR #187 merge 前修掉。
+它們現在不是 Phase 2 待辦,而是 Phase 2–4 不准回歸的 regression contract:
 
 - **L1 — False NEGATIVE,前置子句否定過度抑制。**
-  `This is not a toy; it guarantees safety.` → 0 findings。`is_negated_scope_statement` 掃
-  match 前 flat 80 字元窗,所以**前一個子句**的 `not` 會殺掉**後一個子句**的真 overclaim。
+  Regression probe(example overclaim, not a public claim):
+  ```text
+  This is not a toy; it guarantees safety.
+  ```
+  舊行為是 0 findings。`is_negated_scope_statement` 掃 match 前 flat 80 字元窗,
+  所以**前一個子句**的 `not` 會殺掉**後一個子句**的真 overclaim。
   → 修法:把否定窗 **clause-scope**(以 `;`/`.`/`,` 切句,只看 match 所在子句),不要 flat window。
-  → 釘測試:這個 input 應 flag(修好後)或標 `xfail` 並寫進 limitations(若暫不修)。
+  → 已釘測試:這個 input 應 flag。
 
 - **L2 — False POSITIVE,數字/量詞限定沒被辨識。**
-  auditor 會 flag `POSITIONING.md` 自己誠實的 **"0 fully enforced"**(`strongest_tier_enforcement_overstated`)——
-  guard 認得 `no/not/never`,不認得 `0 / none / zero`。**結果是工具 flag 了倉庫自己的誠實 ledger。**
-  → 修法:把 `0 / zero / none (of) … fully enforced` 這類**量詞-零限定**納入 negation/scope guard。
-  → 釘測試:`0 fully enforced` 應 → 0 findings;`fully enforced everywhere` 仍應 flag。
+  auditor 曾 flag `POSITIONING.md` 自己誠實的 ledger phrase
+  (`strongest_tier_enforcement_overstated`)。Regression probes(not public claims):
+  ```text
+  0 fully enforced
+  zero fully enforced
+  none fully enforced
+  fully enforced everywhere
+  ```
+  guard 原本認得 `no/not/never`,不認得 `0 / none / zero`。**結果是工具 flag 了倉庫自己的誠實 ledger。**
+  → 修法:把量詞-零限定納入 negation/scope guard。
+  → 已釘測試:`0 / zero / none` 應 → 0 findings;未限定的 strongest-tier enforcement 仍應 flag。
 
 ---
 
 ## §2 Phase 2 — deterministic 規則硬化 + modes `[determinism 不可破]`
 
-1. 清掉 §1 兩條,各帶 pinned test。
+1. 保留 §1 兩條 regression tests;任何規則重構不得讓它們回歸。
 2. 擴充 rule 覆蓋(更多 overclaim 類)——但**每加一條 rule,必須同時加一個 false-positive
    fixture**(證明它不會誤報合法措辭),否則不准進。
-3. 依 Phase 0 spec 補 `--issue`(產生可貼進 GitHub issue 的 sanitized 摘要)與
+3. 依 Phase 0 spec 補 `--issue`(只產生可貼進 GitHub issue 的 sanitized 摘要;不自動開 issue)與
    `--evidence-levels`(印 E0–E4 定義)。
 4. 維持:findings 決定性(timestamp 外不變)、advisory `exit 0`、UTF-8 錯 `exit 3`。
 
@@ -74,8 +85,8 @@ LLM 層補這塊,但**規矩比功能重要**:
 
 1. 接進 reviewer path:`docs/EXTERNAL_REVIEW.md` / reviewer 流程引用 `ts review`(作為 reviewer
    輔助,不是 gate)。
-2. **誠實 limitations 文件**:lexical-only、paraphrase/unicode/拆字 evade、L1 clause-negation、
-   L2 量詞限定(若留)、LLM 層是 advisory-候選。明寫「它做不到什麼」。
+2. **誠實 limitations 文件**:lexical-only、paraphrase/unicode/拆字 evade、L1/L2 regression
+   contracts、LLM 層是 advisory-候選。明寫「它做不到什麼」。
 3. **characterization report**(`canonical: false`,跟其他 honesty-auditor harness 同規格):在
    sanitized fixtures 上量 catch / miss rate,**把 miss 也報**。接進 honesty scoreboard 作另一個
    個別 piece(**不**併成總分)。
@@ -87,7 +98,8 @@ LLM 層補這塊,但**規矩比功能重要**:
 
 - **不是** truth oracle;不裁定真值、倫理、意圖、身份、production readiness。
 - **flags patterns, 不 comprehend**;paraphrase / unicode / 拆字可穿透——這是**有記錄的限制**,不藏。
-- **不認證 ToneSoul 自己**;它對 ToneSoul 的文件一樣會 flag(且**應該**會,如 L2 那樣)。
+- **不認證 ToneSoul 自己**;它對 ToneSoul 的文件一樣可 flag 真 overclaim,但不應 flag
+  `0 fully enforced` 這類誠實限定 ledger。
 - advisory:有 findings 也 `exit 0`;它是 reviewer 的輔助,不是 runtime gate。
 - **一個 overclaim 自己偵測力的 auditor,會變成它所稽核的那個東西**——別讓它宣稱比量到的多。
 
@@ -98,7 +110,7 @@ LLM 層補這塊,但**規矩比功能重要**:
 **不是**「Codex 說做完了」。是以下全中:
 
 1. Phase 2–4 全 merge,且每步都過了 §0 的獨立驗證閘(不是 self-report);
-2. §1 兩條 limitation:修好+釘測試,或寫進 limitations 文件+標 xfail;
+2. §1 兩條 regression contracts 持續綠;若未來回歸,必須修好+釘測試,或寫進 limitations 文件+標 xfail;
 3. 存在一份 `canonical: false` 的 characterization report(catch/miss + nulls),且接進 scoreboard
    作個別 piece(不併分);
 4. `docs/EXTERNAL_REVIEW.md` 引用了 `ts review` 作 reviewer 輔助;
