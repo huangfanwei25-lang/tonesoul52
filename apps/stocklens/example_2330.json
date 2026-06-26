@@ -1,0 +1,11 @@
+{
+  "stock": "2330 台積電(範例,非真實推薦)",
+  "points": [
+    {"dimension": "基本面", "side": "bull", "claim": "先進製程市占領先,毛利率長期 50%+", "evidence_level": "E2"},
+    {"dimension": "基本面", "side": "bear", "claim": "資本支出龐大,景氣向下時獲利會明顯修正", "evidence_level": "E1"},
+    {"dimension": "技術面", "side": "bull", "claim": "站上季線且量增,短線轉強", "evidence_level": "E1"},
+    {"dimension": "技術面", "side": "bear", "claim": "周線乖離過大,有拉回風險", "evidence_level": "E1"},
+    {"dimension": "籌碼面", "side": "bull", "claim": "外資連續買超,法人籌碼集中", "evidence_level": "E2"},
+    {"dimension": "消息面", "side": "bull", "claim": "AI 題材保證續強,接下來必漲", "evidence_level": "E0"}
+  ]
+}
