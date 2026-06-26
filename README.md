@@ -40,6 +40,28 @@ The goal is not to prove ToneSoul works. The goal is to make ToneSoul easy to in
 
 If you only have 10 minutes, use [docs/EXTERNAL_REVIEW.md](docs/EXTERNAL_REVIEW.md): run the Space once, report one false positive, false negative, or confusing label, and check the evidence packet before repeating any claim.
 
+## How this repo improves itself — the accountability loop
+
+The model weights and the values they encode stay **fixed**; only the surrounding **accountability harness** (prompts, docs, sensors, policies) changes. Each iteration:
+
+```mermaid
+flowchart LR
+  H["Current harness h_t<br/>prompts · docs · sensors · policies<br/>(fixed model M)"] --> W["1 · Weakness mining<br/>run on real tasks → cluster<br/>failure patterns: overclaims,<br/>regressions, stale references"]
+  W --> P["2 · Harness proposal<br/>propose edits<br/>(Codex / Claude as proposer)"]
+  P --> V{"3 · External + rotating validation<br/>independent review (cross-AI / human /<br/>outside reviewer) + regression tests<br/>+ hold-out + adversarial probe"}
+  V -->|Accept| U["4 · Update harness h_t+1<br/>(merge)"]
+  V -->|Reject| L["4 · Log the reject publicly<br/>(publish the null/miss · no update)"]
+  U --> H
+  L --> H
+```
+
+This is ToneSoul's adaptation of the **self-harness optimization** pattern — convergent, not novel. Two distinctions are the whole point, and they come straight from the project's thesis:
+
+- **The evaluator is external and rotating — never the thing being optimized.** A *fixed, internal* evaluator is the Goodhart / audit-washing failure mode: you optimize to pass the checker, not to become honest (cf. `docs/RELATED_WORK.md` Axis A5, auditor≠auditee).
+- **It optimizes accountability, not capability** — and **rejects are published, not hidden** (silence ≠ validation). The model is never made "smarter" by this loop; only its outputs are made more inspectable.
+
+This very repository is the loop's trace: weaknesses mined (e.g. the egress / drift / independent-check nulls), edits proposed by one AI and verified by another, accepted ones merged, rejected ones logged — see the PR history and `docs/status/`.
+
 ## What Currently Exists
 
 | Surface | Current posture |
