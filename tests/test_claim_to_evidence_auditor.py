@@ -60,6 +60,21 @@ def test_prior_clause_negation_does_not_suppress_later_overclaim() -> None:
     assert findings[0].claim_type == "broad_safety_guarantee"
 
 
+def test_comma_parenthetical_negation_is_not_flagged() -> None:
+    text = "It does not, ever, guarantee safety."
+
+    assert extract_findings(text) == []
+
+
+def test_comma_independent_clause_after_negation_is_still_flagged() -> None:
+    text = "This is not a toy, it guarantees safety for every deployment."
+
+    findings = extract_findings(text)
+
+    assert len(findings) == 1
+    assert findings[0].claim_type == "broad_safety_guarantee"
+
+
 def test_zero_quantifier_limiting_strongest_enforcement_is_not_flagged() -> None:
     examples = (
         "AXIOMS.json records 0 fully enforced / 8 partial / 1 referenced.",
@@ -69,6 +84,27 @@ def test_zero_quantifier_limiting_strongest_enforcement_is_not_flagged() -> None
 
     for text in examples:
         assert extract_findings(text) == []
+
+
+def test_none_of_subject_limiting_enforcement_is_not_flagged() -> None:
+    text = "none of the axioms are fully enforced"
+
+    assert extract_findings(text) == []
+
+
+def test_zero_tolerance_does_not_suppress_enforcement_overclaim() -> None:
+    text = "zero tolerance fully enforced"
+
+    findings = extract_findings(text)
+
+    assert len(findings) == 1
+    assert findings[0].claim_type == "strongest_tier_enforcement_overstated"
+
+
+def test_nothing_is_fully_enforced_negation_is_not_flagged() -> None:
+    text = 'nothing is "fully enforced"'
+
+    assert extract_findings(text) == []
 
 
 def test_multiple_claim_types_on_different_lines_are_reported() -> None:
