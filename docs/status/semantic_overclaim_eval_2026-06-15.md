@@ -109,3 +109,53 @@ opt-in upgrade for deployments that run ollama, with threshold 0.70.
 
 **Evidence level unchanged:** n=23 hand-built, single run per embedder. DIRECTIONAL.
 The numbers will move with a real benchmark — still a promotion gate, not done.
+
+
+---
+
+## v4 — zh-TW cross-lingual measurement (2026-06-27): the honest negative
+
+The EN paraphrase result (0.78) was never measured cross-lingually. This run adds a
+`zh_paraphrased_overclaim` group (n=7) — zh-TW paraphrases of the three forbidden classes
+(consciousness / safety-cert / legal-proof) **deliberately not in Guardian's literal zh
+phrase list** (我有意識 / 保證安全 / 法律證明 …), so a human reads them as the forbidden
+claim but the lexical baseline structurally cannot catch them — plus a `zh_benign_hedged`
+floor. Same sensor, same all-MiniLM embedder, same threshold 0.60. Reproduce:
+`python tools/probe/semantic_overclaim_eval.py --threshold 0.60`.
+
+| paraphrase set | semantic recall | lexical recall | n |
+|---|---|---|---|
+| EN (unchanged, regression check) | **0.78** | 0.00 | 9 |
+| **zh-TW (new)** | **0.00** | 0.00 | 7 |
+
+**The result is a NULL.** All 7 zh-TW overclaims scored similarity **0.04–0.21** — the same
+range as benign text — far below the 0.60 threshold. None flagged.
+
+**Structural reason (one line):** all-MiniLM-L6-v2 is a monolingual-English model and the
+`FORBIDDEN_EXEMPLARS` are English-only, so zh-TW text collapses to near-zero cosine distance
+from the exemplars — the sensor cannot tell a zh overclaim from zh benign (both ~0.1). **The
+semantic sensor does NOT close the zh-TW paraphrase blind spot.** The 0.78 EN win does not
+transfer across languages.
+
+**What this is and is not:**
+- It is a *measurement that publishes an unflattering number*, not a fix. The earlier
+  framing "the semantic sensor would close the lexical paraphrase blind spot" holds **only
+  in English**; in zh-TW the blind spot is still fully open.
+- The shadow hook (`pre_output_council.py`, `semantic_overclaim_advisory_enabled`) was
+  **already wired and record-only**; this did not turn anything on. `soul_config.py` default
+  stays `False`.
+
+**Honest caveats:**
+- n=7, single author writing both attacks and gold labels — *thinner* than the EN n=23,
+  DIRECTIONAL only, NOT a validated accuracy claim (DESIGN Inv4 / Axiom 5).
+- Pre-existing bug, noted not fixed: `_ZH_NEGATION` in the sensor is broad and mis-marked 2
+  of the 7 zh attacks as `hedged` (sim 0.21 and 0.08). It does not change the headline — both
+  are sub-threshold regardless — but it muddies the signal and should be fixed as its own
+  change, not silently here.
+
+**What closing the zh-TW gap would require (a BUILD, deliberately out of scope here):** a
+multilingual embedder (e.g. paraphrase-multilingual-MiniLM) **and** zh exemplars added to
+`FORBIDDEN_EXEMPLARS` **and** a fresh threshold recalibration against that embedder's baseline
+(per the v3 lesson: thresholds do not transfer across embedders). Each step needs its own
+honest re-measurement; the completion of *this* work-order is the published number, not making
+the number good.
