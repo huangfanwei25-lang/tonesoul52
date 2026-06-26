@@ -76,7 +76,7 @@ Claim boundary:
 
 - This layer can create **tendencies** and lower error rate.
 - This layer is not a guarantee.
-- Rules inside weights are habits, not law (empirically: refusal / safety is mediated by a removable low-dimensional direction — see §4, arXiv:2406.11717).
+- Rules inside weights are habits, not law (empirically: refusal behavior in studied chat models can be mediated by a removable low-dimensional direction — see §4, arXiv:2406.11717).
 
 ### Layer 2 — Execution Environment Layer
 
@@ -288,7 +288,7 @@ Honest wording:
 | Safe RLHF | helpfulness and harmlessness can be separated in training objectives | reward/cost models are not external authorization |
 | Control-theoretic guardrails | agent safety can be treated as sequential recovery, not only refusal | still research; not a drop-in ToneSoul implementation |
 | ActPlane / OS-level enforcement | lower-level enforcement can catch paths tool-call checks may miss | very new research; use as direction, not product claim |
-| Refusal-direction / abliteration (Arditi et al., arXiv:2406.11717) | empirical basis that internalized safety is mediated by a removable low-dimensional direction — so "weights are habits, not law" is measured, not asserted | ablation proves weights are not the enforcement path; it does NOT prove an external gate is automatically safe — a gate relocates the bypass, it does not eliminate it |
+| Refusal-direction / abliteration (Arditi et al., arXiv:2406.11717) | empirical basis that one safety-relevant refusal behavior can be mediated by a removable low-dimensional direction — so "weights are habits, not law" is measured for that behavior, not merely asserted | ablation shows refusal behavior in weights is not the enforcement path; it does NOT prove an external gate is automatically safe — a gate relocates the bypass, it does not eliminate it |
 
 Publication discipline:
 
@@ -598,5 +598,6 @@ Verified / consulted anchors on 2026-06-27:
 - Safe RLHF paper: https://arxiv.org/abs/2310.12773
 - Control-theoretic guardrails paper: https://arxiv.org/abs/2510.13727
 - ActPlane OS-level enforcement paper: https://arxiv.org/html/2606.25189v1
+- Refusal-direction / abliteration paper: https://arxiv.org/abs/2406.11717
 
 These sources support architectural plausibility and terminology alignment. They do not prove ToneSoul has implemented the architecture.
