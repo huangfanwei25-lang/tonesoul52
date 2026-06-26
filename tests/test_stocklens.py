@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
@@ -89,3 +90,14 @@ def test_input_problems_flag_bad_fields():
 def test_deterministic():
     pts = _both_sides_all_dims() + [Point("消息面", "bull", "保證必漲", "E0")]
     assert review("2330", pts) == review("2330", pts)
+
+
+def test_cli_accepts_utf8_bom_json(tmp_path, capsys):
+    path = tmp_path / "points.json"
+    payload = {"stock": "5289", "points": []}
+    path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8-sig")
+
+    assert stocklens.main([str(path), "--json"]) == 0
+
+    out = capsys.readouterr().out
+    assert '"stock": "5289"' in out

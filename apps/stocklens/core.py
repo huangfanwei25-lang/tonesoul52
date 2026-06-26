@@ -198,7 +198,7 @@ def main(argv: List[str] | None = None) -> int:  # pragma: no cover - thin CLI
     parser.add_argument("--json", action="store_true", help="emit the structured report as JSON")
     args = parser.parse_args(argv)
 
-    with open(args.points_json, encoding="utf-8") as fh:
+    with open(args.points_json, encoding="utf-8-sig") as fh:
         data = json.load(fh)
     report = review(data.get("stock", "?"), data.get("points", []))
 
