@@ -1,6 +1,10 @@
 # ToneSoul Step 2/3 — Consolidation Map (not a manifesto)
 
-> **Last Updated:** 2026-06-27 · **Status:** inventory + honest gap map · **Author trail:** claude-opus-4-8
+> **Last Updated:** 2026-06-27 · **Status:** inventory + honest gap map · **Author trail:**
+> claude-opus-4-8, revised 2026-06-27 after cross-AI review by Codex (5 claim-exceeds-evidence
+> corrections: vow-phrase coverage, reviewer status class, corrective-recall wiring, Ed25519
+> "mandatory"→capable, trace-schema integration cost). The corrections sharpened the evidence;
+> the headline claims survived.
 
 ## §0 What this is (orientation, read first)
 
@@ -30,10 +34,11 @@ Three disciplines bind every line below:
   soul_db; Aegis chain → commit; reflex/vow/sovereignty/POAV egress gates). At "is the
   scaffolding really there and reachable," ~70% is fair.
 - **Enforcement depth: closer to ~30–40% semantically real.** The load-bearing decision and
-  honesty surfaces are **lexical English keyword heuristics**, not semantic judgment.
-  `AXIOMS.json` records **0 of 8+1 axioms fully enforced (all partial)**; vow harm-detection
-  is **3 literal English phrases**; POAV is keyword-counting; and the one embedding sensor
-  that would close the paraphrase blind spot is **default-OFF, record-only**.
+  honesty surfaces are **lexical keyword/phrase heuristics with narrow EN + zh-TW coverage**,
+  not semantic judgment. `AXIOMS.json` records **0 of 8+1 axioms fully enforced (all
+  partial)**; vow harm-detection is **literal phrase matching (3 EN + 6 zh-TW phrases, the
+  zh-TW set added 2026-06-13), still not semantic**; POAV is keyword-counting; and the one
+  embedding sensor that would close the paraphrase blind spot is **default-OFF, record-only**.
 - **The memory loop is open.** The system *writes* traces, *decays* memory, and maintains
   `SUCCESSOR_MAP.md`, but **no runtime decision reads its own map or consumes crystallized
   memory** (`crystals.jsonl` access_count all 0). Store: yes. Self-consume: no.
@@ -46,8 +51,10 @@ apparatus suggests; and the memory is a one-directional ledger, not yet a loop.
 
 ## §2 The three layers, mapped
 
-Status legend: **[W]** wired (live) · **[U]** unwired (present, off the runtime path) ·
-**[D]** doc-only (prose convention). Line numbers are as-found 2026-06-27 and will drift.
+Status legend: **[W]** wired (live) · **[U]** unwired (present, off the runtime path by
+dormancy) · **[O]** operator surface (a CLI / advisory aid by design — explicitly *not* a
+runtime gate) · **[D]** doc-only (prose convention). Line numbers are as-found 2026-06-27 and
+will drift.
 
 ### 2.1 Honesty (claim ≤ evidence, refuse-both, cannot_verify)
 
@@ -57,8 +64,8 @@ Status legend: **[W]** wired (live) · **[U]** unwired (present, off the runtime
 | Labeler wired into PreOutputCouncil (`.label()` every verdict) | `tonesoul/council/pre_output_council.py:73` | **[W]** |
 | Guardian OVERCLAIM (OBJECTs consciousness/safety-cert/legal-proof = `meta.not_for`) | `tonesoul/council/perspectives/guardian.py:63` | **[W]** |
 | grounding_check (ungrounded-claim ratio → thin_support) | `tonesoul/grounding_check.py:97` | **[W]** |
-| No-verdict / refuse-to-adjudicate stance (reviewer exits 0 even with findings) | `tonesoul/reviewer/__init__.py:3` | **[W]** |
-| Claim-to-evidence reviewer (E0–E4 levels, cannot_verify, weaker-wording) | `tonesoul/reviewer/report.py:22` | **[U]** offline CLI only |
+| No-verdict / refuse-to-adjudicate stance (reviewer is advisory, exits 0 even with findings) | `tonesoul/reviewer/__init__.py:3` | **[O]** |
+| Claim-to-evidence reviewer (E0–E4 levels, cannot_verify, weaker-wording) | `tonesoul/reviewer/report.py:22` | **[O]** offline CLI |
 | semantic_overclaim_sensor (embedding paraphrase catch for `meta.not_for`) | `tonesoul/council/semantic_overclaim_sensor.py:1` | **[U]** advisory_only, default-OFF |
 
 **Gaps:** all live honesty sensors are lexical/English-centric (blind to zh-TW paraphrase per
@@ -99,8 +106,9 @@ closed; several modules are DORMANT/unwired (`memory/freshness.py`, `session_res
 | Governance-binding convention (decision-record-before-major-change) | `CLAUDE.md` | **[D]** |
 | autonomy_preference convention (autonomous-within-scope) | handoff + user-memory | **[D]** |
 
-**Gaps:** the hardest boundaries are lexical (vow harm = 3 English phrases; POAV =
-keyword-counting + path regex; paraphrase and zh-TW pass through); **0 of 8+1 axioms fully
+**Gaps:** the hardest boundaries are lexical (vow harm = literal phrase matching, 3 EN + 6
+zh-TW; POAV = keyword-counting + path regex; *paraphrase* still passes through in both
+languages); **0 of 8+1 axioms fully
 enforced**; Axiom 5 (Mirror-Recursion accuracy gain) is **deliberately un-enforced — no
 runtime accuracy oracle exists** (an honest boundary, not a TODO); the governance-binding +
 autonomy conventions are **prose to the agent, not machine-checked**; POAV/de-escalation are
@@ -154,8 +162,10 @@ apply to, constraints, and artifact references. `verify_log()` replays the chain
 modification/deletion/truncation.
 
 **Verdict — keep ToneSoul's own mechanism, steal the schema.** ToneSoul already has the
-mechanism and in places **exceeds** the paper: Aegis adds **mandatory Ed25519 signing** (vs
-optional `sig?`), a head-anchor truncation check, and a content/injection filter before write;
+mechanism and in places **exceeds** the paper: Aegis is **Ed25519-capable with explicit,
+auditable unsigned states** (a visible `UNSIGNED` marker when PyNaCl or the key is absent —
+fail-visible, not a silent skip — vs the paper's optional `sig?`), plus a head-anchor
+truncation check, and a content/injection filter before write;
 `provenance_chain.py` is structurally near-identical to the paper's Store layer. Wrapping the
 paper's library would not help — its emitters (HF TrainerCallback, FastAPI middleware) target
 an ML-training/serving pipeline ToneSoul does not run.
@@ -167,9 +177,13 @@ keyed by `session_id`/`agent`/`topics`, **not** scoped identifiers — so the pa
 capability (filter+order to reconstruct an artifact's timeline) is not reconstructable today.
 And ToneSoul has **≥3 non-unified provenance planes** (Aegis-chained `session_traces`, the
 separate `provenance_chain.py` ledger, git commit trailers) where the paper deliberately puts
-everything in one stream. **Cheap honest fix (~1 file, no dependency):** re-key traces to
-stable scoped IDs + add explicit `Approval`/`RiskWaiver`/`Attestation` record types. W3C PROV
-(Entity/Activity/Agent) is the serialization target if this is ever externalized.
+everything in one stream. **Cheap honest START (~1 file):** a schema draft + the
+`Approval`/`RiskWaiver`/`Attestation` record types and scoped-ID keys. But *actually
+reconstructing* an artifact's timeline is a larger integration, not one file — it has to span
+the ≥3 provenance planes above (read/write compatibility across Aegis `session_traces`,
+`provenance_chain.py`, and git trailers, plus tests). The schema is one file; unifying the
+planes is not. W3C PROV (Entity/Activity/Agent) is the serialization target if this is ever
+externalized.
 
 ### 3.3 Decision-boundary — the auto/report/confirm tiers, formalized (E2)
 
@@ -195,15 +209,21 @@ a ladder of new subsystems).
    gate** — publish the number even if unflattering. This is *measure*, not build. It also
    closes the §1 "enforcement depth" gap where it most bites.
 2. **Close the memory loop (or admit it's open).** No runtime decision consumes crystallized
-   memory or the self-map (access_count all 0). Either wire **one** runtime consumer
-   (corrective-recall / a crystal read on a real decision) and measure whether it changes an
-   outcome, or state plainly in the docs that memory is store-only. The dormant
-   `hippocampus.py` corrective-recall is the surprise/contradiction-cued instinct already
-   built-but-never-lit — lighting it is the convergent direction (and aligns with Graphiti's
-   contradiction-then-invalidate), but it is a no-op while RFC-012/no-rewrite is parked, so
-   this is *measure the dark path*, not build a new one.
-3. **Trace schema: scoped IDs + governance records (§3.2).** ~1 file, no dependency, directly
-   from a deep-read source. The one place a new artifact is clearly justified.
+   memory or the self-map (`crystals.jsonl` access_count all 0). Either wire **one** runtime
+   consumer (a crystal read on a real decision) and measure whether it changes an outcome, or
+   state plainly that memory is store-only. One *partial* exception, stated precisely: the
+   corrective-recall path (`unified_pipeline.py` §3.8, `TONESOUL_ENABLE_CORRECTIVE_RECALL`
+   **default-ON**) *is* wired — but it is **usually inert**: it computes an
+   intended-vs-generated error vector and only recalls when the norm > 1e-6, which is ~zero on
+   the normal path (nothing rewrote the input), so it is a zero-vector no-op in the common
+   case; and it recalls from Hippocampus, **not** crystals — it is *not* a crystallized-memory
+   consumer. The surprise/contradiction-cued instinct is live-but-inert-in-effect, aligned with
+   Graphiti's contradiction-then-invalidate direction; so this is *measure the usually-inert
+   path*, not build a new one.
+3. **Trace schema: scoped IDs + governance records (§3.2).** The schema draft + record types
+   are ~1 file (the one place a new artifact is clearly justified, directly from a deep-read
+   source); the *full* timeline reconstruction across the 3 provenance planes is a larger
+   integration, not a one-file fix — see §3.2.
 4. **Temporal/relational memory: wrap Graphiti (§3.1).** Already planned; local LLM + FalkorDB
    keeps it free. Build only the deterministic repo-topology walker.
 5. **The auditor ≠ auditee structural gap.** OPA's decision/enforcement separation,
