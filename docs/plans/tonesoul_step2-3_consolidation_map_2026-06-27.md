@@ -68,7 +68,8 @@ will drift.
 | Claim-to-evidence reviewer (E0–E4 levels, cannot_verify, weaker-wording) | `tonesoul/reviewer/report.py:22` | **[O]** offline CLI |
 | semantic_overclaim_sensor (embedding paraphrase catch for `meta.not_for`) | `tonesoul/council/semantic_overclaim_sensor.py:1` | **[U]** advisory_only, default-OFF |
 
-**Gaps:** all live honesty sensors are lexical/English-centric (blind to zh-TW paraphrase per
+**Gaps:** all live honesty sensors are lexical and still paraphrase-blind; zh-TW coverage is
+narrow *literal* coverage, not semantic (so paraphrase passes in both languages, per
 `SUCCESSOR_MAP` §3/§4); the EpistemicLabel is honest *metadata* but **no runtime consumer
 gates on `refusal_eligible`**; the richer E0–E4 auditor runs only offline; the one *semantic*
 sensor that would close the lexical blind spot is built but **not wired to block**.
