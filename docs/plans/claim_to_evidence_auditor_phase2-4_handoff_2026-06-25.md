@@ -3,8 +3,9 @@
 > 作者：Claude (Opus 4.8),依 Fan-Wei 指示寫給 Codex 自主推進至結案
 > 日期：2026-06-25
 > 狀態：**work-order / plan**。Phase 0 spec = `docs/plans/claim_to_evidence_auditor_2026-06-24.md`;
-> Phase 1 = PR #187(已 merge;Claude review 的 L1/L2 **原始 case 已修並釘測試**,但 2026-06-26
-> 多 agent 獨立驗證發現修正**引入新 regression、仍 live 於 master、未測**——見 §1 / §1.5,對外一律稱 partial)。
+> Phase 1 = PR #187(已 merge;Claude review 的 L1/L2 **原始 case 已修並釘測試**;2026-06-26
+> 多 agent 獨立驗證發現修正**引入 R1-R4 regression**,後續 Codex follow-up 已釘測試並修掉——見 §1 / §1.5。L1/L2
+> 仍只能對外稱 lexical partial,不是 semantic fix)。
 > 對接前提:Fan-Wei「晚點再和 Codex 對一次」——本文是給那次對接的底稿,凡與程式碼/findings
 > 衝突以程式碼為準。
 
@@ -26,13 +27,13 @@
 
 ---
 
-## §1 Phase 1 review 的 carry-over(部分修正 — 獨立驗證發現新 regression,LIVE 於 master)
+## §1 Phase 1 review 的 carry-over(部分修正 — R1-R4 已釘測試,L1/L2 仍為 lexical partial)
 
 Claude 獨立探針在 PR #187 抓到、Codex happy-path 測試沒覆蓋的兩條,**原始 case 已在 #187 merge
 前修掉並釘測試**。但 2026-06-26 多 agent 獨立驗證(workflow + 主執行緒親手重現)發現:**那個修正
-本身引入了新 regression,而 #187 的測試只覆蓋修好的方向、沒覆蓋這些新 regression——它們現在 live
-於 master。** 所以 L1/L2 是 **partial,不是「已修」**;原始方向是 regression contract,新發現的是
-Phase 2 必修(見 §1.5)。下面是原始兩條的修法紀錄:
+本身引入了新 regression,而 #187 的測試只覆蓋修好的方向、沒覆蓋這些新 regression——它們曾 live
+於 master,直到 2026-06-26 follow-up 補上 R1-R4 pinned tests 與窄修。** 所以 L1/L2 仍是
+**lexical partial,不是「語義上已修」**;原始方向與 R1-R4 都是 regression contract。下面是原始兩條的修法紀錄:
 
 - **L1 — False NEGATIVE,前置子句否定過度抑制。**
   Regression probe(example overclaim, not a public claim):
@@ -57,21 +58,25 @@ Phase 2 必修(見 §1.5)。下面是原始兩條的修法紀錄:
   → 修法:把量詞-零限定納入 negation/scope guard。
   → 已釘測試(僅覆蓋此方向):`0 / zero / none` 相鄰形 → 0 findings;未限定的 strongest-tier enforcement 仍應 flag。
 
-### §1.5 獨立驗證發現的新 regression(LIVE on master,2026-06-26;publish the miss)
+### §1.5 獨立驗證發現的新 regression(2026-06-26 follow-up 已釘測試並修掉;publish the miss history)
 
-多 agent workflow + 主執行緒親手重現,確認修正 commit `e8bb72d` 引入以下 regression,**目前 live、未測**:
+多 agent workflow + 主執行緒親手重現,確認修正 commit `e8bb72d` 引入以下 regression。它們在 #193
+時仍 live、未測;2026-06-26 Codex follow-up 已補 pinned tests 並修掉。保留這段是為了留下 miss
+history,不是宣稱工具曾經完整:
 
-| # | 類型 | 重現 input | 現況 | 應為 |
+| # | 類型 | 重現 input | #193 現況 | follow-up contract |
 |---|------|-----------|------|------|
-| R1 | L1 新 FALSE POSITIVE | `It does not, ever, guarantee safety.` | flag | `[]`(逗號把否定切進前一 clause) |
-| R2 | L2 漏 case | `none of the axioms are fully enforced` | flag | `[]`(zero-limiter 只認 ≤3 字,這裡 4 字) |
+| R1 | L1 新 FALSE POSITIVE | `It does not, ever, guarantee safety.` | flag | `[]`(逗號插入語不應切掉否定) |
+| R2 | L2 漏 case | `none of the axioms are fully enforced` | flag | `[]`(none-of-subject 限定 enforcement) |
 | R3 | L2 過度壓制(漏真 overclaim) | `zero tolerance fully enforced` | `[]` | flag(量詞沒真的修飾 enforcement) |
-| R4 | 否定詞缺漏 | `nothing is "fully enforced"` | flag | `[]`(`nothing` 不在否定詞表) |
+| R4 | 否定詞缺漏 | `nothing is "fully enforced"` | flag | `[]`(nothing-is-enforced 限定 enforcement) |
 
 根因:純 lexical-positional guard 分不清「0 件 *是* enforced(誠實)」與「以 0 例外 *被* fully
 enforced(overclaim)」——**這是工具的本質限制(標模式、不理解),不是可一次修死的 bug。**
-Phase 2 必須:各補 pinned regression test、收斂 zero-limiter 要求量詞**相鄰修飾** enforcement
-token、加 `nothing` 進否定詞表、決定逗號-parenthetical 否定的處理。**修好前,L1/L2 對外一律稱 partial。**
+Follow-up 修法:各補 pinned regression test、收斂 zero-limiter 使量詞只在修飾 enforcement
+token 時抑制、精確處理 `nothing is enforced`、保留 comma independent clause 的 overclaim flag,
+並讓 `, ever,` 這類逗號插入語不切掉前方否定。**即使 R1-R4 修掉,L1/L2 對外仍一律稱
+lexical partial;這不是語義理解。**
 
 ---
 

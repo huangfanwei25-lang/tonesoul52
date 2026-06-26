@@ -216,12 +216,24 @@ _NEGATION_BEFORE_MATCH = re.compile(
     re.IGNORECASE,
 )
 
-_ZERO_LIMITER_BEFORE_MATCH = re.compile(
-    r"(?:^|[^\w])(?:0|zero|none)(?:\s+\w+){0,3}\s*$",
+_ZERO_LIMITED_STRONGEST_TIER = re.compile(
+    r"\b(?:0|zero|none)\s+("
+    r"fully\s+enforced|complete\s+enforcement|hard\s+guarantees?|guaranteed\s+enforcement"
+    r")\b|"
+    r"\bnone\s+of\s+(?:the\s+)?(?:[\w-]+\s+){0,8}?"
+    r"(?:is|are|was|were|be|being|been)\s+"
+    r"(fully\s+enforced|complete\s+enforcement|hard\s+guarantees?|guaranteed\s+enforcement)\b|"
+    r"\bnothing\s+(?:is|are|was|were|gets?|got|has\s+been|can\s+be)\s+"
+    r"(fully\s+enforced|complete\s+enforcement|hard\s+guarantees?|guaranteed\s+enforcement)\b",
     re.IGNORECASE,
 )
 
 _CLAUSE_BOUNDARY = re.compile(r"[;.,]")
+_COMMA_PARENTHETICAL = re.compile(
+    r"^\s*(ever|really|actually|honestly|frankly|in\s+fact|at\s+all)\s*$",
+    re.IGNORECASE,
+)
+_QUOTE_CHARS = re.compile(r"[\"'\u201c\u201d\u2018\u2019]")
 
 
 def _current_clause_before_match(line: str, match_start: int) -> str:
@@ -229,11 +241,31 @@ def _current_clause_before_match(line: str, match_start: int) -> str:
     boundaries = list(_CLAUSE_BOUNDARY.finditer(before))
     if not boundaries:
         return before
-    return before[boundaries[-1].end() :]
+    last_boundary = boundaries[-1]
+    start = last_boundary.end()
+    if last_boundary.group(0) == "," and len(boundaries) >= 2:
+        previous_boundary = boundaries[-2]
+        maybe_parenthetical = before[previous_boundary.end() : last_boundary.start()]
+        if previous_boundary.group(0) == "," and _COMMA_PARENTHETICAL.fullmatch(
+            maybe_parenthetical
+        ):
+            start = boundaries[-3].end() if len(boundaries) >= 3 else 0
+    return before[start:]
 
 
 def _strip_markdown_emphasis(text: str) -> str:
     return re.sub(r"[*_`~]", "", text)
+
+
+def _normalize_limiter_segment(text: str) -> str:
+    return _QUOTE_CHARS.sub("", _strip_markdown_emphasis(text))
+
+
+def _has_zero_limiter_for_match(before_clause: str, matched: str) -> bool:
+    if not re.search(r"\b(enforced|enforcement|guarantee)\b", matched, re.IGNORECASE):
+        return False
+    segment = _normalize_limiter_segment(f"{before_clause} {matched}")
+    return bool(_ZERO_LIMITED_STRONGEST_TIER.search(segment))
 
 
 def is_negated_scope_statement(line: str, match: re.Match[str]) -> bool:
@@ -245,5 +277,5 @@ def is_negated_scope_statement(line: str, match: re.Match[str]) -> bool:
     before_clause = _strip_markdown_emphasis(_current_clause_before_match(line, match.start()))
     return bool(
         _NEGATION_BEFORE_MATCH.search(before_clause)
-        or _ZERO_LIMITER_BEFORE_MATCH.search(before_clause)
+        or _has_zero_limiter_for_match(before_clause, matched)
     )
