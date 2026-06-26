@@ -305,6 +305,72 @@ evidence: **other builders independently shipping the same governance pattern.**
   His action-side-effect gating is a *complementary* axis ToneSoul does not
   cover — prior art if ToneSoul ever governs actions, not just outputs.
 
+## 6. LLM methods cross-reference — alignment, reasoning, agents
+
+Axes A–E are the *accountability* literature. This section locates ToneSoul among the
+broader *LLM-method* literature, from the full paper map
+(`docs/llm_paper_map_and_tonesoul_relevance_2026-06-26.md` — ~112 papers, of which ~91%
+are none-substrate: the model/training/inference stack ToneSoul runs *on*). Listed here
+are only the genuinely-related methods not already covered above. Same discipline:
+**CONTRAST = the foil ToneSoul differs from; CONVERGENT = a same-direction cousin where
+ToneSoul is a deployment instance, NOT an extension or a validation.**
+
+### CONTRAST — the internalization lineage (values trained into weights)
+
+ToneSoul externalizes the check at runtime; this lineage internalizes it during training.
+(Constitutional AI — the sharpest named foil — is already in Axis C.)
+
+- **CONTRAST** — Christiano, Leike, Brown, Martic, Legg, Amodei, "Deep Reinforcement
+  Learning from Human Preferences" (2017). <https://arxiv.org/abs/1706.03741>
+  The seed of RLHF: human values compiled into a reward model, then into weights.
+- **CONTRAST** — Ziegler, Stiennon, Wu, Brown, Radford, Amodei, Christiano, Irving,
+  "Fine-Tuning Language Models from Human Preferences" (2019).
+  <https://arxiv.org/abs/1909.08593>
+  First applies preference-RL to language models; same internalization direction.
+- **CONTRAST** — Stiennon, Ouyang, Wu, Ziegler, et al., "Learning to Summarize from Human
+  Feedback" (2020). <https://arxiv.org/abs/2009.01325>
+  Optimizes for outcome preference — the opposite axis from procedural accountability.
+- **CONTRAST** — Ouyang, Wu, Jiang, et al., "Training Language Models to Follow
+  Instructions with Human Feedback" (InstructGPT, 2022).
+  <https://arxiv.org/abs/2203.02155>
+  The canonical SFT+RLHF "align by training" recipe; ToneSoul presupposes such a model
+  and governs its *output*, it does not produce alignment this way.
+- **CONTRAST** — Rafailov, Sharma, Mitchell, Ermon, Manning, Finn, "Direct Preference
+  Optimization" (2023). <https://arxiv.org/abs/2305.18290>
+  A simpler way to internalize preferences (no separate reward model); still weight-baked.
+
+### CONVERGENT — same direction, different layer (ToneSoul is a deployment instance)
+
+- **CONVERGENT** — Lightman, Kosaraju, Burda, Edwards, Baker, Lee, Leike, Schulman,
+  Sutskever, Cobbe (OpenAI), "Let's Verify Step by Step" (2023).
+  <https://arxiv.org/abs/2305.20050>
+  Process supervision: score each reasoning *step*, not just the outcome — the academic
+  root of "procedure > outcome," ToneSoul's closest cousin. Theirs is a *training-time*
+  reward signal; ToneSoul is an *inference-time* external check. Shared direction, not
+  the same mechanism; ToneSoul does not implement or contain a PRM.
+- **CONVERGENT** — Yao, Zhao, Yu, Du, Shafran, Narasimhan, Cao, "ReAct: Synergizing
+  Reasoning and Acting in Language Models" (2022). <https://arxiv.org/abs/2210.03629>
+  Interleaved thought→act→observe yields an inspectable trace — the same "expose the
+  trail" direction. ReAct's trace serves task execution; ToneSoul's serves post-hoc
+  accountability.
+- **CONVERGENT** — Shinn, Cassano, Berman, Gopinath, Narasimhan, Yao, "Reflexion:
+  Language Agents with Verbal Reinforcement Learning" (2023).
+  <https://arxiv.org/abs/2303.11366>
+  Verbal self-feedback stored as episodic memory — cousin of ToneSoul's episodic-trace
+  memory (traces, journal, decay). Reflexion's memory drives task retrying; ToneSoul's
+  serves cross-session accountability.
+- **CONVERGENT (design input)** — "When Single-Agent with Skills Replace Multi-Agent
+  Systems and When They Fail" (2026). <https://arxiv.org/abs/2601.04748>
+  Skill-selection accuracy collapses past a critical library size via semantic
+  *confusability* (a phase transition, not raw count) — a capacity warning for ToneSoul's
+  multi-perspective Council: add genuinely *distinct* voices, not confusable ones.
+
+Evidence/verification for §6: classified by the 2026-06-26 paper-map workflow (model
+knowledge + targeted web search); the nine arXiv IDs and titles were independently
+re-fetched and matched on 2026-06-26. Reading depth is **E3 (title + abstract)**, the
+same bar as §2 — but the CONVERGENT/CONTRAST *framing* is ToneSoul's own synthesis, not
+the papers' wording, and (per §0) does **not** raise confidence in ToneSoul.
+
 ---
 
 ## Verification provenance
@@ -323,6 +389,11 @@ reviewed for convergence-inflation and overclaim. Outcome:
 - A few entries were tightened where the original attribution slightly outran the
   abstract (Birhane A4, D'Alessandro B2, Ojewale A6, ELEPHANT D3) — flagged inline.
 - **Unlearning at Scale (E2)** is retained with its authorship caveat in place.
+
+**§6 was added 2026-06-26 and is outside the 2026-06-15 batch:** its nine arXiv IDs +
+titles were re-fetched and matched on 2026-06-26, but it did **not** go through the
+27-agent adversarial re-verification above, and its convergent/contrast framing is
+ToneSoul's synthesis (per §0). Treat §6 at E3 and re-verify before relying on it publicly.
 
 Reading depth remains **E3 (title + abstract only)** for every entry. Fuller
 per-paper notes: `docs/research/tonesoul_in_the_literature_2026-06-15.md`.
