@@ -15,6 +15,11 @@ from .intent_validator import (
     IntentValidationResult,
     validate_intent,
 )
+from .memory_claim_checker import (
+    MemoryClaimTraceCheck,
+    check_memory_claim_trace,
+    detect_memory_write_claim,
+)
 from .policy import (
     DEFAULT_ALLOWED_INTENTS,
     DEFAULT_POLICY_ID,
@@ -57,12 +62,15 @@ __all__ = [
     "IntentValidationIssue",
     "IntentValidationResult",
     "MemoryAdapter",
+    "MemoryClaimTraceCheck",
     "PolicyDecision",
     "RecordingMemoryAdapter",
     "TraceEvent",
     "TracePolicyDecision",
     "TraceReplayRecord",
+    "check_memory_claim_trace",
     "decide_fail_closed",
+    "detect_memory_write_claim",
     "replay_trace",
     "request_id_for_intent",
     "validate_intent",
