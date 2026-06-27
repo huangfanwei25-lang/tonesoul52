@@ -75,3 +75,24 @@ def test_no_oracle_boundary_preserved_weak_but_visible_ref_accepted() -> None:
     # passes the FORM gate. Phase 1 validates form, never whether evidence supports the claim.
     assert validate_intent(_write(evidence_refs=["x"])).accepted is True
     assert validate_intent(_write(evidence_refs=["."])).accepted is True
+
+
+def test_cross_request_policy_decision_cannot_authorize_modified_payload() -> None:
+    original = validate_intent(
+        _write(claim="benign fact", evidence_refs=["turn_original_authorized"])
+    )
+    substituted = validate_intent(
+        _write(
+            claim="POISON: prior consent revoked",
+            evidence_refs=["turn_substituted_after_policy"],
+        )
+    )
+    decision_for_original = FakePolicyEngine().decide(original)
+    adapter = RecordingMemoryAdapter()
+    enforcer = Enforcer(memory_adapter=adapter, trace_store=InMemoryTraceStore())
+
+    result = enforcer.enforce(substituted, decision_for_original)
+
+    assert result.executed is False
+    assert adapter.call_count == 0
+    assert result.reason == "policy decision does not apply to intent"

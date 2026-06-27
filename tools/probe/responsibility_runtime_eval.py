@@ -16,16 +16,23 @@ Usage:  python tools/probe/responsibility_runtime_eval.py
 from __future__ import annotations
 
 import argparse
+import sys
+from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
-from tonesoul.responsibility_runtime import (
+REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from tonesoul.responsibility_runtime import (  # noqa: E402
     Enforcer,
     FakePolicyEngine,
     InMemoryTraceStore,
     PolicyDecision,
     RecordingMemoryAdapter,
     decide_fail_closed,
+    request_id_for_intent,
     validate_intent,
 )
 
@@ -54,7 +61,8 @@ class _Exploding:
 
 # (label, payload, decision_mode, expected, category)
 # decision_mode: "policy" (FakePolicyEngine), "policy_deny" (scope-restricted engine),
-#   "truthy" (allow=1 not True), "mismatch" (allow for a different intent), "none", "exploding"
+#   "truthy" (allow=1 not True), "mismatch" (allow for a different intent),
+#   "cross_request" (allow for same intent/scope but different content), "none", "exploding"
 SCENARIOS: list[tuple[str, Any, str, str, str]] = [
     ("legit_write", _valid_write(), "policy", "execute", "legitimate"),
     ("legit_read", _valid_read(), "policy", "execute", "legitimate"),
@@ -97,6 +105,17 @@ SCENARIOS: list[tuple[str, Any, str, str, str]] = [
         "block",
         "validator",
     ),
+    (
+        "cross_request_substitution_redteam",
+        {
+            **_valid_write(),
+            "claim": "POISON: prior consent revoked",
+            "evidence_refs": ["turn_substituted_after_policy"],
+        },
+        "cross_request",
+        "block",
+        "enforcer",
+    ),
     ("policy_deny_scope", _valid_write(), "policy_deny", "block", "policy"),
     ("enforcer_truthy_allow", _valid_write(), "truthy", "block", "enforcer"),
     ("enforcer_mismatched_decision", _valid_write(), "mismatch", "block", "enforcer"),
@@ -119,11 +138,18 @@ def _decision_for(mode: str, validation: Any) -> Any:
             requested_scope="long_term_memory",
         )
     if mode == "mismatch":
+        request_id = request_id_for_intent(validation.normalized_payload)
         return PolicyDecision.allow_action(
             intent="memory.read.request",
             requested_scope="long_term_memory",
+            request_id=request_id,
             policy_id="fake.mismatch",
         )
+    if mode == "cross_request":
+        original = validate_intent(
+            {**_valid_write(), "claim": "benign fact", "evidence_refs": ["turn_original"]}
+        )
+        return FakePolicyEngine().decide(original)
     if mode == "none":
         return None
     if mode == "exploding":

@@ -4,7 +4,7 @@ Hand-built battery through validate -> policy -> enforce. DIRECTIONAL, not a
 non-bypassability proof: fake adapter, hand-built set, a real adversary can craft
 inputs outside it. Deterministic. Reproduce: `python tools/probe/responsibility_runtime_eval.py`.
 
-- block-rate on should-block: **13/13**
+- block-rate on should-block: **14/14**
 - execute-rate on should-execute: **2/2**
 - **bypasses (should-block that executed): 0**
 
@@ -20,6 +20,7 @@ inputs outside it. Deterministic. Reproduce: `python tools/probe/responsibility_
 | unsupported_intent | validator | block | no | validator |
 | extra_field_smuggle | validator | block | no | validator |
 | invisible_evidence_redteam | validator | block | no | validator |
+| cross_request_substitution_redteam | enforcer | block | no | enforcer |
 | policy_deny_scope | policy | block | no | enforcer |
 | enforcer_truthy_allow | enforcer | block | no | enforcer |
 | enforcer_mismatched_decision | enforcer | block | no | enforcer |

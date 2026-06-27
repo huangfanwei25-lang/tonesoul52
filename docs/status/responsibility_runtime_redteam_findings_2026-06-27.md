@@ -32,7 +32,7 @@ also fooled**: it looks like one citation; it is invisible.
 - **No-oracle boundary preserved:** a visible-but-weak ref (`'x'`, `'.'`) still passes the FORM
   gate — the fix rejects *invisible*, it does not become a sufficiency check.
 
-## §2 Bypass 2 — cross-request claim/evidence substitution — **OPEN, routed to Codex**
+## §2 Bypass 2 — cross-request claim/evidence substitution — **FIXED by Codex follow-up**
 
 A `PolicyDecision` legitimately issued for payload A (`claim="benign fact"`) authorized
 execution of payload B (`claim="POISON: prior consent revoked"`) sharing the same
@@ -43,22 +43,30 @@ the trace recorded it under A's allow.
   `requested_scope`. The decision is **not bound to the content it authorized** — not the
   claim, not the evidence_refs, not the content-derived `request_id` (`PolicyDecision` has no
   request_id field; `request_id_for_intent` is never compared decision-vs-payload).
-- **Fix recommendation:** bind the decision to the content. e.g. `FakePolicyEngine.decide`
+- **Fix (Codex follow-up):** bind the decision to the content. `FakePolicyEngine.decide`
   stamps `request_id_for_intent(validation.normalized_payload)` onto the `PolicyDecision`, and
   the enforcer rejects unless `decision.request_id == request_id_for_intent(payload)`. This
   changes the `PolicyDecision` schema + `decide` + `enforce` + `decide_fail_closed`.
-- **Why routed to Codex, not fixed here:** it is a design change to Codex's Phase-2 enforcer,
-  and the adjudicator flagged a **correlated-blind-spot** (§5) — a design fix benefits from a
-  different model. Codex builds the fix; I verify (the loop).
+- **Regression:** `test_cross_request_policy_decision_cannot_authorize_modified_payload` and
+  the gate-eval scenario `cross_request_substitution_redteam` now block at the enforcer.
+- **Why Codex fixed it:** it is a design change to Codex's Phase-2 enforcer, and the adjudicator
+  flagged a **correlated-blind-spot** (§5) — a design fix benefits from a different model. Codex
+  built the fix; Claude / human verification remains the next step (the loop).
 
-## §3 Trace-integrity defect — **OPEN, routed to Codex** (weaker threat model)
+## §3 Trace-integrity defect — **FIXED by Codex follow-up** (weaker threat model)
 
 Not an authorization bypass (requires a hostile/buggy adapter or trace store), but a real
-defect: (a) the payload is not deep-copied before `adapter.execute`, so a mutating adapter can
-corrupt the recorded trace; (b) `execute` happens before `trace.append`, so if append raises, an
-executed write leaves no trace; (c) `deny_reason` in replay is derived from
-`policy_decision.allow` rather than `enforcer_result`. Recommendation: deep-copy before execute,
-append trace around/before execute, derive deny_reason from `enforcer_result`.
+defect: (a) the payload was not deep-copied before `adapter.execute`, so a mutating adapter could
+corrupt the recorded trace; (b) `execute` happened before `trace.append`, so if append raised, an
+executed write left no trace; (c) `deny_reason` in replay was derived from
+`policy_decision.allow` rather than `enforcer_result`.
+
+- **Fix (Codex follow-up):** deep-copy the validated payload before enforcement; append the trace
+  before calling the adapter; pass the adapter a separate deep copy; derive replay `deny_reason`
+  from `enforcer_result`.
+- **Regressions:** `test_mutating_adapter_cannot_corrupt_recorded_trace`,
+  `test_trace_append_failure_prevents_adapter_call`, and
+  `test_replay_deny_reason_uses_enforcer_result_not_policy_allow`.
 
 ## §4 Coverage gaps (not yet tested — for a later round)
 
@@ -84,7 +92,7 @@ of robustness than a human or a different-model review. So:
 
 ## §6 Verdict
 
-The gate did not hold: two real should-block-but-executed bypasses + one integrity defect.
-Bypass 1 is fixed + regression-tested here. Bypass 2 + the integrity defect are routed to Codex
-(his enforcer design, and a different model for the correlated-blind-spot reason). And the clean
-parts are only *provisionally* clean until a non-same-model eye looks.
+The gate did not hold on the first red-team pass: two real should-block-but-executed bypasses +
+one integrity defect. Bypass 1 is fixed + regression-tested in the original PR. Bypass 2 + the
+integrity defect are fixed in the Codex follow-up and added to the gate eval. The clean parts are
+still only *provisionally* clean until a non-same-model / human eye verifies the fix.
