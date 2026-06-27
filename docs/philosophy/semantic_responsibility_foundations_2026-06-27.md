@@ -76,8 +76,15 @@ the philosophers cited below.
   tamperproof」(模型 process 概念上碰得到 adapter)。OS 層邊界(cf. ActPlane, arXiv:2606.25189)
   才三條皆滿足;尚未建。 / The reference monitor's three criteria are a ready checklist and
   expose ToneSoul's real gap (the in-process gate fails always-invoked/tamperproof).
-- **trace**(`trace.py` / Aegis hash-chain)= 古典 **audit trail**(append-only, tamper-evident;
-  cf. Ojewale, arXiv:2601.20727)。
+- **責任 runtime 的 trace**(`tonesoul/responsibility_runtime/trace.py`)= **append-only 的
+  process trace**——**目前尚非 tamper-evident**(Phase 3 store,依其自身 docstring)。**Aegis
+  hash-chain + Ed25519 簽章**(`aegis_shield.py`,一個獨立、較早的子系統)才是 **tamper-evident
+  的 lineage**。兩者皆 audit-trail 形狀(cf. Ojewale, arXiv:2601.20727),但**只有 Aegis 是
+  tamper-evident**。
+  / The responsibility-runtime trace (`trace.py`) is an append-only **process trace, NOT yet
+  tamper-evident** (Phase 3, per its own docstring); the **Aegis** hash-chain + Ed25519 signing
+  (`aegis_shield.py`, a separate older subsystem) is the **tamper-evident** lineage. Both are
+  audit-trail-shaped; only Aegis is tamper-evident.
 
 **糾正(要避免的 category error):Memory Crystallization **不是** audit trail 的翻譯。**
 它們在「保留」軸上**相反** / they sit at opposite ends of the retention axis:
@@ -88,8 +95,8 @@ the philosophers cited below.
 | 保留 / retention | **保留全部、不可變、永不遺忘** | **遺忘大部分(decay)、蒸餾出結晶** |
 | 血統 / lineage | 資安(SoD / RM / audit log) | **認知記憶科學**(Benna–Fusi 突觸固化;Ebbinghaus 遺忘曲線;Generative-Agents importance/recency) |
 
-audit trail 的重點是**不忘**;結晶的重點是**忘、再留下重要的**。ToneSoul **兩者都有**(不可變
-Aegis trace + 會 decay 的 crystal),服務相反目標、共存。把結晶當 audit trail,是錯把**認知固化**
+audit trail 的重點是**不忘**;結晶的重點是**忘、再留下重要的**。ToneSoul **兩者都有**(不可變的
+**Aegis 鏈紀錄** + 會 decay 的 crystal),服務相反目標、共存。把結晶當 audit trail,是錯把**認知固化**
 當成**資安日誌**。 / ToneSoul has both, serving opposite goals; conflating them mistakes
 cognitive consolidation for a security log.
 
@@ -99,7 +106,8 @@ cognitive consolidation for a security log.
 claim≤evidence ≈ Grice 1975 Quality 子準則 2 + Searle 1969 preparatory;語義責任 = Austin 言即行
 + Searle essential(斷言即承諾);honest refusal = felicity 不滿足的原則回應;misleading-vs-lying
 = Grice 言內/言外;accuracy+sincerity 與 betrayal-as-trust-violation = Williams (2002);
-auditor≠auditee = SoD / reference monitor;trace = audit trail。
+auditor≠auditee = SoD / reference monitor;responsibility-runtime trace = append-only process
+trace(尚非 tamper-evident),Aegis 鏈 = tamper-evident audit lineage。
 
 ToneSoul 的真貢獻**完全在部署/操作層**:把這些「人際之間」的規範,**重新指向「作者對自己軟體
 系統的宣稱」**(自我稽核 docs/輸出),並做成**確定性、可機器檢查**——regex 規則集(reviewer
