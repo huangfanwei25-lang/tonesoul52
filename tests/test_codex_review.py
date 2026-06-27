@@ -96,3 +96,39 @@ def test_cross_check_reminder_carries_aggregation_discipline():
     assert "AGREED" in msg and "DISAGREED" in msg
     assert "claim <= evidence" in msg
     assert "one opinion" in msg.lower() or "still one" in msg.lower()
+
+
+def test_run_codex_timeout_fails_closed_to_124(monkeypatch, tmp_path):
+    # Codex #212 finding: classify_outcome handles rc==124 but run_codex never produced it —
+    # a hung codex would hang the wrapper instead of fail-closed degrading. run_codex now passes
+    # timeout to subprocess.run and converts TimeoutExpired -> 124.
+    import subprocess
+
+    def fake_run(*_a, **kwargs):
+        raise subprocess.TimeoutExpired(cmd="codex", timeout=kwargs.get("timeout"))
+
+    monkeypatch.setattr(cr.subprocess, "run", fake_run)
+    rc, msg = cr.run_codex(
+        "review focus", targets=["x"], output_path=str(tmp_path / "out.md"), timeout=1
+    )
+    assert rc == 124
+    # and the contract closes: 124 degrades (no retry, single opinion)
+    ok, reason = cr.classify_outcome(rc, msg)
+    assert ok is False and "timeout" in reason
+
+
+def test_run_codex_passes_timeout_through(monkeypatch, tmp_path):
+    seen = {}
+
+    def fake_run(_cmd, **kwargs):
+        seen["timeout"] = kwargs.get("timeout")
+
+        class _P:
+            returncode = 0
+
+        (tmp_path / "out.md").write_text("Finding 1 (high): real review " * 5, encoding="utf-8")
+        return _P()
+
+    monkeypatch.setattr(cr.subprocess, "run", fake_run)
+    cr.run_codex("focus", targets=["x"], output_path=str(tmp_path / "out.md"), timeout=42)
+    assert seen["timeout"] == 42  # the timeout actually reaches subprocess.run

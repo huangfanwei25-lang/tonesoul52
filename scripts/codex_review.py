@@ -134,8 +134,14 @@ def run_codex(
     effort: str = "medium",
     model: Optional[str] = None,
     output_path: str,
-) -> Tuple[int, str]:  # pragma: no cover - subprocess shell
-    """Thin shell over `codex exec` in a READ-ONLY sandbox. Returns (returncode, final_message)."""
+    timeout: Optional[int] = None,
+) -> Tuple[int, str]:
+    """Thin shell over `codex exec` in a READ-ONLY sandbox. Returns (returncode, final_message).
+
+    `timeout` makes the fail-closed contract real: without it a hung codex would hang the wrapper
+    forever and the timeout branch in classify_outcome (rc==124) could never fire. On timeout we
+    return code 124 so the caller degrades to "single opinion, stop" — never silently waits.
+    """
     cmd = [
         "codex",
         "exec",
@@ -152,7 +158,17 @@ def run_codex(
     if model:
         cmd += ["-m", model]
     cmd.append(build_prompt(focus, targets, stdin_content))
-    proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    try:
+        proc = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout,
+        )
+    except subprocess.TimeoutExpired:
+        return (124, "")
     try:
         with open(output_path, encoding="utf-8") as fh:
             final_message = fh.read()
@@ -176,6 +192,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:  # pragma: no cover - thi
     p.add_argument("--dir", default=".", help="directory codex runs in")
     p.add_argument("--effort", default="medium", choices=["low", "medium", "high", "xhigh"])
     p.add_argument("--model", default=None)
+    p.add_argument(
+        "--timeout",
+        type=int,
+        default=600,
+        help="seconds before a hung codex fail-closed degrades (rc 124); 0 = no limit",
+    )
     args = p.parse_args(argv)
 
     if not args.target and not args.stdin:
@@ -202,6 +224,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:  # pragma: no cover - thi
         effort=args.effort,
         model=args.model,
         output_path=out_path,
+        timeout=(args.timeout or None),  # 0 → None (no limit); else fail-closed after N seconds
     )
     ok, reason = classify_outcome(rc, final_message)
     if not ok:
