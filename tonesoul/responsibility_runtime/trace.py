@@ -6,8 +6,7 @@ Phase 3 store is not yet tamper-evident.
 
 from __future__ import annotations
 
-import hashlib
-import json
+import copy
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from types import MappingProxyType
@@ -31,6 +30,7 @@ class TracePolicyDecision:
     policy_id: str
     intent: str
     requested_scope: str
+    request_id: str
 
 
 @dataclass(frozen=True)
@@ -75,7 +75,7 @@ class InMemoryTraceStore:
         enforcer_result: str,
         reason: str,
     ) -> TraceEvent:
-        payload = dict(intent_payload or {})
+        payload = copy.deepcopy(dict(intent_payload or {}))
         intent = str(payload.get("intent") or policy_decision.intent)
         event = TraceEvent(
             seq=len(self._events) + 1,
@@ -88,6 +88,7 @@ class InMemoryTraceStore:
                 policy_id=policy_decision.policy_id,
                 intent=policy_decision.intent,
                 requested_scope=policy_decision.requested_scope,
+                request_id=policy_decision.request_id,
             ),
             enforcer_result=enforcer_result,
             evidence_refs=tuple(str(ref) for ref in payload.get("evidence_refs", ())),
@@ -99,19 +100,6 @@ class InMemoryTraceStore:
     @property
     def events(self) -> tuple[TraceEvent, ...]:
         return tuple(self._events)
-
-
-def request_id_for_intent(intent_payload: Mapping[str, Any] | None) -> str:
-    """Return a stable request id for a normalized intent payload."""
-
-    canonical = json.dumps(
-        intent_payload or {},
-        sort_keys=True,
-        ensure_ascii=False,
-        separators=(",", ":"),
-    )
-    digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:16]
-    return f"rr-{digest}"
 
 
 def replay_trace(events: Iterable[TraceEvent]) -> tuple[TraceReplayRecord, ...]:
@@ -127,7 +115,7 @@ def replay_trace(events: Iterable[TraceEvent]) -> tuple[TraceReplayRecord, ...]:
                 policy_id=event.policy_decision.policy_id,
                 enforcer_result=event.enforcer_result,
                 evidence_refs=event.evidence_refs,
-                deny_reason=None if event.policy_decision.allow else event.reason,
+                deny_reason=None if event.enforcer_result == "executed" else event.reason,
             )
         )
     return tuple(records)

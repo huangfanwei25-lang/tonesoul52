@@ -7,6 +7,7 @@ a claim.
 """
 
 from .enforcer import EnforcementResult, Enforcer, MemoryAdapter, RecordingMemoryAdapter
+from .identity import request_id_for_intent
 from .intent_validator import (
     DEFAULT_ALLOWED_SCOPES,
     USES_LLM,
@@ -27,7 +28,6 @@ from .trace import (
     TracePolicyDecision,
     TraceReplayRecord,
     replay_trace,
-    request_id_for_intent,
 )
 
 __ts_layer__ = "governance"

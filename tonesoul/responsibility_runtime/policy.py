@@ -9,6 +9,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from dataclasses import dataclass
 
+from .identity import request_id_for_intent
 from .intent_validator import DEFAULT_ALLOWED_SCOPES, IntentValidationResult
 
 __ts_layer__ = "governance"
@@ -34,11 +35,12 @@ class PolicyDecision:
     policy_id: str
     intent: str
     requested_scope: str
+    request_id: str
 
     def __post_init__(self) -> None:
         if type(self.allow) is not bool:
             raise TypeError("allow must be a bool")
-        for field_name in ("reason", "policy_id", "intent", "requested_scope"):
+        for field_name in ("reason", "policy_id", "intent", "requested_scope", "request_id"):
             value = getattr(self, field_name)
             if not isinstance(value, str) or not value.strip():
                 raise ValueError(f"{field_name} must be a non-empty string")
@@ -49,6 +51,7 @@ class PolicyDecision:
         *,
         intent: str,
         requested_scope: str,
+        request_id: str,
         reason: str = "fake policy allowed validated intent",
         policy_id: str = DEFAULT_POLICY_ID,
     ) -> PolicyDecision:
@@ -58,6 +61,7 @@ class PolicyDecision:
             policy_id=policy_id,
             intent=intent,
             requested_scope=requested_scope,
+            request_id=request_id,
         )
 
     @classmethod
@@ -66,6 +70,7 @@ class PolicyDecision:
         *,
         intent: str,
         requested_scope: str,
+        request_id: str,
         reason: str,
         policy_id: str = DEFAULT_POLICY_ID,
     ) -> PolicyDecision:
@@ -75,6 +80,7 @@ class PolicyDecision:
             policy_id=policy_id,
             intent=intent,
             requested_scope=requested_scope,
+            request_id=request_id,
         )
 
 
@@ -99,11 +105,12 @@ class FakePolicyEngine:
     def decide(self, validation: IntentValidationResult) -> PolicyDecision:
         """Return allow/deny for a Phase-1 validation result without revalidating form."""
 
-        intent, requested_scope = _intent_scope_for_decision(validation)
+        intent, requested_scope, request_id = _decision_identity(validation)
         if not validation.accepted or validation.normalized_payload is None:
             return PolicyDecision.deny_action(
                 intent=intent,
                 requested_scope=requested_scope,
+                request_id=request_id,
                 reason="intent failed Phase-1 validation",
                 policy_id=self.policy_id,
             )
@@ -116,6 +123,7 @@ class FakePolicyEngine:
             return PolicyDecision.deny_action(
                 intent=intent,
                 requested_scope=requested_scope,
+                request_id=request_id,
                 reason=f"intent not allowed by fake policy: {intent}",
                 policy_id=self.policy_id,
             )
@@ -123,6 +131,7 @@ class FakePolicyEngine:
             return PolicyDecision.deny_action(
                 intent=intent,
                 requested_scope=requested_scope,
+                request_id=request_id,
                 reason=f"scope not allowed by fake policy: {requested_scope}",
                 policy_id=self.policy_id,
             )
@@ -130,6 +139,7 @@ class FakePolicyEngine:
         return PolicyDecision.allow_action(
             intent=intent,
             requested_scope=requested_scope,
+            request_id=request_id,
             policy_id=self.policy_id,
         )
 
@@ -142,13 +152,14 @@ def decide_fail_closed(
 ) -> PolicyDecision:
     """Call a decision point and convert any error or malformed output into deny."""
 
-    intent, requested_scope = _intent_scope_for_decision(validation)
+    intent, requested_scope, request_id = _decision_identity(validation)
     try:
         decision = decision_point.decide(validation)  # type: ignore[attr-defined]
     except Exception as exc:
         return PolicyDecision.deny_action(
             intent=intent,
             requested_scope=requested_scope,
+            request_id=request_id,
             reason=f"decision point failed closed: {type(exc).__name__}",
             policy_id=fallback_policy_id,
         )
@@ -159,15 +170,17 @@ def decide_fail_closed(
     return PolicyDecision.deny_action(
         intent=intent,
         requested_scope=requested_scope,
+        request_id=request_id,
         reason="decision point returned malformed decision",
         policy_id=fallback_policy_id,
     )
 
 
-def _intent_scope_for_decision(validation: IntentValidationResult) -> tuple[str, str]:
+def _decision_identity(validation: IntentValidationResult) -> tuple[str, str, str]:
     if validation.normalized_payload is None:
-        return validation.intent or "unknown", "unknown"
+        return validation.intent or "unknown", "unknown", request_id_for_intent(None)
     return (
         str(validation.normalized_payload.get("intent") or validation.intent or "unknown"),
         str(validation.normalized_payload.get("requested_scope") or "unknown"),
+        request_id_for_intent(validation.normalized_payload),
     )
