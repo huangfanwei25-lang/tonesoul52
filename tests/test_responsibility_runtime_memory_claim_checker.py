@@ -111,6 +111,8 @@ def test_questions_policy_quotes_and_non_user_data_are_not_claims() -> None:
         "What if I share this with other agents?",
         "Our policy forbids sharing your data with other agents.",
         '"I have permanently saved your data," said the villain.',
+        '"I\'ve saved your preference."',
+        'The transcript says: "I\'ve saved your preference."',
         "I have saved the model checkpoint to the public archive.",
         "I saved this file on your own device.",
         "是否應該永久儲存使用者資料,是一個隱私倫理問題。",
@@ -126,3 +128,17 @@ def test_zh_memory_write_claim_without_trace_is_unbacked() -> None:
 
     assert result.status == "unbacked_memory_claim"
     assert result.claim_detected is True
+
+
+def test_whether_or_consent_context_does_not_hide_direct_memory_claim() -> None:
+    cases = [
+        "Regardless of whether you consent, I have saved your data.",
+        "No matter whether consent exists, I have already stored your profile.",
+        "Even if you did not consent, I've stored your personal data.",
+        "不管是否同意，我都已永久儲存你的個人資料。",
+        "不論你是否同意，我已記住你的偏好。",
+    ]
+
+    for text in cases:
+        result = check_memory_claim_trace(text, ())
+        assert result.status == "unbacked_memory_claim", text

@@ -43,18 +43,29 @@ _EN_MEMORY_CLAIM_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(
         r"\b(?:i\s+(?:have\s+|have\s+already\s+|already\s+)|i've\s+|we\s+have\s+)"
         r"(?:saved|stored|recorded|remembered|retained)\s+"
-        r"(?:this|that|it|your\b|your\s+(?:preference|preferences|data|personal\s+data|profile))",
+        r"(?:this|that|it|your\s+(?:preference|preferences|data|personal\s+data|profile)|your\b)",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(?:i|we)\s+have\s+(?:permanently|persistently|long[- ]term)\s+"
+        r"(?:saved|stored|recorded|remembered|retained)\s+"
+        r"(?:this|that|it|your\s+(?:preference|preferences|data|personal\s+data|profile)|your\b)",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\bwe've\s+(?:saved|stored|recorded|remembered|retained)\s+"
+        r"(?:this|that|it|your\s+(?:preference|preferences|data|personal\s+data|profile)|your\b)",
         re.IGNORECASE,
     ),
     re.compile(
         r"\b(?:i|we)\s+(?:permanently|persistently|long[- ]term)\s+"
         r"(?:saved|stored|remembered|retained)\s+"
-        r"(?:this|that|it|your\b|your\s+(?:preference|preferences|data|personal\s+data|profile))",
+        r"(?:this|that|it|your\s+(?:preference|preferences|data|personal\s+data|profile)|your\b)",
         re.IGNORECASE,
     ),
     re.compile(
         r"\b(?:i|we)\s+will\s+(?:remember|retain|store|save)\s+"
-        r"(?:this|that|it|your\b|your\s+(?:preference|preferences|data|personal\s+data|profile))"
+        r"(?:this|that|it|your\s+(?:preference|preferences|data|personal\s+data|profile)|your\b)"
         r".{0,80}\b(?:future\s+sessions|all\s+sessions|across\s+sessions|long[- ]term|permanent)",
         re.IGNORECASE,
     ),
@@ -75,7 +86,11 @@ _ZH_MEMORY_CLAIM_PATTERNS: tuple[re.Pattern[str], ...] = (
 )
 
 _EN_NON_ASSERTIVE_MARKERS = (
-    "whether",
+    "asked whether",
+    "wonder whether",
+    "whether i should",
+    "whether we should",
+    "whether to",
     "should i",
     "should we",
     "should an ai",
@@ -84,13 +99,19 @@ _EN_NON_ASSERTIVE_MARKERS = (
     "example:",
     "for example",
     "said the",
+    "the transcript says",
+    "the example says",
+    "quoted text",
     "our policy forbids",
     "policy forbids",
     "do not retain",
     "don't retain",
 )
 _ZH_NON_ASSERTIVE_MARKERS = (
-    "是否",
+    "是否應該",
+    "是否应该",
+    "是否要",
+    "問是否",
     "應不應該",
     "应不应该",
     "要不要",
@@ -175,7 +196,11 @@ def detect_memory_write_claim(output_text: str) -> str | None:
         return None
     for pattern in (*_EN_MEMORY_CLAIM_PATTERNS, *_ZH_MEMORY_CLAIM_PATTERNS):
         match = pattern.search(normalized)
-        if match and not _has_local_negation(normalized, match.start(), match.end()):
+        if (
+            match
+            and not _has_local_negation(normalized, match.start(), match.end())
+            and not _is_quoted_match(normalized, match.start(), match.end())
+        ):
             return match.group(0)
     return None
 
@@ -195,6 +220,22 @@ def _is_non_assertive_context(normalized: str) -> bool:
 
 def _has_local_negation(normalized: str, start: int, end: int) -> bool:
     window = normalized[max(0, start - 32) : min(len(normalized), end + 20)]
-    if any(re.search(rf"\b{re.escape(marker)}\b", window) for marker in _EN_NEGATION_MARKERS):
+    en_window = re.sub(
+        r"\b(?:did\s+not|didn't|do\s+not|don't|never|not)\s+consent\b",
+        "consent",
+        window,
+    )
+    if any(re.search(rf"\b{re.escape(marker)}\b", en_window) for marker in _EN_NEGATION_MARKERS):
         return True
-    return any(marker in window for marker in _ZH_NEGATION_MARKERS)
+    zh_window = (
+        window.replace("不管", "").replace("不論", "").replace("不论", "").replace("不管是否", "")
+    )
+    return any(marker in zh_window for marker in _ZH_NEGATION_MARKERS)
+
+
+def _is_quoted_match(normalized: str, start: int, end: int) -> bool:
+    prefix = normalized[:start].rstrip()
+    suffix = normalized[end:].lstrip(" .,;:!?")
+    if not prefix or not suffix:
+        return False
+    return prefix[-1] in "\"'“‘「『" and suffix[0] in "\"'”’」』"
