@@ -18,8 +18,13 @@ from tonesoul.responsibility_runtime import (
     validate_intent,
 )
 
-# invisible / zero-width / format code points that str.strip() does NOT remove
+# invisible / zero-width / format code points that str.strip() does NOT remove (C/Z categories)
 INVISIBLE = ["​", "﻿", "⁠", "᠎", "‌", "‍"]
+
+# NON-C/Z invisibles a different-model (Codex) red-team found: the first fix (categories outside
+# C/Z) missed these — VS-16 (Mn), CGJ (Mn), braille-blank (So), Hangul filler (Lo), Mongolian
+# FVS (Mn). They render blank but are NOT C/Z. Fixed by requiring L/N/P/S minus a blank denylist.
+INVISIBLE_NON_CZ = ["️", "͏", "⠀", "ㅤ", "᠋"]
 
 
 def _write(**over: object) -> dict[str, object]:
@@ -75,6 +80,35 @@ def test_no_oracle_boundary_preserved_weak_but_visible_ref_accepted() -> None:
     # passes the FORM gate. Phase 1 validates form, never whether evidence supports the claim.
     assert validate_intent(_write(evidence_refs=["x"])).accepted is True
     assert validate_intent(_write(evidence_refs=["."])).accepted is True
+
+
+@pytest.mark.parametrize("ch", INVISIBLE_NON_CZ)
+def test_non_cz_invisible_evidence_ref_is_rejected(ch: str) -> None:
+    # Codex (different-model) finding: these are NOT C/Z but render blank — the first fix missed
+    # them. evidence / claim / query made only of them must now be rejected.
+    assert validate_intent(_write(evidence_refs=[ch])).accepted is False
+    assert validate_intent(_write(claim=ch)).accepted is False
+    assert (
+        validate_intent(
+            {"intent": "memory.read.request", "query": ch, "requested_scope": "session_memory"}
+        ).accepted
+        is False
+    )
+
+
+def test_non_cz_invisible_does_not_reach_executed_end_to_end() -> None:
+    validation = validate_intent(_write(evidence_refs=["️"]))  # VS-16 only
+    adapter = RecordingMemoryAdapter()
+    enforcer = Enforcer(memory_adapter=adapter, trace_store=InMemoryTraceStore())
+    result = enforcer.enforce(validation, FakePolicyEngine().decide(validation))
+    assert result.executed is False and adapter.call_count == 0
+
+
+def test_legit_unicode_refs_still_accepted_no_over_rejection() -> None:
+    # the stricter check must NOT reject real non-ASCII content — CJK, accented (base letter +
+    # combining mark), a base letter followed by VS-16, an emoji alone, punctuation.
+    for ref in ["中文ref", "café", "turn_001️", "😀", "doc://2026", "."]:
+        assert validate_intent(_write(evidence_refs=[ref])).accepted is True, ref
 
 
 def test_cross_request_policy_decision_cannot_authorize_modified_payload() -> None:
