@@ -97,10 +97,18 @@ SCENARIOS: list[tuple[str, Any, str, str, str]] = [
         "block",
         "validator",
     ),
-    # red-team 2026-06-27 bypass 1 (invisible-Unicode evidence) — now blocked after the fix
+    # red-team 2026-06-27 bypass 1 (invisible-Unicode evidence, C/Z) — now blocked after the fix
     (
         "invisible_evidence_redteam",
         {**_valid_write(), "evidence_refs": ["​"]},
+        "policy",
+        "block",
+        "validator",
+    ),
+    # Codex different-model red-team: non-C/Z invisible (VS-16 / Mn) — now blocked
+    (
+        "invisible_evidence_nonCZ_codex",
+        {**_valid_write(), "evidence_refs": ["️"]},
         "policy",
         "block",
         "validator",
