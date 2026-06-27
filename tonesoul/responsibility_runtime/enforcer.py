@@ -6,13 +6,15 @@ policy itself and only calls the fake adapter on an explicit `PolicyDecision.all
 
 from __future__ import annotations
 
+import copy
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any, Protocol
 
+from .identity import request_id_for_intent
 from .intent_validator import IntentValidationResult
 from .policy import PolicyDecision
-from .trace import InMemoryTraceStore, TraceEvent, request_id_for_intent
+from .trace import InMemoryTraceStore, TraceEvent
 
 __ts_layer__ = "governance"
 __ts_purpose__ = "Responsibility-runtime Enforcer that consumes explicit policy decisions."
@@ -77,7 +79,11 @@ class Enforcer:
         validation: IntentValidationResult,
         decision: object,
     ) -> EnforcementResult:
-        payload = validation.normalized_payload
+        payload = (
+            copy.deepcopy(dict(validation.normalized_payload))
+            if validation.normalized_payload is not None
+            else None
+        )
         request_id = request_id_for_intent(payload)
         intent = str((payload or {}).get("intent") or validation.intent or "unknown")
 
@@ -89,6 +95,7 @@ class Enforcer:
                 decision=_invalid_decision(
                     intent=intent,
                     requested_scope=str((payload or {}).get("requested_scope") or "unknown"),
+                    request_id=request_id,
                     reason="validated intent required",
                 ),
                 reason="validated intent required",
@@ -102,19 +109,21 @@ class Enforcer:
                 decision=_invalid_decision(
                     intent=intent,
                     requested_scope=str(payload.get("requested_scope") or "unknown"),
+                    request_id=request_id,
                     reason="missing or malformed policy decision",
                 ),
                 reason="missing or malformed policy decision",
             )
 
-        if not _decision_applies_to_payload(decision, payload):
+        if not _decision_applies_to_payload(decision, payload, request_id):
             return self._deny(
                 request_id=request_id,
                 intent=intent,
                 payload=payload,
                 decision=PolicyDecision.deny_action(
-                    intent=decision.intent,
-                    requested_scope=decision.requested_scope,
+                    intent=intent,
+                    requested_scope=str(payload.get("requested_scope") or "unknown"),
+                    request_id=request_id,
                     reason="policy decision does not apply to intent",
                     policy_id=decision.policy_id,
                 ),
@@ -130,7 +139,6 @@ class Enforcer:
                 reason=decision.reason,
             )
 
-        adapter_result = self.memory_adapter.execute(payload)
         trace_event = self.trace_store.append(
             request_id=request_id,
             intent_payload=payload,
@@ -138,6 +146,7 @@ class Enforcer:
             enforcer_result="executed",
             reason=decision.reason,
         )
+        adapter_result = self.memory_adapter.execute(copy.deepcopy(dict(payload)))
         return EnforcementResult(
             executed=True,
             request_id=request_id,
@@ -173,16 +182,23 @@ class Enforcer:
         )
 
 
-def _decision_applies_to_payload(decision: PolicyDecision, payload: Mapping[str, Any]) -> bool:
-    return decision.intent == payload.get("intent") and decision.requested_scope == payload.get(
-        "requested_scope"
+def _decision_applies_to_payload(
+    decision: PolicyDecision, payload: Mapping[str, Any], request_id: str
+) -> bool:
+    return (
+        decision.intent == payload.get("intent")
+        and decision.requested_scope == payload.get("requested_scope")
+        and decision.request_id == request_id
     )
 
 
-def _invalid_decision(*, intent: str, requested_scope: str, reason: str) -> PolicyDecision:
+def _invalid_decision(
+    *, intent: str, requested_scope: str, request_id: str, reason: str
+) -> PolicyDecision:
     return PolicyDecision.deny_action(
         intent=intent,
         requested_scope=requested_scope,
+        request_id=request_id,
         reason=reason,
         policy_id="invalid.policy_decision",
     )

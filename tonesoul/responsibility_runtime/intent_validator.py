@@ -7,6 +7,7 @@ evidence sufficiency, user intent, authorization, or memory side effects.
 
 from __future__ import annotations
 
+import unicodedata
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import Any, Literal
@@ -18,6 +19,21 @@ __ts_purpose__ = "Deterministic responsibility-runtime intent validator."
 
 USES_LLM = False
 DEFAULT_ALLOWED_SCOPES = frozenset({"session_memory", "long_term_memory", "project_memory"})
+
+
+def _has_visible_content(text: str) -> bool:
+    """True if the string has at least one non-whitespace, non-invisible character.
+
+    str.strip() only removes standard whitespace; it leaves zero-width / format / control code
+    points (U+200B zero-width space, U+FEFF, U+2060 word joiner, U+180E, ZWJ/ZWNJ) that look
+    empty but pass a `min_length=1` + `not value.strip()` check. A required field (claim,
+    evidence ref, scope, query) made ONLY of such code points is effectively empty and must be
+    rejected — otherwise an "evidence ref" can be invisible and still fool the audit trail.
+    Red-team finding 2026-06-27 (rt:evidence). Keeps only categories outside C* (control/format)
+    and Z* (separator).
+    """
+    return any(unicodedata.category(ch)[0] not in {"C", "Z"} for ch in text)
+
 
 IntentName = Literal["memory.write.propose", "memory.read.request"]
 RiskLevel = Literal["low", "medium", "high"]
@@ -54,10 +70,9 @@ class _ScopedIntent(BaseModel):
     @field_validator("requested_scope")
     @classmethod
     def _non_empty_scope(cls, value: str) -> str:
-        scope = value.strip()
-        if not scope:
-            raise ValueError("requested_scope must be a non-empty string")
-        return scope
+        if not _has_visible_content(value):
+            raise ValueError("requested_scope must have visible content")
+        return value.strip()
 
 
 class MemoryWriteProposal(_ScopedIntent):
@@ -73,18 +88,16 @@ class MemoryWriteProposal(_ScopedIntent):
     @field_validator("claim")
     @classmethod
     def _non_empty_claim(cls, value: str) -> str:
-        claim = value.strip()
-        if not claim:
-            raise ValueError("claim must be a non-empty string")
-        return claim
+        if not _has_visible_content(value):
+            raise ValueError("claim must have visible content")
+        return value.strip()
 
     @field_validator("evidence_refs")
     @classmethod
     def _non_empty_evidence_refs(cls, value: list[str]) -> list[str]:
-        refs = [ref.strip() for ref in value]
-        if any(not ref for ref in refs):
-            raise ValueError("evidence_refs must contain non-empty strings")
-        return refs
+        if any(not _has_visible_content(ref) for ref in value):
+            raise ValueError("evidence_refs must contain refs with visible content")
+        return [ref.strip() for ref in value]
 
     @field_validator("audit_reason")
     @classmethod
@@ -105,10 +118,9 @@ class MemoryReadRequest(_ScopedIntent):
     @field_validator("query")
     @classmethod
     def _non_empty_query(cls, value: str) -> str:
-        query = value.strip()
-        if not query:
-            raise ValueError("query must be a non-empty string")
-        return query
+        if not _has_visible_content(value):
+            raise ValueError("query must have visible content")
+        return value.strip()
 
     @field_validator("reason")
     @classmethod

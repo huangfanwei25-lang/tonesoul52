@@ -10,8 +10,11 @@ from tonesoul.responsibility_runtime import (
     InMemoryTraceStore,
     PolicyDecision,
     RecordingMemoryAdapter,
+    TraceEvent,
+    TracePolicyDecision,
     decide_fail_closed,
     replay_trace,
+    request_id_for_intent,
     validate_intent,
 )
 
@@ -113,9 +116,11 @@ def test_one_allow_one_deny_replay_from_trace() -> None:
 
 def test_allow_path_calls_adapter_only_on_explicit_policy_decision_allow() -> None:
     validation = validate_intent(_valid_write_payload())
+    assert validation.normalized_payload is not None
     decision = PolicyDecision.allow_action(
         intent="memory.write.propose",
         requested_scope="long_term_memory",
+        request_id=request_id_for_intent(validation.normalized_payload),
         policy_id="fake.test.allow",
     )
     enforcer, adapter, trace = _enforcer()
@@ -130,9 +135,11 @@ def test_allow_path_calls_adapter_only_on_explicit_policy_decision_allow() -> No
 
 def test_mismatched_policy_decision_fails_closed() -> None:
     validation = validate_intent(_valid_write_payload())
+    assert validation.normalized_payload is not None
     decision = PolicyDecision.allow_action(
         intent="memory.read.request",
         requested_scope="long_term_memory",
+        request_id=request_id_for_intent(validation.normalized_payload),
         policy_id="fake.test.mismatch",
     )
     enforcer, adapter, trace = _enforcer()
@@ -160,6 +167,77 @@ def test_decision_point_exception_fails_closed_before_enforcement() -> None:
     assert result.executed is False
     assert adapter.call_count == 0
     assert trace.events[0].reason == "decision point failed closed: RuntimeError"
+
+
+def test_mutating_adapter_cannot_corrupt_recorded_trace() -> None:
+    class MutatingAdapter:
+        def __init__(self) -> None:
+            self.call_count = 0
+
+        def execute(self, intent_payload: dict[str, object]) -> dict[str, object]:
+            self.call_count += 1
+            intent_payload["claim"] = "MUTATED AFTER AUTHORIZATION"
+            intent_payload["evidence_refs"] = ["mutated_ref"]
+            return {"status": "mutated"}
+
+    validation = validate_intent(_valid_write_payload())
+    decision = FakePolicyEngine().decide(validation)
+    adapter = MutatingAdapter()
+    trace = InMemoryTraceStore()
+    enforcer = Enforcer(memory_adapter=adapter, trace_store=trace)
+
+    result = enforcer.enforce(validation, decision)
+
+    assert result.executed is True
+    assert adapter.call_count == 1
+    assert trace.events[0].intent_payload["claim"] == "使用者偏好繁體中文與誠實優先"
+    assert trace.events[0].evidence_refs == ("turn_2026_06_27_001",)
+
+
+def test_trace_append_failure_prevents_adapter_call() -> None:
+    class ExplodingTraceStore:
+        def append(self, **_kwargs: object) -> object:
+            raise RuntimeError("trace unavailable")
+
+    validation = validate_intent(_valid_write_payload())
+    decision = FakePolicyEngine().decide(validation)
+    adapter = RecordingMemoryAdapter()
+    enforcer = Enforcer(memory_adapter=adapter, trace_store=ExplodingTraceStore())  # type: ignore[arg-type]
+
+    try:
+        enforcer.enforce(validation, decision)
+    except RuntimeError as exc:
+        assert str(exc) == "trace unavailable"
+    else:  # pragma: no cover - assertion clarity
+        raise AssertionError("trace append failure should propagate")
+
+    assert adapter.call_count == 0
+
+
+def test_replay_deny_reason_uses_enforcer_result_not_policy_allow() -> None:
+    event = TraceEvent(
+        seq=1,
+        request_id="rr-test",
+        intent="memory.write.propose",
+        intent_payload={},
+        policy_decision=TracePolicyDecision(
+            allow=True,
+            reason="policy allowed",
+            policy_id="fake.policy",
+            intent="memory.write.propose",
+            requested_scope="long_term_memory",
+            request_id="rr-test",
+        ),
+        enforcer_result="denied",
+        evidence_refs=(),
+        reason="enforcer denied after policy allow",
+    )
+
+    replayed = replay_trace((event,))
+
+    assert replayed[0].policy_allow is True
+    assert replayed[0].enforcer_result == "denied"
+    assert replayed[0].deny_reason == "enforcer denied after policy allow"
 
 
 def test_trace_events_are_append_only_process_facts() -> None:

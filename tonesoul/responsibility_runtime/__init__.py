@@ -7,6 +7,7 @@ a claim.
 """
 
 from .enforcer import EnforcementResult, Enforcer, MemoryAdapter, RecordingMemoryAdapter
+from .identity import request_id_for_intent
 from .intent_validator import (
     DEFAULT_ALLOWED_SCOPES,
     USES_LLM,
@@ -21,13 +22,19 @@ from .policy import (
     PolicyDecision,
     decide_fail_closed,
 )
+from .responsibility_graph import (
+    EdgeProvenance,
+    EdgeRejected,
+    FakeResponsibilityGraph,
+    ResponsibilityEdge,
+    edge_from_enforcement,
+)
 from .trace import (
     InMemoryTraceStore,
     TraceEvent,
     TracePolicyDecision,
     TraceReplayRecord,
     replay_trace,
-    request_id_for_intent,
 )
 
 __ts_layer__ = "governance"
@@ -37,10 +44,15 @@ __all__ = [
     "DEFAULT_ALLOWED_INTENTS",
     "DEFAULT_ALLOWED_SCOPES",
     "DEFAULT_POLICY_ID",
+    "EdgeProvenance",
+    "EdgeRejected",
     "Enforcer",
     "EnforcementResult",
     "FakePolicyEngine",
+    "FakeResponsibilityGraph",
     "InMemoryTraceStore",
+    "ResponsibilityEdge",
+    "edge_from_enforcement",
     "USES_LLM",
     "IntentValidationIssue",
     "IntentValidationResult",
