@@ -23,6 +23,11 @@ import json
 from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 
+# single source of truth for "what counts as visible content" — the same rule the Phase-1
+# validator uses, so the direct graph-write surface cannot drift from it. Red-team #210 finding:
+# the graph had the same strip-only invisible-evidence blind spot the validator had (#211).
+from .intent_validator import _has_visible_content
+
 __ts_layer__ = "governance"
 __ts_purpose__ = "Fake responsibility-graph adapter with provenance-bound edges."
 
@@ -103,9 +108,9 @@ class FakeResponsibilityGraph:
     ) -> ResponsibilityEdge:
         """Write a provenance-bound edge. Fail-closed: no evidence / no authorization → reject."""
 
+        if not evidence_refs or any(not _has_visible_content(str(r)) for r in evidence_refs):
+            raise EdgeRejected("edge requires evidence_refs with visible content")
         refs = tuple(str(r).strip() for r in evidence_refs)
-        if not refs or any(not r for r in refs):
-            raise EdgeRejected("edge requires non-empty evidence_refs")
         for name, value in (
             ("subject", subject),
             ("predicate", predicate),
@@ -114,8 +119,8 @@ class FakeResponsibilityGraph:
             ("policy_id", policy_id),
             ("trace_id", trace_id),
         ):
-            if not isinstance(value, str) or not value.strip():
-                raise EdgeRejected(f"edge requires non-empty {name}")
+            if not isinstance(value, str) or not _has_visible_content(value):
+                raise EdgeRejected(f"edge requires {name} with visible content")
         if supersedes is not None and supersedes not in self._edges:
             raise EdgeRejected(f"supersedes references unknown edge: {supersedes}")
 

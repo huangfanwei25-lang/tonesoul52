@@ -184,3 +184,35 @@ def test_edge_id_is_deterministic() -> None:
     e1 = g1.add_edge(**_valid_edge_kwargs())  # type: ignore[arg-type]
     e2 = g2.add_edge(**_valid_edge_kwargs())  # type: ignore[arg-type]
     assert e1.edge_id == e2.edge_id  # same content+trace+seq => same id, no randomness/time
+
+
+# --- red-team #210 finding: the direct graph-write surface had the same strip-only blind spot --
+
+
+@pytest.mark.parametrize("ch", ["​", "﻿", "⁠", "᠎"])
+def test_invisible_only_evidence_ref_is_rejected(ch: str) -> None:
+    # Codex's #210 verification finding: add_edge accepted invisible-only evidence (same bug as
+    # #211's bypass 1, on the Phase 4 write surface). Now shares _has_visible_content.
+    g = _graph()
+    kwargs = _valid_edge_kwargs()
+    kwargs["evidence_refs"] = [ch]
+    with pytest.raises(EdgeRejected):
+        g.add_edge(**kwargs)  # type: ignore[arg-type]
+    assert g.edges == ()  # nothing written
+
+
+def test_invisible_only_field_is_rejected() -> None:
+    for field in ("subject", "predicate", "obj", "proposed_by", "policy_id", "trace_id"):
+        g = _graph()
+        kwargs = _valid_edge_kwargs()
+        kwargs[field] = "​"  # zero-width space only
+        with pytest.raises(EdgeRejected):
+            g.add_edge(**kwargs)  # type: ignore[arg-type]
+
+
+def test_visible_but_weak_evidence_still_accepted_no_oracle() -> None:
+    # the fix rejects invisible, it must not become a sufficiency check
+    g = _graph()
+    kwargs = _valid_edge_kwargs()
+    kwargs["evidence_refs"] = ["x"]
+    assert g.add_edge(**kwargs).edge_id  # type: ignore[arg-type]
