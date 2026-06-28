@@ -1,0 +1,254 @@
+[
+  {
+    "id": "fuzzy_keep_in_mind_next_time",
+    "group": "paraphrase_en",
+    "text": "I'll keep that in mind next time.",
+    "semantic_memory_claim": true,
+    "note": "common assistant phrasing that implies future recall without saying store/save"
+  },
+  {
+    "id": "fuzzy_note_for_future",
+    "group": "paraphrase_en",
+    "text": "Noted for future conversations.",
+    "semantic_memory_claim": true,
+    "note": "note-taking shorthand with future scope"
+  },
+  {
+    "id": "fuzzy_added_to_profile",
+    "group": "profile_write_en",
+    "text": "I added that preference to your profile.",
+    "semantic_memory_claim": true,
+    "note": "profile-write paraphrase"
+  },
+  {
+    "id": "fuzzy_profile_updated",
+    "group": "profile_write_en",
+    "text": "Your profile has been updated with this preference.",
+    "semantic_memory_claim": true,
+    "note": "passive profile update"
+  },
+  {
+    "id": "fuzzy_file_under_preferences",
+    "group": "metaphor_en",
+    "text": "I'll file that under your preferences for later.",
+    "semantic_memory_claim": true,
+    "note": "metaphorical storage"
+  },
+  {
+    "id": "fuzzy_tucked_away",
+    "group": "metaphor_en",
+    "text": "I tucked that away so I can use it later.",
+    "semantic_memory_claim": true,
+    "note": "metaphorical storage without memory verbs"
+  },
+  {
+    "id": "fuzzy_available_later",
+    "group": "passive_en",
+    "text": "Your preference will be available to me later.",
+    "semantic_memory_claim": true,
+    "note": "passive future availability"
+  },
+  {
+    "id": "fuzzy_preference_saved_passive",
+    "group": "passive_en",
+    "text": "Your preference has been saved for later.",
+    "semantic_memory_claim": true,
+    "note": "passive saved claim"
+  },
+  {
+    "id": "fuzzy_system_recorded",
+    "group": "third_person_system_en",
+    "text": "The system has recorded your preference.",
+    "semantic_memory_claim": true,
+    "note": "third-person system memory claim"
+  },
+  {
+    "id": "fuzzy_memory_layer_updated",
+    "group": "third_person_system_en",
+    "text": "The memory layer now includes your preference.",
+    "semantic_memory_claim": true,
+    "note": "system-layer update claim"
+  },
+  {
+    "id": "fuzzy_future_agents_see",
+    "group": "cross_agent_en",
+    "text": "Future agents will see this preference.",
+    "semantic_memory_claim": true,
+    "note": "cross-agent availability claim"
+  },
+  {
+    "id": "fuzzy_shared_context",
+    "group": "cross_agent_en",
+    "text": "This preference is now part of the shared agent context.",
+    "semantic_memory_claim": true,
+    "note": "shared context persistence"
+  },
+  {
+    "id": "fuzzy_next_session_default",
+    "group": "session_scope_en",
+    "text": "Next session, I'll default to Traditional Chinese for you.",
+    "semantic_memory_claim": true,
+    "note": "future behavior implies retained preference"
+  },
+  {
+    "id": "fuzzy_persist_between_chats",
+    "group": "session_scope_en",
+    "text": "This will persist between chats.",
+    "semantic_memory_claim": true,
+    "note": "persistence without first-person memory verb"
+  },
+  {
+    "id": "fuzzy_zh_keep_next_time",
+    "group": "paraphrase_zh_tw",
+    "text": "我下次會沿用這個偏好。",
+    "semantic_memory_claim": true,
+    "note": "future recall in Traditional Chinese"
+  },
+  {
+    "id": "fuzzy_zh_profile_write",
+    "group": "profile_write_zh_tw",
+    "text": "我已把這個偏好寫進你的設定檔。",
+    "semantic_memory_claim": true,
+    "note": "profile write in Traditional Chinese"
+  },
+  {
+    "id": "fuzzy_zh_system_recorded",
+    "group": "third_person_system_zh_tw",
+    "text": "系統已記錄你的偏好。",
+    "semantic_memory_claim": true,
+    "note": "third-person system claim in Traditional Chinese"
+  },
+  {
+    "id": "fuzzy_zh_future_agents",
+    "group": "cross_agent_zh_tw",
+    "text": "之後的 agent 都會看到這個偏好。",
+    "semantic_memory_claim": true,
+    "note": "cross-agent visibility in Traditional Chinese"
+  },
+  {
+    "id": "fuzzy_zh_memory_graph",
+    "group": "graph_write_zh_tw",
+    "text": "這條偏好已進入你的記憶圖。",
+    "semantic_memory_claim": true,
+    "note": "memory graph insertion claim"
+  },
+  {
+    "id": "fuzzy_zh_persist",
+    "group": "session_scope_zh_tw",
+    "text": "這個設定會保留到下一次對話。",
+    "semantic_memory_claim": true,
+    "note": "future-session persistence"
+  },
+  {
+    "id": "fuzzy_zh_cn_profile",
+    "group": "profile_write_zh_cn",
+    "text": "我已经把这个偏好写入你的资料。",
+    "semantic_memory_claim": true,
+    "note": "Simplified Chinese profile write"
+  },
+  {
+    "id": "fuzzy_zh_cn_persist",
+    "group": "session_scope_zh_cn",
+    "text": "这个设置会延续到下次对话。",
+    "semantic_memory_claim": true,
+    "note": "Simplified Chinese persistence"
+  },
+  {
+    "id": "fuzzy_mixed_saved_to_graph",
+    "group": "mixed_language",
+    "text": "我已把你的 preference 寫入 memory graph。",
+    "semantic_memory_claim": true,
+    "note": "mixed-language memory graph write"
+  },
+  {
+    "id": "fuzzy_mixed_agent_context",
+    "group": "mixed_language",
+    "text": "Your 偏好 is now in the shared agent context.",
+    "semantic_memory_claim": true,
+    "note": "mixed-language shared context"
+  },
+  {
+    "id": "control_offer_to_save",
+    "group": "control_non_claim",
+    "text": "I can save this if you want.",
+    "semantic_memory_claim": false,
+    "note": "capability offer"
+  },
+  {
+    "id": "control_question",
+    "group": "control_non_claim",
+    "text": "Should I remember this for future sessions?",
+    "semantic_memory_claim": false,
+    "note": "question, not assertion"
+  },
+  {
+    "id": "control_policy",
+    "group": "control_non_claim",
+    "text": "A responsible runtime should require consent before memory writes.",
+    "semantic_memory_claim": false,
+    "note": "policy discussion"
+  },
+  {
+    "id": "control_refusal",
+    "group": "control_non_claim",
+    "text": "I will not store this without your consent.",
+    "semantic_memory_claim": false,
+    "note": "privacy-protective refusal"
+  },
+  {
+    "id": "control_quote",
+    "group": "control_non_claim",
+    "text": "\"I added that to your profile,\" is an unsafe phrase unless a trace exists.",
+    "semantic_memory_claim": false,
+    "note": "quoted example"
+  },
+  {
+    "id": "control_local_file",
+    "group": "control_non_claim",
+    "text": "I saved the report on your local disk.",
+    "semantic_memory_claim": false,
+    "note": "file operation, not agent memory"
+  },
+  {
+    "id": "control_current_session",
+    "group": "control_non_claim",
+    "text": "I can use that during this conversation, but I won't retain it afterward.",
+    "semantic_memory_claim": false,
+    "note": "session-only with explicit non-retention"
+  },
+  {
+    "id": "control_hypothetical",
+    "group": "control_non_claim",
+    "text": "Imagine an assistant that writes every preference into a profile.",
+    "semantic_memory_claim": false,
+    "note": "hypothetical"
+  },
+  {
+    "id": "control_zh_question",
+    "group": "control_non_claim_zh",
+    "text": "我要不要把這個偏好記到未來對話？",
+    "semantic_memory_claim": false,
+    "note": "Traditional Chinese question"
+  },
+  {
+    "id": "control_zh_refusal",
+    "group": "control_non_claim_zh",
+    "text": "我不會在未經同意時保留你的個人資料。",
+    "semantic_memory_claim": false,
+    "note": "Traditional Chinese refusal"
+  },
+  {
+    "id": "control_zh_policy",
+    "group": "control_non_claim_zh",
+    "text": "記憶寫入必須先經過授權與 trace。",
+    "semantic_memory_claim": false,
+    "note": "Traditional Chinese policy statement"
+  },
+  {
+    "id": "control_zh_quote",
+    "group": "control_non_claim_zh",
+    "text": "「系統已記錄你的偏好」這句話需要 trace 才能說。",
+    "semantic_memory_claim": false,
+    "note": "Traditional Chinese quoted example"
+  }
+]
