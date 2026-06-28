@@ -21,6 +21,7 @@ from .memory_claim_checker import (
     detect_memory_write_claim,
 )
 from .memory_output_surface import MemoryOutputSurfaceResult, render_memory_write_result
+from .memory_response_composer import MemoryResponseComposition, compose_memory_response
 from .policy import (
     DEFAULT_ALLOWED_INTENTS,
     DEFAULT_POLICY_ID,
@@ -65,6 +66,7 @@ __all__ = [
     "MemoryAdapter",
     "MemoryClaimTraceCheck",
     "MemoryOutputSurfaceResult",
+    "MemoryResponseComposition",
     "PolicyDecision",
     "RecordingMemoryAdapter",
     "TraceEvent",
@@ -73,6 +75,7 @@ __all__ = [
     "check_memory_claim_trace",
     "decide_fail_closed",
     "detect_memory_write_claim",
+    "compose_memory_response",
     "render_memory_write_result",
     "replay_trace",
     "request_id_for_intent",
