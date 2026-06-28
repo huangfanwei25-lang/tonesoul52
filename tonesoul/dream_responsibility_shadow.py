@@ -9,6 +9,17 @@ gated, non-bypassable, or that the gate "perceives" anything. The real write kee
 ``MemoryWriteGateway.write_payload`` unchanged (Axiom 8 records that path as intentionally
 un-gated); enforce-mode is a separate, owner-authorized decision.
 
+Isolation properties (self red-team verified 2026-06-29; codex pass attempted but did not land):
+- The integration injects this gate's verdict into ``payload["observability"]`` before the real
+  write. Verified safe: ``MemoryWriteGateway``'s promotion/forgetting gates and the dedup signature
+  never read ``observability``, so the annotation cannot change the write decision or what core
+  content is persisted.
+- ``run_shadow_gate`` catches ``Exception`` (not ``BaseException``) on purpose: a
+  ``KeyboardInterrupt``/``SystemExit`` should abort the cycle, and every other failure becomes an
+  error outcome while the real write proceeds.
+- The payload->intent translation is LOSSY by design (lineage ids count as evidence_refs), so
+  ``would_execute`` is OPTIMISTIC -- a lower bound on what an enforcing gate would deny.
+
 Governance record: docs/plans/responsibility_runtime_dream_shadow_wiring_2026-06-29.md
 """
 
@@ -185,17 +196,34 @@ class ShadowLedger:
 
     def summary(self) -> dict[str, Any]:
         total = len(self.entries)
-        would_allow = sum(1 for e in self.entries if e["would_execute"] is True)
-        would_deny = sum(1 for e in self.entries if e["would_execute"] is False)
         errored = sum(1 for e in self.entries if not e["ran"])
-        diverged = [e for e in self.entries if e["agrees"] is False]
+
+        def _count(would_execute: bool, written: bool) -> int:
+            return sum(
+                1
+                for e in self.entries
+                if e["would_execute"] is would_execute and e["actual_written"] is written
+            )
+
+        # Cross-tab of TWO INDEPENDENT gates: the responsibility gate's `would_execute` vs the
+        # write_gateway's `actual_written`. They are NOT the same check, so a mismatch does not mean
+        # the responsibility gate erred (the old single "diverged" count conflated the two
+        # directions). The enforce-relevant signal is `would_deny_but_written`: writes that
+        # succeeded which an *enforcing* responsibility gate WOULD have blocked.
+        would_deny_but_written = [
+            e for e in self.entries if e["would_execute"] is False and e["actual_written"] is True
+        ]
         return {
             "mode": "shadow",
-            "note": "observe-only measurement; the gate did not block any real write",
+            "note": (
+                "observe-only; cross-tab of the responsibility gate's verdict vs the write_gateway's "
+                "outcome (two independent gates). The shadow never blocked any real write."
+            ),
             "total": total,
-            "would_allow": would_allow,
-            "would_deny": would_deny,
             "errored": errored,
-            "diverged_count": len(diverged),
-            "diverged": diverged,
+            "would_allow_and_written": _count(True, True),
+            "would_deny_but_written": len(would_deny_but_written),
+            "would_allow_but_rejected": _count(True, False),
+            "would_deny_and_rejected": _count(False, False),
+            "would_deny_but_written_cases": would_deny_but_written,
         }
