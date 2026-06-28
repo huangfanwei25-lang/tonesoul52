@@ -132,6 +132,7 @@ ROOT_MODULE_LAYER: dict[str, str] = {
     "self_improvement_trial_wave": "evolution",
     "dream_engine": "evolution",
     "dream_observability": "evolution",
+    "dream_responsibility_shadow": "evolution",
     "mirror": "evolution",
     "reflection": "evolution",
     "resonance": "evolution",
