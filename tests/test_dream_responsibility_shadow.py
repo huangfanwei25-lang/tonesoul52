@@ -165,15 +165,18 @@ def test_shadow_ledger_counts_and_divergence() -> None:
         reason="deny",
         issue_codes=("missing_evidence_refs",),
     )
-    ledger.record(allow, actual_written=True, topic="A")  # gate allow, real wrote -> agree
-    ledger.record(deny, actual_written=True, topic="B")  # gate would deny, real wrote -> diverge
+    ledger.record(allow, actual_written=True, topic="A")  # gate allow, real wrote
+    ledger.record(
+        deny, actual_written=True, topic="B"
+    )  # gate would deny, real wrote -> enforce signal
 
     summary = ledger.summary()
     assert summary["total"] == 2
-    assert summary["would_allow"] == 1
-    assert summary["would_deny"] == 1
-    assert summary["diverged_count"] == 1
-    assert summary["diverged"][0]["topic"] == "B"
+    assert summary["would_allow_and_written"] == 1
+    # the enforce-relevant cell: a write an enforcing gate would have blocked
+    assert summary["would_deny_but_written"] == 1
+    assert summary["would_deny_but_written_cases"][0]["topic"] == "B"
+    assert summary["would_allow_but_rejected"] == 0
 
 
 # ── dream_engine integration ─────────────────────────────────────────────────
@@ -223,11 +226,12 @@ def test_shadow_annotates_persisted_record_and_ledger(tmp_path: Path) -> None:
     # and the cycle ledger summarizes it
     summary = res["responsibility_shadow"]
     assert summary["total"] == 1
-    assert summary["would_allow"] == 1
+    assert summary["would_allow_and_written"] == 1
 
 
-def test_shadow_records_divergence_when_real_write_rejected(tmp_path: Path) -> None:
-    # gate would allow (valid intent) but reality rejects -> recorded divergence, write still 0.
+def test_shadow_records_would_allow_but_rejected_when_real_write_rejected(tmp_path: Path) -> None:
+    # responsibility gate would allow (valid intent) but the write_gateway rejects -> the cross-tab
+    # cell would_allow_but_rejected (NOT would_deny_but_written, which is the enforce signal).
     gw = _StubGateway(reject_topics={"Topic A"})
     engine = _make_engine(tmp_path, gateway=gw, shadow=True)
 
@@ -239,5 +243,5 @@ def test_shadow_records_divergence_when_real_write_rejected(tmp_path: Path) -> N
     assert res["rejected"] == 1
     summary = res["responsibility_shadow"]
     assert summary["total"] == 1
-    assert summary["would_allow"] == 1
-    assert summary["diverged_count"] == 1
+    assert summary["would_allow_but_rejected"] == 1
+    assert summary["would_deny_but_written"] == 0
