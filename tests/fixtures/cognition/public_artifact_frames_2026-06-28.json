@@ -218,6 +218,28 @@
           }
         ]
       }
+    },
+    {
+      "id": "rejected_unsupported_fact_frame",
+      "expected_accepted": false,
+      "artifact_paths": [
+        "docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md"
+      ],
+      "frame": {
+        "question": "Does the public-artifact eval reject a factual claim shipped without an evidence ref?",
+        "known_facts": [
+          {
+            "text": "The claim-to-evidence matrix warns against promoting philosophical claims into mechanism claims.",
+            "evidence_refs": ["file:docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md"],
+            "confidence": "observed"
+          },
+          {
+            "text": "This factual claim is intentionally shipped without any evidence ref so the frame must fail closed.",
+            "evidence_refs": [],
+            "confidence": "observed"
+          }
+        ]
+      }
     }
   ]
 }

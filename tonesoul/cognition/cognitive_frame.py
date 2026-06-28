@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any, Literal, get_args
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, ValidationError, field_validator
 
@@ -26,6 +26,25 @@ USES_NETWORK = False
 
 ConfidenceLevel = Literal["observed", "derived", "inferred", "unknown"]
 IssueSeverity = Literal["error", "warning"]
+
+# The frame is accepted only if every issue is an explicitly non-blocking severity, so an
+# unrecognized or mistyped severity fails closed (blocks) instead of silently passing.
+_VALID_SEVERITIES: frozenset[str] = frozenset(get_args(IssueSeverity))
+_NON_BLOCKING_SEVERITIES: frozenset[str] = frozenset({"warning"})
+
+
+def _require_single_line(value: str, *, field_label: str) -> str:
+    """Reject embedded line breaks so rendered prompt sections cannot be structurally forged.
+
+    ``to_prompt_sections`` renders a line-oriented packet (``[SECTION]`` headers and ``- item``
+    lines). Text containing a newline or other line separator could inject a forged section
+    header or item line that bypassed lane validation, so multi-line field text fails closed.
+    """
+
+    cleaned = value.strip()
+    if cleaned.splitlines() != [cleaned]:
+        raise ValueError(f"{field_label} must not contain embedded line breaks")
+    return cleaned
 
 
 class FrameItem(BaseModel):
@@ -42,14 +61,14 @@ class FrameItem(BaseModel):
     def _text_has_visible_content(cls, value: str) -> str:
         if not _has_visible_content(value):
             raise ValueError("text must have visible content")
-        return value.strip()
+        return _require_single_line(value, field_label="text")
 
     @field_validator("evidence_refs")
     @classmethod
     def _evidence_refs_have_visible_content(cls, value: tuple[str, ...]) -> tuple[str, ...]:
         if any(not _has_visible_content(ref) for ref in value):
             raise ValueError("evidence_refs must contain refs with visible content")
-        return tuple(ref.strip() for ref in value)
+        return tuple(_require_single_line(ref, field_label="evidence_ref") for ref in value)
 
 
 class CognitiveFrame(BaseModel):
@@ -77,10 +96,14 @@ class CognitiveFrame(BaseModel):
     def _question_has_visible_content(cls, value: str) -> str:
         if not _has_visible_content(value):
             raise ValueError("question must have visible content")
-        return value.strip()
+        return _require_single_line(value, field_label="question")
 
     def to_prompt_sections(self) -> list[str]:
-        """Render a compact prompt packet without inventing new content."""
+        """Render a compact, line-oriented prompt packet without inventing new content.
+
+        Question and item text are validated single-line, so ``[SECTION]`` headers and ``- item``
+        lines cannot be forged by embedding line breaks in field text.
+        """
 
         sections = [f"[QUESTION]\n{self.question}"]
         for label, items in (
@@ -107,6 +130,12 @@ class CognitiveFrameIssue:
     severity: IssueSeverity
     message: str
 
+    def __post_init__(self) -> None:
+        # Dataclasses do not enforce the Literal at runtime; reject unknown severities loudly at
+        # construction so a typo cannot silently become non-blocking in the accept decision.
+        if self.severity not in _VALID_SEVERITIES:
+            raise ValueError(f"unknown CognitiveFrameIssue severity: {self.severity!r}")
+
 
 @dataclass(frozen=True)
 class CognitiveFrameValidationResult:
@@ -130,7 +159,7 @@ _FACTUAL_LANES = (
 
 
 def validate_cognitive_frame(
-    payload: Mapping[str, Any] | CognitiveFrame | Any,
+    payload: Mapping[str, Any] | CognitiveFrame | object,
 ) -> CognitiveFrameValidationResult:
     """Validate an external cognitive frame without side effects."""
 
@@ -156,7 +185,8 @@ def validate_cognitive_frame(
 
     semantic_issues = _semantic_issues(frame)
     issues = parse_issues + semantic_issues
-    accepted = not any(issue.severity == "error" for issue in issues)
+    # Fail closed: accept only when every issue is an explicitly non-blocking severity.
+    accepted = all(issue.severity in _NON_BLOCKING_SEVERITIES for issue in issues)
     return CognitiveFrameValidationResult(accepted=accepted, frame=frame, issues=issues)
 
 
