@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Protocol, Sequence
 from uuid import uuid4
 
+from tonesoul.dream_responsibility_shadow import ShadowLedger, run_shadow_gate
 from tonesoul.governance.kernel import GovernanceKernel
 from tonesoul.llm.router import LLMRouter
 from tonesoul.memory.crystallizer import Crystal, MemoryCrystallizer
@@ -146,6 +147,7 @@ class DreamEngine:
         governance_kernel: Optional[GovernanceKernel] = None,
         router: Optional[LLMRouterLike] = None,
         crystallizer: Optional[MemoryCrystallizer] = None,
+        responsibility_shadow: bool = False,
     ) -> None:
         self.soul_db = soul_db or SqliteSoulDB()
         self.write_gateway = write_gateway or MemoryWriteGateway(self.soul_db)
@@ -154,6 +156,11 @@ class DreamEngine:
             backend_resolver=self.governance_kernel.resolve_llm_backend,
         )
         self.crystallizer = crystallizer or MemoryCrystallizer()
+        # OBSERVE-ONLY responsibility-gate shadow (default OFF). When enabled, each dream write is
+        # ALSO judged by the responsibility_runtime gate and the verdict is RECORDED; the real
+        # write is never gated or blocked (Axiom 8 records write_payload as intentionally
+        # un-gated). See docs/plans/responsibility_runtime_dream_shadow_wiring_2026-06-29.md
+        self._responsibility_shadow = bool(responsibility_shadow)
 
     def run_cycle(
         self,
@@ -267,6 +274,7 @@ class DreamEngine:
         reject_reasons: List[str] = []
         existing_signatures = self._active_unresolved_collision_signatures()
         rejected_signatures = self._historical_rejected_collision_signatures()
+        shadow_ledger = ShadowLedger() if self._responsibility_shadow else None
 
         for collision in collisions:
             payload = self._build_collision_payload(
@@ -300,19 +308,35 @@ class DreamEngine:
                 collision.observability["write_status"] = "skipped"
                 collision.observability["write_skip_reason"] = "prior_rejected_signature"
                 continue
+            shadow_outcome = run_shadow_gate(payload) if shadow_ledger is not None else None
+            if shadow_outcome is not None:
+                annotation = shadow_outcome.to_observability()
+                # Line travels with the memory: annotate the persisted record's observability.
+                observability = dict(payload.get("observability") or {})
+                observability["responsibility_shadow"] = annotation
+                payload["observability"] = observability
+                collision.observability = dict(collision.observability)
+                collision.observability["responsibility_shadow"] = annotation
+            collision_topic = str(payload.get("topic") or "")
             try:
                 record_id = self.write_gateway.write_payload(MemorySource.CUSTOM, payload)
             except MemoryWriteRejectedError as exc:
                 rejected += 1
                 reject_reasons.extend(exc.reasons)
+                if shadow_ledger is not None and shadow_outcome is not None:
+                    shadow_ledger.record(
+                        shadow_outcome, actual_written=False, topic=collision_topic
+                    )
                 continue
             written += 1
             record_ids.append(record_id)
             collision.persisted_record_id = record_id
+            if shadow_ledger is not None and shadow_outcome is not None:
+                shadow_ledger.record(shadow_outcome, actual_written=True, topic=collision_topic)
             if signature:
                 existing_signatures.add(signature)
 
-        return {
+        result: Dict[str, object] = {
             "written": written,
             "skipped": skipped,
             "rejected": rejected,
@@ -320,6 +344,9 @@ class DreamEngine:
             "skip_reasons": skip_reasons,
             "reject_reasons": reject_reasons,
         }
+        if shadow_ledger is not None:
+            result["responsibility_shadow"] = shadow_ledger.summary()
+        return result
 
     def _build_collision_payload(
         self,
