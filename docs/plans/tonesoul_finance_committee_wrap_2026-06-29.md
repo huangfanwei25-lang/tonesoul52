@@ -110,21 +110,47 @@ calibration_entry {
 
 ---
 
-## 6. Landscape（deep-research 2026-06-29 因斷網失敗，**未查證**）
+## 6. Landscape（deep-research `wtdtxtpe5` 已查證，23/25 claims 對抗式確認）
 
-deep-research run `wm7mlzbap` 跑過了，但**全程斷網**（ConnectionRefused / FailedToOpenSocket，
-17 agents、**0 可用來源、0 claims**）。所以 landscape **尚未查證**。
+**一句話：機制走得很熟、全做 alpha、而 alpha 多半是假的；校準軸幾乎沒人填——這條方向是真縫。**
 
-**誠實標明（這就是本專案的規矩）**：我訓練裡的回憶——TradingAgents、FinMem、FinAgent、
-Reflexion-for-finance、generative-agents reflection、Brier/ECE 校準——**一律不算已驗證**
-（外部工作別憑回憶斷言；session memory R2/R3）。等網路回來**重跑 deep-research** 再回填，
-確認「**校準軸 vs alpha 軸**」那條縫到底有沒有人認真填過。
+**機制 prior art（記憶+反省迴圈，全在做 alpha、零校準）：**
+- **FinMem**（arXiv 2311.13743）：分層記憶 trader，反省為**累積報酬**；標題即「Performance-Enhanced」。
+- **FinAgent**（arXiv 2402.18485, KDD'24）：真的 make-call→observe→reflect→update 雙層反省；目標
+  **獲利**（自報 92.27% return、Sharpe 2.25），六指標全財務；零校準。
+- **TradingAgents**（arXiv 2412.20138；**就是 hedge-fund-committee 參照的那個**）：只用
+  return/Sharpe/drawdown 評；**v1 論文無 outcome-learning 迴圈**（只有 ReAct 推理）。
+  注意 paper≠實作：GitHub v0.2.x **有**抓 realized-return-vs-SPY + 注入反省，但論文沒寫。
+- **FINCON**（NeurIPS 2024）：make-call/observe-PnL/reflect 迴圈，目標 max 折現 PnL，「風控」= 護獲利
+  （CVaR）；零校準。
+- 它們繼承的 **Reflexion**（arXiv 2303.11366, NeurIPS'23）本來做**任務完成正確率**，不碰金融/校準。
 
-在那之前——§3–§5 的設計與宜鼎示範**不依賴**這個 landscape 成立（gate 拒絕無證據、calibration
-記錄格式、calibration≠alpha 的守界，都是自洽的）。
+**alpha 多半是假的（最關鍵、也是別走 alpha 軸的硬證據）：**
+- **FINSABER**（arXiv 2505.07078, **KDD 2026 accepted**）：偏誤修正後的 20 年、100+ 標的 backtest →
+  FinMem/FinAgent **無統計顯著 alpha（p 全 > 0.34）**，一旦控制 survivorship / look-ahead /
+  data-snooping、拉長 horizon、放寬標的。短窗亮眼報酬是偏誤產物。
+- 「Profit Mirage」（arXiv 2510.07920）：資訊洩漏 / 預訓練污染——知識截止後報酬蒸發。
+- Reflexion 假設「即時環境回饋」，市場違反（PnL 延遲+雜訊）→ 直接移植「reflect-to-predict-better」站不住。
+
+**校準軸：唯一中心化它的是 benchmark、不是會反省的 agent：**
+- **KalshiBench**（arXiv 2512.16030, 2025-12）：300 題 Kalshi 預測市場、結果在訓練截止後揭曉；量
+  「自報 confidence 配不配得上實際命中（80% 信心該對 80%）」；發現**五個前沿 LLM（含 Claude Opus
+  4.5）全系統性過度自信**；用 ECE / Brier Skill。**但它是評測 benchmark，不是反省-為-校準的 agent。**
+  （caveat：單作者、未同儕審查 preprint、n=300。）
+
+**那條真縫（deep-research 的 open question 原話）：** 有沒有任何已部署/已發表的金融 agent，**把校準
+誤差（Brier/ECE）當成反省/學習的 signal**（不只事後評估）？**沒有出現——這就是真正新、沒填的
+niche。** 正是本設計（§4）的 calibration-as-reflection-signal。而且它**比 alpha 更好-posed**：校準
+有乾淨 ground truth、可逐 call 評分、且**對 FINSABER 那種讓 alpha 變幻覺的非穩態/data-snooping 免疫**
+（你不需要打敗市場就能量它）。
+
+**誠實邊界：** (a) 這是「負存在」結論（**這些系統**裡沒有），不證明全領域都沒有；(b) 有兩條 claim 被
+對抗式投票否決——**別用「audit 19 篇論文」那個框架**（被否）；(c) 領域 2024–26 高速移動，已有
+calibration-bonus（arXiv 2606.14211）、TrustTrade（uncertainty）在動，這縫隨時可能被填。
 
 ## 7. 下一步
 
-1. deep-research 回來 → 回填 §6 → 確認「校準軸」確實是 underexplored 的縫。
+1. ✅ deep-research（`wtdtxtpe5`）已查證並回填 §6：**「calibration-as-reflection-signal」是真縫**
+   （所有現有 finance agent 做 alpha、且 alpha 多半幻覺；唯一碰校準的 KalshiBench 是 benchmark 非 agent）。
 2. 換電腦 + 地端模型上來 → 離線跑、私有記憶、不靠 API 預算——最適合這個每日迴圈。
 3. 第一刀（小）：只接 §2 的「committee memo → gate → 存 call」+ §4 的隔天回寫，**不碰**委員會辯論邏輯。
