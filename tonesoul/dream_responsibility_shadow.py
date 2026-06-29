@@ -176,19 +176,15 @@ class ShadowLedger:
         actual_written: bool,
         topic: str = "",
     ) -> None:
-        agrees: bool | None
-        if outcome.would_execute is None:
-            agrees = None
-        else:
-            # "perceptual localization": does the gate's judgment match what reality did?
-            agrees = outcome.would_execute == actual_written
+        # Store raw cross-tab inputs only. The old per-entry "agrees" binary was removed
+        # (codex 2026-06-29): it re-introduced the "the two gates should match" framing that
+        # summary() deliberately dropped, and it leaked through would_deny_but_written_cases.
         self.entries.append(
             {
                 "topic": topic,
                 "ran": outcome.ran,
                 "would_execute": outcome.would_execute,
                 "actual_written": actual_written,
-                "agrees": agrees,
                 "gate_reason": outcome.reason,
                 "issue_codes": list(outcome.issue_codes),
             }
