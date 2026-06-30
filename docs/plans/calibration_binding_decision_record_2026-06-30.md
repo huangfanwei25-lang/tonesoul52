@@ -2,7 +2,8 @@
 
 > 對象：`calibration_score`（#227，目前 score-only）是否該接上去，**綁未來信任 / 縮 latitude**
 > （在 council 裡 down-weight、或 gate、或降 trust score）。
-> 狀態：**owner-gated，待梵威 ratify。** 這份記錄是分析 + 建議，不是已生效的決定。
+> 狀態：**已由梵威 ratify（2026-06-30，窄化）+ 經 codex（不同模型）交叉驗證。** 決議與驗證見
+> §9。窄化結論：**不綁 weight / vote**，但**允許** shadow / surfacing / non-weight consequence。
 
 ---
 
@@ -37,6 +38,11 @@
 
 **但「不做」不是中性的**（見 §5）：後果缺口是 thesis 的真實短板。若要前進，正確順序是
 **先治理 resolver、不是先治理 binding**（見 §6）。
+
+> **2026-06-30 ratify 修正（見 §9）：** 決議窄化為「**不綁 weight / vote**」——但這**不等於什麼都
+> 不做**。明確**允許** near-term 的 **shadow + surfacing + non-weight consequence**（低校準 → 加
+> evidence requirement / reviewer / second source，**不降 perspective voice**）。原本 §1 的二元
+> 「bind vs score-only」框架漏了這個中間地帶（codex 抓到、屬「過度警告」家族）。
 
 ---
 
@@ -169,6 +175,41 @@ un-gated-write 隱患，#219 就是為了避開它才做成 owner-gated）。
 
 > 註：這份記錄本身**不該被當成「決定」merge 後就生效**——它記錄的是建議。實際的治理決定是你的；
 > 你 ratify 哪一條，我再動。
+
+---
+
+## 9. Owner ratification + cross-model verification（codex, 2026-06-30）
+
+**梵威 ratify（窄化）。** 同意「現在不要把 calibration 綁 weight / latitude」，但修正為**更窄**：
+不綁 weight；**可以做 shadow / surfacing / audit consequence**。near-term 安全路徑＝
+- **shadow ledger**：只記錄 calibration，不改權重；
+- **surfacing**：未來 session 看得到「此 reasoner / domain 的校準狀態」，但**不自動懲罰**；
+- **non-weight consequence**：低校準只觸發**更多 evidence requirement / reviewer / second source**，
+  **不降 perspective voice**；
+- **enforce 前**還要：可信 resolver + horizon 事前 commit + 雙來源 / 簽章 + append-only trace +
+  **dispute lane** + **sample-size power check** + **pre-registered evaluation protocol**。
+
+**codex（不同模型，讀 origin/master@1b297ae）交叉驗證 —— single-model 但書已閉合：**
+- **Part 1（7 條事實）：全部獨立確認**（council 已有兩條 live binding；internal≠external；taxonomy
+  disjoint；persona_track_record monotonic / gitignored / `except: pass`；recovery_rate 無
+  per-perspective；veto 在 weights 前）。persona_track_record 的 "outcome" 經 codex 追到
+  `unified_pipeline.py:3218` 餵的是 `verdict`、非 reality —— **internal/external 區分成立、非硬凹。**
+- **Part 2（數字）：獨立重現。** 完美校準者誤判率 n=10→**99.40%**、n=50→90.18%、n=100→54.49%、
+  n=300→3.72%；**n≈270-275 才穩定 <5%**。`min_n=10` 確定不可用於 binding。（先前 ~99.6% 在同量級
+  → 那條 single-model 但書解除。）
+- **de-bind：codex 同意「考慮」但不建議硬拔** —— 先 default-off / shadow、先量測再動；
+  `voting_evolution`（獎勵對齊 final verdict）比 `persona_track_record` 更危險。
+
+**codex 抓到本記錄漏的兩點（已修）：**
+1. **治理物件自己漂在 branch 上、不可審計** —— 故本 PR 在 ratify 後**併入 master**，讓決策記錄本身
+   可審計（併入＝記錄分析與已 ratify 的結論，**≠ 啟用 binding**）。
+2. **`council/calibration.py` 的 `__ts_purpose__` 仍寫 "tune perspective weights from outcome
+   feedback"**，與 v0b no-weight 邊界語義衝突、會誤導未來 agent —— 本 PR 一併改為「read-only
+   realism metrics … does NOT tune voting weights」。
+
+**誠實標註（auditor ≠ auditee）。** 7 條事實 + 數字是**梵威、codex、我獨立都到**（E2+，強）；codex 是
+不同訓練 regime，比同模型 sub-agent 強。但 `claim ≤ evidence` 對 codex 也適用 —— 這是**一個**強外部
+意見，不是 oracle。
 
 ---
 
