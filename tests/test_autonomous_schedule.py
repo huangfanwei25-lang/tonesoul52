@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import pytest
+from freezegun import freeze_time
 
 from tonesoul.autonomous_schedule import (
     AutonomousRegistrySchedule,
@@ -12,6 +13,14 @@ from tonesoul.autonomous_schedule import (
     RegistryEntryState,
 )
 from tonesoul.dream_observability import JSON_FILENAME
+
+
+@pytest.fixture(autouse=True)
+def _freeze_schedule_clock():
+    """Keep registry freshness fixtures independent from wall-clock time."""
+    with freeze_time("2026-03-08 00:00:00Z"):
+        yield
+
 
 # ── RegistryEntryState ────────────────────────────────────────────────────────
 
@@ -376,6 +385,51 @@ def test_schedule_marks_payload_not_ok_when_registry_filter_matches_nothing(
     assert payload["results"][0]["registry_batch"]["selected_entry_ids"] == []
     assert runner.calls[0]["urls"] == []
     assert payload["state"]["cursor"] == 0
+
+
+def test_schedule_marks_payload_not_ok_when_registry_entries_are_stale(
+    tmp_path: Path,
+) -> None:
+    runner = DummyRunner()
+    schedule = AutonomousRegistrySchedule(
+        runner=runner,
+        registry_path=_write_registry(tmp_path / "registry.yaml"),
+        state_path=tmp_path / "state.json",
+        snapshot_path=tmp_path / "latest.json",
+        history_path=tmp_path / "history.jsonl",
+        interval_seconds=0.0,
+        sleep_func=lambda _seconds: None,
+    )
+
+    with freeze_time("2026-07-15 00:00:00Z"):
+        payload = schedule.run(
+            max_cycles=1,
+            entries_per_cycle=1,
+            urls_per_cycle=1,
+            cycle_kwargs={"generate_reflection": False},
+        )
+
+    assert payload["overall_ok"] is False
+    assert payload["results"][0]["registry_batch"]["selected_entry_ids"] == []
+    assert runner.calls[0]["urls"] == []
+    assert payload["results"][0]["registry_batch"]["warnings"] == [
+        "no approved curated source URLs were selected"
+    ]
+    registry_selection = payload["results"][0]["autonomous_payload"]["registry_selection"]
+    assert registry_selection["skipped_entries"] == [
+        {
+            "id": "alpha",
+            "reason": "stale review: age_days=136, max=120",
+        },
+        {
+            "id": "beta",
+            "reason": "stale review: age_days=136, max=120",
+        },
+        {
+            "id": "gamma",
+            "reason": "stale review: age_days=136, max=120",
+        },
+    ]
 
 
 def test_schedule_applies_revisit_cooldown_and_reports_deferred_entries(
