@@ -168,6 +168,7 @@ ROOT_MODULE_LAYER: dict[str, str] = {
     # surface — operator-facing entry adapters, diagnostics
     "diagnose": "surface",
     "claude_entry_adapter": "surface",
+    "accountability_panel": "surface",
     # domain — semantic field modellers, predictors, variance
     "ystm_demo": "domain",
     "variance_compressor": "domain",
