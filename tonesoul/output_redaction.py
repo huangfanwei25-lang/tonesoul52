@@ -26,15 +26,17 @@ Lexical redaction is a FLOOR, not a proof: it catches known shapes, not novel en
 claim "secrets cannot leak"; claim "known credential shapes are masked, and here is the record of
 what was". A missed shape is a bug to add a pattern + test for — not a reason to trust it blindly.
 
-Coverage was widened after a different-model (codex) review on 2026-07-01: env-style keys
-(OPENAI_API_KEY / AWS_SECRET_ACCESS_KEY), connection-string / URL userinfo, Basic auth, Stripe, and
-a narrowed sk- to kill a "sk-learn" false positive. KNOWN REMAINING GAPS (deliberate, honest): an
-UNQUOTED value after ":" is not masked (it is lexically indistinguishable from prose — "password:
-strong policy…" — so ":" is quoted-only by default); raw high-entropy hex/base64 with no key
-context is not masked (would false-positive on git SHAs); an unquoted value with spaces is masked
-only up to the first space. These are candidates for a future opt-in strict/entropy mode, not
-silent behaviour. Security-adjacent → re-confirm with a different model after each pattern change.
-See docs/plans/output_redaction_2026-07-01.md.
+Coverage was widened over two different-model (codex) review rounds on 2026-07-01. Round 1: env-style
+keys (OPENAI_API_KEY / AWS_SECRET_ACCESS_KEY), connection-string / URL userinfo, Basic auth, Stripe,
+and a narrowed sk- to kill a "sk-learn" false positive. Round 2: audit-idempotent quoted redaction,
+URI passwords containing ":", SECRET_KEY_BASE, colon-quoted values only at line start (so inline
+prose `note: password: "…"` is safe), and Basic auth gated behind an Authorization header. KNOWN
+REMAINING GAPS (deliberate, honest): an UNQUOTED value after ":" is not masked (lexically
+indistinguishable from prose); a QUOTED colon value masks only at line start (a mid-line YAML flow
+value is missed); raw high-entropy hex/base64 with no key context is not masked (would false-positive
+on git SHAs); an unquoted value with spaces is masked only up to the first space. Candidates for a
+future opt-in strict/entropy mode, not silent behaviour. Security-adjacent → re-confirm with a
+different model after each pattern change. See docs/plans/output_redaction_2026-07-01.md.
 """
 
 from __future__ import annotations
@@ -78,9 +80,9 @@ class RedactionResult:
 # listed before bare secret/token so alternation prefers them.
 _KEY_PREFIX = r"(?<![A-Za-z0-9_])(?:[A-Za-z0-9]+_)*"
 _KEY_WORDS = (
-    r"(?:api[_-]?key|secret[_-]?access[_-]?key|secret[_-]?key|access[_-]?key[_-]?id|"
-    r"access[_-]?token|client[_-]?secret|auth[_-]?token|private[_-]?key|credential|"
-    r"password|passwd|pwd|secret|token)"
+    r"(?:api[_-]?key|secret[_-]?access[_-]?key|secret[_-]?key[_-]?base|secret[_-]?key|"
+    r"access[_-]?key[_-]?id|access[_-]?token|client[_-]?secret|auth[_-]?token|private[_-]?key|"
+    r"credential|password|passwd|pwd|secret|token)"
 )
 
 # (kind, priority, compiled regex, group_to_mask). Higher priority wins an overlap. group 0 = whole
@@ -96,9 +98,24 @@ _SECRET_PATTERNS: list[tuple[str, int, re.Pattern[str], int]] = [
         ),
         0,
     ),
-    # credentials in a connection string / URL userinfo: scheme://user:PASSWORD@host
-    ("uri_userinfo", 95, re.compile(r"\b[a-z][a-z0-9+.\-]*://[^\s:/@]+:([^\s:/@]{3,})@"), 1),
-    ("basic_auth", 92, re.compile(r"\bBasic\s+[A-Za-z0-9+/]{16,}={0,2}"), 0),
+    # credentials in a connection string / URL userinfo: scheme://user:PASSWORD@host. The password
+    # group allows ":" and "/" (only whitespace/@ end it) so "s3c:r3t" is masked whole.
+    (
+        "uri_userinfo",
+        95,
+        re.compile(r"\b[a-z][a-z0-9+.\-]*://[^\s:/@]+:((?!\[REDACTED:)[^\s@]{3,})@"),
+        1,
+    ),
+    # Basic auth — require an Authorization / Proxy-Authorization header so prose "Basic word" is safe.
+    (
+        "basic_auth",
+        92,
+        re.compile(
+            r"(?:Proxy-)?Authorization\s*:\s*Basic\s+((?!\[REDACTED:)[A-Za-z0-9+/]{16,}={0,2})",
+            re.IGNORECASE,
+        ),
+        1,
+    ),
     (
         "jwt",
         90,
@@ -119,12 +136,29 @@ _SECRET_PATTERNS: list[tuple[str, int, re.Pattern[str], int]] = [
         0,
     ),
     ("bearer", 70, re.compile(r"\bBearer\s+[A-Za-z0-9._~+/-]{20,}=*"), 0),
-    # credential assignment, QUOTED value (":" or "=" ok — a quoted value is unambiguously config).
-    # keyword is non-capturing so the value is group 1; full quoted content is masked (spaces incl).
+    # credential assignment, "=" with a QUOTED value (any position). Full quoted content is masked
+    # (spaces incl). (?!\[REDACTED:) keeps it audit-idempotent.
     (
         "assignment_quoted",
         55,
-        re.compile(_KEY_PREFIX + _KEY_WORDS + r"""\s*[:=]\s*["']([^"']{6,})["']""", re.IGNORECASE),
+        re.compile(
+            _KEY_PREFIX + _KEY_WORDS + r"""\s*=\s*["']((?!\[REDACTED:)[^"']{6,})["']""",
+            re.IGNORECASE,
+        ),
+        1,
+    ),
+    # credential assignment, ":" with a QUOTED value but only at LINE START (YAML/config), so inline
+    # prose like  note: password: "strong policy"  is NOT eaten (":" mid-line stays prose).
+    (
+        "assignment_quoted",
+        54,
+        re.compile(
+            r"(?m)^[ \t]*"
+            + _KEY_PREFIX
+            + _KEY_WORDS
+            + r"""\s*:\s*["']((?!\[REDACTED:)[^"']{6,})["']""",
+            re.IGNORECASE,
+        ),
         1,
     ),
     # credential assignment, UNQUOTED value. Only "=" (a ":" would eat prose like "password: strong").

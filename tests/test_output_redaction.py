@@ -149,3 +149,47 @@ def test_quoted_value_with_spaces_fully_masked() -> None:
     assert result.redacted
     assert "correct" not in result.text and "staple" not in result.text
     assert "[REDACTED:assignment_quoted]" in result.text
+
+
+# --- round-2 codex re-review regression tests, 2026-07-01 ---
+
+
+def test_quoted_redaction_is_idempotent() -> None:
+    # round-2 #1: assignment_quoted must not re-report a finding on its own marker.
+    once = redact('password="correct horse battery staple"').text
+    twice = redact(once)
+    assert not twice.redacted and twice.text == once
+
+
+def test_uri_password_with_colon_masked_whole() -> None:
+    # round-2 #2: a password containing ":" must not leak its tail.
+    r = redact("DATABASE_URL=postgres://alice:s3c:r3tPassword@db.internal/app")
+    assert r.redacted
+    assert "r3tPassword" not in r.text and "s3c:r3t" not in r.text
+
+
+def test_secret_key_base_env_name_masked() -> None:
+    # round-2 #3: the common Rails SECRET_KEY_BASE.
+    r = redact("SECRET_KEY_BASE=abcdef1234567890abcdef")
+    assert r.redacted and "abcdef1234567890abcdef" not in r.text
+
+
+def test_inline_quoted_colon_prose_not_eaten() -> None:
+    # round-2 #4: ":" mid-line is prose, not config — must NOT be redacted.
+    text = 'note: password: "strong policy" is required for all'
+    r = redact(text)
+    assert not r.redacted and r.text == text
+
+
+def test_yaml_line_start_colon_quoted_is_masked() -> None:
+    # round-2 #4 (coverage half): a real line-start YAML secret IS masked.
+    r = redact('  api_key: "s3cr3tValueHere"')
+    assert r.redacted and "s3cr3tValueHere" not in r.text
+
+
+def test_basic_auth_requires_authorization_header() -> None:
+    # round-2 #5: bare "Basic <word>" in prose must not be redacted.
+    prose = "The Basic abcdefghijklmnop section is not a credential."
+    assert not redact(prose).redacted
+    hdr = redact("Authorization: Basic " + "dXNlcjpwYXNzd29yZDEyMw==")
+    assert hdr.redacted and "[REDACTED:basic_auth]" in hdr.text and "dXNlcj" not in hdr.text
