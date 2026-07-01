@@ -75,3 +75,33 @@ def test_seed_events_render() -> None:
     assert "沒站住" in html_doc and "站住" in html_doc
     # misses must be the majority-shown point
     assert sum(1 for e in events if not e.held) >= 1
+
+
+def test_interactive_elements_present() -> None:
+    html_doc = render_panel([_ev(claim="x", lane="self-check")], generated_at="t")
+    assert 'id="mark-form"' in html_doc  # the live "mark me" form
+    assert 'id="f-miss"' in html_doc  # miss-only filter
+    assert 'data-lane="self-check"' in html_doc  # rows carry filter attributes
+    assert "tools/accountability_panel/add.py" in html_doc  # JS emits the persistence CLI command
+    assert "<script>" in html_doc
+
+
+def test_append_event_persists_and_revalidates(tmp_path) -> None:
+    import json
+
+    from tools.accountability_panel.add import append_event
+
+    p = tmp_path / "events.json"
+    p.write_text("[]", encoding="utf-8")
+    ev = AccountabilityEvent(
+        claim="c1",
+        evidence_at_claim="—",
+        held=False,
+        caught_by="人(梵威)",
+        correction="fix",
+        lane="co-observer",
+    )
+    assert append_event(p, ev) == 1
+    data = json.loads(p.read_text(encoding="utf-8"))
+    assert data[0]["claim"] == "c1" and data[0]["lane"] == "co-observer"
+    assert append_event(p, ev) == 2  # appends, does not overwrite
