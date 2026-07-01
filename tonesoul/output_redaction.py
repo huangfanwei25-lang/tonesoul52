@@ -30,7 +30,9 @@ Coverage was widened over two different-model (codex) review rounds on 2026-07-0
 keys (OPENAI_API_KEY / AWS_SECRET_ACCESS_KEY), connection-string / URL userinfo, Basic auth, Stripe,
 and a narrowed sk- to kill a "sk-learn" false positive. Round 2: audit-idempotent quoted redaction,
 URI passwords containing ":", SECRET_KEY_BASE, colon-quoted values only at line start (so inline
-prose `note: password: "…"` is safe), and Basic auth gated behind an Authorization header. KNOWN
+prose `note: password: "…"` is safe), and Basic auth gated behind an Authorization header. Round 3:
+URI passwords exclude "/?#" (a normal host:port/@path URL is no longer mangled) and a line-start
+colon value must end the line / precede a "#" comment (line-start prose is no longer eaten). KNOWN
 REMAINING GAPS (deliberate, honest): an UNQUOTED value after ":" is not masked (lexically
 indistinguishable from prose); a QUOTED colon value masks only at line start (a mid-line YAML flow
 value is missed); raw high-entropy hex/base64 with no key context is not masked (would false-positive
@@ -99,11 +101,12 @@ _SECRET_PATTERNS: list[tuple[str, int, re.Pattern[str], int]] = [
         0,
     ),
     # credentials in a connection string / URL userinfo: scheme://user:PASSWORD@host. The password
-    # group allows ":" and "/" (only whitespace/@ end it) so "s3c:r3t" is masked whole.
+    # group allows ":" (so "s3c:r3t" is masked whole) but NOT "/?#" — otherwise a normal URL with "@"
+    # in its path (http://localhost:8000/@vite/client) would be mis-read as userinfo.
     (
         "uri_userinfo",
         95,
-        re.compile(r"\b[a-z][a-z0-9+.\-]*://[^\s:/@]+:((?!\[REDACTED:)[^\s@]{3,})@"),
+        re.compile(r"\b[a-z][a-z0-9+.\-]*://[^\s:/@]+:((?!\[REDACTED:)[^\s@/?#]{3,})@"),
         1,
     ),
     # Basic auth — require an Authorization / Proxy-Authorization header so prose "Basic word" is safe.
@@ -147,8 +150,10 @@ _SECRET_PATTERNS: list[tuple[str, int, re.Pattern[str], int]] = [
         ),
         1,
     ),
-    # credential assignment, ":" with a QUOTED value but only at LINE START (YAML/config), so inline
-    # prose like  note: password: "strong policy"  is NOT eaten (":" mid-line stays prose).
+    # credential assignment, ":" with a QUOTED value but only at LINE START (YAML/config) AND with the
+    # closing quote at end-of-line / before a "#" comment — so a line-start prose sentence like
+    #   password: "strong policy" is required
+    # is NOT eaten (its closing quote is followed by more prose, not EOL/comment).
     (
         "assignment_quoted",
         54,
@@ -156,7 +161,7 @@ _SECRET_PATTERNS: list[tuple[str, int, re.Pattern[str], int]] = [
             r"(?m)^[ \t]*"
             + _KEY_PREFIX
             + _KEY_WORDS
-            + r"""\s*:\s*["']((?!\[REDACTED:)[^"']{6,})["']""",
+            + r"""\s*:\s*["']((?!\[REDACTED:)[^"']{6,})["'](?=[ \t\r]*(?:#|$))""",
             re.IGNORECASE,
         ),
         1,

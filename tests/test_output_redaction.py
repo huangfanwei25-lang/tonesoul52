@@ -193,3 +193,21 @@ def test_basic_auth_requires_authorization_header() -> None:
     assert not redact(prose).redacted
     hdr = redact("Authorization: Basic " + "dXNlcjpwYXNzd29yZDEyMw==")
     assert hdr.redacted and "[REDACTED:basic_auth]" in hdr.text and "dXNlcj" not in hdr.text
+
+
+# --- round-3 codex re-review regression tests, 2026-07-01 ---
+
+
+def test_uri_does_not_eat_normal_host_port_url() -> None:
+    # round-3 #1: a dev URL with "@" in the path must NOT be mistaken for userinfo.
+    text = "dev server http://localhost:8000/@vite/client is loaded"
+    r = redact(text)
+    assert not r.redacted and r.text == text
+
+
+def test_line_start_colon_requires_quote_at_eol_or_comment() -> None:
+    # round-3 #2: a line-start prose sentence starting "password:" must NOT be eaten ...
+    assert not redact('password: "strong policy" is required for all users.').redacted
+    # ... but a real YAML value (quote at EOL, or before a "#" comment) IS masked.
+    assert redact('api_key: "s3cr3tValueHere"').redacted
+    assert redact('token: "s3cr3tValueHere"  # prod').redacted
