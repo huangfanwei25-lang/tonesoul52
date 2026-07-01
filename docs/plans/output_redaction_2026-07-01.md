@@ -28,5 +28,13 @@ lexical redaction 是**地板不是證明**:抓已知 shape、抓不到新編碼
 
 ## 狀態
 - primitive + tests + probe baseline(`docs/status/output_redaction_eval_2026-07-01.md`)已落。
-- **security-adjacent → 合併前要不同模型(codex)review**(pattern 正確性、繞過、誤判)。PR 開著、
-  **不自動 merge**,等 codex。
+- **codex(不同模型)round-1 review 完成(2026-07-01)** — 抓到 5 條真 finding,全修 + 各加回歸測試:
+  - **F1** env-style key 漏遮(`OPENAI_API_KEY=` 因 `\b`+`_` 不匹配)→ 加 `_KEY_PREFIX` env 前綴。
+  - **F2** 空白/`&` partial redaction 留下後半 secret → 加 `assignment_quoted` 全 quoted-capture。
+  - **F3** connection-string / URL userinfo / Basic auth / Stripe 漏 → 加 targeted patterns。
+  - **F4** `sk-` 誤判(`sk-learn-compatible`)→ 收窄到 `sk-ant-`/`sk-proj-` 或 40+ 連續字元。
+  - **F5** `:` 吃 prose(`password: strong policy`)→ 未加引號的 value 只認 `=`。
+  - idempotency / overlap / audit-preview:codex 判 **no-finding**(設計成立)。
+- **known gaps(誠實、刻意)** 見 §N coda:未加引號的 `:` value、無 context 的 raw hex/base64、
+  未加引號含空白的 value——候選 opt-in strict/entropy mode。
+- **仍 hold merge,等 codex re-confirm**(每次改 pattern 都要不同模型再驗一次)。16 tests + probe 綠。

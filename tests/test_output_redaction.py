@@ -28,13 +28,11 @@ def test_private_key_block_masked_whole() -> None:
 
 
 def test_assignment_keeps_key_masks_value() -> None:
-    result = redact('api_key="s3cr3tValue123" and password: hunter2xyz')
-    assert "api_key=" in result.text and "password:" not in result.text.replace(
-        "password: [REDACTED:assignment]", ""
-    )  # key names preserved
+    result = redact('api_key="s3cr3tValue123" and password=hunter2xyz')
+    assert "api_key=" in result.text and "password=" in result.text  # key names preserved
     assert "s3cr3tValue123" not in result.text
     assert "hunter2xyz" not in result.text
-    assert all(f.kind == "assignment" for f in result.findings)
+    assert all(f.kind.startswith("assignment") for f in result.findings)
 
 
 def test_pii_email_is_opt_in() -> None:
@@ -90,3 +88,64 @@ def test_empty_input() -> None:
     r = redact("")
     assert r.text == "" and not r.redacted
     assert not has_secrets("")
+
+
+# --- regression tests for the codex (different-model) review, 2026-07-01 ---
+
+
+def test_env_style_prefixed_keys_are_masked() -> None:
+    # codex F1: the most common leak vector — env var names with a prefix.
+    for line, secret in [
+        ("OPENAI_API_KEY=abcdef1234567890", "abcdef1234567890"),
+        ("DB_PASSWORD=hunter2supersecret", "hunter2supersecret"),
+        ("AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY", "wJalrXUtnFEMI"),
+        ("OAUTH_CLIENT_SECRET=abcdef1234567890", "abcdef1234567890"),
+    ]:
+        result = redact(line)
+        assert result.redacted, line
+        assert secret not in result.text, line
+
+
+def test_connection_string_and_url_userinfo_masked() -> None:
+    # codex F3: password embedded in a URI/connection string.
+    for text, secret in [
+        ("DATABASE_URL=postgres://alice:s3cr3tPassword@db.internal/app", "s3cr3tPassword"),
+        ("visit https://alice:s3cr3tPassword@example.com/path now", "s3cr3tPassword"),
+    ]:
+        result = redact(text)
+        assert result.redacted and secret not in result.text, text
+
+
+def test_basic_auth_and_stripe_masked() -> None:
+    # codex F3
+    r1 = redact("Authorization: Basic dXNlcjpwYXNzd29yZDEyMw==")
+    assert r1.redacted and "[REDACTED:basic_auth]" in r1.text and "dXNlcj" not in r1.text
+    # assembled from parts so the secret shape never sits contiguously in git (push-protection),
+    # while redact() still sees the full shape at runtime.
+    stripe = "sk_" + "live_" + "51N9aBcDeFgHiJkLmNoPqRsTuVwXyZ01"
+    r2 = redact(f"the key {stripe} leaked")
+    assert r2.redacted and stripe not in r2.text
+
+
+def test_sk_learn_is_not_a_false_positive() -> None:
+    # codex F4: hyphenated prose starting sk- must NOT be redacted.
+    text = "This package is sk-learn-compatible-model for demos."
+    result = redact(text)
+    assert not result.redacted
+    assert result.text == text
+
+
+def test_colon_prose_is_not_partially_eaten() -> None:
+    # codex F5: an UNQUOTED value after ":" is prose-ambiguous, so not masked by default.
+    text = "password: strong policy is required for all users."
+    result = redact(text)
+    assert not result.redacted
+    assert result.text == text
+
+
+def test_quoted_value_with_spaces_fully_masked() -> None:
+    # codex F2: a quoted multi-word secret must be masked WHOLE — no tail left behind.
+    result = redact('password = "correct horse battery staple"')
+    assert result.redacted
+    assert "correct" not in result.text and "staple" not in result.text
+    assert "[REDACTED:assignment_quoted]" in result.text

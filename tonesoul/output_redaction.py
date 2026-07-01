@@ -25,8 +25,16 @@ safety certification and NOT a claim that "secrets cannot leak".
 Lexical redaction is a FLOOR, not a proof: it catches known shapes, not novel encodings. Never
 claim "secrets cannot leak"; claim "known credential shapes are masked, and here is the record of
 what was". A missed shape is a bug to add a pattern + test for — not a reason to trust it blindly.
-Because it is security-adjacent, it wants a different-model review before being trusted on real
-output. See docs/plans/output_redaction_2026-07-01.md.
+
+Coverage was widened after a different-model (codex) review on 2026-07-01: env-style keys
+(OPENAI_API_KEY / AWS_SECRET_ACCESS_KEY), connection-string / URL userinfo, Basic auth, Stripe, and
+a narrowed sk- to kill a "sk-learn" false positive. KNOWN REMAINING GAPS (deliberate, honest): an
+UNQUOTED value after ":" is not masked (it is lexically indistinguishable from prose — "password:
+strong policy…" — so ":" is quoted-only by default); raw high-entropy hex/base64 with no key
+context is not masked (would false-positive on git SHAs); an unquoted value with spaces is masked
+only up to the first space. These are candidates for a future opt-in strict/entropy mode, not
+silent behaviour. Security-adjacent → re-confirm with a different model after each pattern change.
+See docs/plans/output_redaction_2026-07-01.md.
 """
 
 from __future__ import annotations
@@ -63,6 +71,18 @@ class RedactionResult:
         return bool(self.findings)
 
 
+# Credential-assignment key matching. `_KEY_PREFIX` lets env-style names match
+# (OPENAI_API_KEY / DB_PASSWORD / AWS_SECRET_ACCESS_KEY): the lookbehind anchors the whole name at a
+# real boundary, the (?:[A-Za-z0-9]+_)* eats env prefixes, and the required \s*[:=] after the keyword
+# is the effective right boundary (so TOKENIZER=... / AUTHOR=... do NOT match). Longer compounds are
+# listed before bare secret/token so alternation prefers them.
+_KEY_PREFIX = r"(?<![A-Za-z0-9_])(?:[A-Za-z0-9]+_)*"
+_KEY_WORDS = (
+    r"(?:api[_-]?key|secret[_-]?access[_-]?key|secret[_-]?key|access[_-]?key[_-]?id|"
+    r"access[_-]?token|client[_-]?secret|auth[_-]?token|private[_-]?key|credential|"
+    r"password|passwd|pwd|secret|token)"
+)
+
 # (kind, priority, compiled regex, group_to_mask). Higher priority wins an overlap. group 0 = whole
 # match; a positive int masks only that capture group (so an assignment keeps its key name).
 # Ordered most-specific-first. Deliberately conservative: high-signal shapes, low false positives.
@@ -76,6 +96,9 @@ _SECRET_PATTERNS: list[tuple[str, int, re.Pattern[str], int]] = [
         ),
         0,
     ),
+    # credentials in a connection string / URL userinfo: scheme://user:PASSWORD@host
+    ("uri_userinfo", 95, re.compile(r"\b[a-z][a-z0-9+.\-]*://[^\s:/@]+:([^\s:/@]{3,})@"), 1),
+    ("basic_auth", 92, re.compile(r"\bBasic\s+[A-Za-z0-9+/]{16,}={0,2}"), 0),
     (
         "jwt",
         90,
@@ -86,19 +109,34 @@ _SECRET_PATTERNS: list[tuple[str, int, re.Pattern[str], int]] = [
     ("github_token", 85, re.compile(r"\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{36,}\b"), 0),
     ("google_api_key", 85, re.compile(r"\bAIza[0-9A-Za-z_-]{35}\b"), 0),
     ("slack_token", 85, re.compile(r"\bxox[baprs]-[A-Za-z0-9-]{10,}\b"), 0),
-    ("anthropic_openai_key", 85, re.compile(r"\bsk-(?:ant-)?[A-Za-z0-9_-]{16,}\b"), 0),
+    ("stripe_key", 85, re.compile(r"\b(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{10,}\b"), 0),
+    # sk- keys: require a known provider prefix (ant-/proj-) OR a long contiguous run, so hyphenated
+    # prose like "sk-learn-compatible" does NOT match.
+    (
+        "anthropic_openai_key",
+        84,
+        re.compile(r"\bsk-(?:(?:ant|proj)-[A-Za-z0-9_-]{16,}|[A-Za-z0-9]{40,})\b"),
+        0,
+    ),
     ("bearer", 70, re.compile(r"\bBearer\s+[A-Za-z0-9._~+/-]{20,}=*"), 0),
-    # credential assignment: mask only the value (group 3), keep the key name (group 1).
-    # The (?!\[REDACTED:) lookahead keeps this idempotent — it will not re-mask its own marker.
+    # credential assignment, QUOTED value (":" or "=" ok — a quoted value is unambiguously config).
+    # keyword is non-capturing so the value is group 1; full quoted content is masked (spaces incl).
+    (
+        "assignment_quoted",
+        55,
+        re.compile(_KEY_PREFIX + _KEY_WORDS + r"""\s*[:=]\s*["']([^"']{6,})["']""", re.IGNORECASE),
+        1,
+    ),
+    # credential assignment, UNQUOTED value. Only "=" (a ":" would eat prose like "password: strong").
+    # (?!\[REDACTED:) keeps it idempotent — it will not re-mask its own marker.
     (
         "assignment",
         50,
         re.compile(
-            r"\b(api[_-]?key|secret|token|password|passwd|pwd|access[_-]?token|client[_-]?secret)\b"
-            r"(\s*[:=]\s*)[\"']?((?!\[REDACTED:)[^\s\"'&]{6,})[\"']?",
+            _KEY_PREFIX + _KEY_WORDS + r"""\s*=\s*(?!["'])((?!\[REDACTED:)[^\s"'&]{6,})""",
             re.IGNORECASE,
         ),
-        3,
+        1,
     ),
 ]
 
