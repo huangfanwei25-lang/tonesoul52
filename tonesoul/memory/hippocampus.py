@@ -1,7 +1,7 @@
 # PARTIAL-LIVE (as of 2026-06-15): of THIS root module, only the static compute_error_vector is live (used by the openclaw recall path). recall / recall_corrective / _apply_tension_context_boost are tested-but-NO-live-caller (parked RFC-012); the class is never instantiated at runtime. The default-ON corrective-recall branch (unified_pipeline.py) computes a ~zero error vector in the no-rewrite case (silent near-no-op). Do NOT delete as redundant — distinct from memory/openclaw/hippocampus.py (the primary recall). See docs/plans/01_active/tier4_structural_decisions_2026-06-15.md.
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List
 
 import numpy as np
@@ -73,8 +73,10 @@ class Hippocampus:
     ) -> float:
         """Applies exponential time decay: score = score * exp(-lambda * days_old)"""
         try:
-            record_time = datetime.fromisoformat(ingested_at)
-            days_old = (datetime.utcnow() - record_time).days
+            record_time = datetime.fromisoformat(ingested_at.replace("Z", "+00:00"))
+            if record_time.tzinfo is None:
+                record_time = record_time.replace(tzinfo=timezone.utc)
+            days_old = (datetime.now(timezone.utc) - record_time.astimezone(timezone.utc)).days
             days_old = max(0, days_old)
             decay_rate = 0.01  # Approx for half-life of 69 days
             return float(base_score * np.exp(-decay_rate * days_old))
@@ -95,7 +97,7 @@ class Hippocampus:
             meta = self.metadata[idx]
             raw_score = distances[0][i]
             decayed_score = self._apply_time_decay(
-                raw_score, meta.get("ingested_at", datetime.utcnow().isoformat())
+                raw_score, meta.get("ingested_at", datetime.now(timezone.utc).isoformat())
             )
 
             results.append({"doc": meta, "score": decayed_score, "type": "vector"})

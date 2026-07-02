@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 __ts_layer__ = "domain"
@@ -57,7 +57,7 @@ class MarketStimulus:
     date: str
     data: Dict[str, Any]
     source: str = "FinMind/TWSE"
-    fetched_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    fetched_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     subjectivity_layer: str = "event"  # raw data = event layer
 
 

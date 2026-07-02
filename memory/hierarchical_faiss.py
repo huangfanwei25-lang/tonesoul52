@@ -17,15 +17,13 @@ Design based on Moltbook discussion:
 """
 
 import json
-import os
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import List, Dict, Any, Optional, Tuple
-import numpy as np
-from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 try:
-    from sentence_transformers import SentenceTransformer
     import faiss
+    from sentence_transformers import SentenceTransformer
 except ImportError:
     print("❌ Missing dependencies. Install with:")
     print("   pip install sentence-transformers faiss-cpu")
@@ -127,7 +125,7 @@ class HierarchicalVowIndex:
             "scope": scope,
             "verdict": verdict,
             "agent_id": agent_id,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "metadata": metadata or {},
         }
 
@@ -343,7 +341,7 @@ def demo():
     )
 
     print(f"\nTest statement: '{test_statement}'")
-    print(f"Proposed verdict: APPROVE")
+    print("Proposed verdict: APPROVE")
     print(f"\nFound {len(contradictions)} potential issues:")
 
     for c in contradictions:
