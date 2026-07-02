@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-07-02T06:46:50Z",
+  "generated_at": "2026-07-02T08:49:15Z",
   "source": "scripts/run_identity_card.py",
   "claim_boundary": "此卡只聚合可觀察痕跡(git trailers / committed artifacts / state 檔)。「狀態」是 observable state,不是 felt-self 宣稱(AXIOMS meta.not_for: consciousness-claim)。痕跡的地圖不等於內在生活。",
   "who": {
-    "current_agent": "claude-fable-5 (嶼)",
+    "current_agent": "Codex",
     "recent_agents_from_git_trailers": {
-      "claude-fable-5[1m]": 4,
+      "claude-fable-5[1m]": 14,
       "claude-opus-4-8[1m]": 10
     }
   },
@@ -24,22 +24,22 @@
   },
   "when": {
     "evidence_freshness": {
-      "artifact_count": 72,
-      "fresh": 42,
-      "stale_assertive": 16,
+      "artifact_count": 73,
+      "fresh": 59,
+      "stale_assertive": 0,
       "stale_episodic": 5,
       "untimestamped_assertive": 0,
       "untimestamped_episodic": 9,
       "future_dated_assertive": 0,
       "future_dated_episodic": 0,
-      "failure_count": 16
+      "failure_count": 0
     },
-    "freshness_generated_at": "2026-07-02T05:13:29Z",
+    "freshness_generated_at": "2026-07-02T08:49:15Z",
     "note": null
   },
   "where": {
-    "branch": "claude/identity-card-tranche4-20260702",
-    "head": "0de6f05",
+    "branch": "codex/refresh-identity-card",
+    "head": "7a0fe88",
     "remote": "https://github.com/Fan1234-1/tonesoul52.git"
   },
   "things": {
