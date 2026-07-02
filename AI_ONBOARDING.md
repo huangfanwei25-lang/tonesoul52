@@ -55,6 +55,7 @@ Do not:
 - continuity, packet, compaction, or handoff: `docs/architecture/TONESOUL_SHARED_R_MEMORY_OPERATIONS_CONTRACT.md`
 - knowledge, retrieval, or residue boundaries: `docs/architecture/TONESOUL_KNOWLEDGE_LAYER_BOUNDARY_CONTRACT.md` and `docs/architecture/KNOWLEDGE_SURFACES_BOUNDARY_MAP.md`
 - evidence posture or overclaim risk: `docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md`
+- claim boundaries (mechanism vs observable vs interpretation): `docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md` — mandatory before writing any capability claim into an entrypoint doc
 - new advisory sensors / Tier-5 gates: `docs/status/semantic_overclaim_eval_2026-06-15.md` and `docs/status/intent_proportionality_eval_2026-06-15.md` (both advisory-only, default-OFF, measured not calibrated; design rationale in `DESIGN.md` "Tier-5 Advisory Sensors")
 - where ToneSoul sits vs other governance/accountability work: `docs/RELATED_WORK.md`
 - whole-system explanation: `DESIGN.md` then `docs/architecture/TONESOUL_SYSTEM_OVERVIEW_AND_SUBSYSTEM_GUIDE.md`
