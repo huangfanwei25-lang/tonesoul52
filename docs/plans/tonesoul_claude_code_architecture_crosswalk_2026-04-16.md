@@ -119,10 +119,10 @@ Claude Code frames an agent system around six abstractions:
 
 ToneSoul maps cleanly onto the same frame:
 
-- query loop -> [tonesoul/unified_pipeline.py](/C:/Users/user/Desktop/倉庫/tonesoul/unified_pipeline.py:1), [tonesoul/council/runtime.py](/C:/Users/user/Desktop/倉庫/tonesoul/council/runtime.py:217)
-- tools -> shell/script/router execution paths, [tonesoul/runtime_adapter.py](/C:/Users/user/Desktop/倉庫/tonesoul/runtime_adapter.py:1)
+- query loop -> [tonesoul/unified_pipeline.py](../../tonesoul/unified_pipeline.py), [tonesoul/council/runtime.py](../../tonesoul/council/runtime.py)
+- tools -> shell/script/router execution paths, [tonesoul/runtime_adapter.py](../../tonesoul/runtime_adapter.py)
 - tasks -> claim/checkpoint/compaction/shared-edit coordination lanes
-- state -> [tonesoul/runtime_adapter.py](/C:/Users/user/Desktop/倉庫/tonesoul/runtime_adapter.py:1542), [tonesoul/diagnose.py](/C:/Users/user/Desktop/倉庫/tonesoul/diagnose.py:1)
+- state -> [tonesoul/runtime_adapter.py](../../tonesoul/runtime_adapter.py), [tonesoul/diagnose.py](../../tonesoul/diagnose.py)
 - memory -> traces, snapshots, journals, store backends
 - hooks -> preflight chain, vow/boundary intercepts, skill contract routing
 
@@ -132,8 +132,8 @@ This chapter is the strongest evidence that ToneSoul should be explained as an `
 
 ToneSoul has the same need for a reliable bootstrap path:
 
-- [scripts/start_agent_session.py](/C:/Users/user/Desktop/倉庫/scripts/start_agent_session.py:1)
-- [tonesoul/diagnose.py](/C:/Users/user/Desktop/倉庫/tonesoul/diagnose.py:1)
+- [scripts/start_agent_session.py](../../scripts/start_agent_session.py)
+- [tonesoul/diagnose.py](../../tonesoul/diagnose.py)
 - packet-first session start and ack surfaces
 
 That means ToneSoul is not just "generate text and hope."
@@ -229,9 +229,9 @@ ToneSoul has real multi-agent coordination concerns already:
 
 Relevant repo anchors include:
 
-- [scripts/run_task_claim.py](/C:/Users/user/Desktop/倉庫/scripts/run_task_claim.py:1)
-- [scripts/save_checkpoint.py](/C:/Users/user/Desktop/倉庫/scripts/save_checkpoint.py:1)
-- [scripts/save_compaction.py](/C:/Users/user/Desktop/倉庫/scripts/save_compaction.py:1)
+- [scripts/run_task_claim.py](../../scripts/run_task_claim.py)
+- [scripts/save_checkpoint.py](../../scripts/save_checkpoint.py)
+- [scripts/save_compaction.py](../../scripts/save_compaction.py)
 
 This is one of the clearest reasons not to describe ToneSoul as "just a chatbot."
 
@@ -255,9 +255,9 @@ ToneSoul already has several persistence strata:
 
 Key repo anchors:
 
-- [tonesoul/store.py](/C:/Users/user/Desktop/倉庫/tonesoul/store.py:65)
-- [tonesoul/backends/file_store.py](/C:/Users/user/Desktop/倉庫/tonesoul/backends/file_store.py:19)
-- [tonesoul/backends/redis_store.py](/C:/Users/user/Desktop/倉庫/tonesoul/backends/redis_store.py:18)
+- [tonesoul/store.py](../../tonesoul/store.py)
+- [tonesoul/backends/file_store.py](../../tonesoul/backends/file_store.py)
+- [tonesoul/backends/redis_store.py](../../tonesoul/backends/redis_store.py)
 
 This is a very strong match to the "memory is part of the architecture, not an afterthought" reading.
 
@@ -265,7 +265,7 @@ This is a very strong match to the "memory is part of the architecture, not an a
 
 ToneSoul has direct analogues:
 
-- skill routing via [tonesoul/council/skill_parser.py](/C:/Users/user/Desktop/倉庫/tonesoul/council/skill_parser.py:1)
+- skill routing via [tonesoul/council/skill_parser.py](../../tonesoul/council/skill_parser.py)
 - bounded hook/preflight chains in current operator guidance
 - vow and governance intercepts before write actions
 

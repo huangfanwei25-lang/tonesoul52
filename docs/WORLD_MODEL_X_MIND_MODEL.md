@@ -148,7 +148,7 @@ ToneSoul / YuHun 提供的是**心智層**：
 
 ## Implementation
 
-See: [`core/decision_kernel.py`](./core/decision_kernel.py)
+See: ``core/decision_kernel.py``（設計稿，無對應實作）
 
 ```python
 from core.decision_kernel import DecisionKernel, create_decision_kernel

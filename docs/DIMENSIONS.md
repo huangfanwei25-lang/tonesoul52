@@ -34,4 +34,5 @@ A **PASS** decision requires meeting minimum thresholds for E, R, and I.
 ## 4. SRP Specification
 $$ SRP = OperationalIntent - PermittedOutput $$
 *   **Definition**: A Governance Gap (Operational Gap).
+*   **Status (2026-07-02 公式審計)**: **aspirational / doc-only** — `SRP`、`OperationalIntent`、`PermittedOutput` 在 `tonesoul/` 無任何對應實作;此式是設計語彙,不是被計算的量。
 *   **Note**: NOT strict emotional pain or desire. Auxiliary signal for I and R.

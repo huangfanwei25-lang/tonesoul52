@@ -1,7 +1,7 @@
 # ToneSoul Beta Wave Day 1-2 Execution Pack (2026-04-28)
 
 > Purpose: turn the 14-day beta wave into an immediately runnable Day 1-2 setup pack: fixed task shapes, evidence schema, artifact list, and operator steps.
-> Status: execution aid only. This file does not outrank [task.md](../../task.md), latest `docs/status/*`, code, or tests.
+> Status: execution aid only. This file does not outrank [task.md](../../../task.md), latest `docs/status/*`, code, or tests.
 > Scope: Day 1-2 only. This pack does not cover later calibration, enforcement, or public-claim decisions.
 
 ---
@@ -10,7 +10,7 @@
 
 Read these before starting the Day 1-2 setup:
 
-1. [task.md](../../task.md)
+1. [task.md](../../../task.md)
 2. [README.md](../../README.md)
 3. [tonesoul_beta_wave_14day_2026-04-28.md](tonesoul_beta_wave_14day_2026-04-28.md)
 4. latest collaborator-beta preflight under `docs/status/collaborator_beta_preflight_latest.{md,json}`

@@ -13,12 +13,12 @@ This note covers two specific source materials:
 1. `asgard-ai-platform/skills`
    Source: <https://github.com/asgard-ai-platform/skills>
 2. `PSE v0.2 / Prompt Semantic Engine`
-   Local source: [remixed-2e84cd67.html](</C:/Users/user/Downloads/remixed-2e84cd67.html:1>)
+   Local source: `remixed-2e84cd67.html`（來源為本機下載檔，未入庫）
 
 Detailed companion schemas:
 
-- [ToneSoul Skill Capsule Registry Schema](/C:/Users/user/Desktop/倉庫/docs/plans/tonesoul_skill_capsule_registry_schema_2026-04-16.md)
-- [ToneSoul Rhetoric Operator Registry Schema](/C:/Users/user/Desktop/倉庫/docs/plans/tonesoul_rhetoric_operator_registry_schema_2026-04-16.md)
+- [ToneSoul Skill Capsule Registry Schema](../../docs/plans/tonesoul_skill_capsule_registry_schema_2026-04-16.md)
+- [ToneSoul Rhetoric Operator Registry Schema](../../docs/plans/tonesoul_rhetoric_operator_registry_schema_2026-04-16.md)
 
 The goal is not to "adopt" either source whole.
 

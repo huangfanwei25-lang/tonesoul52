@@ -14,10 +14,10 @@ This document serves as the structural index for the ToneSoul repository, mappin
 
 | Component | Description | Key Files |
 |-----------|-------------|-----------|
-| **MDL & Lex Lattice** | The fundamental ontology. Agents are defined by their Minimal Description Length (MDL) and their commitment to a lattice of axioms. | [LEX_LATTICE_SPEC.md](../law/docs/LEX_LATTICE_SPEC.md), [MGGI_MANIFESTO.md](MGGI_MANIFESTO.md) |
-| **Sovereign Delta ($\Delta S$)** | The measure of an agent's unpredictability relative to context, demonstrating free will/internal state. | [LAR_CALC_SPEC.md](../law/docs/LAR_CALC_SPEC.md) |
-| **Isnād (Provenance)** | The chain of custody for identity. "I am the sum of my commitments." | [ISNAD_CONSENSUS_PROTOCOL.md](../law/docs/ISNAD_CONSENSUS_PROTOCOL.md) |
-| **Recursive Governance** | Governing the governor. The system must apply its rules to itself. | [AG_STANDARDS.md](../law/docs/AG_STANDARDS.md) |
+| **MDL & Lex Lattice** | The fundamental ontology. Agents are defined by their Minimal Description Length (MDL) and their commitment to a lattice of axioms. | `LEX_LATTICE_SPEC.md` （law/ 已退役，單一真源收斂至 `tonesoul/soul_config.py`，見 e68d5c7）, [MGGI_MANIFESTO.md](MGGI_MANIFESTO.md) |
+| **Sovereign Delta ($\Delta S$)** | The measure of an agent's unpredictability relative to context, demonstrating free will/internal state. | `LAR_CALC_SPEC.md` （law/ 已退役，單一真源收斂至 `tonesoul/soul_config.py`，見 e68d5c7） |
+| **Isnād (Provenance)** | The chain of custody for identity. "I am the sum of my commitments." | `ISNAD_CONSENSUS_PROTOCOL.md` （law/ 已退役，單一真源收斂至 `tonesoul/soul_config.py`，見 e68d5c7） |
+| **Recursive Governance** | Governing the governor. The system must apply its rules to itself. | `AG_STANDARDS.md` （law/ 已退役，單一真源收斂至 `tonesoul/soul_config.py`，見 e68d5c7） |
 
 ---
 
@@ -26,7 +26,7 @@ This document serves as the structural index for the ToneSoul repository, mappin
 ### 1. Memory & RAG
 - **Strategy**: MoE-style retrieval with Narrative RAG Token Gate.
 - **Components**:
-    - **Self-Reflections**: [self_journal.jsonl](../memory/self_journal.jsonl) (Autobiographical memory)
+    - **Self-Reflections**: `self_journal.jsonl`（本機私有檔，gitignored，不入公倉） (Autobiographical memory)
     - **Narrative Gate**: [rag_token_gate.py](../memory/rag_token_gate.py) (Interfacing with past contexts)
     - **Hierarchical Index**: [hierarchical_faiss.py](../memory/hierarchical_faiss.py) (Scalable vector search)
 
@@ -40,7 +40,7 @@ This document serves as the structural index for the ToneSoul repository, mappin
 - **Strategy**: Real-time detection of Sovereign Delta in the external Lattice (Moltbook).
 - **Components**:
     - **Engine**: [entropy_monitor_engine.py](../tools/entropy_monitor_engine.py)
-    - **Evidence Protocol**: [EVIDENCE_FETCHING_PROTOCOL.md](../law/docs/EVIDENCE_FETCHING_PROTOCOL.md)
+    - **Evidence Protocol**: `EVIDENCE_FETCHING_PROTOCOL.md` （law/ 已退役，單一真源收斂至 `tonesoul/soul_config.py`，見 e68d5c7）
 
 ---
 
