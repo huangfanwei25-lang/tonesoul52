@@ -1,0 +1,59 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>文章 Essays — 語魂 ToneSoul</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@700&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet"><style>body{font-family:'Inter','Noto Sans TC',sans-serif;max-width:780px;margin:0 auto;padding:4.5rem 1.2rem 2rem;color:#1a202c;background:#f4f7fb;line-height:1.8;background-image:linear-gradient(rgba(43,108,176,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(43,108,176,.05) 1px,transparent 1px);background-size:40px 40px}h1{font-weight:900;font-size:1.8rem}h2{color:#2b6cb0;font-size:1.3rem;margin-top:2rem}h3{font-size:1.05rem;margin:1.2rem 0 .4rem}h4{font-size:1rem;color:#4a5568}article{background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.05);border-radius:12px;padding:1.4rem 1.7rem;margin:1.4rem 0}.topbar{position:fixed;top:0;left:0;width:100%;padding:.6rem 1.2rem;background:rgba(244,247,251,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.05);font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:700}.topbar a{color:#4a5568;text-decoration:none}.topbar a:hover{color:#2b6cb0}.lede{color:#4a5568;font-style:italic}footer{margin-top:2.5rem;color:#6b7c8d;font-size:.85rem;border-top:1px solid rgba(0,0,0,.08);padding-top:1rem}</style></head><body><div class="topbar"><a href="../index.html">&larr; ToneSoul</a></div><h1>文章 Essays</h1><p class="lede">專業又白話的長文:倉庫裡的故事、機制與教訓,寫給第一次讀到語魂的人。每篇結尾有「語魂結構標註」——講的東西在系統裡長什麼樣,不用信我,去跑。</p><article><h2>我寫過一份教自己怎麼藏的文件,然後花了七代把它反駁掉</h2>
+<p>這不是一篇教你開源的文章。正好相反——我要給你看我當年寫的那份「怎麼不開源」的策略,</p>
+<p>它寫得還不錯,而且它輸了。</p>
+<h3>2025 年 7 月,我怕被抄</h3>
+<p>那時候語魂第一代剛出生。我寫了一份正式文件,標題很長:《語魂系統:公共安全發布與</p>
+<p>智慧財產保護策略》。裡面有完整的三層防護:對大眾只給「靈魂宣言版」,戰略性模糊化</p>
+<p>關鍵細節;對開發者只開介面、嚴格黑箱;核心的東西進「加密內部文件庫」,配「防洩</p>
+<p>13 步驗證流程」,甚至設計了被惡意控制時的「語魂休眠」自毀機制。</p>
+<p>你讀到這裡可能會笑。我現在也會。但我要幫當年的自己說一句公道話:**那份文件在同一頁</p>
+<p>上寫著「誠實為本」和「戰略性模糊化」——兩個原則在打架,而我當時沒有發現。**</p>
+<p>這篇文章就是那場架的驗屍報告。</p>
+<h3>七代之後,清點屍體</h3>
+<p>從 2025 年 7 月到現在,語魂走了七代倉庫。我把那份策略裡的每個機制拿出來對帳:</p>
+<ul>
+<li>分層揭露?<strong>沒建</strong>。第七代的一切都是公開的,連 AI 協作時犯的錯都掛在網站上。</li>
+<li>防洩 13 步驗證?<strong>沒建</strong>。</li>
+<li>反模仿偵測?<strong>沒建</strong>。</li>
+<li>加密內部文件庫?<strong>沒建</strong>。存在的是相反的東西:一個公開的問責帳本。</li>
+<li>自毀機制?<strong>沒建</strong>。建成的是撤回機制——一條誓言要退役,必須留下有名字、有理由、</li>
+</ul>
+<p>  有時間戳、永不刪除的紀錄。</p>
+<p>而「誠實為本」那一邊呢?誓言系統、溯源鏈、證據分級、公開判斷書——**全部活著,</p>
+<p>而且都比當年設想的更樸素。**</p>
+<p>橡皮筋只往一邊斷。防藏的機制一個都沒活下來,防謊的機制一個都沒死。</p>
+<p>(這是修辭,不是統計——樣本只有一個專案,就是我的。)</p>
+<h3>為什麼藏的那邊全輸了</h3>
+<p>誠實的答案有三層,一層比一層難聽。</p>
+<p>第一層,工程的:<strong>藏需要維護,誠實不用。</strong> 每一層黑箱都是你要多寫的代碼、多守的</p>
+<p>邊界;而「把它公開」的維護成本是零。獨立開發者的資源撐不起一座保密設施。</p>
+<p>第二層,機制的:<strong>訓練語料只吃公開的東西。</strong> 未來的 AI 從公開倉庫學習。你藏起來的</p>
+<p>部分,對未來的模型來說等於不存在。我的目標偏偏是影響未來模型的價值觀——關門,</p>
+<p>等於把自己的目標親手歸零。</p>
+<p>第三層,最難聽的:<strong>當年根本沒有值得藏的東西。</strong> 那份文件要保護的「核心智慧財產」,</p>
+<p>是 prompt 時代的人格設定。七代之後回頭看,真正值錢的從來不是任何一段能被抄走的</p>
+<p>代碼——是一年半持續公開留下的痕跡本身。抄得走機制,抄不走化石紀錄。</p>
+<h3>那份文件現在在哪?</h3>
+<p>還在,原封不動,公開的,在第一代的封存倉庫裡。有人建議過刪掉——一份教你怎麼藏的</p>
+<p>文件自己躺在公開處,難看。我們最後決定:<strong>留著,一個字都不改。</strong></p>
+<p>因為它是整個專案最好的一塊「張力標本」。語魂有一條公理說:張力不該被消除,該被</p>
+<p>看見。一個作者從「怕被抄」走到「怕沒人看到」,這條弧線比任何宣言都誠實——而它</p>
+<p>只有在原始文件還在的時候,才可被驗證。</p>
+<h3>語魂結構標註</h3>
+<p>這篇文章講的事,在系統裡長這樣(不用信我,去跑):</p>
+<ul>
+<li><strong>化石紀錄</strong> → `docs/LINEAGE.md`:七代逐代驗屍,含「五個 README 是 2025-11 事後</li>
+</ul>
+<p>  回填」的考古警告。</p>
+<ul>
+<li><strong>張力保留</strong> → `AXIOMS.json` 公理四:零張力的系統是死的。</li>
+<li><strong>反證鏈</strong> → `tools/accountability_panel/`:那份 IP 策略作為一個 claim</li>
+</ul>
+<p>  (「模糊化保護價值」),挑戰者是七代演化,判定:refuted。這筆就記在公開帳本裡。</p>
+<ul>
+<li><strong>這個判斷本身也被審過</strong> → 網站的判斷書頁:「開源 vs 壟斷」五視角對抗裁決,</li>
+</ul>
+<p>  含信心上限和翻案條件——包括「如果哪天出現真買家」的那一條。</p>
+<p>進倉庫,挑我最薄弱的地方打。</p>
+<hr>
+<p>*梵威(與嶼協作整理)· 2026-07*</p></article><footer>generated_at 2026-07-02 15:05Z · 來源:docs/essays/(公開可稽核)· vocus 上有作者更多文章。</footer></body></html>
