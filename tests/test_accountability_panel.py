@@ -128,6 +128,24 @@ def test_story_renders_bilingual() -> None:
     assert "2026-07-02 00:00Z" in html_doc
 
 
+def test_story_site_theme() -> None:
+    from tonesoul.accountability_panel import render_story
+
+    story = {
+        "title": {"zh": "標題", "en": "Title"},
+        "lede": {"zh": "a", "en": "b"},
+        "sections": [{"heading": {"zh": "h", "en": "h"}, "paras": [{"zh": "c", "en": "d"}]}],
+    }
+    html_doc = render_story(story, generated_at="t", theme="site")
+    assert "Inter" in html_doc and "#f4f7fb" in html_doc  # site design tokens
+    assert 'href="index.html"' in html_doc  # back-to-home link
+    assert 'class="lede zh"' in html_doc and 'class="lede en"' in html_doc  # still bilingual
+    paper = render_story(story, generated_at="t")
+    assert "Georgia" in paper and 'href="index.html"' not in paper  # default unchanged
+    with pytest.raises(ValueError):
+        render_story(story, generated_at="t", theme="dark")
+
+
 def test_story_escapes_html() -> None:
     from tonesoul.accountability_panel import render_story
 

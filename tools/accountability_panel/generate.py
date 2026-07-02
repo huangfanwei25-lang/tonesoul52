@@ -32,6 +32,7 @@ EVENTS_PATH = Path(__file__).resolve().parent / "events.json"
 STORY_PATH = Path(__file__).resolve().parent / "story_content.json"
 OUT_PATH = REPO_ROOT / "docs" / "status" / "accountability_panel_latest.html"
 STORY_OUT = REPO_ROOT / "docs" / "status" / "accountability_story.html"
+SITE_OUT = REPO_ROOT / "site" / "accountability.html"  # published by the Pages workflow
 
 
 def load_events() -> list[AccountabilityEvent]:
@@ -56,9 +57,15 @@ def main() -> int:
     STORY_OUT.write_text(
         render_story(story, generated_at=generated_at), encoding="utf-8", newline="\n"
     )
+    SITE_OUT.write_text(
+        render_story(story, generated_at=generated_at, theme="site"),
+        encoding="utf-8",
+        newline="\n",
+    )
     sys.stdout.buffer.write(
         f"[wrote {OUT_PATH.relative_to(REPO_ROOT)} — {len(events)} events; "
-        f"{STORY_OUT.relative_to(REPO_ROOT)} — narrative]\n".encode("utf-8")
+        f"{STORY_OUT.relative_to(REPO_ROOT)} — narrative; "
+        f"{SITE_OUT.relative_to(REPO_ROOT)} — site theme]\n".encode("utf-8")
     )
     return 0
 

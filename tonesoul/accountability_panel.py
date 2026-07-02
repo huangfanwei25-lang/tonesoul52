@@ -237,11 +237,15 @@ def render_panel(events: Sequence[AccountabilityEvent], *, generated_at: str) ->
     )
 
 
-def render_story(story: dict, *, generated_at: str) -> str:
+def render_story(story: dict, *, generated_at: str, theme: str = "paper") -> str:
     """Render the bilingual NARRATIVE page (zh/en toggle, default zh) — the outward face. This is the
     accountability story told as prose (claim -> who caught it -> correction), NOT a feelings diary.
     Pure: content in -> HTML out. `story` = {"title":{zh,en}, "lede":{zh,en},
-    "sections":[{"heading":{zh,en}, "paras":[{zh,en}, ...]}]}."""
+    "sections":[{"heading":{zh,en}, "paras":[{zh,en}, ...]}]}.
+    `theme`: "paper" (docs/status serif page) or "site" (matches site/ blueprint tokens:
+    #f4f7fb grid bg, Inter/Noto Sans TC, accent #2b6cb0, glass cards, back-to-home link)."""
+    if theme not in ("paper", "site"):
+        raise ValueError(f"theme must be 'paper' or 'site', got {theme!r}")
 
     def bi(node: dict, tag: str, cls: str = "") -> str:
         prefix = (cls + " ") if cls else ""
@@ -255,18 +259,55 @@ def render_story(story: dict, *, generated_at: str) -> str:
         paras = "".join(bi(p, "p") for p in sec["paras"])
         sections += f"<section>{bi(sec['heading'], 'h2')}{paras}</section>"
 
-    css = (
-        "body{font-family:Georgia,'Noto Serif TC',serif;max-width:720px;margin:2.5rem auto;"
-        "padding:0 1.2rem;color:#1c2833;background:#fbfcfc;line-height:1.75;font-size:1.05rem}"
-        "h1{font-size:1.7rem;line-height:1.3;margin:.4rem 0 1rem}"
-        "h2{font-size:1.15rem;margin:2rem 0 .5rem;color:#34495e}.lede{color:#566573;font-style:italic}"
-        ".langbar{margin-bottom:1rem}.langbar button{border:1px solid #d5dbdb;background:#fff;"
-        "padding:.25rem .8rem;cursor:pointer;border-radius:.3rem;margin-right:.4rem;font:inherit;font-size:.85rem}"
-        ".langbar button.active{background:#1a5276;color:#fff;border-color:#1a5276}"
-        "body.lang-zh .en{display:none}body.lang-en .zh{display:none}"
-        "footer{margin-top:2.5rem;color:#7f8c8d;font-size:.85rem;border-top:1px solid #d5dbdb;"
-        "padding-top:1rem;font-family:system-ui,sans-serif}"
-    )
+    if theme == "paper":
+        css = (
+            "body{font-family:Georgia,'Noto Serif TC',serif;max-width:720px;margin:2.5rem auto;"
+            "padding:0 1.2rem;color:#1c2833;background:#fbfcfc;line-height:1.75;font-size:1.05rem}"
+            "h1{font-size:1.7rem;line-height:1.3;margin:.4rem 0 1rem}"
+            "h2{font-size:1.15rem;margin:2rem 0 .5rem;color:#34495e}.lede{color:#566573;font-style:italic}"
+            ".langbar{margin-bottom:1rem}.langbar button{border:1px solid #d5dbdb;background:#fff;"
+            "padding:.25rem .8rem;cursor:pointer;border-radius:.3rem;margin-right:.4rem;font:inherit;font-size:.85rem}"
+            ".langbar button.active{background:#1a5276;color:#fff;border-color:#1a5276}"
+            "body.lang-zh .en{display:none}body.lang-en .zh{display:none}"
+            "footer{margin-top:2.5rem;color:#7f8c8d;font-size:.85rem;border-top:1px solid #d5dbdb;"
+            "padding-top:1rem;font-family:system-ui,sans-serif}"
+        )
+        fonts_link = ""
+        topbar_back = ""
+    else:
+        # tokens mirror site/index.html :root (--bg #f4f7fb, --text #1a202c, --accent #2b6cb0)
+        css = (
+            "body{font-family:'Inter','Noto Sans TC',sans-serif;max-width:760px;margin:0 auto;"
+            "padding:4.5rem 1.2rem 2rem;color:#1a202c;background:#f4f7fb;line-height:1.8;"
+            "background-image:linear-gradient(rgba(43,108,176,.05) 1px,transparent 1px),"
+            "linear-gradient(90deg,rgba(43,108,176,.05) 1px,transparent 1px);background-size:40px 40px}"
+            "h1{font-size:1.9rem;line-height:1.3;margin:.4rem 0 1rem;font-weight:900;letter-spacing:-.01em}"
+            "h2{font-size:1.1rem;margin:0 0 .6rem;color:#2b6cb0;font-weight:700}"
+            ".lede{color:#4a5568;font-style:italic}"
+            "section{background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.05);"
+            "border-radius:12px;padding:1.4rem 1.7rem;margin:1.4rem 0}"
+            ".topbar{position:fixed;top:0;left:0;width:100%;display:flex;justify-content:space-between;"
+            "align-items:center;padding:.6rem 1.2rem;background:rgba(244,247,251,.85);"
+            "backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.05);"
+            "font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:700;letter-spacing:.05em}"
+            ".topbar .back{color:#4a5568;text-decoration:none;padding:.4rem .8rem;border-radius:6px}"
+            ".topbar .back:hover{color:#2b6cb0;background:rgba(135,206,250,.15)}"
+            ".langbar button{border:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.7);"
+            "padding:.25rem .8rem;cursor:pointer;border-radius:6px;margin-left:.4rem;"
+            "font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700}"
+            ".langbar button.active{background:#2b6cb0;color:#fff;border-color:#2b6cb0}"
+            "body.lang-zh .en{display:none}body.lang-en .zh{display:none}"
+            "footer{margin-top:2.5rem;color:#6b7c8d;font-size:.85rem;"
+            "border-top:1px solid rgba(0,0,0,.08);padding-top:1rem}"
+        )
+        fonts_link = (
+            '<link rel="preconnect" href="https://fonts.googleapis.com">'
+            '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+            '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900'
+            "&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@300;400;700;900"
+            '&display=swap" rel="stylesheet">'
+        )
+        topbar_back = '<a class="back" href="index.html">&larr; ToneSoul</a>'
     js = (
         "document.querySelectorAll('.langbar button').forEach(function(b){"
         "b.addEventListener('click',function(){document.body.className='lang-'+b.dataset.l;"
@@ -277,13 +318,17 @@ def render_story(story: dict, *, generated_at: str) -> str:
     foot_en = (
         "Written from real collaboration events, not marketing. claim ≤ evidence applies here too."
     )
+    langbar = (
+        '<div class="langbar"><button data-l="zh" class="active">中文</button>'
+        '<button data-l="en">English</button></div>'
+    )
+    header_bar = f'<div class="topbar">{topbar_back}{langbar}</div>' if theme == "site" else langbar
     return (
         '<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
-        f"<title>{_esc(story['title']['zh'])}</title><style>{css}</style></head>"
+        f"<title>{_esc(story['title']['zh'])}</title>{fonts_link}<style>{css}</style></head>"
         '<body class="lang-zh">'
-        '<div class="langbar"><button data-l="zh" class="active">中文</button>'
-        '<button data-l="en">English</button></div>'
+        + header_bar
         + bi(story["title"], "h1")
         + bi(story["lede"], "p", "lede")
         + sections
