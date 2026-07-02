@@ -143,5 +143,5 @@ LLM 容易因為 **「預訓練的助手偏見 (Helpful Assistant Bias)」** 導
 
 ## 參考
 
-- [Semantic Responsibility Axioms](./semantic_responsibility_axioms.md)
-- [ToneStream Navigator v3](../../examples/ToneStreamNavigator.jsx)
+- [Semantic Responsibility Axioms](../philosophy/semantic_responsibility_axioms.md)
+- `ToneStream Navigator v3`（原型檔未入庫）

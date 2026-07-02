@@ -169,9 +169,9 @@ Bucket B 已經建立 synthetic baseline + reproducibility + adversarial surviva
 ## 5. 記憶同步狀態
 
 今日新增 / 更新：
-- [project_phase_864b_bucket_b_2026-04-20.md](../../../../.claude/projects/c--Users-user-Desktop---/memory/project_phase_864b_bucket_b_2026-04-20.md)
-- [project_hackathon_track_b_pages_2026-04-20.md](../../../../.claude/projects/c--Users-user-Desktop---/memory/project_hackathon_track_b_pages_2026-04-20.md)
-- [feedback_autonomy_preference.md](../../../../.claude/projects/c--Users-user-Desktop---/memory/feedback_autonomy_preference.md)（user 今日指示：bypassPermissions 全自動模式）
+- `project_phase_864b_bucket_b_2026-04-20.md`（協作者本機記憶檔，機器本地路徑，不隨倉庫走）
+- `project_hackathon_track_b_pages_2026-04-20.md`（協作者本機記憶檔，機器本地路徑，不隨倉庫走）
+- `feedback_autonomy_preference.md`（協作者本機記憶檔，機器本地路徑，不隨倉庫走）（user 今日指示：bypassPermissions 全自動模式）
 - MEMORY.md 索引 + 執行序狀態位更新（步驟 4、5 完成打勾）
 
 ---

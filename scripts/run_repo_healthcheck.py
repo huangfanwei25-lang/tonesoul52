@@ -554,6 +554,14 @@ def _build_check_specs(
             ],
         },
         {
+            "name": "doc_links",
+            "command": [
+                python_executable,
+                "scripts/verify_doc_links.py",
+                "--strict",
+            ],
+        },
+        {
             "name": "skill_registry",
             "command": [
                 python_executable,
