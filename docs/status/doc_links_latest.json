@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-07-02T06:27:13Z",
+  "source": "scripts/verify_doc_links.py",
+  "overall_ok": true,
+  "policy": {
+    "exempt_prefixes": [
+      "docs/design/tonesoul-reference/sources/"
+    ]
+  },
+  "summary": {
+    "md_files_scanned": 786,
+    "md_files_exempt": 4,
+    "violation_count": 0,
+    "absolute": 0,
+    "missing": 0,
+    "untracked": 0
+  },
+  "violations": []
+}

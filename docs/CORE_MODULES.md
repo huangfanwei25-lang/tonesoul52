@@ -109,6 +109,6 @@ This document provides technical details about ToneSoul's internal architecture 
 
 ## 📚 Related Documents
 
-- [AGENT_STATE_MACHINE.yaml](../law/AGENT_STATE_MACHINE.yaml) — State definitions
-- [BEHAVIOR_CONFIG.json](../law/BEHAVIOR_CONFIG.json) — Behavior presets
+- `AGENT_STATE_MACHINE.yaml` （law/ 已退役，單一真源收斂至 `tonesoul/soul_config.py`，見 e68d5c7） — State definitions
+- `BEHAVIOR_CONFIG.json` （law/ 已退役，單一真源收斂至 `tonesoul/soul_config.py`，見 e68d5c7） — Behavior presets
 - [glossary_engineering_mapping.md](./glossary_engineering_mapping.md) — Terminology
