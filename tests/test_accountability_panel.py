@@ -173,3 +173,45 @@ def test_counterevidence_fields_validate_and_render() -> None:
         _ev(outcome="maybe")
     legacy = _ev()  # records without the extension stay valid
     assert legacy.outcome == ""
+
+
+def test_append_preserves_counterevidence_fields(tmp_path) -> None:
+    import json
+
+    from tools.accountability_panel.add import append_event
+
+    p = tmp_path / "events.json"
+    first = AccountabilityEvent(
+        claim="c1",
+        evidence_at_claim="E1",
+        held=False,
+        caught_by="x",
+        correction="y",
+        lane="self-check",
+        method="review",
+        outcome="refuted",
+        evidence_ref="PR #1",
+    )
+    p.write_text("[]", encoding="utf-8")
+    append_event(p, first)
+    append_event(
+        p,
+        AccountabilityEvent(
+            claim="c2",
+            evidence_at_claim="—",
+            held=False,
+            caught_by="z",
+            correction="",
+            lane="co-observer",
+        ),
+    )
+    data = json.loads(p.read_text(encoding="utf-8"))
+    assert data[0]["method"] == "review" and data[0]["evidence_ref"] == "PR #1"
+
+
+def test_outcome_held_coherence_enforced() -> None:
+    with pytest.raises(ValueError):
+        _ev(outcome="refuted", held=True)
+    with pytest.raises(ValueError):
+        _ev(outcome="survived", held=False)
+    _ev(outcome="narrowed", held=True)  # narrowed allows either

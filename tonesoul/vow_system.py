@@ -80,13 +80,23 @@ class WithdrawalTerms:
             "repair_deadline": self.repair_deadline,
         }
 
+    @staticmethod
+    def _str_list(value: object) -> List[str]:
+        # a bare string must become one item, not a list of characters (codex finding)
+        if isinstance(value, str):
+            return [value]
+        if isinstance(value, list):
+            return [str(item) for item in value]
+        return []
+
     @classmethod
     def from_dict(cls, data: Dict) -> "WithdrawalTerms":
+        deadline = data.get("repair_deadline")
         return cls(
-            conditions=list(data.get("conditions", [])),
-            repair_owner=data.get("repair_owner", ""),
-            repair_actions=list(data.get("repair_actions", [])),
-            repair_deadline=data.get("repair_deadline"),
+            conditions=cls._str_list(data.get("conditions", [])),
+            repair_owner=str(data.get("repair_owner", "") or ""),
+            repair_actions=cls._str_list(data.get("repair_actions", [])),
+            repair_deadline=str(deadline) if deadline is not None else None,
         )
 
 
@@ -268,9 +278,11 @@ class VowRegistry:
         self._vows: Dict[str, Vow] = {}
         self._withdrawals: List[Dict] = []  # immutable exit records; never deleted
         if vows is None:
-            # Load defaults
+            # Load defaults — deep-copied per registry: withdrawing in one registry must
+            # never deactivate the shared module-level instances (codex finding, 2026-07-03;
+            # same aliasing family as the G8 template bug the gap study warned about)
             for vow in DEFAULT_VOWS:
-                self.register(vow)
+                self.register(Vow.from_dict(vow.to_dict()))
         else:
             for vow in vows:
                 self.register(vow)
@@ -313,8 +325,11 @@ class VowRegistry:
         return True
 
     def withdrawal_records(self) -> List[Dict]:
-        """The immutable exit ledger (copies; the registry's list is append-only)."""
-        return [dict(r) for r in self._withdrawals]
+        """The immutable exit ledger (deep copies — callers must not be able to reach
+        into nested terms_snapshot/conditions_cited and mutate history)."""
+        import copy
+
+        return copy.deepcopy(self._withdrawals)
 
     def get(self, vow_id: str) -> Optional[Vow]:
         """Get a vow by ID"""
@@ -342,7 +357,10 @@ class VowRegistry:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
         vows = [Vow.from_dict(v) for v in data.get("vows", [])]
-        return cls(vows)
+        registry = cls(vows)
+        # the exit ledger persists round-trip (codex finding: it was written but never read)
+        registry._withdrawals = [dict(w) for w in data.get("withdrawals", [])]
+        return registry
 
     def save(self, path: str) -> None:
         """Save vows to JSON file"""
