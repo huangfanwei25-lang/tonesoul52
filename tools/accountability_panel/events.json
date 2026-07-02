@@ -13,7 +13,10 @@
     "evidence_at_claim": "E1",
     "held": false,
     "caught_by": "自審 / 測試",
-    "correction": "當時從推論講的,沒在最後改動後真跑;補跑後 8055 passed"
+    "correction": "當時從推論講的,沒在最後改動後真跑;補跑後 8055 passed",
+    "method": "post-change 全套重跑",
+    "outcome": "refuted",
+    "evidence_ref": "PR #236 更正 commit"
   },
   {
     "lane": "self-check",
@@ -37,7 +40,10 @@
     "evidence_at_claim": "E1",
     "held": false,
     "caught_by": "不同模型(codex,3 輪)",
-    "correction": "codex 抓到 12 個 finding,含我修 round-2 時自己新捅的 FP;自寫測試帶作者盲點"
+    "correction": "codex 抓到 12 個 finding,含我修 round-2 時自己新捅的 FP;自寫測試帶作者盲點",
+    "method": "跨模型對抗審查(3 輪)",
+    "outcome": "refuted",
+    "evidence_ref": "PR #230"
   },
   {
     "lane": "self-check",
@@ -109,6 +115,20 @@
     "evidence_at_claim": "E1",
     "held": false,
     "caught_by": "結構(Dual-Track Boundary Gate, CI)",
-    "correction": ".agent/ 是私軌,公倉 PR 不該碰;撤回、hash 還原、BOM 留 owner;接住我的是 gate,不是人也不是模型"
+    "correction": ".agent/ 是私軌,公倉 PR 不該碰;撤回、hash 還原、BOM 留 owner;接住我的是 gate,不是人也不是模型",
+    "method": "CI gate 執行取證",
+    "outcome": "refuted",
+    "evidence_ref": "PR #233 run/dual-track"
+  },
+  {
+    "lane": "co-observer",
+    "claim": "(作者層,G1 2025-07)「戰略性模糊化能保護語魂的價值」",
+    "evidence_at_claim": "E0",
+    "held": false,
+    "caught_by": "七個世代的演化(考古)",
+    "correction": "模糊化機制全數未建或死亡;誠實機制以更樸素形狀存活;方向反轉為公開問責",
+    "method": "lineage archaeology",
+    "outcome": "refuted",
+    "evidence_ref": "docs/LINEAGE.md + Genesis IP 策略文"
   }
 ]
