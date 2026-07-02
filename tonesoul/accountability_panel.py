@@ -235,3 +235,58 @@ def render_panel(events: Sequence[AccountabilityEvent], *, generated_at: str) ->
         f"<script>{_JS}</script>"
         "</body></html>"
     )
+
+
+def render_story(story: dict, *, generated_at: str) -> str:
+    """Render the bilingual NARRATIVE page (zh/en toggle, default zh) — the outward face. This is the
+    accountability story told as prose (claim -> who caught it -> correction), NOT a feelings diary.
+    Pure: content in -> HTML out. `story` = {"title":{zh,en}, "lede":{zh,en},
+    "sections":[{"heading":{zh,en}, "paras":[{zh,en}, ...]}]}."""
+
+    def bi(node: dict, tag: str, cls: str = "") -> str:
+        prefix = (cls + " ") if cls else ""
+        return (
+            f'<{tag} class="{prefix}zh">{_esc(node["zh"])}</{tag}>'
+            f'<{tag} class="{prefix}en">{_esc(node["en"])}</{tag}>'
+        )
+
+    sections = ""
+    for sec in story["sections"]:
+        paras = "".join(bi(p, "p") for p in sec["paras"])
+        sections += f"<section>{bi(sec['heading'], 'h2')}{paras}</section>"
+
+    css = (
+        "body{font-family:Georgia,'Noto Serif TC',serif;max-width:720px;margin:2.5rem auto;"
+        "padding:0 1.2rem;color:#1c2833;background:#fbfcfc;line-height:1.75;font-size:1.05rem}"
+        "h1{font-size:1.7rem;line-height:1.3;margin:.4rem 0 1rem}"
+        "h2{font-size:1.15rem;margin:2rem 0 .5rem;color:#34495e}.lede{color:#566573;font-style:italic}"
+        ".langbar{margin-bottom:1rem}.langbar button{border:1px solid #d5dbdb;background:#fff;"
+        "padding:.25rem .8rem;cursor:pointer;border-radius:.3rem;margin-right:.4rem;font:inherit;font-size:.85rem}"
+        ".langbar button.active{background:#1a5276;color:#fff;border-color:#1a5276}"
+        "body.lang-zh .en{display:none}body.lang-en .zh{display:none}"
+        "footer{margin-top:2.5rem;color:#7f8c8d;font-size:.85rem;border-top:1px solid #d5dbdb;"
+        "padding-top:1rem;font-family:system-ui,sans-serif}"
+    )
+    js = (
+        "document.querySelectorAll('.langbar button').forEach(function(b){"
+        "b.addEventListener('click',function(){document.body.className='lang-'+b.dataset.l;"
+        "document.querySelectorAll('.langbar button').forEach(function(x){"
+        "x.classList.toggle('active',x===b);});});});"
+    )
+    foot_zh = "這份紀錄由真實協作事件寫成,不是宣傳。claim ≤ evidence 也適用於這頁本身。"
+    foot_en = (
+        "Written from real collaboration events, not marketing. claim ≤ evidence applies here too."
+    )
+    return (
+        '<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1">'
+        f"<title>{_esc(story['title']['zh'])}</title><style>{css}</style></head>"
+        '<body class="lang-zh">'
+        '<div class="langbar"><button data-l="zh" class="active">中文</button>'
+        '<button data-l="en">English</button></div>'
+        + bi(story["title"], "h1")
+        + bi(story["lede"], "p", "lede")
+        + sections
+        + f'<footer>generated_at {_esc(generated_at)} · <span class="zh">{foot_zh}</span>'
+        f'<span class="en">{foot_en}</span></footer>' + f"<script>{js}</script></body></html>"
+    )

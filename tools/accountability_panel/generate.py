@@ -22,10 +22,16 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from tonesoul.accountability_panel import AccountabilityEvent, render_panel  # noqa: E402
+from tonesoul.accountability_panel import (  # noqa: E402
+    AccountabilityEvent,
+    render_panel,
+    render_story,
+)
 
 EVENTS_PATH = Path(__file__).resolve().parent / "events.json"
+STORY_PATH = Path(__file__).resolve().parent / "story_content.json"
 OUT_PATH = REPO_ROOT / "docs" / "status" / "accountability_panel_latest.html"
+STORY_OUT = REPO_ROOT / "docs" / "status" / "accountability_story.html"
 
 
 def load_events() -> list[AccountabilityEvent]:
@@ -46,8 +52,13 @@ def main() -> int:
         sys.stdout.buffer.write(html_doc.encode("utf-8"))
         return 0
     OUT_PATH.write_text(html_doc, encoding="utf-8", newline="\n")
+    story = json.loads(STORY_PATH.read_text(encoding="utf-8"))
+    STORY_OUT.write_text(
+        render_story(story, generated_at=generated_at), encoding="utf-8", newline="\n"
+    )
     sys.stdout.buffer.write(
-        f"[wrote {OUT_PATH.relative_to(REPO_ROOT)} — {len(events)} events]\n".encode("utf-8")
+        f"[wrote {OUT_PATH.relative_to(REPO_ROOT)} — {len(events)} events; "
+        f"{STORY_OUT.relative_to(REPO_ROOT)} — narrative]\n".encode("utf-8")
     )
     return 0
 

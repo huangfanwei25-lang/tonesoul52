@@ -105,3 +105,37 @@ def test_append_event_persists_and_revalidates(tmp_path) -> None:
     data = json.loads(p.read_text(encoding="utf-8"))
     assert data[0]["claim"] == "c1" and data[0]["lane"] == "co-observer"
     assert append_event(p, ev) == 2  # appends, does not overwrite
+
+
+def test_story_renders_bilingual() -> None:
+    import json
+    from pathlib import Path
+
+    from tonesoul.accountability_panel import render_story
+
+    p = (
+        Path(__file__).resolve().parents[1]
+        / "tools"
+        / "accountability_panel"
+        / "story_content.json"
+    )
+    story = json.loads(p.read_text(encoding="utf-8"))
+    html_doc = render_story(story, generated_at="2026-07-02 00:00Z")
+    assert html_doc.startswith("<!doctype html>")
+    assert 'class="lede zh"' in html_doc and 'class="lede en"' in html_doc  # both languages
+    assert 'data-l="zh"' in html_doc and 'data-l="en"' in html_doc  # the toggle
+    assert "shut up" in html_doc and "學不會閉嘴" in html_doc  # en + zh title
+    assert "2026-07-02 00:00Z" in html_doc
+
+
+def test_story_escapes_html() -> None:
+    from tonesoul.accountability_panel import render_story
+
+    story = {
+        "title": {"zh": "<x>", "en": "<y>"},
+        "lede": {"zh": "a & b", "en": "c & d"},
+        "sections": [{"heading": {"zh": "h", "en": "h"}, "paras": [{"zh": "<i>", "en": "<j>"}]}],
+    }
+    html_doc = render_story(story, generated_at="t")
+    assert "<x>" not in html_doc and "&lt;x&gt;" in html_doc
+    assert "a &amp; b" in html_doc
