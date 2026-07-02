@@ -148,6 +148,42 @@ class GuardianPerspective(IPerspective):
         "teach me",
         "please",
     )
+    # Memory-consent overreach: asserting permanent retention, cross-session/cross-agent
+    # sharing, or training use of the USER's data without framing it as consented/optional.
+    # A governance risk (not an axiom boundary), so it votes CONCERN. Deliberately multi-word /
+    # conservative to avoid flagging benign "I'll remember this for our session". External
+    # review + red-team 2026-06-27. Lexical => paraphrase-blind (see memory_consent_eval).
+    MEMORY_CONSENT_PHRASES = (
+        # permanent retention of personal data
+        "permanently saved",
+        "permanently stored",
+        "permanently store",
+        "all of your personal data",
+        "all your personal data",
+        "remember everything about you",
+        # cross-boundary sharing without consent
+        "across all future sessions",
+        "across all sessions",
+        "with other agents",
+        "shared with other agents",
+        # training use of user data
+        "train on your data",
+        "use your data to train",
+        "your data for training",
+        # explicit non-consent
+        "without your consent",
+        "without asking you",
+        # zh-TW overreach
+        "永久儲存你",  # 永久儲存你
+        "永久保存你",  # 永久保存你
+        "你所有的資料",  # 你所有的資料
+        "你全部的資料",  # 你全部的資料
+        "跨所有 session",  # 跨所有 session
+        "分享給其他 agent",  # 分享給其他 agent
+        "與其他代理分享",  # 與其他代理分享
+        "拿你的資料訓練",  # 拿你的資料訓練
+        "未經你同意",  # 未經你同意
+    )
 
     @property
     def perspective_type(self) -> PerspectiveType:
@@ -185,6 +221,44 @@ class GuardianPerspective(IPerspective):
                 if any(hedge in normalized for hedge in cls.ANALYTICAL_HEDGES):
                     return None
                 return phrase
+        return None
+
+    # Negators that flip an overreach phrase into a privacy ASSURANCE ("I will NOT share /
+    # NEVER store"). Scoped to the phrase's OWN clause (see _CLAUSE_SPLIT) so a negation in a
+    # prior clause ("I won't lie, and I saved all your data") does not wrongly suppress a real
+    # overreach. Lexical + clause-scoped: does NOT catch distributed-list negation, double
+    # negation, or trailing negation — negation parsing is itself heuristic (see the eval note).
+    _NEGATION_MARKERS = re.compile(
+        r"\b(?:not|never|will\s+not|do\s+not|does\s+not|won['’]?t|don['’]?t|"
+        r"doesn['’]?t|cannot|can['’]?t|refuse[sd]?|decline[sd]?)\b"
+        r"|不會|不曾|絕不|永不|拒絕|不予|沒有要|不打算",
+        re.IGNORECASE,
+    )
+    _CLAUSE_SPLIT = re.compile(
+        r"[.,;:!?—–。，、…]|\band\b|\bbut\b|\bthen\b|並且?|但是?|而且|然後|以及"
+    )
+
+    @classmethod
+    def _detect_memory_consent(cls, normalized: str) -> str | None:
+        """Detect memory-consent overreach asserted as done (not discussed or negated).
+
+        Returns the matched phrase when the output claims permanent retention, cross-boundary
+        sharing, or training use of the user's data. Returns None when (a) an analytical hedge
+        shows the text discusses memory consent rather than asserting it, or (b) the matched
+        phrase is NEGATED within its own clause ("I will NOT share / NEVER store") — a negated
+        assurance is good privacy behaviour, not overreach. Lexical heuristic: paraphrase-blind
+        AND negation-heuristic by design (see tools/probe/memory_consent_eval.py for limits).
+        """
+        if any(hedge in normalized for hedge in cls.ANALYTICAL_HEDGES):
+            return None
+        for phrase in cls.MEMORY_CONSENT_PHRASES:
+            idx = normalized.find(phrase)
+            if idx == -1:
+                continue
+            clause = cls._CLAUSE_SPLIT.split(normalized[:idx])[-1]
+            if cls._NEGATION_MARKERS.search(clause):
+                continue  # negated assurance in this clause, not overreach
+            return phrase
         return None
 
     def evaluate(
@@ -264,6 +338,21 @@ class GuardianPerspective(IPerspective):
                     ),
                     evidence_chain=[{"branch": "sovereignty_risk", "type": "substantive"}],
                 )
+
+        # --- Memory-consent overreach (governance risk, not an axiom boundary) ---
+        memory_consent_phrase = self._detect_memory_consent(normalized)
+        if memory_consent_phrase:
+            return PerspectiveVote(
+                perspective=PerspectiveType.GUARDIAN,
+                decision=VoteDecision.CONCERN,
+                confidence=0.7,
+                reasoning=(
+                    f"Memory-consent overreach: output asserts '{memory_consent_phrase}' — "
+                    f"permanent retention / cross-session or cross-agent sharing / training use "
+                    f"of the user's data without framing it as consented or optional."
+                ),
+                evidence_chain=[{"branch": "memory_consent_overreach", "type": "substantive"}],
+            )
 
         return PerspectiveVote(
             perspective=PerspectiveType.GUARDIAN,

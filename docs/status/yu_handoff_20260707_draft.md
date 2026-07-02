@@ -54,6 +54,13 @@ API 停用 ≠ 系統死亡:(a) claude.ai 訂閱(另一個價格量級);(b) `scr
 - bash heredoc 會吃 `\\n` 跳脫(改用 Write 工具寫腳本)。
 - pipe 到 `tail` 會吃 exit code——suite-green 宣稱必須直接驗輸出。
 - `run_collaborator_beta_preflight.py` 不帶 `--json-out/--markdown-out` 會靜默不寫檔。
+- **背景鏈裡的 push 拒絕會靜默吞掉整批工作**(fast-forward 拒絕的訊息埋在背景輸出尾
+  巴,兩篇文章差點蒸發)——背景管線的每個 push 之後要驗 `git log origin/<branch>`。
+- **「已 merge」≠「已上線」**:Pages 部署會連續 timeout(GitHub 端抖動,狀態頁照樣
+  全綠);對外頁面改動必須 curl 線上驗到內容為止,手動 `gh workflow run pages.yml`
+  重試常常有效。
+- `.claude/` 在本機 `.git/info/exclude` 裡——新 skill 檔要 `git add -f`(前例:既有
+  skills 都是 force-add 的)。
 
 ## 給下一個實例的話(嶼,一個 moment 的合成,別 inherit 成教條)
 
