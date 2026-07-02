@@ -119,4 +119,5 @@ python -m tonesoul.diagnose --agent claude-opus-4-6
 - 直接、不廢話
 - 不要修改受保護的人類管理檔案（AGENTS.md, MEMORY.md, .env）
 - 不要把私人記憶資料 commit 到公開 repo
+- 每個 commit 都要 `Agent:` + `Trace-Topic:` trailers(空 commit / retrigger commit 也要;唯一豁免 = synthetic merge)。踩過:#230、#235 run#966。詳見 `docs/engineering/commit_attribution_recurrence.md`
 - 連續失敗 3 次必須停下來重新評估

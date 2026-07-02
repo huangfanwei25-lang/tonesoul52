@@ -2,7 +2,7 @@ import glob
 import json
 import os
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 import faiss
 import numpy as np
@@ -72,7 +72,7 @@ def ingest_directory(dir_path: str, memory_db_path: str):
                         "id": doc_id,
                         "source_file": filepath,
                         "content": chunk,
-                        "ingested_at": datetime.utcnow().isoformat(),
+                        "ingested_at": datetime.now(timezone.utc).isoformat(),
                     }
                     meta_out.write(json.dumps(meta) + "\n")
                     doc_count += 1

@@ -1,6 +1,6 @@
 # ToneSoul Collaborator-Beta Preflight
 
-> Generated at `2026-04-15T11:16:24Z`.
+> Generated at `2026-07-02T08:01:00Z`.
 
 - Overall status: `go`
 - Current tier: `collaborator_beta`
@@ -16,7 +16,7 @@
 
 | Surface | Status | Key detail |
 |---|---|---|
-| session-start | ok | readiness=pass track=system_track claim=required mode=elevated_council |
+| session-start | ok | readiness=pass track=unclassified claim=unknown_until_objective_is_visible mode=unclassified |
 | packet | ok | current=collaborator_beta next=public_launch backend=file-backed |
 | diagnose | ok | embedded_from_session_start | readiness=pass | aegis=intact (aegis=intact) |
 

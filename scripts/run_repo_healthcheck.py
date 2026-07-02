@@ -546,6 +546,22 @@ def _build_check_specs(
             ],
         },
         {
+            "name": "status_freshness",
+            "command": [
+                python_executable,
+                "scripts/verify_status_freshness.py",
+                "--strict",
+            ],
+        },
+        {
+            "name": "doc_links",
+            "command": [
+                python_executable,
+                "scripts/verify_doc_links.py",
+                "--strict",
+            ],
+        },
+        {
             "name": "skill_registry",
             "command": [
                 python_executable,

@@ -11,7 +11,7 @@
 
 其他文件需要提及術語時：
 ```markdown
-（定義見 [GLOSSARY.md#tension](docs/GLOSSARY.md#tension)）
+（定義見 [tension](#tension)）
 ```
 
 不要在別的地方重新定義。遇到衝突，本文以程式碼為準。
