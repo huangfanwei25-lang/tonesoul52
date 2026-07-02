@@ -1,25 +1,15 @@
-import json
-import os
-import ssl
-import urllib.request
+from __future__ import annotations
 
-url = "https://www.moltbook.com/api/v1/posts"
-api_key = os.environ.get("MOLTBOOK_API_KEY", "").strip()
-if not api_key:
-    raise SystemExit("MOLTBOOK_API_KEY is required")
+EXIT_MESSAGE = (
+    "fetch_moltbook.py: retired in the 2026-07-02 scripts triage — it was a moltbook outreach fetch probe. "
+    "Zero importers repo-wide (SUCCESSOR_MAP verification recipe applied). "
+    "Full content lives in git history before this stub."
+)
 
-headers = {
-    "Authorization": f"Bearer {api_key}",
-}
 
-req = urllib.request.Request(url, headers=headers, method="GET")
-context = ssl._create_unverified_context()
+def main() -> None:
+    raise SystemExit(EXIT_MESSAGE)
 
-try:
-    with urllib.request.urlopen(req, context=context) as response:
-        result = json.loads(response.read().decode("utf-8"))
-        with open("moltbook_feed.json", "w", encoding="utf-8") as f:
-            json.dump(result, f, indent=2, ensure_ascii=False)
-        print("Success! Feed written to moltbook_feed.json")
-except Exception as e:
-    print(f"Error: {e}")
+
+if __name__ == "__main__":
+    main()
