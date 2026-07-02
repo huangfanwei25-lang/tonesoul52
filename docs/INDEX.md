@@ -357,6 +357,7 @@ Use these when a document claim sounds too clean, too rounded, or too shell-depe
 | [FILE_PURPOSE_MAP.md](FILE_PURPOSE_MAP.md) | 頝函???蝝?|
 | plans/iu_oi_backplane_convergence_2026-03-18.md（未入庫，已散佚） | IU/OI/Backplane ?嗆??? |
 | [環境設定.md](環境設定.md) | 環境 | 環境設置說明 |
+| [LINEAGE.md](LINEAGE.md) | 歷史 | 語魂七代世代史(白話,含考古警告與 parked assets) |
 
 ---
 
