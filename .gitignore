@@ -69,6 +69,7 @@ memory/agent_discussion.jsonl
 memory/agent_discussion_curated.jsonl
 memory/semantic_memory.jsonl
 memory/.consolidation_state.json
+memory/council_evolution.json
 memory/handoff/
 memory/external_framework_analysis/
 memory/vectors/
