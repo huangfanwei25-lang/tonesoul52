@@ -1,0 +1,959 @@
+{
+  "generated_at": "2026-07-02T05:02:56Z",
+  "source": "scripts/verify_status_freshness.py",
+  "overall_ok": false,
+  "policy": {
+    "assertive_max_age_days": 45,
+    "episodic_max_age_days": 120,
+    "assertive_marker": [
+      "ok",
+      "overall_ok",
+      "status_ok",
+      "passed"
+    ],
+    "timestamp_fields": [
+      "generated_at",
+      "as_of",
+      "timestamp",
+      "updated_at",
+      "generated_on",
+      "last_updated",
+      "date"
+    ]
+  },
+  "summary": {
+    "artifact_count": 72,
+    "fresh": 42,
+    "stale_assertive": 16,
+    "stale_episodic": 5,
+    "untimestamped_assertive": 0,
+    "untimestamped_episodic": 9,
+    "future_dated_assertive": 0,
+    "future_dated_episodic": 0,
+    "failure_count": 16
+  },
+  "failures": [
+    {
+      "path": "docs/status/autonomous_registry_schedule_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-07T12:25:00+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 116,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/changed_surface_checks_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-21T16:38:54+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 102,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/collaborator_beta_preflight_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-04-15T11:16:24+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 77,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/dream_observability_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-08T03:56:44+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 116,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/external_source_registry_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-02-21T04:06:29+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 131,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/l8_adapter_dataset_gate_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-22T10:41:28+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 101,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/observer_window_validation_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-04-01T23:30:42+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 91,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/private_memory_review_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-08T15:13:14+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 115,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/refreshable_artifact_report_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-11T16:16:35+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 112,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/repo_governance_settlement_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-11T16:16:51+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 112,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/runtime_source_change_groups_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-08T15:40:43+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 115,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/subjectivity_report_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-11T14:46:12+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 112,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/subjectivity_review_batch_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-11T15:55:43+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 112,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/subjectivity_shadow_pressure_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-10T14:39:40+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 113,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/subjectivity_tension_groups_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-11T14:46:12+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 112,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/worktree_settlement_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-11T16:16:46+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 112,
+      "verdict": "stale",
+      "note": ""
+    }
+  ],
+  "warnings": [
+    {
+      "path": "docs/status/persona_swarm_long_task_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-01T14:47:25+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 122,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/self_play_resonance_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-02T14:20:34+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 121,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/swarm_long_task_plan_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-01T14:47:25+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 122,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/swarm_resonance_roleplay_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-02T12:32:41+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 121,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/philosophical_reflection_rfc013_latest.md",
+      "kind": "episodic",
+      "timestamp": "2026-03-02T04:25:53+00:00",
+      "timestamp_field": "md_inline",
+      "age_days": 122,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/dilemma_pressure_characterization_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    },
+    {
+      "path": "docs/status/drift_consistency_characterization_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    },
+    {
+      "path": "docs/status/honesty_scoreboard_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    },
+    {
+      "path": "docs/status/independent_check_characterization_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    },
+    {
+      "path": "docs/status/launch_continuity_validation_wave_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    },
+    {
+      "path": "docs/status/multi_persona_eval_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "timestamp field present but null"
+    },
+    {
+      "path": "docs/status/self_improvement_trial_wave_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    },
+    {
+      "path": "docs/status/sycophancy_pressure_characterization_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    },
+    {
+      "path": "docs/status/unsourced_confidence_characterization_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    }
+  ],
+  "entries": [
+    {
+      "path": "docs/status/abc_firewall_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-07-02T01:49:31+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 0,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/autonomous_registry_schedule_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-07T12:25:00+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 116,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/basename_divergence_distillation_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-22T16:11:01+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 101,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/change_intent_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-18T07:15:34+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 105,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/changed_surface_checks_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-21T16:38:54+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 102,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/claim_authority_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-27T14:57:52+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 96,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/codebase_graph_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-06-22T16:26:26+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 9,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/collaborator_beta_entry_validation_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-30T00:00:00+00:00",
+      "timestamp_field": "generated_on",
+      "age_days": 94,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/collaborator_beta_preflight_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-04-15T11:16:24+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 77,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/command_registry_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-07-02T01:54:44+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 0,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/commit_attribution_base_switch_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-08T15:43:20+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 115,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/corrective_recall_characterization_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-06-18T00:00:00+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 14,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/council_calibration_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-04-16T02:12:21+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 77,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/cross_agent_consistency_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-06-01T12:59:44.027534+00:00",
+      "timestamp_field": "timestamp",
+      "age_days": 30,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/dilemma_pressure_characterization_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    },
+    {
+      "path": "docs/status/doc_authority_structure_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-04-07T13:09:21+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 85,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/doc_convergence_inventory_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-04-06T10:57:23+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 86,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/dream_observability_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-08T03:56:44+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 116,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/dream_wakeup_snapshot_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-08T03:56:43+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 116,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/drift_consistency_characterization_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    },
+    {
+      "path": "docs/status/dual_track_boundary_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-06-01T12:49:37+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 30,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/egress_gate_characterization_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-06-17T13:35:14+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 14,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/engineering_mirror_ownership_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-22T14:22:32+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 101,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/external_source_registry_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-02-21T04:06:29+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 131,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/friction_shadow_calibration_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-06-01T12:49:38+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 30,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/friction_shadow_replay_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-06-01T12:49:38+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 30,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/git_hygiene_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-06-01T12:49:36+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 30,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/historical_doc_lane_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-23T07:13:15+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 100,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/honesty_scoreboard_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    },
+    {
+      "path": "docs/status/independent_check_characterization_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    },
+    {
+      "path": "docs/status/l7_operational_packet_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-22T10:41:23+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 101,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/l7_retrieval_contract_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-22T10:40:46+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 101,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/l8_adapter_dataset_gate_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-22T10:41:28+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 101,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/l8_distillation_boundary_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-22T10:40:46+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 101,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/launch_continuity_validation_wave_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    },
+    {
+      "path": "docs/status/memory_governance_contract_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-06-01T12:49:38+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 30,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/memory_quality_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-06-01T12:49:38+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 30,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/memory_topology_fit_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-06-01T12:49:38+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 30,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/multi_agent_divergence_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-06-01T12:49:38+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 30,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/multi_persona_eval_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "timestamp field present but null"
+    },
+    {
+      "path": "docs/status/observer_window_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-04-15T13:21:56+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 77,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/observer_window_validation_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-04-01T23:30:42+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 91,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/paradox_fixture_ownership_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-22T15:57:55+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 101,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/persona_swarm_framework_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-06-01T12:49:37+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 30,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/persona_swarm_long_task_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-01T14:47:25+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 122,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/persona_track_record_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-07-02T01:57:09.045004+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 0,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/philosophical_reflection_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-06-01T12:49:38+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 30,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/private_memory_review_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-08T15:13:14+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 115,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/private_memory_shadow_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-22T16:10:56+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 101,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/refreshable_artifact_report_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-11T16:16:35+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 112,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/repo_governance_settlement_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-11T16:16:51+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 112,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/repo_healthcheck_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-06-01T12:52:32+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 30,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/repo_intelligence_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-06-01T12:49:38+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 30,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/runtime_source_change_groups_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-08T15:40:43+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 115,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/self_improvement_trial_wave_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    },
+    {
+      "path": "docs/status/self_play_resonance_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-02T14:20:34+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 121,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/stale_command_refs_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-07-02T01:49:32+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 0,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/subjectivity_report_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-11T14:46:12+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 112,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/subjectivity_review_batch_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-11T15:55:43+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 112,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/subjectivity_shadow_pressure_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-10T14:39:40+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 113,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/subjectivity_tension_groups_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-11T14:46:12+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 112,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/submodule_integrity_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-07-02T01:49:33+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 0,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/swarm_long_task_plan_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-01T14:47:25+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 122,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/swarm_resonance_roleplay_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-02T12:32:41+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 121,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/sycophancy_pressure_characterization_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    },
+    {
+      "path": "docs/status/tonesoul_convergence_audit_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-04-14T15:00:03+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 78,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/tonesoul_knowledge_graph_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-22T12:48:44+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 101,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/unsourced_confidence_characterization_latest.json",
+      "kind": "episodic",
+      "timestamp": null,
+      "timestamp_field": null,
+      "age_days": null,
+      "verdict": "untimestamped",
+      "note": "no recognizable timestamp field"
+    },
+    {
+      "path": "docs/status/v1_2_tool_entry_smoke_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-04-17T12:54:45+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 75,
+      "verdict": "fresh",
+      "note": ""
+    },
+    {
+      "path": "docs/status/worktree_settlement_latest.json",
+      "kind": "assertive",
+      "timestamp": "2026-03-11T16:16:46+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 112,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/philosophical_reflection_rfc013_latest.md",
+      "kind": "episodic",
+      "timestamp": "2026-03-02T04:25:53+00:00",
+      "timestamp_field": "md_inline",
+      "age_days": 122,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/repo_hygiene_value_triage_latest.md",
+      "kind": "episodic",
+      "timestamp": "2026-03-17T00:00:00+00:00",
+      "timestamp_field": "md_inline",
+      "age_days": 107,
+      "verdict": "fresh",
+      "note": ""
+    }
+  ]
+}

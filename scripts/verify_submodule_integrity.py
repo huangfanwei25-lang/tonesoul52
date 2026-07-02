@@ -10,6 +10,7 @@ import json
 import os
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
@@ -114,8 +115,9 @@ def build_report(
         warnings.append(f"{len(not_initialized)} submodule(s) not initialized in current checkout")
 
     return {
+        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "overall_ok": len(issues) == 0,
-        "repo_root": str(repo_root),
+        "repo_root": ".",  # portable: no local absolute paths in committed artifacts
         "issue_count": len(issues),
         "warning_count": len(warnings),
         "gitlinks": gitlinks,

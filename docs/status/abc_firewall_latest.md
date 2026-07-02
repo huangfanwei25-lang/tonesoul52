@@ -1,6 +1,6 @@
 # A/B/C Firewall Latest
 
-- generated_at: 2026-03-22T12:48:09Z
+- generated_at: 2026-07-02T01:49:31Z
 - ok: `true`
 - primary_status_line: `abc_firewall_ready | entrypoint_refs=7/7 prohibited_claims=0 doctrine_exists=true`
 - runtime_status_line: `entrypoints | doctrine=docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md observable_shell=external_only latent_intervention_claims=forbidden`
