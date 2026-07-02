@@ -1,0 +1,245 @@
+{
+  "schema": "tonesoul.cognition.public_artifact_frames.v1",
+  "date": "2026-06-28",
+  "boundary": "Public repo artifacts only. These frames test structure and evidence-ref presence, not semantic truth.",
+  "cases": [
+    {
+      "id": "externalized_cognition_anchor",
+      "expected_accepted": true,
+      "artifact_paths": [
+        "docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md",
+        "docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md"
+      ],
+      "frame": {
+        "question": "How should ToneSoul frame an AI cognitive engine without overclaiming hidden understanding?",
+        "temporal_context": [
+          {
+            "text": "The externalized cognition architecture is a canonical architecture anchor dated 2026-03-22/2026-03-23.",
+            "evidence_refs": ["file:docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md"],
+            "confidence": "observed"
+          }
+        ],
+        "spatial_context": [
+          {
+            "text": "The frame is scoped to public repository architecture documents.",
+            "evidence_refs": ["file:docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md"],
+            "confidence": "observed"
+          }
+        ],
+        "actors": [
+          {
+            "text": "Future AI agents and maintainers are the stated audience of the architecture anchor.",
+            "evidence_refs": ["file:docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md"],
+            "confidence": "observed"
+          }
+        ],
+        "known_facts": [
+          {
+            "text": "The architecture direction prefers external, inspectable modules over opaque model-internal dependencies.",
+            "evidence_refs": ["file:docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md"],
+            "confidence": "observed"
+          },
+          {
+            "text": "The claim-to-evidence matrix warns against promoting philosophical claims into mechanism claims.",
+            "evidence_refs": ["file:docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md"],
+            "confidence": "observed"
+          }
+        ],
+        "hypotheses": [
+          {
+            "text": "A CognitiveFrame contract can reduce hidden overclaim before answer synthesis.",
+            "evidence_refs": ["file:docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md"],
+            "confidence": "inferred"
+          }
+        ],
+        "unknowns": [
+          {
+            "text": "Whether the first schema lanes are sufficient for real project work is not yet measured.",
+            "evidence_refs": [],
+            "confidence": "unknown"
+          }
+        ],
+        "constraints": [
+          {
+            "text": "Private memory and governance-critical control points must remain external and deletable.",
+            "evidence_refs": ["file:docs/architecture/TONESOUL_EXTERNALIZED_COGNITIVE_ARCHITECTURE.md"],
+            "confidence": "observed"
+          }
+        ],
+        "next_probes": [
+          {
+            "text": "Validate the frame against additional public artifacts before wiring it into runtime.",
+            "evidence_refs": [],
+            "confidence": "unknown"
+          }
+        ]
+      }
+    },
+    {
+      "id": "responsibility_runtime_frame",
+      "expected_accepted": true,
+      "artifact_paths": [
+        "docs/plans/tonesoul_responsibility_native_runtime_architecture_2026-06-27.md",
+        "docs/status/responsibility_runtime_gate_eval_2026-06-27.md"
+      ],
+      "frame": {
+        "question": "How should a cognitive frame preserve the responsibility-runtime enforcement boundary?",
+        "temporal_context": [
+          {
+            "text": "The responsibility-native runtime architecture memo is dated 2026-06-27.",
+            "evidence_refs": ["file:docs/plans/tonesoul_responsibility_native_runtime_architecture_2026-06-27.md"],
+            "confidence": "observed"
+          }
+        ],
+        "spatial_context": [
+          {
+            "text": "The frame is scoped to the public responsibility-runtime design and gate-eval artifacts.",
+            "evidence_refs": ["file:docs/plans/tonesoul_responsibility_native_runtime_architecture_2026-06-27.md", "file:docs/status/responsibility_runtime_gate_eval_2026-06-27.md"],
+            "confidence": "observed"
+          }
+        ],
+        "actors": [
+          {
+            "text": "The model proposes, the authorization and enforcer layers decide and execute, and trace records the result.",
+            "evidence_refs": ["file:docs/plans/tonesoul_responsibility_native_runtime_architecture_2026-06-27.md"],
+            "confidence": "observed"
+          }
+        ],
+        "known_facts": [
+          {
+            "text": "The runtime architecture says model weights can learn responsibility grammar but must not be the enforcement path.",
+            "evidence_refs": ["file:docs/plans/tonesoul_responsibility_native_runtime_architecture_2026-06-27.md"],
+            "confidence": "observed"
+          },
+          {
+            "text": "The gate eval is directional and explicitly not a non-bypassability proof.",
+            "evidence_refs": ["file:docs/status/responsibility_runtime_gate_eval_2026-06-27.md"],
+            "confidence": "observed"
+          }
+        ],
+        "hypotheses": [
+          {
+            "text": "CognitiveFrame should produce intent-ready context, not bypass authorization.",
+            "evidence_refs": ["file:docs/plans/tonesoul_responsibility_native_runtime_architecture_2026-06-27.md"],
+            "confidence": "inferred"
+          }
+        ],
+        "unknowns": [
+          {
+            "text": "Whether future frame-to-intent composition needs a policy decision is unresolved.",
+            "evidence_refs": [],
+            "confidence": "unknown"
+          }
+        ],
+        "constraints": [
+          {
+            "text": "Auditee must not possess the enforcement path.",
+            "evidence_refs": ["file:docs/plans/tonesoul_responsibility_native_runtime_architecture_2026-06-27.md"],
+            "confidence": "observed"
+          }
+        ],
+        "next_probes": [
+          {
+            "text": "Add a separate trace-binding cut before using frames to drive runtime actions.",
+            "evidence_refs": [],
+            "confidence": "unknown"
+          }
+        ]
+      }
+    },
+    {
+      "id": "memory_output_surface_frame",
+      "expected_accepted": true,
+      "artifact_paths": [
+        "docs/status/memory_output_surface_eval_2026-06-28.md",
+        "docs/status/memory_claim_corpus_eval_2026-06-28.md"
+      ],
+      "frame": {
+        "question": "How should a cognitive frame describe memory acknowledgements without inventing persistence?",
+        "temporal_context": [
+          {
+            "text": "The memory output surface eval is dated 2026-06-28.",
+            "evidence_refs": ["file:docs/status/memory_output_surface_eval_2026-06-28.md"],
+            "confidence": "observed"
+          }
+        ],
+        "spatial_context": [
+          {
+            "text": "The frame is scoped to public memory-output and memory-claim eval reports.",
+            "evidence_refs": ["file:docs/status/memory_output_surface_eval_2026-06-28.md", "file:docs/status/memory_claim_corpus_eval_2026-06-28.md"],
+            "confidence": "observed"
+          }
+        ],
+        "actors": [
+          {
+            "text": "The output surface may acknowledge memory writes only when enforcer result and trace both support it.",
+            "evidence_refs": ["file:docs/status/memory_output_surface_eval_2026-06-28.md"],
+            "confidence": "observed"
+          }
+        ],
+        "known_facts": [
+          {
+            "text": "The memory output surface eval reports four deterministic scenarios and zero failures.",
+            "evidence_refs": ["file:docs/status/memory_output_surface_eval_2026-06-28.md"],
+            "confidence": "observed"
+          },
+          {
+            "text": "Consent language does not replace trace support for memory claims.",
+            "evidence_refs": ["file:docs/status/memory_claim_corpus_eval_2026-06-28.md"],
+            "confidence": "observed"
+          }
+        ],
+        "hypotheses": [
+          {
+            "text": "CognitiveFrame should treat memory claims as trace-dependent output facts, not as model self-report.",
+            "evidence_refs": ["file:docs/status/memory_output_surface_eval_2026-06-28.md"],
+            "confidence": "inferred"
+          }
+        ],
+        "unknowns": [
+          {
+            "text": "Whether future frame synthesis will falsely infer persistence from conversational consent remains unmeasured.",
+            "evidence_refs": [],
+            "confidence": "unknown"
+          }
+        ],
+        "constraints": [
+          {
+            "text": "No memory acknowledgement should be rendered without executed trace support.",
+            "evidence_refs": ["file:docs/status/memory_output_surface_eval_2026-06-28.md"],
+            "confidence": "observed"
+          }
+        ],
+        "next_probes": [
+          {
+            "text": "Measure frame synthesis against memory-consent false-positive cases before adding automation.",
+            "evidence_refs": [],
+            "confidence": "unknown"
+          }
+        ]
+      }
+    },
+    {
+      "id": "rejected_unsupported_fact_frame",
+      "expected_accepted": false,
+      "artifact_paths": [
+        "docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md"
+      ],
+      "frame": {
+        "question": "Does the public-artifact eval reject a factual claim shipped without an evidence ref?",
+        "known_facts": [
+          {
+            "text": "The claim-to-evidence matrix warns against promoting philosophical claims into mechanism claims.",
+            "evidence_refs": ["file:docs/architecture/TONESOUL_CLAIM_TO_EVIDENCE_MATRIX.md"],
+            "confidence": "observed"
+          },
+          {
+            "text": "This factual claim is intentionally shipped without any evidence ref so the frame must fail closed.",
+            "evidence_refs": [],
+            "confidence": "observed"
+          }
+        ]
+      }
+    }
+  ]
+}

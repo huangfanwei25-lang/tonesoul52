@@ -56,6 +56,7 @@ def test_classify_strengthened_short_error_signature_degrades():
         "401 unauthorized",
         "you are not logged in",
         "insufficient_quota",
+        "ERROR: You've hit your usage limit. Try again later.",  # observed live 2026-06-29
     ):
         assert cr.classify_outcome(0, msg)[0] is False
 

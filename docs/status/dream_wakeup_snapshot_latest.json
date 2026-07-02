@@ -1,61 +1,72 @@
 {
-  "generated_at": "2026-03-08T03:56:43Z",
+  "generated_at": "2026-07-02T07:34:19Z",
   "overall_status": "ok",
   "config": {
     "interval_seconds": 0.0,
     "max_cycles": 1,
-    "limit": 4,
-    "min_priority": 0.3,
+    "limit": 3,
+    "min_priority": 0.35,
     "related_limit": 5,
     "crystal_count": 5,
     "generate_reflection": true,
     "require_inference_ready": true,
-    "inference_timeout_seconds": 2.0
+    "inference_timeout_seconds": 10.0
+  },
+  "runtime_state": {
+    "session_id": "wakeup_3d4105382bc8",
+    "next_cycle": 2,
+    "consecutive_failures": 0,
+    "last_status": "ok",
+    "last_started_at": "2026-07-02T07:34:17Z",
+    "last_finished_at": "2026-07-02T07:34:18Z",
+    "last_duration_ms": 1091,
+    "updated_at": "2026-07-02T07:34:19Z",
+    "resumed": false,
+    "state_path": "memory/autonomous/dream_wakeup_state.json"
   },
   "results": [
     {
       "cycle": 1,
       "status": "ok",
-      "started_at": "2026-03-08T03:56:41Z",
-      "finished_at": "2026-03-08T03:56:43Z",
-      "duration_ms": 2195,
+      "started_at": "2026-07-02T07:34:17Z",
+      "finished_at": "2026-07-02T07:34:18Z",
+      "duration_ms": 1091,
       "interval_seconds": 0.0,
       "dream_result": {
-        "generated_at": "2026-03-08T03:56:43Z",
-        "stimuli_considered": 3,
-        "stimuli_selected": 3,
-        "llm_backend": "lmstudio",
+        "generated_at": "2026-07-02T07:34:17Z",
+        "dream_cycle_id": "dream-cycle-f6afcabe516a",
+        "stimuli_considered": 2,
+        "stimuli_selected": 2,
+        "llm_backend": "none",
         "llm_preflight": {
           "ok": false,
-          "supported": true,
-          "backend": "lmstudio",
-          "model": "qwen3.5-9b",
-          "reason": "timeout",
-          "latency_ms": 2013,
-          "probe_latency_ms": 1255,
-          "selection_latency_ms": 758,
-          "timeout_seconds": 2.0,
+          "supported": false,
+          "backend": "none",
+          "reason": "no_client",
+          "latency_ms": 1004,
+          "selection_latency_ms": 1004,
+          "timeout_seconds": 10.0,
           "enabled": true,
           "required": true
         },
         "collisions": [
           {
-            "stimulus_record_id": "ffc10418-cb1f-4e63-9324-9426fc6c6eeb",
-            "topic": "A distributed vulnerability database for Open Source",
-            "source_url": "https://osv.dev/",
-            "priority_score": 0.5108,
+            "stimulus_record_id": "153a7b6f-29be-4e9f-b097-8085551ec480",
+            "topic": "[](https://google.github.io/osv.dev/data/#data-sources) Data sources",
+            "source_url": "https://google.github.io/osv.dev/data/",
+            "priority_score": 0.5808,
             "relevance_score": 0.3015,
-            "novelty_score": 0.7,
-            "resonance_score": 1.0,
-            "friction_score": 0.3067,
+            "novelty_score": 0.9,
+            "resonance_score": 0.6,
+            "friction_score": 0.1742,
             "should_convene_council": true,
-            "council_reason": "Tension (0.51) exceeds threshold (0.4)",
-            "llm_backend": "lmstudio",
-            "reflection": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3067 with 2 recalled memories and 3 durable rules. Next governance move: Tension (0.51) exceeds threshold (0.4).",
+            "council_reason": "Tension (0.58) exceeds threshold (0.4)",
+            "llm_backend": "none",
+            "reflection": "Dream collision examined '[](https://google.github.io/osv.dev/data/#data-sources) Data sources'. Friction=0.1742 with 1 recalled memories and 0 durable rules. Next governance move: Tension (0.58) exceeds threshold (0.4).",
             "reflection_generated": false,
             "related_memories": [
               {
-                "id": "85c8bd7e-5cfe-4606-8acb-f1c63ac15b96",
+                "id": "835bc5df-0609-4409-bb65-fb1a4cb6c43a",
                 "title": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
                 "source": "custom",
                 "layer": "working",
@@ -65,53 +76,37 @@
                   "architecture",
                   "engineering",
                   "environment",
-                  "perception"
-                ]
-              },
-              {
-                "id": "5e0863eb-6caa-4354-bd51-7a87de7fd905",
-                "title": "Quickly assess open source projects for risky practices",
-                "source": "custom",
-                "layer": "working",
-                "summary": "Quickly assess open source projects for risky practices",
-                "tags": [
-                  "ai",
-                  "engineering",
-                  "environment",
-                  "perception"
+                  "perception",
+                  "observation:remote_feed"
                 ]
               }
             ],
-            "crystal_rules": [
-              "critical: collapse warnings escalate to fail-closed governance",
-              "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)",
-              "avoid high-risk actions that previously triggered block outcomes"
-            ],
+            "crystal_rules": [],
             "resistance": {
               "prior_tension": {
-                "query_tension": 0.5108,
-                "memory_tension": 0.0,
-                "delta_t": 0.48919999999999997,
+                "query_tension": 0.5808,
+                "memory_tension": 0.4,
+                "delta_t": 0.019199999999999995,
                 "query_wave": {
-                  "uncertainty_shift": 0.7,
-                  "divergence_shift": 0.0,
-                  "risk_shift": 0.5108,
-                  "revision_shift": 0.48919999999999997
+                  "uncertainty_shift": 0.9,
+                  "divergence_shift": 0.4,
+                  "risk_shift": 0.5808,
+                  "revision_shift": 0.019199999999999995
                 },
                 "memory_wave": {
-                  "uncertainty_shift": 1.0,
-                  "divergence_shift": 0.0,
-                  "risk_shift": 1.0,
-                  "revision_shift": 0.4
+                  "uncertainty_shift": 0.6,
+                  "divergence_shift": 0.4,
+                  "risk_shift": 0.0,
+                  "revision_shift": 0.2
                 },
                 "constraint_kind": "core_rule",
                 "is_immutable": false,
                 "gate_decision": "approve"
               },
               "runtime_friction": {
-                "tension_delta": 0.5108,
-                "wave_distance": 0.2196,
-                "friction_score": 0.3798,
+                "tension_delta": 0.1808,
+                "wave_distance": 0.2654,
+                "friction_score": 0.2189,
                 "constraint_kind": "core_rule",
                 "is_immutable": false
               },
@@ -121,101 +116,86 @@
                 "is_frozen": false,
                 "freeze_reason": "",
                 "status": "ok",
-                "lyapunov_exponent": 0.2499
+                "lyapunov_exponent": 0.0112
               }
             },
             "observability": {
               "query_terms": [
-                "a",
-                "distributed",
-                "vulnerability",
-                "database",
-                "for",
-                "open",
-                "source",
-                "an",
-                "open,",
-                "precise,",
-                "and",
-                "approach"
+                "[](https://google.github.io/osv.dev/data/#data-sources)",
+                "data",
+                "sources",
+                "[skip",
+                "to",
+                "main",
+                "content](https://google.github.io/osv.dev/data/#main-content)",
+                "link",
+                "menu",
+                "expand",
+                "(external",
+                "link)"
               ],
-              "lyapunov_proxy": 0.2499,
+              "lyapunov_proxy": 0.0112,
               "breaker_status": "ok"
-            }
+            },
+            "persisted_record_id": "8e87e4bd-ae16-4bde-bcaa-89f4f1570f4f"
           },
           {
-            "stimulus_record_id": "85c8bd7e-5cfe-4606-8acb-f1c63ac15b96",
+            "stimulus_record_id": "835bc5df-0609-4409-bb65-fb1a4cb6c43a",
             "topic": "A distributed vulnerability database for Open Source",
             "source_url": "https://osv.dev/",
             "priority_score": 0.5108,
             "relevance_score": 0.3015,
             "novelty_score": 0.7,
-            "resonance_score": 1.0,
-            "friction_score": 0.3067,
+            "resonance_score": 0.6,
+            "friction_score": 0.113,
             "should_convene_council": true,
             "council_reason": "Tension (0.51) exceeds threshold (0.4)",
-            "llm_backend": "lmstudio",
-            "reflection": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.3067 with 2 recalled memories and 3 durable rules. Next governance move: Tension (0.51) exceeds threshold (0.4).",
+            "llm_backend": "none",
+            "reflection": "Dream collision examined 'A distributed vulnerability database for Open Source'. Friction=0.113 with 1 recalled memories and 0 durable rules. Next governance move: Tension (0.51) exceeds threshold (0.4).",
             "reflection_generated": false,
             "related_memories": [
               {
-                "id": "ffc10418-cb1f-4e63-9324-9426fc6c6eeb",
-                "title": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                "id": "153a7b6f-29be-4e9f-b097-8085551ec480",
+                "title": "[Skip to main content](https://google.github.io/osv.dev/data/#main-content) Link Menu Expand (external link) Document Se",
                 "source": "custom",
                 "layer": "working",
-                "summary": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
+                "summary": "[Skip to main content](https://google.github.io/osv.dev/data/#main-content) Link Menu Expand (external link) Document Search Copy Copied",
                 "tags": [
                   "ai",
                   "architecture",
                   "engineering",
                   "environment",
-                  "perception"
-                ]
-              },
-              {
-                "id": "5e0863eb-6caa-4354-bd51-7a87de7fd905",
-                "title": "Quickly assess open source projects for risky practices",
-                "source": "custom",
-                "layer": "working",
-                "summary": "Quickly assess open source projects for risky practices",
-                "tags": [
-                  "ai",
-                  "engineering",
-                  "environment",
-                  "perception"
+                  "perception",
+                  "observation:remote_feed"
                 ]
               }
             ],
-            "crystal_rules": [
-              "critical: collapse warnings escalate to fail-closed governance",
-              "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)",
-              "avoid high-risk actions that previously triggered block outcomes"
-            ],
+            "crystal_rules": [],
             "resistance": {
               "prior_tension": {
                 "query_tension": 0.5108,
-                "memory_tension": 0.0,
-                "delta_t": 0.48919999999999997,
+                "memory_tension": 0.4,
+                "delta_t": 0.08919999999999995,
                 "query_wave": {
                   "uncertainty_shift": 0.7,
-                  "divergence_shift": 0.0,
+                  "divergence_shift": 0.4,
                   "risk_shift": 0.5108,
-                  "revision_shift": 0.48919999999999997
+                  "revision_shift": 0.08919999999999995
                 },
                 "memory_wave": {
-                  "uncertainty_shift": 1.0,
-                  "divergence_shift": 0.0,
-                  "risk_shift": 1.0,
-                  "revision_shift": 0.4
+                  "uncertainty_shift": 0.6,
+                  "divergence_shift": 0.4,
+                  "risk_shift": 0.0,
+                  "revision_shift": 0.2
                 },
                 "constraint_kind": "core_rule",
                 "is_immutable": false,
                 "gate_decision": "approve"
               },
               "runtime_friction": {
-                "tension_delta": 0.5108,
-                "wave_distance": 0.2196,
-                "friction_score": 0.3798,
+                "tension_delta": 0.1108,
+                "wave_distance": 0.1804,
+                "friction_score": 0.1421,
                 "constraint_kind": "core_rule",
                 "is_immutable": false
               },
@@ -225,7 +205,7 @@
                 "is_frozen": false,
                 "freeze_reason": "",
                 "status": "ok",
-                "lyapunov_exponent": 0.2499
+                "lyapunov_exponent": 0.0456
               }
             },
             "observability": {
@@ -243,137 +223,139 @@
                 "and",
                 "approach"
               ],
-              "lyapunov_proxy": 0.2499,
+              "lyapunov_proxy": 0.0456,
               "breaker_status": "ok"
-            }
-          },
-          {
-            "stimulus_record_id": "5e0863eb-6caa-4354-bd51-7a87de7fd905",
-            "topic": "Build better security habits,",
-            "source_url": "https://scorecard.dev/",
-            "priority_score": 0.36,
-            "relevance_score": 0.0,
-            "novelty_score": 0.8,
-            "resonance_score": 0.6,
-            "friction_score": 0.1055,
-            "should_convene_council": false,
-            "council_reason": "Tension (0.36) below threshold, council not needed",
-            "llm_backend": "lmstudio",
-            "reflection": "Dream collision examined 'Build better security habits,'. Friction=0.1055 with 2 recalled memories and 3 durable rules. Next governance move: Tension (0.36) below threshold, council not needed.",
-            "reflection_generated": false,
-            "related_memories": [
-              {
-                "id": "ffc10418-cb1f-4e63-9324-9426fc6c6eeb",
-                "title": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
-                "source": "custom",
-                "layer": "working",
-                "summary": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
-                "tags": [
-                  "ai",
-                  "architecture",
-                  "engineering",
-                  "environment",
-                  "perception"
-                ]
-              },
-              {
-                "id": "85c8bd7e-5cfe-4606-8acb-f1c63ac15b96",
-                "title": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
-                "source": "custom",
-                "layer": "working",
-                "summary": "An open, precise, and distributed approach to producing and consuming vulnerability information for open source.",
-                "tags": [
-                  "ai",
-                  "architecture",
-                  "engineering",
-                  "environment",
-                  "perception"
-                ]
-              }
-            ],
-            "crystal_rules": [
-              "critical: collapse warnings escalate to fail-closed governance",
-              "prefer interactions that produce genuine resonance (tension -> convergence -> novel output)",
-              "avoid high-risk actions that previously triggered block outcomes"
-            ],
-            "resistance": {
-              "prior_tension": {
-                "query_tension": 0.36,
-                "memory_tension": 0.4,
-                "delta_t": 0.24,
-                "query_wave": {
-                  "uncertainty_shift": 0.8,
-                  "divergence_shift": 0.4,
-                  "risk_shift": 0.36,
-                  "revision_shift": 0.24
-                },
-                "memory_wave": {
-                  "uncertainty_shift": 0.6,
-                  "divergence_shift": 0.4,
-                  "risk_shift": 1.0,
-                  "revision_shift": 0.4
-                },
-                "constraint_kind": "core_rule",
-                "is_immutable": false,
-                "gate_decision": "approve"
-              },
-              "runtime_friction": {
-                "tension_delta": 0.04,
-                "wave_distance": 0.25,
-                "friction_score": 0.1345,
-                "constraint_kind": "core_rule",
-                "is_immutable": false
-              },
-              "circuit_breaker": {
-                "friction_history_len": 3,
-                "consecutive_high": 0,
-                "is_frozen": false,
-                "freeze_reason": "",
-                "status": "ok",
-                "lyapunov_exponent": 0.096
-              }
             },
-            "observability": {
-              "query_terms": [
-                "build",
-                "better",
-                "security",
-                "habits,",
-                "quickly",
-                "assess",
-                "open",
-                "source",
-                "projects",
-                "for",
-                "risky",
-                "practices"
-              ],
-              "lyapunov_proxy": 0.096,
-              "breaker_status": "ok"
+            "persisted_record_id": "085dcdb9-1d0b-4161-af06-ee304cf423ca"
+          }
+        ],
+        "write_gateway": {
+          "written": 2,
+          "skipped": 0,
+          "rejected": 0,
+          "record_ids": [
+            "8e87e4bd-ae16-4bde-bcaa-89f4f1570f4f",
+            "085dcdb9-1d0b-4161-af06-ee304cf423ca"
+          ],
+          "skip_reasons": [],
+          "reject_reasons": []
+        },
+        "stale_rule_tasks_generated": 0,
+        "verification_applied": {
+          "re_confirmed": 0,
+          "retired": 0,
+          "skipped": 0
+        },
+        "scribe": {
+          "evaluated": true,
+          "triggered": true,
+          "skip_reason": "",
+          "signal_signature": "3be8cfe9899d3f0b1f10cf480a34558dc5e1b2973a1051fab92681500b89ea77",
+          "status_artifact_path": "docs/status/scribe_status_latest.json",
+          "state_path": "memory/autonomous/dream_wakeup_scribe_state.json",
+          "result": {
+            "generated_at": "2026-07-02T07:34:18Z",
+            "status": "llm_unavailable",
+            "title_hint": "After the Wake-Up Collisions",
+            "source_db_path": "C:\\Users\\user\\Desktop\\codex_worktrees\\stale-regen-20260702\\memory\\soul.db",
+            "observed_counts": {
+              "tensions": 0,
+              "collisions": 0,
+              "crystals": 0
+            },
+            "lead_anchor_summary": "",
+            "fallback_mode": "bootstrap_reflection",
+            "generation_mode": "llm_chronicle",
+            "state_document_posture": "anchor_only",
+            "llm_model": "qwen3.5:14b",
+            "llm_attempt_count": 1,
+            "llm_attempts": [
+              {
+                "model": "qwen3.5:14b",
+                "status": "llm_unavailable",
+                "error": "Local LLM is unreachable.",
+                "error_kind": "llm_unavailable"
+              }
+            ],
+            "chronicle_path": null,
+            "companion_path": "C:\\Users\\user\\Desktop\\codex_worktrees\\stale-regen-20260702\\docs\\chronicles\\scribe_chronicle_20260702_073418.json",
+            "latest_available_source": "companion_only",
+            "primary_status_line": "llm_unavailable | mode=llm_chronicle model=qwen3.5:14b fallback_mode=bootstrap_reflection attempts=1 latest=companion_only",
+            "runtime_status_line": "state_document | tensions=0 collisions=0 crystals=0 posture=anchor_only",
+            "anchor_status_line": "",
+            "problem_route": {
+              "family_code": "F4",
+              "family": "execution_contract_integrity",
+              "broken_invariant": "local_model_availability",
+              "first_repair_surface": "model_allowlist_and_runtime_readiness",
+              "do_not_repair_first": "chronicle_style_rewrite"
+            },
+            "problem_route_status_line": "route | family=F4_execution_contract_integrity invariant=local_model_availability repair=model_allowlist_and_runtime_readiness",
+            "problem_route_secondary_labels": [],
+            "artifact_policy_status_line": "artifact_source=companion_only | chronicle=no companion=yes",
+            "handoff": {
+              "queue_shape": "scribe_companion_only",
+              "requires_operator_action": false,
+              "latest_available_source": "companion_only",
+              "lead_anchor_summary": "",
+              "anchor_status_line": "",
+              "problem_route_status_line": "route | family=F4_execution_contract_integrity invariant=local_model_availability repair=model_allowlist_and_runtime_readiness",
+              "companion_path": "C:\\Users\\user\\Desktop\\codex_worktrees\\stale-regen-20260702\\docs\\chronicles\\scribe_chronicle_20260702_073418.json",
+              "chronicle_path": null,
+              "primary_status_line": "llm_unavailable | mode=llm_chronicle model=qwen3.5:14b fallback_mode=bootstrap_reflection attempts=1 latest=companion_only"
             }
           }
-        ]
+        }
       },
       "summary": {
-        "stimuli_considered": 3,
-        "stimuli_selected": 3,
-        "collision_count": 3,
+        "stimuli_considered": 2,
+        "stimuli_selected": 2,
+        "collision_count": 2,
+        "collision_success_rate": 1.0,
         "council_count": 2,
         "frozen_count": 0,
-        "avg_friction_score": 0.2396,
-        "max_friction_score": 0.3067,
-        "max_lyapunov_proxy": 0.2499,
+        "avg_friction_score": 0.1436,
+        "max_friction_score": 0.1742,
+        "max_lyapunov_proxy": 0.0456,
+        "write_gateway_written": 2,
+        "write_gateway_skipped": 0,
+        "write_gateway_rejected": 0,
+        "write_gateway_record_count": 2,
         "llm_call_count": 0,
         "llm_prompt_tokens_total": 0,
         "llm_completion_tokens_total": 0,
         "llm_total_tokens": 0,
         "llm_backends": [],
         "llm_models": [],
-        "llm_preflight_latency_ms": 2013,
-        "llm_preflight_selection_latency_ms": 758,
-        "llm_preflight_probe_latency_ms": 1255,
-        "llm_preflight_timeout_count": 1,
-        "llm_preflight_reason": "timeout"
+        "llm_preflight_latency_ms": 1004,
+        "llm_preflight_selection_latency_ms": 1004,
+        "llm_preflight_probe_latency_ms": null,
+        "llm_preflight_timeout_count": 0,
+        "llm_preflight_reason": "no_client",
+        "consolidation_ran": false,
+        "consolidation_promoted_count": 0,
+        "consolidation_cleared_count": 0,
+        "consolidation_gated_count": 0,
+        "consolidation_unresolved_tension_count": 0,
+        "consolidation_vow_count": 0,
+        "scribe_evaluated": true,
+        "scribe_triggered": true,
+        "scribe_skip_reason": "",
+        "scribe_status": "llm_unavailable",
+        "scribe_generation_mode": "llm_chronicle",
+        "scribe_state_document_posture": "anchor_only",
+        "scribe_latest_available_source": "companion_only",
+        "scribe_signal_signature": "3be8cfe9899d3f0b1f10cf480a34558dc5e1b2973a1051fab92681500b89ea77",
+        "scribe_anchor_status_line": "",
+        "scribe_problem_route_status_line": "route | family=F4_execution_contract_integrity invariant=local_model_availability repair=model_allowlist_and_runtime_readiness",
+        "scribe_problem_route_secondary_labels": "",
+        "consecutive_failure_count": 0,
+        "circuit_breaker_paused": false,
+        "failure_pause_seconds": 0.0,
+        "session_id": "wakeup_3d4105382bc8",
+        "session_resumed": false,
+        "heartbeat_window_cycle": 1,
+        "resume_state_path": "memory/autonomous/dream_wakeup_state.json"
       }
     }
   ]

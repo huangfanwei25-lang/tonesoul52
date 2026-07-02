@@ -8,6 +8,7 @@ import argparse
 import json
 import re
 from dataclasses import asdict, dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable, Sequence
 
@@ -135,8 +136,9 @@ def build_report(
         excludes=excludes,
     )
     return {
+        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "overall_ok": len(matches) == 0,
-        "repo_root": str(repo_root),
+        "repo_root": ".",  # portable: no local absolute paths in committed artifacts
         "scan_targets": list(scan_targets),
         "patterns": [asdict(spec) for spec in pattern_specs],
         "match_count": len(matches),
@@ -168,12 +170,14 @@ def _render_markdown(payload: dict[str, object]) -> str:
 
 def _write_json(path: Path, payload: dict[str, object]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
 
 
 def _write_markdown(path: Path, payload: dict[str, object]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(_render_markdown(payload), encoding="utf-8")
+    path.write_text(_render_markdown(payload), encoding="utf-8", newline="\n")
 
 
 def build_parser() -> argparse.ArgumentParser:

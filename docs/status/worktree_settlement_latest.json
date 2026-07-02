@@ -1,65 +1,29 @@
 {
-  "generated_at": "2026-03-11T16:16:46Z",
+  "generated_at": "2026-07-02T07:34:25Z",
   "overall_ok": false,
   "source": "scripts/run_worktree_settlement_report.py",
   "planner": {
-    "recommendation": "manual_review_required",
-    "rationale": "Backfill branch and current branch are not tree-equivalent. Treat this as real content drift, not metadata-only debt.",
+    "recommendation": "no_switch_needed",
+    "rationale": "Current branch already satisfies commit-attribution requirements.",
     "tree_equal": false,
-    "current_missing_count": 34,
+    "current_missing_count": 0,
     "backfill_missing_count": 0,
     "cleanup_priority": [
       {
         "category": "generated_status",
-        "count": 23,
+        "count": 24,
         "reason": "generated snapshots can usually be refreshed later"
-      },
-      {
-        "category": "memory",
-        "count": 1,
-        "reason": "memory artifacts should be reviewed before branch movement"
-      },
-      {
-        "category": "docs",
-        "count": 35,
-        "reason": "hand-authored docs can be grouped after generated outputs"
-      },
-      {
-        "category": "scripts",
-        "count": 16,
-        "reason": "script changes affect operator and CI behavior"
-      },
-      {
-        "category": "tests",
-        "count": 16,
-        "reason": "tests should stay paired with code changes"
-      },
-      {
-        "category": "tonesoul",
-        "count": 10,
-        "reason": "core library changes are high-signal branch content"
-      },
-      {
-        "category": "repo_misc",
-        "count": 2,
-        "reason": "miscellaneous root-level changes need manual review"
       }
     ]
   },
   "worktree": {
     "dirty": true,
-    "entry_count": 103,
+    "entry_count": 24,
     "staged_count": 0,
-    "unstaged_count": 37,
-    "untracked_count": 66,
+    "unstaged_count": 24,
+    "untracked_count": 0,
     "category_counts": {
-      "docs": 35,
-      "generated_status": 23,
-      "memory": 1,
-      "repo_misc": 2,
-      "scripts": 16,
-      "tests": 16,
-      "tonesoul": 10
+      "generated_status": 24
     }
   },
   "settlement_lanes": [
@@ -71,20 +35,20 @@
       "categories": [
         {
           "category": "generated_status",
-          "count": 23,
+          "count": 24,
           "staged_count": 0,
-          "unstaged_count": 15,
-          "untracked_count": 8,
+          "unstaged_count": 24,
+          "untracked_count": 0,
           "sample_paths": [
-            "docs/status/refreshable_artifact_report_latest.json",
-            "docs/status/refreshable_artifact_report_latest.md",
-            "docs/status/repo_governance_settlement_latest.json",
-            "docs/status/repo_governance_settlement_latest.md",
-            "docs/status/true_verification_weekly/autonomous_registry_schedule_latest.json"
+            "docs/status/autonomous_registry_schedule_latest.json",
+            "docs/status/dream_observability_latest.html",
+            "docs/status/dream_observability_latest.json",
+            "docs/status/dream_wakeup_snapshot_latest.json",
+            "docs/status/external_source_registry_latest.json"
           ]
         }
       ],
-      "entry_count": 23,
+      "entry_count": 24,
       "recommended_actions": [
         "Do not let generated status snapshots and derived reports drive branch-base decisions.",
         "Refresh, discard, or restage reproducible artifacts only after the authored source set is stable."
@@ -92,48 +56,67 @@
       "exit_criteria": "No remaining dirty paths in generated outputs or reports, or an explicit decision to preserve them.",
       "handoff_previews": [
         {
-          "path": "docs/status/subjectivity_report_latest.json",
-          "queue_shape": "deferred_monitoring",
-          "primary_status_line": "deferred_monitoring | records=195 unresolved=50 deferred=50 settled=31 reviewed_vows=0 | top_unresolved_status=deferred",
+          "path": "docs/status/dream_observability_latest.json",
+          "queue_shape": "dream_observability_ready",
+          "primary_status_line": "dream_observability_ready | wakeup_cycles=1 schedule_cycles=1 warnings=1 overall_ok=yes",
+          "runtime_status_line": "wakeup_scribe | status=llm_unavailable posture=anchor_only source=companion_only",
+          "anchor_status_line": "",
+          "artifact_policy_status_line": "dashboard_inputs | wakeup=yes schedule=yes invalid_json=0",
+          "admissibility_primary_status_line": "",
+          "requires_operator_action": "false",
+          "problem_route_status_line": "route | family=F4_execution_contract_integrity invariant=local_model_availability repair=model_allowlist_and_runtime_readiness"
+        },
+        {
+          "path": "docs/status/l8_adapter_dataset_gate_latest.json",
+          "queue_shape": "",
+          "primary_status_line": "l8_dataset_gate_ready | records=1 approved=1 rejected=0 load_issues=0",
+          "runtime_status_line": "entrypoints | input=spec/governance/adapter_dataset_record_v1.example.json schema=spec/governance/adapter_dataset_record_v1.schema.json contract=docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md",
+          "anchor_status_line": "",
+          "artifact_policy_status_line": "adapter_rows=public_safe_only | min_verifier_pass_rate_floor=0.90 private_memory=forbidden",
           "admissibility_primary_status_line": "",
           "requires_operator_action": "false"
         },
         {
+          "path": "docs/status/subjectivity_report_latest.json",
+          "queue_shape": "action_required",
+          "primary_status_line": "action_required | records=4 unresolved=2 deferred=0 settled=0 reviewed_vows=0 | top_unresolved_status=candidate",
+          "runtime_status_line": "",
+          "anchor_status_line": "",
+          "artifact_policy_status_line": "",
+          "admissibility_primary_status_line": "",
+          "requires_operator_action": "true"
+        },
+        {
           "path": "docs/status/subjectivity_review_batch_latest.json",
-          "queue_shape": "stable_history_only",
-          "primary_status_line": "stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split",
-          "admissibility_primary_status_line": "admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity",
+          "queue_shape": "monitoring_queue",
+          "primary_status_line": "active_reject_queue | A distributed vulnerability database for Open Source | rows=1 lineages=1 cycles=1 | density=1r x1 | trigger=reject_review",
+          "runtime_status_line": "",
+          "anchor_status_line": "",
+          "artifact_policy_status_line": "",
+          "admissibility_primary_status_line": "insufficient_admissibility_confidence | focus=authority_and_exception_pressure | tags=exception_pressure, externalized_harm_check, low_context_diversity, single_lineage_pressure",
           "requires_operator_action": "false"
         },
         {
           "path": "docs/status/subjectivity_tension_groups_latest.json",
-          "queue_shape": "monitoring_queue",
-          "primary_status_line": "high_duplicate_same_source_loop | A distributed vulnerability database for Open Source | recommendation=defer_review | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | followup=upstream_dedup_candidate",
+          "queue_shape": "multi_group",
+          "primary_status_line": "same_source_loop_monitor | A distributed vulnerability database for Open Source | recommendation=reject_review | rows=1 lineages=1 cycles=1 | density=1r x1",
+          "runtime_status_line": "",
+          "anchor_status_line": "",
+          "artifact_policy_status_line": "",
           "admissibility_primary_status_line": "",
           "requires_operator_action": "false"
         }
       ],
-      "handoff_preview_count": 3,
+      "handoff_preview_count": 5,
       "admissibility_preview_count": 1
     },
     {
       "name": "private_memory_review",
       "title": "Private Memory Review",
-      "active": true,
+      "active": false,
       "goal": "Review private memory artifacts outside the public-branch settlement path.",
-      "categories": [
-        {
-          "category": "memory",
-          "count": 1,
-          "staged_count": 0,
-          "unstaged_count": 1,
-          "untracked_count": 0,
-          "sample_paths": [
-            "memory/crystals.jsonl"
-          ]
-        }
-      ],
-      "entry_count": 1,
+      "categories": [],
+      "entry_count": 0,
       "recommended_actions": [
         "Treat raw memory artifacts as private-evolution evidence, not ordinary public repo edits.",
         "Mirror only public-safe learnings into task/reflection/status artifacts when needed."
@@ -143,25 +126,10 @@
     {
       "name": "public_contract_docs",
       "title": "Public Contract Docs",
-      "active": true,
+      "active": false,
       "goal": "Group public documentation and spec edits by owning implementation phase.",
-      "categories": [
-        {
-          "category": "docs",
-          "count": 35,
-          "staged_count": 0,
-          "unstaged_count": 2,
-          "untracked_count": 33,
-          "sample_paths": [
-            "docs/plans/memory_subjectivity_context_roadmap_2026-03-10.md",
-            "docs/plans/memory_subjectivity_implementation_plan_2026-03-10.md",
-            "docs/experiments/historical_viewpoint_audit_seed_2026-03-11.json",
-            "docs/plans/memory_subjectivity_admissibility_preview_mirror_addendum_2026-03-12.md",
-            "docs/plans/memory_subjectivity_admissibility_status_line_addendum_2026-03-11.md"
-          ]
-        }
-      ],
-      "entry_count": 35,
+      "categories": [],
+      "entry_count": 0,
       "recommended_actions": [
         "Settle docs and specs after generated artifacts are separated, but before final branch movement.",
         "Keep public docs aligned with the actual runtime and governance artifacts they describe."
@@ -171,53 +139,10 @@
     {
       "name": "runtime_source_changes",
       "title": "Runtime Source Changes",
-      "active": true,
+      "active": false,
       "goal": "Review high-signal code and contract changes as cohesive change groups.",
-      "categories": [
-        {
-          "category": "scripts",
-          "count": 16,
-          "staged_count": 0,
-          "unstaged_count": 4,
-          "untracked_count": 12,
-          "sample_paths": [
-            "scripts/run_refreshable_artifact_report.py",
-            "scripts/run_repo_governance_settlement_report.py",
-            "scripts/run_subjectivity_report.py",
-            "scripts/run_worktree_settlement_report.py",
-            "scripts/hunt_margin_safe_live.py"
-          ]
-        },
-        {
-          "category": "tests",
-          "count": 16,
-          "staged_count": 0,
-          "unstaged_count": 8,
-          "untracked_count": 8,
-          "sample_paths": [
-            "tests/test_dream_engine.py",
-            "tests/test_reviewed_promotion.py",
-            "tests/test_run_refreshable_artifact_report.py",
-            "tests/test_run_repo_governance_settlement_report.py",
-            "tests/test_run_subjectivity_report.py"
-          ]
-        },
-        {
-          "category": "tonesoul",
-          "count": 10,
-          "staged_count": 0,
-          "unstaged_count": 5,
-          "untracked_count": 5,
-          "sample_paths": [
-            "tonesoul/dream_engine.py",
-            "tonesoul/memory/__init__.py",
-            "tonesoul/memory/reviewed_promotion.py",
-            "tonesoul/memory/subjectivity_reporting.py",
-            "tonesoul/schemas.py"
-          ]
-        }
-      ],
-      "entry_count": 42,
+      "categories": [],
+      "entry_count": 0,
       "recommended_actions": [
         "Keep tests paired with the code paths they validate instead of settling them independently.",
         "Treat scripts, runtime apps, and core `tonesoul` changes as the public source-of-truth lane."
@@ -227,22 +152,10 @@
     {
       "name": "experimental_misc_review",
       "title": "Experimental and Misc Review",
-      "active": true,
+      "active": false,
       "goal": "Resolve root-level drift and experimental assets deliberately instead of letting them hitchhike.",
-      "categories": [
-        {
-          "category": "repo_misc",
-          "count": 2,
-          "staged_count": 0,
-          "unstaged_count": 2,
-          "untracked_count": 0,
-          "sample_paths": [
-            "CODEX_TASK.md",
-            "task.md"
-          ]
-        }
-      ],
-      "entry_count": 2,
+      "categories": [],
+      "entry_count": 0,
       "recommended_actions": [
         "Decide whether experimental files belong to the public repo, a follow-up branch, or should be dropped.",
         "Review uncategorized root-level files manually before any git history movement."
@@ -251,44 +164,44 @@
     }
   ],
   "summary": {
-    "active_lane_count": 5,
+    "active_lane_count": 1,
     "largest_categories": [
       {
         "category": "generated_status",
-        "count": 23,
+        "count": 24,
         "reason": "generated snapshots can usually be refreshed later"
-      },
-      {
-        "category": "memory",
-        "count": 1,
-        "reason": "memory artifacts should be reviewed before branch movement"
-      },
-      {
-        "category": "docs",
-        "count": 35,
-        "reason": "hand-authored docs can be grouped after generated outputs"
-      },
-      {
-        "category": "scripts",
-        "count": 16,
-        "reason": "script changes affect operator and CI behavior"
-      },
-      {
-        "category": "tests",
-        "count": 16,
-        "reason": "tests should stay paired with code changes"
       }
     ],
-    "refreshable_handoff_preview_count": 3,
+    "refreshable_handoff_preview_count": 5,
     "refreshable_admissibility_preview_count": 1
   },
+  "weekly_host_status_preview": null,
   "subjectivity_focus_preview": {
     "path": "docs/status/subjectivity_review_batch_latest.json",
-    "queue_shape": "stable_history_only",
-    "primary_status_line": "stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split",
-    "admissibility_primary_status_line": "admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity",
+    "queue_shape": "monitoring_queue",
+    "primary_status_line": "active_reject_queue | A distributed vulnerability database for Open Source | rows=1 lineages=1 cycles=1 | density=1r x1 | trigger=reject_review",
+    "runtime_status_line": "",
+    "anchor_status_line": "",
+    "artifact_policy_status_line": "",
+    "admissibility_primary_status_line": "insufficient_admissibility_confidence | focus=authority_and_exception_pressure | tags=exception_pressure, externalized_harm_check, low_context_diversity, single_lineage_pressure",
     "requires_operator_action": "false"
   },
+  "dream_observability_focus_preview": {
+    "path": "docs/status/dream_observability_latest.json",
+    "queue_shape": "dream_observability_ready",
+    "primary_status_line": "dream_observability_ready | wakeup_cycles=1 schedule_cycles=1 warnings=1 overall_ok=yes",
+    "runtime_status_line": "wakeup_scribe | status=llm_unavailable posture=anchor_only source=companion_only",
+    "anchor_status_line": "",
+    "artifact_policy_status_line": "dashboard_inputs | wakeup=yes schedule=yes invalid_json=0",
+    "admissibility_primary_status_line": "",
+    "requires_operator_action": "false",
+    "problem_route_status_line": "route | family=F4_execution_contract_integrity invariant=local_model_availability repair=model_allowlist_and_runtime_readiness"
+  },
+  "scribe_focus_preview": null,
+  "agent_integrity_focus_preview": null,
+  "repo_semantic_atlas_focus_preview": null,
+  "repo_intelligence_focus_preview": null,
+  "dream_weekly_alignment_line": "",
   "next_checkpoint": {
     "command": "python scripts/plan_commit_attribution_base_switch.py --current-ref HEAD --backfill-ref feat/env-perception-attribution-backfill --strict",
     "goal": "Re-check whether branch-base movement is safe after settlement."

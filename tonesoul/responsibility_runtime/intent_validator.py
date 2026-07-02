@@ -21,18 +21,37 @@ USES_LLM = False
 DEFAULT_ALLOWED_SCOPES = frozenset({"session_memory", "long_term_memory", "project_memory"})
 
 
-def _has_visible_content(text: str) -> bool:
-    """True if the string has at least one non-whitespace, non-invisible character.
+# L/N/P/S-category code points that nonetheless render blank/filler — a curated denylist.
+# This is a BEST-EFFORT denylist, NOT exhaustive: Unicode invisibility is an open adversarial
+# surface. The robust long-term fix is a POSITIVE evidence-ref format (a required id/URI shape),
+# not an ever-growing denylist. (red-team 2026-06-27: Codex/different-model pass.)
+_BLANK_CODE_POINTS = frozenset(
+    "⠀"  # BRAILLE PATTERN BLANK (So)
+    "ㅤ"  # HANGUL FILLER (Lo)
+    "ᅟ"  # HANGUL CHOSEONG FILLER (Lo)
+    "ᅠ"  # HANGUL JUNGSEONG FILLER (Lo)
+    "ﾠ"  # HALFWIDTH HANGUL FILLER (Lo)
+)
 
-    str.strip() only removes standard whitespace; it leaves zero-width / format / control code
-    points (U+200B zero-width space, U+FEFF, U+2060 word joiner, U+180E, ZWJ/ZWNJ) that look
-    empty but pass a `min_length=1` + `not value.strip()` check. A required field (claim,
-    evidence ref, scope, query) made ONLY of such code points is effectively empty and must be
-    rejected — otherwise an "evidence ref" can be invisible and still fool the audit trail.
-    Red-team finding 2026-06-27 (rt:evidence). Keeps only categories outside C* (control/format)
-    and Z* (separator).
+
+def _has_visible_content(text: str) -> bool:
+    """True if the string has at least one rendering character.
+
+    A char counts as visible only if its Unicode category is L/N/P/S — which excludes C
+    (control/format), Z (separators), AND **all M\\* marks** (combining marks / variation
+    selectors like U+FE0F, U+034F, U+180B do not count on their own) — AND it is not a known
+    blank/filler in `_BLANK_CODE_POINTS` (braille-blank U+2800, Hangul fillers).
+
+    History: the original `str.strip()` check missed zero-width code points; the first fix
+    (categories outside C/Z) STILL missed the non-C/Z invisibles a different-model red-team
+    found (VS-16/Mn, CGJ/Mn, braille-blank/So, Hangul-filler/Lo). This category+denylist version
+    closes those — but it is best-effort, not a proof (see `_BLANK_CODE_POINTS`). A required
+    field made only of invisible/filler code points is effectively empty and must be rejected.
     """
-    return any(unicodedata.category(ch)[0] not in {"C", "Z"} for ch in text)
+    return any(
+        unicodedata.category(ch)[0] in {"L", "N", "P", "S"} and ch not in _BLANK_CODE_POINTS
+        for ch in text
+    )
 
 
 IntentName = Literal["memory.write.propose", "memory.read.request"]

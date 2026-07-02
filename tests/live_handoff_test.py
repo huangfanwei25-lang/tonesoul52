@@ -4,7 +4,7 @@ import sys
 
 sys.path.insert(0, ".")
 
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from tools.handoff_builder import ContextSummary, DriftEntry, PendingTask, Phase
@@ -87,7 +87,7 @@ def generate_codex_prompt(handoff_path: str) -> str:
 Packet:
 `{handoff_path}`
 
-Generated: {datetime.utcnow().isoformat()}Z
+Generated: {datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")}
 """
 
 

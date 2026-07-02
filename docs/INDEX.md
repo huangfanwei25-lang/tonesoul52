@@ -355,7 +355,9 @@ Use these when a document claim sounds too clean, too rounded, or too shell-depe
 | [DOCS_INFORMATION_ARCHITECTURE_v1.md](DOCS_INFORMATION_ARCHITECTURE_v1.md) | ?辣?????蝞～???蝞∠??箇? |
 | [DOCS_CLASSIFICATION_LEDGER_v1.md](DOCS_CLASSIFICATION_LEDGER_v1.md) | 蝚砌???憿撣喉???憿??祉宏嚗?|
 | [FILE_PURPOSE_MAP.md](FILE_PURPOSE_MAP.md) | 頝函???蝝?|
-| [plans/iu_oi_backplane_convergence_2026-03-18.md](plans/iu_oi_backplane_convergence_2026-03-18.md) | IU/OI/Backplane ?嗆??? |
+| plans/iu_oi_backplane_convergence_2026-03-18.md（未入庫，已散佚） | IU/OI/Backplane ?嗆??? |
+| [環境設定.md](環境設定.md) | 環境 | 環境設置說明 |
+| [LINEAGE.md](LINEAGE.md) | 歷史 | 語魂七代世代史(白話,含考古警告與 parked assets) |
 
 ---
 
@@ -366,7 +368,6 @@ Use these when a document claim sounds too clean, too rounded, or too shell-depe
 |------|------|------|
 | [GETTING_STARTED.md](GETTING_STARTED.md) | EN | Setup & first run |
 | [GETTING_STARTED_zh.md](GETTING_STARTED_zh.md) | 銝?| 摰???甈∪銵?|
-| [?啣?閮剖?.md](?啣?閮剖?.md) | 銝?| ?啣??蔭 |
 | [DEMO_SHOWCASE.md](DEMO_SHOWCASE.md) | EN | Demo walkthrough |
 | [VERCEL_DEPLOY.md](VERCEL_DEPLOY.md) | EN | Vercel deployment |
 | [faq.md](faq.md) | EN | FAQ |

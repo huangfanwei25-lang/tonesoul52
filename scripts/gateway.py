@@ -409,6 +409,15 @@ class GatewayHandler(http.server.BaseHTTPRequestHandler):
 
 
 def main() -> None:
+    # cp950 terminals cannot encode banner glyphs; never let the exit-route
+    # component die on a print (2026-07-02 survival test: boot crash at the banner)
+    import sys as _sys
+
+    for _s in (_sys.stdout, _sys.stderr):
+        try:
+            _s.reconfigure(errors="replace")
+        except (AttributeError, ValueError):
+            pass
     global _AUTH_TOKEN, _CORS_ORIGIN, _OUTCOME_COLLECTION_ENABLED
 
     parser = argparse.ArgumentParser(description="ToneSoul Gateway API")

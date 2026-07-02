@@ -101,6 +101,8 @@ pytest tests/ -v
 
 如果這個區分很重要，先讀 [docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md](docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md)。
 
+Claim 邊界（機制層 / 可觀察層 / 詮釋層怎麼分、什麼話不能寫進入口文件）以 [docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md](docs/architecture/TONESOUL_ABC_FIREWALL_DOCTRINE.md) 為準。
+
 ## 品質快照
 
 | 指標 | 數值 |

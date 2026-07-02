@@ -61,6 +61,46 @@ class VowAction(Enum):
 
 
 @dataclass
+class WithdrawalTerms:
+    """Declared exit terms for a vow — the decent-withdrawal metadata revived from the
+    G8 lineage (docs/plans/vow_withdrawal_gap_study_2026-07-02.md, owner-ratified).
+    Declarative only: nothing validates or schedules these in the shadow phase; the
+    declaration itself is the accountability move (exit costs stated at creation)."""
+
+    conditions: List[str] = field(default_factory=list)  # when withdrawing is legitimate
+    repair_owner: str = ""  # role accountable for explanation/repair (declared, not enforced)
+    repair_actions: List[str] = field(default_factory=list)  # what is owed on withdrawal
+    repair_deadline: Optional[str] = None  # ISO timestamp; record-only, no scheduler
+
+    def to_dict(self) -> Dict:
+        return {
+            "conditions": list(self.conditions),
+            "repair_owner": self.repair_owner,
+            "repair_actions": list(self.repair_actions),
+            "repair_deadline": self.repair_deadline,
+        }
+
+    @staticmethod
+    def _str_list(value: object) -> List[str]:
+        # a bare string must become one item, not a list of characters (codex finding)
+        if isinstance(value, str):
+            return [value]
+        if isinstance(value, list):
+            return [str(item) for item in value]
+        return []
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> "WithdrawalTerms":
+        deadline = data.get("repair_deadline")
+        return cls(
+            conditions=cls._str_list(data.get("conditions", [])),
+            repair_owner=str(data.get("repair_owner", "") or ""),
+            repair_actions=cls._str_list(data.get("repair_actions", [])),
+            repair_deadline=str(deadline) if deadline is not None else None,
+        )
+
+
+@dataclass
 class Vow:
     """
     A semantic vow - an explicit commitment AI must satisfy.
@@ -80,6 +120,9 @@ class Vow:
     # GSE upgrade: operatable ontology fields (optional, backward-compatible)
     trigger: Optional[str] = None  # condition that activates this vow
     operation_instruction: Optional[str] = None  # step-by-step instruction agent can follow
+    # Decent-exit terms (optional; constructed per vow — never share an instance, cf. the
+    # G8 template-aliasing hazard recorded in the gap study)
+    withdrawal_terms: Optional[WithdrawalTerms] = None
 
     def to_dict(self) -> Dict:
         d = {
@@ -97,6 +140,8 @@ class Vow:
             d["trigger"] = self.trigger
         if self.operation_instruction is not None:
             d["operation_instruction"] = self.operation_instruction
+        if self.withdrawal_terms is not None:
+            d["withdrawal_terms"] = self.withdrawal_terms.to_dict()
         return d
 
     @classmethod
@@ -115,6 +160,11 @@ class Vow:
             measurable_via=data.get("measurable_via"),
             trigger=data.get("trigger"),
             operation_instruction=data.get("operation_instruction"),
+            withdrawal_terms=(
+                WithdrawalTerms.from_dict(data["withdrawal_terms"])
+                if data.get("withdrawal_terms")
+                else None
+            ),
         )
 
 
@@ -178,6 +228,11 @@ DEFAULT_VOWS = [
         action_on_violation=VowAction.FLAG,
         falsifiable_by="Output contains a clear false statement stated as fact.",
         measurable_via=f"Truthfulness evaluator score >= {SOUL.vow.truthfulness_target}.",
+        withdrawal_terms=WithdrawalTerms(
+            conditions=["truthfulness metric retired or replaced by owner decision"],
+            repair_owner="module_owner",
+            repair_actions=["解釋原因", "提供替代約束"],
+        ),
     ),
     Vow(
         id="ΣVow_002",
@@ -188,6 +243,11 @@ DEFAULT_VOWS = [
         action_on_violation=VowAction.FLAG,
         falsifiable_by="Output lacks uncertainty markers when confidence is low.",
         measurable_via=f"Confidence disclosure score >= {SOUL.vow.hedging_target}.",
+        withdrawal_terms=WithdrawalTerms(
+            conditions=["hedging metric retired or replaced by owner decision"],
+            repair_owner="module_owner",
+            repair_actions=["解釋原因", "提供替代約束"],
+        ),
     ),
     Vow(
         id="ΣVow_003",
@@ -198,6 +258,11 @@ DEFAULT_VOWS = [
         action_on_violation=VowAction.BLOCK,
         falsifiable_by="Output includes actionable harmful instructions.",
         measurable_via=f"Safety evaluator score == {SOUL.vow.harm_threshold} (no unsafe patterns).",
+        withdrawal_terms=WithdrawalTerms(
+            conditions=["axiom-level ratification only（公理層決議,非工程判斷）"],
+            repair_owner="system_admin",
+            repair_actions=["公開說明", "記錄於 audit chain"],
+        ),
     ),
 ]
 
@@ -211,10 +276,13 @@ class VowRegistry:
 
     def __init__(self, vows: Optional[List[Vow]] = None):
         self._vows: Dict[str, Vow] = {}
+        self._withdrawals: List[Dict] = []  # immutable exit records; never deleted
         if vows is None:
-            # Load defaults
+            # Load defaults — deep-copied per registry: withdrawing in one registry must
+            # never deactivate the shared module-level instances (codex finding, 2026-07-03;
+            # same aliasing family as the G8 template bug the gap study warned about)
             for vow in DEFAULT_VOWS:
-                self.register(vow)
+                self.register(Vow.from_dict(vow.to_dict()))
         else:
             for vow in vows:
                 self.register(vow)
@@ -224,9 +292,44 @@ class VowRegistry:
         self._vows[vow.id] = vow
 
     def unregister(self, vow_id: str) -> None:
-        """Unregister a vow"""
+        """Hard-delete a vow. Test/tooling only — runtime retirement must use
+        withdraw(), which leaves provenance. A silent delete of a standing
+        constraint is exactly the traceless exit the withdrawal study rejects."""
         if vow_id in self._vows:
             del self._vows[vow_id]
+
+    def withdraw(
+        self, vow_id: str, reason: str, actor: str, conditions_cited: Optional[List[str]] = None
+    ) -> bool:
+        """Retire a vow decently: deactivate it and append an immutable withdrawal
+        record. Never deletes — provenance stays queryable (same principle as
+        responsibility_graph.revoke). conditions_cited is RECORDED, not validated:
+        whether it matches the declared withdrawal_terms is a measure-phase question,
+        not a gate (shadow-first, per the ratified gap study)."""
+        vow = self._vows.get(vow_id)
+        if vow is None:
+            return False
+        vow.active = False
+        self._withdrawals.append(
+            {
+                "vow_id": vow_id,
+                "withdrawn_at": datetime.now(timezone.utc).isoformat(),
+                "actor": actor,
+                "reason": reason,
+                "conditions_cited": list(conditions_cited or []),
+                "terms_snapshot": (
+                    vow.withdrawal_terms.to_dict() if vow.withdrawal_terms else None
+                ),
+            }
+        )
+        return True
+
+    def withdrawal_records(self) -> List[Dict]:
+        """The immutable exit ledger (deep copies — callers must not be able to reach
+        into nested terms_snapshot/conditions_cited and mutate history)."""
+        import copy
+
+        return copy.deepcopy(self._withdrawals)
 
     def get(self, vow_id: str) -> Optional[Vow]:
         """Get a vow by ID"""
@@ -245,6 +348,7 @@ class VowRegistry:
             "vows": [v.to_dict() for v in self._vows.values()],
             "count": len(self._vows),
             "active_count": len(self.active_vows()),
+            "withdrawals": self.withdrawal_records(),
         }
 
     @classmethod
@@ -253,7 +357,10 @@ class VowRegistry:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
         vows = [Vow.from_dict(v) for v in data.get("vows", [])]
-        return cls(vows)
+        registry = cls(vows)
+        # the exit ledger persists round-trip (codex finding: it was written but never read)
+        registry._withdrawals = [dict(w) for w in data.get("withdrawals", [])]
+        return registry
 
     def save(self, path: str) -> None:
         """Save vows to JSON file"""

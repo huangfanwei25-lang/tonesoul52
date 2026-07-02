@@ -83,6 +83,8 @@ ROOT_MODULE_LAYER: dict[str, str] = {
     "constraint_stack": "governance",
     "tension_engine": "governance",
     "risk_calculator": "governance",
+    "calibration_score": "governance",
+    "output_redaction": "governance",
     "drift_monitor": "governance",
     "stale_rule_verifier": "governance",
     "seed_schema_check": "governance",
@@ -132,6 +134,7 @@ ROOT_MODULE_LAYER: dict[str, str] = {
     "self_improvement_trial_wave": "evolution",
     "dream_engine": "evolution",
     "dream_observability": "evolution",
+    "dream_responsibility_shadow": "evolution",
     "mirror": "evolution",
     "reflection": "evolution",
     "resonance": "evolution",
@@ -165,6 +168,7 @@ ROOT_MODULE_LAYER: dict[str, str] = {
     # surface — operator-facing entry adapters, diagnostics
     "diagnose": "surface",
     "claude_entry_adapter": "surface",
+    "accountability_panel": "surface",
     # domain — semantic field modellers, predictors, variance
     "ystm_demo": "domain",
     "variance_compressor": "domain",

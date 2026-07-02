@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-04-15T11:16:24Z",
+  "generated_at": "2026-07-02T08:01:00Z",
   "overall_ok": true,
   "overall_status": "go",
-  "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
-  "agent": "phase724-surface-refresh",
+  "repo_root": "C:\\Users\\user\\Desktop\\codex_worktrees\\stale-final2-20260702",
+  "agent": "beta-preflight",
   "commands": {
-    "session_start": "run_session_start_bundle(agent_id='phase724-surface-refresh')",
+    "session_start": "run_session_start_bundle(agent_id='beta-preflight')",
     "packet": "extracted from session_start bundle payload['packet']",
     "diagnose": "embedded_from_session_start"
   },
@@ -13,9 +13,9 @@
     "session_start": {
       "ok": true,
       "readiness": "pass",
-      "task_track": "system_track",
-      "claim_recommendation": "required",
-      "deliberation_mode": "elevated_council"
+      "task_track": "unclassified",
+      "claim_recommendation": "unknown_until_objective_is_visible",
+      "deliberation_mode": "unclassified"
     },
     "packet": {
       "ok": true,
@@ -41,7 +41,7 @@
     "target_note": "next_target_tier names the next maturity target, not current readiness or public-launch permission."
   },
   "claim_posture": {
-    "claim_recommendation": "required",
+    "claim_recommendation": "unknown_until_objective_is_visible",
     "claim_trigger": "claim when you are about to edit a shared path; read-only inspection can stay unclaimed"
   },
   "aegis_posture": {
@@ -107,7 +107,7 @@
   },
   "validation_wave": {
     "present": true,
-    "path": "C:\\Users\\user\\Desktop\\倉庫\\docs\\status\\launch_continuity_validation_wave_latest.json",
+    "path": "C:\\Users\\user\\Desktop\\codex_worktrees\\stale-final2-20260702\\docs\\status\\launch_continuity_validation_wave_latest.json",
     "scenario_count": 7,
     "scenario_names": [
       "clean_pass",

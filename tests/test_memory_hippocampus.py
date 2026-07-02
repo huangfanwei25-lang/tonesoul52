@@ -1,16 +1,12 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import numpy as np
 import pytest
 
 from tonesoul.memory import hippocampus as module
 from tonesoul.memory.hippocampus import Hippocampus, MemoryResult
-
-pytestmark = pytest.mark.filterwarnings(
-    "ignore:datetime.datetime.utcnow\\(\\) is deprecated.*:DeprecationWarning"
-)
 
 
 class FakeIndex:
@@ -71,7 +67,7 @@ def test_load_db_skips_vector_loading_when_faiss_is_missing(tmp_path, monkeypatc
 
 def test_apply_time_decay_decays_old_records_and_ignores_bad_timestamp(tmp_path) -> None:
     hippo = Hippocampus(db_path=str(tmp_path / "decay-db"))
-    old = (datetime.utcnow() - timedelta(days=10, seconds=1)).isoformat()
+    old = (datetime.now(timezone.utc) - timedelta(days=10, seconds=1)).isoformat()
 
     assert hippo._apply_time_decay(1.0, "bad-timestamp") == 1.0
     assert hippo._apply_time_decay(1.0, old) == np.exp(-0.1)

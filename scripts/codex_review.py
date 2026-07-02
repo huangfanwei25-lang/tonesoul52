@@ -29,6 +29,7 @@ module deliberately does not.
 from __future__ import annotations
 
 import re
+import shutil
 import subprocess
 from typing import List, Optional, Sequence, Tuple
 
@@ -142,8 +143,14 @@ def run_codex(
     forever and the timeout branch in classify_outcome (rc==124) could never fire. On timeout we
     return code 124 so the caller degrades to "single opinion, stop" — never silently waits.
     """
+    # Resolve the codex executable explicitly. On Windows the CLI is a `.cmd`/`.CMD` shim that a
+    # bare-name, non-shell subprocess cannot launch (WinError 2) — which silently broke the whole
+    # skill on Windows. shutil.which finds the real path (verified: the full `.CMD` path launches
+    # via the list form). Fall back to "codex" so a genuinely missing CLI still fails closed
+    # (rule b) instead of this resolution masking the absence.
+    codex_exe = shutil.which("codex") or "codex"
     cmd = [
-        "codex",
+        codex_exe,
         "exec",
         "--skip-git-repo-check",
         "-s",

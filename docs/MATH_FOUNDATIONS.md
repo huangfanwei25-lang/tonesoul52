@@ -244,7 +244,7 @@ F = 0.45×|query_tension - memory_tension| + 0.35×mean_wave_delta + 0.20×bound
 M = 0.30×benefit - 0.35×harm + 0.15×fairness + 0.10×traceability + 0.10×reversibility
 ```
 
-- **用在哪**：`mercy_objective.py`
+- **用在哪**：`mercy_objective.py` — **注意:此模組為 `# YSS-STATUS: unwired`**,程式碼存在但無 runtime 消費者;此公式目前是「已實作、未接線」,不是活的治理判斷(2026-07-02 公式審計標注)
 - **有趣的設計**：harm 的係數（-0.35）比 benefit（0.30）大，
   代表「避害比行善重要」。這是一個倫理設計決策。
 - **加上 mode multiplier**：cautious 時 harm ×1.2，lockdown 時 harm ×1.4
