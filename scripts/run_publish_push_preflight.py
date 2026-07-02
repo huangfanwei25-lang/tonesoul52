@@ -17,7 +17,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Run the ToneSoul publish/push posture preflight.",
     )
-    parser.add_argument("--agent", required=True)
+    parser.add_argument("--agent", default="publish-push-preflight")
     parser.add_argument("--state-path", type=Path, default=None)
     parser.add_argument("--traces-path", type=Path, default=None)
     return parser
