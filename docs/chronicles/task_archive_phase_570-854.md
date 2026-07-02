@@ -1245,12 +1245,12 @@
 
 > Phases before 570 are archived in `docs/chronicles/`:
 
-- [task_archive_phase_001-100.md](task_archive_phase_001-100.md) — Phase 76-100
-- [task_archive_phase_101-200.md](task_archive_phase_101-200.md) — Phase 106-200
-- [task_archive_phase_201-300.md](task_archive_phase_201-300.md) — Phase 201-300
-- [task_archive_phase_301-400.md](task_archive_phase_301-400.md) — Phase 301-400
-- [task_archive_phase_401-500.md](task_archive_phase_401-500.md) — Phase 401-500
-- [task_archive_phase_501-600.md](task_archive_phase_501-600.md) — Phase 501-569
+- `task_archive_phase_001-100.md`（僅存本機，編碼損毀，未入庫） — Phase 76-100
+- `task_archive_phase_101-200.md`（僅存本機，編碼損毀，未入庫） — Phase 106-200
+- `task_archive_phase_201-300.md`（僅存本機，編碼損毀，未入庫） — Phase 201-300
+- `task_archive_phase_301-400.md`（僅存本機，編碼損毀，未入庫） — Phase 301-400
+- `task_archive_phase_401-500.md`（僅存本機，編碼損毀，未入庫） — Phase 401-500
+- `task_archive_phase_501-600.md`（僅存本機，編碼損毀，未入庫） — Phase 501-569
 
 ---
 

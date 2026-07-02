@@ -1,6 +1,7 @@
 {
+  "generated_at": "2026-07-02T05:13:30Z",
   "overall_ok": true,
-  "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
+  "repo_root": ".",
   "scan_targets": [
     "tonesoul",
     "scripts",

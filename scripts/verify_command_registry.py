@@ -9,6 +9,7 @@ import importlib.util
 import json
 import shlex
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 
@@ -49,6 +50,20 @@ def _resolve_path(repo_root: Path, raw: str) -> Path:
     return (repo_root / path).resolve()
 
 
+def _portable(path_value: Path | str, repo_root: Path) -> str:
+    # Committed artifacts must not embed local absolute paths: they leak the
+    # machine's directory layout and make every regeneration from a different
+    # checkout churn the diff. Serialize repo-internal paths relative to root.
+    # Relative inputs anchor to repo_root (matching _resolve_path), never CWD.
+    candidate = Path(path_value)
+    if not candidate.is_absolute():
+        candidate = repo_root / candidate
+    try:
+        return candidate.resolve().relative_to(repo_root.resolve()).as_posix()
+    except (ValueError, OSError):
+        return str(path_value)  # outside the repo: cannot relativize, keep as given
+
+
 def _entry_payload(entry_name: str, command: str, path: str) -> dict[str, Any]:
     return {
         "name": entry_name,
@@ -76,7 +91,7 @@ def _check_script_target(
 ) -> None:
     resolved = _resolve_path(repo_root, script_token)
     key = f"{label}_resolved"
-    payload[key] = str(resolved)
+    payload[key] = _portable(resolved, repo_root)
     payload[f"{label}_exists"] = resolved.exists()
     if not resolved.exists():
         _append_issue(payload, f"{label} target missing: {script_token}")
@@ -106,10 +121,10 @@ def _iter_entry_records(repo_root: Path, entrypoints: Sequence[Any]) -> Iterable
         name = str(getattr(entry, "name", ""))
         path = str(getattr(entry, "path", ""))
         command = str(getattr(entry, "command", "") or "")
-        payload = _entry_payload(name, command, path)
+        payload = _entry_payload(name, command, _portable(path, repo_root))
 
         resolved_entry_path = _resolve_path(repo_root, path)
-        payload["resolved_path"] = str(resolved_entry_path)
+        payload["resolved_path"] = _portable(resolved_entry_path, repo_root)
         payload["path_exists"] = resolved_entry_path.exists()
         if not payload["path_exists"]:
             _append_issue(payload, f"entry path missing: {path}")
@@ -156,8 +171,9 @@ def build_report(repo_root: Path, entrypoints: Sequence[Any] | None = None) -> d
     issue_count = sum(len(entry["issues"]) for entry in entries)
     warning_count = sum(len(entry["warnings"]) for entry in entries)
     return {
+        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "overall_ok": issue_count == 0,
-        "repo_root": str(repo_root),
+        "repo_root": _portable(repo_root, repo_root),
         "entrypoint_count": len(entries),
         "issue_count": issue_count,
         "warning_count": warning_count,
@@ -196,12 +212,14 @@ def _render_markdown(payload: dict[str, Any]) -> str:
 
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
 
 
 def _write_markdown(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(_render_markdown(payload), encoding="utf-8")
+    path.write_text(_render_markdown(payload), encoding="utf-8", newline="\n")
 
 
 def build_parser() -> argparse.ArgumentParser:

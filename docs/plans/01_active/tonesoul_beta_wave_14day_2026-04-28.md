@@ -10,13 +10,13 @@
 
 Read these first before treating any step below as active:
 
-1. [task.md](../../task.md)
+1. [task.md](../../../task.md)
 2. [README.md](../../README.md)
 3. latest collaborator-beta preflight under `docs/status/collaborator_beta_preflight_latest.{md,json}`
 4. latest current-truth handoff under `docs/status/codex_handoff_*.md`
 5. latest go/no-go review under `docs/status/phase726_go_nogo_*.md`
 6. latest launch-operations surface under `docs/status/phase724_launch_operations_surface_*.md`
-7. latest public-surface security hardening note: [docs/status/phase866_public_surface_security_hardening_2026-04-23.md](../status/phase866_public_surface_security_hardening_2026-04-23.md)
+7. latest public-surface security hardening note: [docs/status/phase866_public_surface_security_hardening_2026-04-23.md](../../status/phase866_public_surface_security_hardening_2026-04-23.md)
 
 Do not let older plans, side threads, or experiment notes silently outrank these.
 

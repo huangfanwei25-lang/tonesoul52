@@ -1,14 +1,17 @@
 {
-  "generated_at": "2026-03-11T16:16:51Z",
+  "generated_at": "2026-07-02T07:34:20Z",
   "overall_ok": false,
   "source": "scripts/run_repo_governance_settlement_report.py",
   "healthcheck": {
-    "generated_at": "2026-03-08T15:43:20Z",
+    "generated_at": "2026-06-01T12:52:32Z",
     "overall_ok": false,
-    "pass_count": 19,
-    "fail_count": 1,
+    "pass_count": 17,
+    "fail_count": 4,
     "failing_checks": [
-      "commit_attribution"
+      "python_lint",
+      "python_format",
+      "git_hygiene",
+      "skill_registry"
     ]
   },
   "attribution": {
@@ -44,18 +47,30 @@
     "planner_recommendation": "manual_review_required",
     "refreshable_handoff_preview_count": 3,
     "refreshable_admissibility_preview_count": 1,
+    "weekly_host_status_preview": null,
     "subjectivity_focus_preview": {
       "path": "docs/status/subjectivity_review_batch_latest.json",
       "queue_shape": "stable_history_only",
       "primary_status_line": "stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split",
+      "runtime_status_line": "",
+      "anchor_status_line": "",
+      "artifact_policy_status_line": "",
       "admissibility_primary_status_line": "admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity",
       "requires_operator_action": "false"
     },
+    "dream_observability_focus_preview": null,
+    "repo_semantic_atlas_focus_preview": null,
+    "repo_intelligence_focus_preview": null,
+    "agent_integrity_focus_preview": null,
+    "scribe_focus_preview": null,
     "handoff_previews": [
       {
         "path": "docs/status/subjectivity_report_latest.json",
         "queue_shape": "deferred_monitoring",
         "primary_status_line": "deferred_monitoring | records=195 unresolved=50 deferred=50 settled=31 reviewed_vows=0 | top_unresolved_status=deferred",
+        "runtime_status_line": "",
+        "anchor_status_line": "",
+        "artifact_policy_status_line": "",
         "admissibility_primary_status_line": "",
         "requires_operator_action": "false"
       },
@@ -63,6 +78,9 @@
         "path": "docs/status/subjectivity_review_batch_latest.json",
         "queue_shape": "stable_history_only",
         "primary_status_line": "stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split",
+        "runtime_status_line": "",
+        "anchor_status_line": "",
+        "artifact_policy_status_line": "",
         "admissibility_primary_status_line": "admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity",
         "requires_operator_action": "false"
       },
@@ -70,23 +88,29 @@
         "path": "docs/status/subjectivity_tension_groups_latest.json",
         "queue_shape": "monitoring_queue",
         "primary_status_line": "high_duplicate_same_source_loop | A distributed vulnerability database for Open Source | recommendation=defer_review | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | followup=upstream_dedup_candidate",
+        "runtime_status_line": "",
+        "anchor_status_line": "",
+        "artifact_policy_status_line": "",
         "admissibility_primary_status_line": "",
         "requires_operator_action": "false"
       }
     ]
   },
+  "dream_weekly_alignment_line": "",
   "settlement": {
-    "status": "runtime_green_metadata_blocked",
-    "metadata_only_blocker": true,
-    "runtime_green_except_metadata": true,
+    "status": "runtime_blocked",
+    "metadata_only_blocker": false,
+    "runtime_green_except_metadata": false,
     "next_actions": [
-      "Do not reinterpret the remaining failure as runtime drift; current repo governance gates are green except for historical commit trailers.",
-      "Keep branch movement deferred until the dirty worktree is settled, then prefer the tree-equivalent backfill branch as the clean attribution base.",
-      "Current attribution planner recommendation: `defer_until_worktree_clean`."
+      "Resolve the non-attribution blocking checks before treating repo governance as converged.",
+      "Use the healthcheck artifact as the source of truth for which blocking gates still fail."
     ]
   },
   "issues": [
-    "metadata_only_commit_attribution_blocker"
+    "blocking_check:python_lint",
+    "blocking_check:python_format",
+    "blocking_check:git_hygiene",
+    "blocking_check:skill_registry"
   ],
   "warnings": []
 }

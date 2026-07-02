@@ -24,9 +24,9 @@ This schema defines a `skill capsule` as:
 
 There is already a partial skill shape in the repo:
 
-- [tonesoul/council/skill_parser.py](/C:/Users/user/Desktop/倉庫/tonesoul/council/skill_parser.py:1)
+- [tonesoul/council/skill_parser.py](../../tonesoul/council/skill_parser.py)
 - existing `SKILL.md` frontmatter examples under `.agent/skills/`
-- historical schema note: [spec/skills/skill_gravity_well_schema.md](/C:/Users/user/Desktop/倉庫/spec/skills/skill_gravity_well_schema.md:1)
+- historical schema note: [spec/skills/skill_gravity_well_schema.md](../../spec/skills/skill_gravity_well_schema.md)
 
 Important reality check:
 
