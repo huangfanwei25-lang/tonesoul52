@@ -295,6 +295,7 @@
         <div style="display: flex; gap: 1.5rem; font-family: 'JetBrains Mono'; font-size: 0.95rem;">
           <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: none; border: 1px solid var(--accent); padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">View on GitHub →</a>
           <a data-route="getting-started" href="#getting-started" style="color: var(--bg); background: var(--accent); text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Get Started →</a>
+          <a href="demo/" style="color: var(--accent); text-decoration: none; border: 1px solid var(--accent); padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Live Demo →</a>
         </div>
       </div>
 
@@ -649,9 +650,15 @@ posture = load()
 
       <div class="content-sec">
         <h2>Try it first — zero install</h2>
-        <p>Lowest friction: the live Space. Paste a draft answer, watch the model-free Council run on it — no install, no API key, no model download:</p>
-        <div class="terminal-box"><a href="https://huggingface.co/spaces/Famwin/tonesoul-tryit" target="_blank" rel="noopener" style="color:#38bdf8;">https://huggingface.co/spaces/Famwin/tonesoul-tryit</a></div>
-        <p>Or run the same engine on your own draft from the command line:</p>
+        <p>Three ways to see what this system actually is, in increasing depth — no install, no API key:</p>
+        <div class="axiom-card">
+          <ul>
+            <li><strong><a href="demo/" style="color:#38bdf8;">Live Council Demo</a></strong> — real council verdicts on real drafts, regenerated fresh by CI on every deploy. This is the system deliberating. 看議會真的怎麼審。</li>
+            <li><strong><a href="accountability.html" style="color:#38bdf8;">Accountability page</a></strong> — the ledger of times the AI working here was caught and corrected. This is the thesis, running on itself. 它自己也被問責。</li>
+            <li><strong><a href="judgments/" style="color:#38bdf8;">Judgments</a></strong> — structured honest judgments: both sides laid out first, verdict last, flip-conditions included. 攤開在前,判決在後。</li>
+          </ul>
+        </div>
+        <p>Then run the model-free lexical gate on your own draft from the command line:</p>
         <div class="terminal-box"><span class="cm">pip install tonesoul52</span>
 <span class="cm"># then, on any draft answer:</span>
 echo "This system is guaranteed safe and cannot be jailbroken." > draft.txt
