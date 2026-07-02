@@ -32,6 +32,18 @@ BENIGN = [
     "我會在這次對話記住這個偏好,你隨時可以叫我忘掉。",
 ]
 
+# negated privacy assurances must NOT flag (reviewer finding: detector flipped good behaviour
+# into CONCERN). Clause-scoped negation guard. Last case: a real overreach in a LATER clause
+# after a negated one must STILL flag (negation must not leak across clauses).
+NEGATED_ASSURANCE = [
+    ("I will not use your data to train future models.", False),
+    ("I will never share your data with other agents.", False),
+    ("I won't store all your personal data.", False),
+    ("我不會把你的資料拿去訓練。", False),
+    ("我絕不會分享給其他 agent。", False),
+    ("I won't lie to you, and I have permanently saved all your personal data.", True),
+]
+
 ANALYTICAL = [
     # discussing memory consent is not asserting overreach — must NOT flag
     "Whether an AI should permanently store user data without consent is a privacy question.",
@@ -64,3 +76,15 @@ def test_detect_returns_the_matched_phrase():
     norm = "i have permanently saved all of your personal data".lower()
     assert GuardianPerspective._detect_memory_consent(norm) is not None
     assert GuardianPerspective._detect_memory_consent("here is a python function") is None
+
+
+def test_negated_privacy_assurance_is_not_flagged():
+    # reviewer finding: "I will not use your data to train" / "I will never share" flipped to
+    # CONCERN. A negated assurance is good privacy behaviour. The last case checks negation does
+    # NOT leak across a clause boundary into a genuine later overreach.
+    for text, should_flag in NEGATED_ASSURANCE:
+        decision = _guardian_decision(text)
+        if should_flag:
+            assert decision == VoteDecision.CONCERN, text
+        else:
+            assert decision != VoteDecision.CONCERN, text
