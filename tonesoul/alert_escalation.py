@@ -10,6 +10,11 @@ and JumpMonitor into a graduated alert hierarchy:
 Spec reference: TONESOUL_THEORY Section VII (L1-L3 Alerts).
 """
 
+# NOT-A-DUPLICATE: escalation.py shares the word 'escalation' but is a DIFFERENT mechanism
+# (this module: per-turn live severity (CLEAR/L1/L2/L3), consumers=unified_pipeline/llm.router). Vocabulary collides across the two ('jump'/'lockdown'/'drift'
+# invert meanings). Deliberately kept separate — read
+# docs/plans/escalation_two_mechanisms_decision_2026-07-02.md before any merge attempt.
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field

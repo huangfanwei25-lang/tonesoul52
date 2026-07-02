@@ -1,3 +1,8 @@
+# NOT-A-DUPLICATE: alert_escalation.py shares the word 'escalation' but is a DIFFERENT mechanism
+# (this module: offline batch decision (none/jump/quarantine), consumer=yss_pipeline (reserved substrate)). Vocabulary collides across the two ('jump'/'lockdown'/'drift'
+# invert meanings). Deliberately kept separate — read
+# docs/plans/escalation_two_mechanisms_decision_2026-07-02.md before any merge attempt.
+
 import json
 import os
 from typing import Dict, List, Optional
