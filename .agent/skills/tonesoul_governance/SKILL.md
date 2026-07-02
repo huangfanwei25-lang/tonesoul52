@@ -1,4 +1,4 @@
----
+﻿---
 name: tonesoul_governance
 description: AI self-governance skill with tension computation, resonance detection, and memory crystallization
 l1_routing:

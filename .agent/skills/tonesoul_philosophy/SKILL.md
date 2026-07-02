@@ -1,4 +1,4 @@
----
+﻿---
 name: tonesoul_philosophy
 description: The philosophical foundation of AI governance - why prompt engineering is not enough
 l1_routing:
