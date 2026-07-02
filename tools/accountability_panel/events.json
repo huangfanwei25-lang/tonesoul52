@@ -143,6 +143,17 @@
     "evidence_ref": "docs/plans/judgment_open_vs_monopoly_2026-07-02.md"
   },
   {
+    "lane": "self-check",
+    "claim": "「vow 體面退場 + 反證鏈擴充的實作正確」(#249/#247,自寫測試全綠)",
+    "evidence_at_claim": "E1",
+    "held": false,
+    "caught_by": "不同模型(codex,三張工單)",
+    "correction": "6 個確認缺陷全修:跨 registry 外溢(執行取證重現)、ledger 載入丟失、淺拷貝洩漏、字串拆字元、CLI 抹欄位、outcome/held 矛盾未驗",
+    "method": "異模型獨立審查+本地執行取證",
+    "outcome": "refuted",
+    "evidence_ref": "docs/plans/codex_work_orders_2026-07-03.md + 本 PR"
+  },
+  {
     "lane": "co-observer",
     "claim": "「誠實判斷器的協議形狀完整」(首版,只有判決模式)",
     "evidence_at_claim": "E1",

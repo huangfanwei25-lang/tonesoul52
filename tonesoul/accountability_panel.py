@@ -62,6 +62,14 @@ class AccountabilityEvent:
             )
         if self.outcome not in ("", "refuted", "survived", "narrowed"):
             raise ValueError(f"outcome must be refuted/survived/narrowed/'', got {self.outcome!r}")
+        for name in ("method", "evidence_ref"):
+            if not isinstance(getattr(self, name), str):
+                raise ValueError(f"{name} must be a string")
+        # coherence (codex finding): a refuted claim cannot be held; a survived one must be
+        if self.outcome == "refuted" and self.held:
+            raise ValueError("outcome=refuted contradicts held=True")
+        if self.outcome == "survived" and not self.held:
+            raise ValueError("outcome=survived contradicts held=False")
 
 
 def _esc(text: str) -> str:

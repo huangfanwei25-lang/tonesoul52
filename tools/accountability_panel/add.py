@@ -40,8 +40,9 @@ def append_event(events_path: Path, event: AccountabilityEvent) -> int:
     raw = json.loads(events_path.read_text(encoding="utf-8")) if events_path.exists() else []
     existing = [AccountabilityEvent(**e) for e in raw]  # revalidate the whole file
     updated = existing + [event]
-    payload = [
-        {
+
+    def _serialize(e: AccountabilityEvent) -> dict:
+        d = {
             "lane": e.lane,
             "claim": e.claim,
             "evidence_at_claim": e.evidence_at_claim,
@@ -49,8 +50,15 @@ def append_event(events_path: Path, event: AccountabilityEvent) -> int:
             "caught_by": e.caught_by,
             "correction": e.correction,
         }
-        for e in updated
-    ]
+        # counterevidence extension survives every rewrite (codex finding: the CLI
+        # used to silently strip method/outcome/evidence_ref from existing records)
+        for key in ("method", "outcome", "evidence_ref"):
+            value = getattr(e, key, "")
+            if value:
+                d[key] = value
+        return d
+
+    payload = [_serialize(e) for e in updated]
     events_path.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
     )
