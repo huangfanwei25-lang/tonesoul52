@@ -118,8 +118,16 @@ def _cmd_vows(argv: List[str]) -> int:
         return 0
     active = registry.active_vows()
     print(f"Vows: {len(vows)} total, {len(active)} active\n")
+    withdrawn_by = {
+        record["vow_id"]: record for record in getattr(registry, "withdrawal_records", list)()
+    }
     for vow in vows:
-        tag = "[ACTIVE]  " if vow.active else "[INACTIVE]"
+        record = withdrawn_by.get(vow.id)
+        if record is not None:
+            # the human-visible decency: an exit shows who retired it and why
+            tag = f"[WITHDRAWN by {record['actor']}: {record['reason']}]"
+        else:
+            tag = "[ACTIVE]  " if vow.active else "[INACTIVE]"
         label = f"{vow.id}: {vow.title}"
         print(f"  {tag} {label:<40} {vow.description[:60]}")
     return 0
