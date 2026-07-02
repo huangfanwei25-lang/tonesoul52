@@ -1,30 +1,16 @@
 # Status Artifact Freshness
 
-- generated_at: 2026-07-02T05:13:29Z
+- generated_at: 2026-07-02T07:34:25Z
 - overall_ok: `false`
 - policy: assertive<= 45d, episodic<= 120d
-- artifacts: 72 (fresh 42, stale assertive 16, stale episodic 5, untimestamped 9)
+- artifacts: 74 (fresh 58, stale assertive 2, stale episodic 5, untimestamped 9)
 
 ## Failures (stale, undated, or future-dated assertive artifacts)
 
 | artifact | age (days) | issue |
 |---|---|---|
-| docs/status/autonomous_registry_schedule_latest.json | 116 | stale |
-| docs/status/changed_surface_checks_latest.json | 102 | stale |
 | docs/status/collaborator_beta_preflight_latest.json | 77 | stale |
-| docs/status/dream_observability_latest.json | 116 | stale |
-| docs/status/external_source_registry_latest.json | 131 | stale |
-| docs/status/l8_adapter_dataset_gate_latest.json | 101 | stale |
 | docs/status/observer_window_validation_latest.json | 91 | stale |
-| docs/status/private_memory_review_latest.json | 115 | stale |
-| docs/status/refreshable_artifact_report_latest.json | 112 | stale |
-| docs/status/repo_governance_settlement_latest.json | 112 | stale |
-| docs/status/runtime_source_change_groups_latest.json | 115 | stale |
-| docs/status/subjectivity_report_latest.json | 112 | stale |
-| docs/status/subjectivity_review_batch_latest.json | 112 | stale |
-| docs/status/subjectivity_shadow_pressure_latest.json | 113 | stale |
-| docs/status/subjectivity_tension_groups_latest.json | 112 | stale |
-| docs/status/worktree_settlement_latest.json | 112 | stale |
 
 ## Warnings (episodic)
 

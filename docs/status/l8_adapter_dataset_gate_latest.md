@@ -1,6 +1,6 @@
 # L8 Adapter Dataset Gate Latest
 
-- generated_at: 2026-03-22T10:41:28Z
+- generated_at: 2026-07-02T07:34:20Z
 - ok: `true`
 - input_path: `spec/governance/adapter_dataset_record_v1.example.json`
 - input_format: `json`
