@@ -141,5 +141,16 @@
     "method": "五視角真分身+對抗裁決(同模型,flagged)",
     "outcome": "narrowed",
     "evidence_ref": "docs/plans/judgment_open_vs_monopoly_2026-07-02.md"
+  },
+  {
+    "lane": "co-observer",
+    "claim": "「誠實判斷器的協議形狀完整」(首版,只有判決模式)",
+    "evidence_at_claim": "E1",
+    "held": false,
+    "caught_by": "外部模型批評(經梵威轉交)",
+    "correction": "批評半數成立:行為導向會把理念之爭窄化成行動命題;新增探究模式(張力地圖,無判決)+ 第0步模式分流",
+    "method": "異模型讀首份判決書後的對抗批評",
+    "outcome": "narrowed",
+    "evidence_ref": ".claude/skills/honest-judgment/SKILL.md 模式分流節"
   }
 ]
