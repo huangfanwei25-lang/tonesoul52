@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-02T07:34:25Z",
+  "generated_at": "2026-07-02T08:01:00Z",
   "source": "scripts/verify_status_freshness.py",
-  "overall_ok": false,
+  "overall_ok": true,
   "policy": {
     "assertive_max_age_days": 45,
     "episodic_max_age_days": 120,
@@ -22,36 +22,17 @@
     ]
   },
   "summary": {
-    "artifact_count": 74,
+    "artifact_count": 72,
     "fresh": 58,
-    "stale_assertive": 2,
+    "stale_assertive": 0,
     "stale_episodic": 5,
     "untimestamped_assertive": 0,
     "untimestamped_episodic": 9,
     "future_dated_assertive": 0,
     "future_dated_episodic": 0,
-    "failure_count": 2
+    "failure_count": 0
   },
-  "failures": [
-    {
-      "path": "docs/status/collaborator_beta_preflight_latest.json",
-      "kind": "assertive",
-      "timestamp": "2026-04-15T11:16:24+00:00",
-      "timestamp_field": "generated_at",
-      "age_days": 77,
-      "verdict": "stale",
-      "note": ""
-    },
-    {
-      "path": "docs/status/observer_window_validation_latest.json",
-      "kind": "assertive",
-      "timestamp": "2026-04-01T23:30:42+00:00",
-      "timestamp_field": "generated_at",
-      "age_days": 91,
-      "verdict": "stale",
-      "note": ""
-    }
-  ],
+  "failures": [],
   "warnings": [
     {
       "path": "docs/status/persona_swarm_long_task_latest.json",
@@ -256,10 +237,10 @@
     {
       "path": "docs/status/collaborator_beta_preflight_latest.json",
       "kind": "assertive",
-      "timestamp": "2026-04-15T11:16:24+00:00",
+      "timestamp": "2026-07-02T08:01:00+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 77,
-      "verdict": "stale",
+      "age_days": 0,
+      "verdict": "fresh",
       "note": ""
     },
     {
@@ -569,15 +550,6 @@
       "note": ""
     },
     {
-      "path": "docs/status/observer_window_validation_latest.json",
-      "kind": "assertive",
-      "timestamp": "2026-04-01T23:30:42+00:00",
-      "timestamp_field": "generated_at",
-      "age_days": 91,
-      "verdict": "stale",
-      "note": ""
-    },
-    {
       "path": "docs/status/paradox_fixture_ownership_latest.json",
       "kind": "episodic",
       "timestamp": "2026-03-22T15:57:55+00:00",
@@ -671,15 +643,6 @@
       "path": "docs/status/runtime_source_change_groups_latest.json",
       "kind": "assertive",
       "timestamp": "2026-07-02T07:34:21+00:00",
-      "timestamp_field": "generated_at",
-      "age_days": 0,
-      "verdict": "fresh",
-      "note": ""
-    },
-    {
-      "path": "docs/status/scribe_status_latest.json",
-      "kind": "episodic",
-      "timestamp": "2026-07-02T07:34:18+00:00",
       "timestamp_field": "generated_at",
       "age_days": 0,
       "verdict": "fresh",

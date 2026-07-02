@@ -1,16 +1,9 @@
 # Status Artifact Freshness
 
-- generated_at: 2026-07-02T07:34:25Z
-- overall_ok: `false`
+- generated_at: 2026-07-02T08:01:00Z
+- overall_ok: `true`
 - policy: assertive<= 45d, episodic<= 120d
-- artifacts: 74 (fresh 58, stale assertive 2, stale episodic 5, untimestamped 9)
-
-## Failures (stale, undated, or future-dated assertive artifacts)
-
-| artifact | age (days) | issue |
-|---|---|---|
-| docs/status/collaborator_beta_preflight_latest.json | 77 | stale |
-| docs/status/observer_window_validation_latest.json | 91 | stale |
+- artifacts: 72 (fresh 58, stale assertive 0, stale episodic 5, untimestamped 9)
 
 ## Warnings (episodic)
 
