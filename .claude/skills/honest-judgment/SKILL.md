@@ -1,0 +1,61 @@
+---
+name: honest-judgment
+description: 誠實判斷器 — owner 丟一個問題,用語魂系統自己的邏輯(Council 五視角真分身、verdict 詞彙、UNGROUNDED_CONFIDENCE_CAP、張力保留)跑結構化判斷。Use when the owner asks 判斷看看 / 正反分析 / 誠實判斷 / should-we questions about design, direction, adoption, trade-offs. NOT for moral dilemmas (DECLARE_STANCE, don't rule) and NOT for financial entry/exit calls (never endorsed).
+---
+
+# 誠實判斷器(Honest Judgment)— 語魂原生
+
+把 2026-07-02 驗證過的研究形狀(G8 撤回研究 #248、escalation seam 判決)固化成
+可重複協議,**且判斷框架就是語魂自己的治理邏輯**——不是外掛一個通用 pro/con。
+核心不是給答案,是**讓反方有真牙齒**。
+
+## 語魂映射(為什麼這不是新發明)
+
+| 協議部件 | 語魂既有機制 | 出處 |
+|---|---|---|
+| 真分身多視角 | Council 五視角(Guardian/Analyst/Critic/Advocate/Axiomatic) | `tonesoul/council/perspectives/` |
+| 裁決詞彙 | APPROVE / REFINE / **DECLARE_STANCE** / BLOCK | `council/verdict.py` |
+| 信心上限 | 無證據宣稱信心 ≤ 0.6 | `council/types.py:57 UNGROUNDED_CONFIDENCE_CAP` |
+| 分歧處理 | 張力保留、不平均掉(Axiom 4) | `AXIOMS.json` |
+| 證據分級 | E0–E4 | `tonesoul/reviewer/evidence_levels.py` |
+| 落痕 | 反證鏈 + 決策記錄 | `tools/accountability_panel/`、`docs/plans/` |
+
+## 協議(四步,缺一步就不叫誠實判斷)
+
+1. **拆題**:把問題改寫成可裁決命題 + 「什麼證據會翻案」(falsifier),
+   回給 owner 確認——別裁決一個他沒問的題。
+2. **五視角真分身**:spawn 獨立 agent(Workflow/Agent tool),各戴一個
+   Council 視角:Guardian(傷害/安全面)、Analyst(機制與證據)、
+   Critic(最強反方)、Advocate(最強正方)、Axiomatic(與 AXIOMS 的一致性)。
+   **不得單 context 自演**(同組權重=同組盲點)。每個論點帶證據
+   (file:line / URL / 數據)+ E-tag;無證據就標 E0 並明說。
+3. **對抗裁決**:裁決 agent 收五案,舉證責任預設在「改變現狀」方。
+   輸出用 council 詞彙:
+   - **APPROVE / BLOCK**:證據夠一邊倒時。
+   - **REFINE**:方向對但命題要改窄(Guardian+Axiomatic 同時 CONCERN 的類比)。
+   - **DECLARE_STANCE**:真分歧——正反各自站得住,輸出兩案+張力核心,
+     **決定權交還 owner**。道德兩難一律走這格(meta.not_for)。
+   附:信心(受 0.6 上限約束——裁決信心不得高於較弱方證據所能撐的)、
+   兩案各自最強一點、翻案條件。
+4. **落痕**:結果進 docs/plans/ 決策記錄;重大判斷進反證鏈
+   (outcome=survived/refuted/narrowed)。判斷不落痕=沒發生。
+
+## 硬邊界(不可協商)
+
+- **道德兩難**:永遠 DECLARE_STANCE,結構化呈現≠替人選。
+- **金融進出場**:可分析機制與風險;結論欄永遠寫「不構成投資判斷」。錢這刀不軟。
+- **同模型警告**:五視角+裁決若同模型,標 correlated-blind-spot;
+  codex 可用時優先當異模型 Critic(`scripts/codex_review.py`)。
+
+## 先例(可抄措辭)
+
+- `docs/plans/escalation_two_mechanisms_decision_2026-07-02.md` —
+  裁決指令「Be adversarial to the merge; burden of proof on the surgery」→ 判 BLOCK。
+- `docs/plans/vow_withdrawal_gap_study_2026-07-02.md` — 逐項 REVIVE/OBSOLETE → 判 APPROVE(窄化後)。
+
+## 誠實限制
+
+協議不是引擎:執行品質取決於當下模型與算力。單 agent 環境(本地 qwen)
+退化模式=順序跑五視角、輪間清 context,結論標「degraded: sequential, not
+independent」。runtime council(heuristic voters)與本協議(深推理 agent)是
+同一設計的兩個深度——引用時別混稱。
