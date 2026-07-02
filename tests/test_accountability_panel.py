@@ -157,3 +157,19 @@ def test_story_escapes_html() -> None:
     html_doc = render_story(story, generated_at="t")
     assert "<x>" not in html_doc and "&lt;x&gt;" in html_doc
     assert "a &amp; b" in html_doc
+
+
+def test_counterevidence_fields_validate_and_render() -> None:
+    ev = _ev(
+        claim="ce",
+        method="adversarial review",
+        outcome="refuted",
+        evidence_ref="PR #230",
+    )
+    html_doc = render_panel([ev], generated_at="t")
+    assert "adversarial review" in html_doc and "PR #230" in html_doc
+    assert 'class="ceref"' in html_doc
+    with pytest.raises(ValueError):
+        _ev(outcome="maybe")
+    legacy = _ev()  # records without the extension stay valid
+    assert legacy.outcome == ""
