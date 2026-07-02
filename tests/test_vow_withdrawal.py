@@ -78,3 +78,40 @@ def test_registry_to_dict_includes_exit_ledger() -> None:
     d = reg.to_dict()
     assert d["withdrawals"][0]["vow_id"] == "ΣVow_T"
     assert d["active_count"] == 0 and d["count"] == 1
+
+
+def test_registries_do_not_share_default_vow_instances() -> None:
+    # codex finding (confirmed live): withdrawing in one registry must not
+    # deactivate No-Harm in every other registry in the process
+    r1, r2 = VowRegistry(), VowRegistry()
+    r1.withdraw("ΣVow_003", reason="t", actor="t")
+    assert r1.get("ΣVow_003").active is False
+    assert r2.get("ΣVow_003").active is True
+
+
+def test_exit_ledger_survives_save_load(tmp_path) -> None:
+    reg = VowRegistry([_vow()])
+    reg.withdraw("ΣVow_T", reason="r", actor="a")
+    path = str(tmp_path / "vows.json")
+    reg.save(path)
+    restored = VowRegistry.from_file(path)
+    recs = restored.withdrawal_records()
+    assert len(recs) == 1 and recs[0]["actor"] == "a"
+
+
+def test_withdrawal_records_are_deep_copies() -> None:
+    terms = WithdrawalTerms(conditions=["c1"], repair_owner="o")
+    reg = VowRegistry([_vow(withdrawal_terms=terms)])
+    reg.withdraw("ΣVow_T", reason="r", actor="a", conditions_cited=["x"])
+    rec = reg.withdrawal_records()[0]
+    rec["conditions_cited"].append("EVIL")
+    rec["terms_snapshot"]["conditions"].append("EVIL")
+    clean = reg.withdrawal_records()[0]
+    assert "EVIL" not in clean["conditions_cited"]
+    assert "EVIL" not in clean["terms_snapshot"]["conditions"]
+
+
+def test_from_dict_string_does_not_split_to_chars() -> None:
+    terms = WithdrawalTerms.from_dict({"conditions": "single condition", "repair_owner": None})
+    assert terms.conditions == ["single condition"]
+    assert terms.repair_owner == ""
