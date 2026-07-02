@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-02T05:02:56Z",
+  "generated_at": "2026-07-02T05:13:29Z",
   "source": "scripts/verify_status_freshness.py",
   "overall_ok": false,
   "policy": {
@@ -391,7 +391,7 @@
     {
       "path": "docs/status/command_registry_latest.json",
       "kind": "assertive",
-      "timestamp": "2026-07-02T01:54:44+00:00",
+      "timestamp": "2026-07-02T05:02:56+00:00",
       "timestamp_field": "generated_at",
       "age_days": 0,
       "verdict": "fresh",
@@ -715,7 +715,7 @@
     {
       "path": "docs/status/persona_track_record_latest.json",
       "kind": "episodic",
-      "timestamp": "2026-07-02T01:57:09.045004+00:00",
+      "timestamp": "2026-07-02T05:06:19.317284+00:00",
       "timestamp_field": "generated_at",
       "age_days": 0,
       "verdict": "fresh",

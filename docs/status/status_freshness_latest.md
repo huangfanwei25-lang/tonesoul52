@@ -1,6 +1,6 @@
 # Status Artifact Freshness
 
-- generated_at: 2026-07-02T05:02:56Z
+- generated_at: 2026-07-02T05:13:29Z
 - overall_ok: `false`
 - policy: assertive<= 45d, episodic<= 120d
 - artifacts: 72 (fresh 42, stale assertive 16, stale episodic 5, untimestamped 9)

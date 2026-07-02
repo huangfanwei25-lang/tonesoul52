@@ -317,9 +317,13 @@ def main() -> int:
     payload = build_payload(verdicts, now, args.assertive_max_age, args.episodic_max_age)
     if not args.no_write:
         (STATUS_DIR / JSON_FILENAME).write_text(
-            json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+            json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+            newline="\n",
         )
-        (STATUS_DIR / MARKDOWN_FILENAME).write_text(_render_markdown(payload), encoding="utf-8")
+        (STATUS_DIR / MARKDOWN_FILENAME).write_text(
+            _render_markdown(payload), encoding="utf-8", newline="\n"
+        )
     summary = payload["summary"]
     print(
         "status_freshness "

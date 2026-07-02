@@ -175,12 +175,14 @@ def _render_markdown(payload: dict[str, Any]) -> str:
 
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
 
 
 def _write_markdown(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(_render_markdown(payload), encoding="utf-8")
+    path.write_text(_render_markdown(payload), encoding="utf-8", newline="\n")
 
 
 def build_parser() -> argparse.ArgumentParser:
