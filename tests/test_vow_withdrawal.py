@@ -115,3 +115,33 @@ def test_from_dict_string_does_not_split_to_chars() -> None:
     terms = WithdrawalTerms.from_dict({"conditions": "single condition", "repair_owner": None})
     assert terms.conditions == ["single condition"]
     assert terms.repair_owner == ""
+
+
+def test_inventory_records_withdrawal_without_conviction_impact() -> None:
+    from tonesoul.vow_inventory import VowInventory
+
+    inv = VowInventory()
+    inv.record_check("ΣVow_T", passed=True, score=0.9, threshold=0.8)
+    before = inv.get_state("ΣVow_T").conviction_score
+    inv.record_withdrawal("ΣVow_T", reason="superseded", actor="tester")
+    assert inv.get_state("ΣVow_T").conviction_score == before  # exit ≠ pass/fail
+    events = inv.withdrawal_events()
+    assert events[0]["vow_id"] == "ΣVow_T" and events[0]["actor"] == "tester"
+    events[0]["reason"] = "EVIL"
+    assert inv.withdrawal_events()[0]["reason"] == "superseded"  # copies out
+
+
+def test_cli_list_renders_withdrawn_tag(capsys, tmp_path) -> None:
+    import importlib
+
+    cli = importlib.import_module("tonesoul.cli.main")
+
+    reg = VowRegistry([_vow()])
+    reg.withdraw("ΣVow_T", reason="retired in test", actor="tester")
+    store = tmp_path / "vow_store.json"
+    reg.save(str(store))
+
+    rc = cli._cmd_vows(["--path", str(store)])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "WITHDRAWN by tester: retired in test" in out
