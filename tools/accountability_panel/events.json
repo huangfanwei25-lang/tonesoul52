@@ -130,5 +130,16 @@
     "method": "lineage archaeology",
     "outcome": "refuted",
     "evidence_ref": "docs/LINEAGE.md + Genesis IP 策略文"
+  },
+  {
+    "lane": "co-observer",
+    "claim": "(owner 提問)「知識壟斷對我比較好,還是開源分享?」",
+    "evidence_at_claim": "—",
+    "held": true,
+    "caught_by": "honest-judgment 協議(五視角+對抗裁決)",
+    "correction": "REFINE:留開源、修窄命題(Axiom 8 記憶/金鑰照舊關);信心=中,E0 洞誠實標明",
+    "method": "五視角真分身+對抗裁決(同模型,flagged)",
+    "outcome": "narrowed",
+    "evidence_ref": "docs/plans/judgment_open_vs_monopoly_2026-07-02.md"
   }
 ]
