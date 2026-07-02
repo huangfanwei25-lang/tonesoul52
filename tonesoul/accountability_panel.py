@@ -35,7 +35,13 @@ _TIERS = ("E0", "E1", "E2", "E3", "E4", "—")
 @dataclass(frozen=True)
 class AccountabilityEvent:
     """One accountability event. `lane` ∈ {self-check, co-observer}; `evidence_at_claim` is an E-tier
-    (or '—' when not applicable); `held` is whether the claim survived scrutiny."""
+    (or '—' when not applicable); `held` is whether the claim survived scrutiny.
+
+    CounterEvidence extension (RFC responsibility_exoskeleton 2026-07-02, owner-ratified,
+    shadow-first): the optional fields turn an event into one link of a counterevidence
+    chain — how the claim was challenged (`method`), what happened (`outcome`:
+    refuted/survived/narrowed), and where the receipts live (`evidence_ref`: PR/commit/
+    doc). Old records without these fields stay valid; nothing consumes them for gating."""
 
     claim: str
     evidence_at_claim: str
@@ -43,6 +49,9 @@ class AccountabilityEvent:
     caught_by: str
     correction: str
     lane: str
+    method: str = ""
+    outcome: str = ""
+    evidence_ref: str = ""
 
     def __post_init__(self) -> None:
         if self.lane not in _LANES:
@@ -51,6 +60,8 @@ class AccountabilityEvent:
             raise ValueError(
                 f"evidence_at_claim must be one of {_TIERS}, got {self.evidence_at_claim!r}"
             )
+        if self.outcome not in ("", "refuted", "survived", "narrowed"):
+            raise ValueError(f"outcome must be refuted/survived/narrowed/'', got {self.outcome!r}")
 
 
 def _esc(text: str) -> str:
@@ -82,8 +93,13 @@ def _row(ev: AccountabilityEvent) -> str:
         f'<td class="tiercell">{_tier_badge(ev.evidence_at_claim)}</td>'
         f'<td class="heldcell">{held_txt}</td>'
         f"<td>{_esc(ev.caught_by)}</td>"
-        f'<td class="corr">{_esc(ev.correction) or "—"}</td>'
-        f"</tr>"
+        f'<td class="corr">{_esc(ev.correction) or "—"}'
+        + (
+            f' <span class="ceref">〔{_esc(ev.method)}→{_esc(ev.outcome)};{_esc(ev.evidence_ref)}〕</span>'
+            if ev.outcome
+            else ""
+        )
+        + "</td></tr>"
     )
 
 
@@ -170,6 +186,7 @@ def render_panel(events: Sequence[AccountabilityEvent], *, generated_at: str) ->
         "table{border-collapse:collapse;width:100%;margin-top:.6rem;font-size:.93rem}"
         "th,td{border:1px solid #e5e8e8;padding:.5rem .6rem;text-align:left;vertical-align:top}"
         "th{background:#f4f6f6}tr.miss{background:#fdf2f0}tr.miss .heldcell{color:#c0392b;font-weight:600}"
+        ".ceref{color:#7f8c8d;font-size:.85em}"
         "tr.held .heldcell{color:#1e8449}.claim{font-weight:600;max-width:260px}.corr{color:#34495e}"
         ".tier{color:#fff;padding:.1rem .45rem;border-radius:.5rem;font-size:.8rem;font-weight:700}"
         ".empty{color:#909497;text-align:center}"
