@@ -99,3 +99,42 @@ def test_run_publish_push_preflight_emits_review_before_push(
     assert output["underlying_commands"][0] == (
         "python scripts/start_agent_session.py --agent observer-publish-preflight --no-ack"
     )
+
+
+def test_run_publish_push_preflight_agent_defaults(
+    capsys,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+
+    _write_state(state_path)
+    _write_traces(traces_path)
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "run_publish_push_preflight.py",
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+        ],
+    )
+
+    module.main()
+    output = json.loads(capsys.readouterr().out)
+
+    assert output["agent"] == "publish-push-preflight"
+    assert output["underlying_commands"][0] == (
+        "python scripts/start_agent_session.py --agent publish-push-preflight --no-ack"
+    )
+
+
+def test_run_publish_push_preflight_script_stays_lf_only() -> None:
+    module_path = Path(__file__).resolve().parents[1] / "scripts" / "run_publish_push_preflight.py"
+    data = module_path.read_bytes()
+    assert b"\r\n" not in data
