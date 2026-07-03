@@ -144,6 +144,13 @@ moltbook_feed.json
 # Memory crystals (runtime generated)
 memory/crystals.jsonl
 
+# Strategic decision crystals — local working notes, never in the public repo.
+# Was only in .git/info/exclude (this machine); other clones would happily
+# commit them. Path name being visible here is fine — the format doc
+# (docs/memory/STRATEGIC_CRYSTAL_FORMAT.md) is already public; the contents
+# are not.
+/memory/strategic_crystals/
+
 # Scribe chronicles (auto-generated runtime snapshots, keep local)
 docs/chronicles/
 

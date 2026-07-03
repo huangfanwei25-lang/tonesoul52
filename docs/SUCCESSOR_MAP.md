@@ -1,6 +1,8 @@
 # Successor Cognitive Map — read this before deleting, refactoring, or "cleaning up"
 
-> Last Updated: 2026-06-16
+> Last Updated: 2026-07-03 (all §1 rows re-verified against master d428191; three line
+> numbers had drifted and were refreshed — line numbers in this map WILL drift again,
+> so verify by grepping the import string, not by trusting the cached `:NNN`.)
 > Audience: the next AI agent (or human) who picks up this repo cold.
 > Purpose: the single page that prevents the failure that almost happened on
 > 2026-06-13 — a "consolidation" PR that nearly deleted `yss_gates`, a module
@@ -55,12 +57,12 @@ delete or "consolidate" them without re-verifying against current code:
 
 | Module | Looks like | Actually | Proof |
 |---|---|---|---|
-| `tonesoul/yss_gates.py` | part of the dead "yss" chain | **runtime POAV gate** | `unified_pipeline.py:643` `from tonesoul.yss_gates import poav_gate` (high-risk 0.92 / normal 0.70 gate) |
+| `tonesoul/yss_gates.py` | part of the dead "yss" chain | **runtime POAV gate** — but enforce is CONDITIONAL: it blocks only in lockdown / risk-danger zones; everyday traffic is record-only (`unified_pipeline.py:648` `enforce = high_risk_mode`, `:667`) | `unified_pipeline.py:638` `from tonesoul.yss_gates import poav_gate`; thresholds now live in `soul_config.py:139-140` (0.92 high-risk / 0.70 low-risk), not at the import site; extra importer `tools/eval/egress_gate_characterization.py:24` |
 | `tonesoul/tsr_metrics.py` | yss helper | **council runtime + public demo** | `council/intent_reconstructor.py:8` (→ `council/runtime.py` main line); `examples/quickstart.py:81` |
-| `tonesoul/action_set.py` | yss helper | **runtime policy** | `unified_pipeline.py:2588,3529` `from tonesoul.action_set import ACTION_POLICY` |
+| `tonesoul/action_set.py` | yss helper | **runtime policy** | `unified_pipeline.py:2615,3585` `from tonesoul.action_set import ACTION_POLICY` |
 | `tonesoul/memory_manager.py` | yss helper | **live CLI** | `scripts/memory_compact.py` (has `main()`/`__main__`) |
 | `tonesoul/skill_gate.py` | yss helper | **live CLI** | `scripts/skill_gate.py` (has `main()`/`__main__`) |
-| `tonesoul/skill_promoter.py` | yss helper | **transitively live** | `skill_gate.py:59` imports it inside a function |
+| `tonesoul/skill_promoter.py` | yss helper | **transitively live** | `skill_gate.py:57` imports it inside a function |
 | `tonesoul/drift_monitor.py` | one of two drift impls | **canonical runtime drift** | wired into the dispatch trace; `drift_tracker.py` was the deletable duplicate (removed in PR5) |
 
 **Lesson encoded:** the "yss subsystem" is NOT a clean dead island. The dead
@@ -175,7 +177,7 @@ what's here nor deletes it thinking it's junk. Each is a pending owner decision
 | **GSE Strategy_Mirror** | `gse/strategy_mirror/` — 150-element rhetorical-move catalogue (57 green/73 yellow/20 red); names manipulation moves in ToneSoul's own output | **REVIVED 2026-06-14** — `scripts/run_strategy_mirror_shadow.py` verifies it discriminates (zh-TW rhetorical detection 1.0 / plain false-trip 0.0; catches urgency/scarcity as a red move). Production default still **OFF**, pending owner enable-decision. Phases 3-5 (~550 more moves) unbuilt | `scripts/run_strategy_mirror_shadow.py`; `tonesoul/council/pre_output_council.py:118-279` | Calibrate at scale (needs traffic) then decide on flipping the default ON. |
 | **YSS governance** | 9 modules (3045 LOC): audit_interface, constraint_stack, evidence_collector, generation_orch, intent_verification, mercy_objective, skill_apply, yss_pipeline, yss_unified_adapter | Built; **unwired** (marked `# YSS-STATUS: unwired`); only importers are its own tests | grep `YSS-STATUS: unwired` | Responsibility-Manifold P1 candidate substrate (see §5 plan), or archive if P1 doesn't start. |
 | **inter_soul** | 5 modules — multi-agent tension/sovereignty protocol (TensionPacket, RuptureNotice, SovereigntyBoundary) | Built; tests live in `.codex-temp/`; **ZERO production imports** | `tonesoul/inter_soul/` | For Phase 8 multi-agent; mark wire-in point or archive. |
-| **market** |台股 analysis (analyzer/data_ingest/world_model, ~1338 LOC) | Half-dismantled (forecaster/gold_detector deleted; zombie .pyc cleaned 2026-06-14); no integration; off-thesis | `tonesoul/market/` | Off the accountability thesis — strongest archive candidate. |
+| **market** |台股 analysis (analyzer/data_ingest/world_model, ~1338 LOC) | **ARCHIVED 2026-07-03** (owner decision; the 2026-06-15 dated archive gate expired with no governance wire-in). 4 modules + 6 dedicated scripts + 5 dedicated tests removed from the tracked tree; recover via `git checkout f6300db -- tonesoul/market ...`; local copy `.archive/market_archived_2026-07-03/` | `docs/plans/market_archive_decision_2026-07-03.md` | Done — see decision record. |
 
 **Forgotten ideas (docs, not code) — articulated, never operationalized:**
 - `docs/philosophy/language_as_womb_2026.md` (289 lines: weak-model + strong-governance = subject posture) — cited by no axiom/council/eval.
@@ -191,8 +193,14 @@ Decision frame for all of the above: each is *revive*, *archive*, or *mark-and-w
 
 A 37-agent adversarial verification sweep (each module independently checked
 unwired, then a second skeptic tried to *refute* dormancy — the exact discipline
-§0 demands) confirmed **18 modules** carry zero non-test live importers. They are
-now tagged in-file with a uniform, greppable marker:
+§0 demands) confirmed **18 modules** carry zero non-test live importers, tagged
+in-file with a uniform, greppable marker. **The grep below is the source of
+truth, not this paragraph's count** — as of 2026-07-03 it returns **25 files**:
+the original 18, minus `corpus/` 4 (archived 2026-06-15, §6b) and `market/` 4
+(archived 2026-07-03, §6b + `docs/plans/market_archive_decision_2026-07-03.md`),
+plus `yuhun/context_assembler` (marked later, §6b), plus `loop/` 4 +
+`tech_trace/` 4 + `axioms/` 2 (verified unwired and marked 2026-07-03 — they
+had been a coverage hole in this convention):
 
 ```
 # DORMANT (as of 2026-06-15): <reason>
@@ -215,6 +223,9 @@ module: `docs/architecture/architecture_legibility_2026-06-15.md`.
 | `observability/self_claim_audit.py` | first-person claim reducer | same — package facade unused at runtime |
 | `inter_soul/{__init__,bridge,negotiation,sovereignty,types}.py` | cross-agent tension/sovereignty protocol | Phase-8 substrate; zero live importers (also the §6 row) |
 | ~~`corpus/{__init__,consent,pipeline,storage}.py`~~ | privacy-first training-data corpus | **ARCHIVED 2026-06-15** (owner decision — parked duplicate of the live Supabase consent path). Removed from the tracked tree; recover via `git checkout b497c68 -- tonesoul/corpus`; local copy in `.archive/corpus_archived_2026-06-15/`. See §6b. |
+| `loop/{__init__,config,engine,events}.py` | iterative execution engine + event streaming | only importers are tests/helpers.py + tests/test_loop_*.py (marked 2026-07-03) |
+| `tech_trace/{__init__,capture,normalize,validate}.py` | Tech-Trace ingestion/normalize/validate helpers | only importers are tests/test_tech_trace_*.py (marked 2026-07-03) |
+| `axioms/{__init__,living_insights}.py` | provisional philosophical observations store | zero live importers; the live axiom carrier is repo-root `AXIOMS.json`, not this package (marked 2026-07-03) |
 
 **Caught as ACTUALLY LIVE — NOT marked dormant (the verification's safety win):**
 `gse/element.py` — the `GSEElement` dataclass is imported by `gse/registry.py`
@@ -244,5 +255,5 @@ Decision evidence + adversarial review: `docs/plans/01_active/tier4_structural_d
 | `corpus/` | **Archive** | Removed from the tracked tree (parked duplicate of the live Supabase consent path). Recover: `git checkout b497c68 -- tonesoul/corpus`. The 3 corpus-dedicated tests were removed; the 2 consent cases in `test_security_memory_boundary.py` (duplicated in the archived `test_corpus_consent.py`) were dropped, leaving its 4 genuine memory-security tests. **Coverage note:** the live Supabase consent path's own test coverage is a separate, pre-existing question. |
 | YUHUN hook | **Wire (advisory)** | DPR wired as `dispatch_trace["dpr_advisory"]`; ContextAssembler kept parked (see §6a). |
 | `council/evolution.py` | **Rename** | → `council/voting_evolution.py` (resolves the live-vs-live grep collision with `tonesoul/evolution/`). Class names unchanged; 3 importers + 1 test updated. `yss`/`yuhun` were NOT renamed — they are not true namesakes. |
-| `market/` | **Keep + mark** | The 4 modules now carry a `# DORMANT` marker with a **dated archive gate** ("archive at next consolidation unless a governance wire-in lands"). Not removed (tested + CLI-script-reachable). |
+| `market/` | **Keep + mark** → **Archived 2026-07-03** | The 2026-06-15 decision marked the 4 modules with a **dated archive gate** ("archive at next consolidation unless a governance wire-in lands"). The gate expired with no wire-in; owner approved execution 2026-07-03. Removed with its 6 dedicated scripts + 5 dedicated tests; recovery + rationale in `docs/plans/market_archive_decision_2026-07-03.md`. |
 | dual `Hippocampus` | **Leave + mark** | No merge (M-effort/M-risk for zero gain). Root `memory/hippocampus.py` marked `# PARTIAL-LIVE` (only the static `compute_error_vector` is live; the default-ON corrective branch is a usually-zero near-no-op). |

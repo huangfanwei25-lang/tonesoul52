@@ -2,7 +2,8 @@
 
 > **決策物件**：兩條 **live** 的 council self-referential weight-binding 做 cleanup —
 > `voting_evolution` → shadow/observe-only，`persona_track_record` → modify-not-remove。
-> **狀態**：owner-gated，**待梵威 ratify**。這份是決策記錄（像 #228），不是已生效的變更。
+> **狀態**：**RATIFIED**（PR #231 merged 2026-07-02；`docs/status/yu_handoff_final.md` 記「de-bind ratified」）。
+> **實作進度（2026-07-03 回填）**：尚未動工——shadow/observe-only flag 與 post-normalize floor（codex 但書）的 code 均不存在（`pre_output_council.py:110-118` 仍無條件 `get_weights()`；`deliberation/types.py:168-174` 無 floor）。§0 的但書仍有效：實作 PR 前必須在 proposed flag 下實跑 `test_deliberation_gravity_pareto` + `test_council_evolution`。
 > **界定（承重）**：這是 **de-bind / self-referential binding cleanup，不是刪除 council memory**。
 
 ---

@@ -2,7 +2,11 @@
 
 Tracks how each perspective (Guardian / Analyst / Critic / Advocate / Axiomatic) votes
 relative to the final verdict, and slowly adjusts weights to reward
-reliable alignment without penalizing healthy dissent.
+reliable alignment. Honest limit: the normalization in ``evolve_weights``
+can push a persistently dissenting perspective below baseline 1.0 — dissent
+is not directly penalized, but it is not shielded either. That tension is
+deliberately surfaced (not hidden) by ``_build_suppression_observability``,
+which flags low-weight perspectives whose dissent keeps recurring.
 
 State is persisted to ``memory/council_evolution.json`` so that
 weights survive across process restarts.
