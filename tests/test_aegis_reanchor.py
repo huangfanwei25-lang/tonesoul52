@@ -15,10 +15,29 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+import pytest  # noqa: E402
+
 import tonesoul.aegis_shield as aegis_shield  # noqa: E402
 from scripts.aegis_reanchor import diagnose_gap, reanchor  # noqa: E402
 from tonesoul.aegis_shield import AegisShield  # noqa: E402
 from tonesoul.backends.file_store import FileStore  # noqa: E402
+
+try:  # Ed25519 signing is the optional tonesoul52[aegis] extra
+    import nacl.signing  # noqa: F401
+
+    _HAS_NACL = True
+except ImportError:
+    _HAS_NACL = False
+
+requires_nacl = pytest.mark.skipif(
+    not _HAS_NACL,
+    reason=(
+        "needs PyNaCl (tonesoul52[aegis]): without it every trace is UNSIGNED, audit "
+        "correctly reports signature failures, and the tool refuses (fail-closed by "
+        "design — that refusal path is covered by test_broken_chain_is_refused and "
+        "test_diagnose_gap_shapes, which run everywhere)"
+    ),
+)
 
 
 def _make_store(tmp_path, monkeypatch) -> FileStore:
@@ -44,6 +63,7 @@ def _seed_chain(store: FileStore, n: int = 2) -> AegisShield:
     return shield
 
 
+@requires_nacl
 def test_intact_chain_is_left_alone(tmp_path, monkeypatch):
     store = _make_store(tmp_path, monkeypatch)
     shield = _seed_chain(store)
@@ -53,6 +73,7 @@ def test_intact_chain_is_left_alone(tmp_path, monkeypatch):
     assert store.get_traces(n=100)[-1]["type"] == "test_trace"
 
 
+@requires_nacl
 def test_benign_gap_dry_run_writes_nothing(tmp_path, monkeypatch):
     store = _make_store(tmp_path, monkeypatch)
     _seed_chain(store)
@@ -68,6 +89,7 @@ def test_benign_gap_dry_run_writes_nothing(tmp_path, monkeypatch):
     assert AegisShield.load(store).chain_head == "0" * 64
 
 
+@requires_nacl
 def test_benign_gap_apply_reanchors_with_provenance(tmp_path, monkeypatch):
     store = _make_store(tmp_path, monkeypatch)
     shield = _seed_chain(store)

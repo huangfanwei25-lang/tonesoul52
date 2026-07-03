@@ -20,6 +20,13 @@ benign shape — chain_valid AND zero signature failures AND head!=tail. A
 broken chain or bad signature is possible real tamper; that needs a human,
 not an auto-repair. Default is dry-run; pass --apply to write.
 
+Note: in a deployment WITHOUT PyNaCl (the tonesoul52[aegis] extra), every
+trace is recorded UNSIGNED, audit reports those as signature failures, and
+this tool therefore always refuses. That is intentional — an unsigned store
+gives the repair no cryptographic ground to stand on; install the extra (or
+accept the standing 'compromised' as documented) rather than weakening the
+guard.
+
 Usage:
     python scripts/aegis_reanchor.py --agent <you>            # dry-run
     python scripts/aegis_reanchor.py --agent <you> --apply
