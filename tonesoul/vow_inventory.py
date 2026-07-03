@@ -185,8 +185,27 @@ class VowInventory:
 
     def __init__(self) -> None:
         self._states: Dict[str, VowConvictionState] = {}
+        # exit events (withdrawals) — shadow surface per the ratified gap study
+        # PROPOSAL-3: an exit is recorded next to the check history but NEVER touches
+        # conviction_score or the pass/violation counters (it is not a pass/fail)
+        self._withdrawal_events: List[Dict[str, object]] = []
 
     # ── Public API ──────────────────────────────────────────────────────────
+
+    def record_withdrawal(self, vow_id: str, reason: str, actor: str) -> None:
+        """Record a vow's decent exit as an inventory event (observability only)."""
+        self._withdrawal_events.append(
+            {
+                "vow_id": vow_id,
+                "reason": reason,
+                "actor": actor,
+                "recorded_at": _utc_iso(),
+            }
+        )
+
+    def withdrawal_events(self) -> List[Dict[str, object]]:
+        """Copies of the recorded exit events (append-only ledger)."""
+        return [dict(e) for e in self._withdrawal_events]
 
     def record_check(
         self,
