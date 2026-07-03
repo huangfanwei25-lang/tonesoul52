@@ -69,12 +69,12 @@ python scripts/gateway.py --port 7700 --token YOUR_SECRET
 
 ## 核心文件（按優先序）
 
-1. `AXIOMS.json` — 8 條不可變公理（v1.1.0，2026-04 增補 Axiom 8 記憶主權）
+1. `AXIOMS.json` — 8 條不可變公理（v1.2.0；2026-04 增補 Axiom 8 記憶主權，2026-06 A7 reframe + enforcement reconciliation。版本以檔內 `version` 欄為準，本行可能過期）
 2. `AGENTS.md` — AI 協作手冊
 3. `AI_ONBOARDING.md` — AI 入口總覽
 4. `docs/AI_QUICKSTART.md` — 最小正確流程
 5. `DESIGN.md` — 系統為什麼這樣分層
-6. `docs/status/codex_handoff_2026-03-31.md` — 近期 handoff
+6. `docs/status/yu_handoff_final.md` — 現行 handoff（2026-07-03 定稿；更早的在 `docs/status/codex_handoff_*.md`）
 7. `task.md` — 現行短板與下一桶
 8. `docs/memory/STRATEGIC_CRYSTAL_FORMAT.md` — 策略性決策 closed-loop 5-field memory format
 
