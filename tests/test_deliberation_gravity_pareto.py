@@ -4,6 +4,7 @@ from dataclasses import replace
 from pathlib import Path
 
 import pytest
+
 import tonesoul.deliberation.gravity as gravity_module
 from tonesoul.deliberation.gravity import SemanticGravity
 from tonesoul.deliberation.persona_track_record import PersonaTrackRecord
