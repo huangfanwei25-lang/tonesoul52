@@ -177,7 +177,7 @@ what's here nor deletes it thinking it's junk. Each is a pending owner decision
 | **GSE Strategy_Mirror** | `gse/strategy_mirror/` — 150-element rhetorical-move catalogue (57 green/73 yellow/20 red); names manipulation moves in ToneSoul's own output | **REVIVED 2026-06-14** — `scripts/run_strategy_mirror_shadow.py` verifies it discriminates (zh-TW rhetorical detection 1.0 / plain false-trip 0.0; catches urgency/scarcity as a red move). Production default still **OFF**, pending owner enable-decision. Phases 3-5 (~550 more moves) unbuilt | `scripts/run_strategy_mirror_shadow.py`; `tonesoul/council/pre_output_council.py:118-279` | Calibrate at scale (needs traffic) then decide on flipping the default ON. |
 | **YSS governance** | 9 modules (3045 LOC): audit_interface, constraint_stack, evidence_collector, generation_orch, intent_verification, mercy_objective, skill_apply, yss_pipeline, yss_unified_adapter | Built; **unwired** (marked `# YSS-STATUS: unwired`); only importers are its own tests | grep `YSS-STATUS: unwired` | Responsibility-Manifold P1 candidate substrate (see §5 plan), or archive if P1 doesn't start. |
 | **inter_soul** | 5 modules — multi-agent tension/sovereignty protocol (TensionPacket, RuptureNotice, SovereigntyBoundary) | Built; tests live in `.codex-temp/`; **ZERO production imports** | `tonesoul/inter_soul/` | For Phase 8 multi-agent; mark wire-in point or archive. |
-| **market** |台股 analysis (analyzer/data_ingest/world_model, ~1338 LOC) | Half-dismantled (forecaster/gold_detector deleted; zombie .pyc cleaned 2026-06-14); no integration; off-thesis | `tonesoul/market/` | Off the accountability thesis — strongest archive candidate. |
+| **market** |台股 analysis (analyzer/data_ingest/world_model, ~1338 LOC) | **ARCHIVED 2026-07-03** (owner decision; the 2026-06-15 dated archive gate expired with no governance wire-in). 4 modules + 6 dedicated scripts + 5 dedicated tests removed from the tracked tree; recover via `git checkout f6300db -- tonesoul/market ...`; local copy `.archive/market_archived_2026-07-03/` | `docs/plans/market_archive_decision_2026-07-03.md` | Done — see decision record. |
 
 **Forgotten ideas (docs, not code) — articulated, never operationalized:**
 - `docs/philosophy/language_as_womb_2026.md` (289 lines: weak-model + strong-governance = subject posture) — cited by no axiom/council/eval.
@@ -195,11 +195,12 @@ A 37-agent adversarial verification sweep (each module independently checked
 unwired, then a second skeptic tried to *refute* dormancy — the exact discipline
 §0 demands) confirmed **18 modules** carry zero non-test live importers, tagged
 in-file with a uniform, greppable marker. **The grep below is the source of
-truth, not this paragraph's count** — as of 2026-07-03 it returns **29 files**:
-the original 18, minus `corpus/` 4 (archived, §6b), plus `market/` 4 and
-`yuhun/context_assembler` (marked later, §6b), plus `loop/` 4 + `tech_trace/` 4 +
-`axioms/` 2 (verified unwired and marked 2026-07-03 — they had been a coverage
-hole in this convention):
+truth, not this paragraph's count** — as of 2026-07-03 it returns **25 files**:
+the original 18, minus `corpus/` 4 (archived 2026-06-15, §6b) and `market/` 4
+(archived 2026-07-03, §6b + `docs/plans/market_archive_decision_2026-07-03.md`),
+plus `yuhun/context_assembler` (marked later, §6b), plus `loop/` 4 +
+`tech_trace/` 4 + `axioms/` 2 (verified unwired and marked 2026-07-03 — they
+had been a coverage hole in this convention):
 
 ```
 # DORMANT (as of 2026-06-15): <reason>
@@ -254,5 +255,5 @@ Decision evidence + adversarial review: `docs/plans/01_active/tier4_structural_d
 | `corpus/` | **Archive** | Removed from the tracked tree (parked duplicate of the live Supabase consent path). Recover: `git checkout b497c68 -- tonesoul/corpus`. The 3 corpus-dedicated tests were removed; the 2 consent cases in `test_security_memory_boundary.py` (duplicated in the archived `test_corpus_consent.py`) were dropped, leaving its 4 genuine memory-security tests. **Coverage note:** the live Supabase consent path's own test coverage is a separate, pre-existing question. |
 | YUHUN hook | **Wire (advisory)** | DPR wired as `dispatch_trace["dpr_advisory"]`; ContextAssembler kept parked (see §6a). |
 | `council/evolution.py` | **Rename** | → `council/voting_evolution.py` (resolves the live-vs-live grep collision with `tonesoul/evolution/`). Class names unchanged; 3 importers + 1 test updated. `yss`/`yuhun` were NOT renamed — they are not true namesakes. |
-| `market/` | **Keep + mark** | The 4 modules now carry a `# DORMANT` marker with a **dated archive gate** ("archive at next consolidation unless a governance wire-in lands"). Not removed (tested + CLI-script-reachable). |
+| `market/` | **Keep + mark** → **Archived 2026-07-03** | The 2026-06-15 decision marked the 4 modules with a **dated archive gate** ("archive at next consolidation unless a governance wire-in lands"). The gate expired with no wire-in; owner approved execution 2026-07-03. Removed with its 6 dedicated scripts + 5 dedicated tests; recovery + rationale in `docs/plans/market_archive_decision_2026-07-03.md`. |
 | dual `Hippocampus` | **Leave + mark** | No merge (M-effort/M-risk for zero gain). Root `memory/hippocampus.py` marked `# PARTIAL-LIVE` (only the static `compute_error_vector` is live; the default-ON corrective branch is a usually-zero near-no-op). |
