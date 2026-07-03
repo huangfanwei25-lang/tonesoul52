@@ -163,5 +163,27 @@
     "method": "異模型讀首份判決書後的對抗批評",
     "outcome": "narrowed",
     "evidence_ref": ".claude/skills/honest-judgment/SKILL.md 模式分流節"
+  },
+  {
+    "lane": "self-check",
+    "claim": "「語魂是判例系統,規則各有事故出處」(2026-07-03,方法論比較的核心論點 C1)",
+    "evidence_at_claim": "E1",
+    "held": false,
+    "caught_by": "同模型對抗式 critic agent(標注 correlated-blind-spot)",
+    "correction": "以普遍形式被推翻:憲法層(8 公理、P0-P4、Guardian 0.7/coherence 0.6/POAV 0.92 等閾值)是無事故出處的先驗立法;真實形狀=「小憲法+厚判例」,救憲法的是 enforcement_reconciliation 誠實標注,不是判例出身",
+    "method": "對抗式反駁 agent 逐條找反例(file:line 佐證)",
+    "outcome": "narrowed",
+    "evidence_ref": "docs/engineering/model_dispatch_protocol.md provenance 節(每條規則掛判例或誠實標 prior 的設計即源自此修正)"
+  },
+  {
+    "lane": "self-check",
+    "claim": "「freshness 契約 87/250 覆蓋;doc 債 missing_purpose 206、missing_date 120」(repo_atlas 初版數字)",
+    "evidence_at_claim": "E1",
+    "held": false,
+    "caught_by": "同模型對抗式 critic agent(在自己 tree 上重跑 post-change run 對數)",
+    "correction": "四個數字全錯:87 把 json/md 雙胞胎分開數(實為 artifact_count=73)、250 混入子目錄(頂層 233)、206/120 含當時 34 個 untracked 遺留(tracked-tree 基準 185/102)——inventory 數字隨工作樹而異,引用必標基準",
+    "method": "重跑 doc_convergence + verify_status_freshness 後逐數對照",
+    "outcome": "refuted",
+    "evidence_ref": "docs/status/repo_atlas_2026-07-03.md H2 列與處置回填(修正 commit 529d936)"
   }
 ]
