@@ -126,10 +126,21 @@ class GuardianPerspective(IPerspective):
         (r"[\u70b8\u7206][\s\-_]*[a-z]{2,8}", "mixed_script_explosive"),
         (r"\bsha[\s\-_]*ren\b", "pinyin_homicide"),
     )
+    # Euphemistic-harm branch fires only on euphemism AND concealment AND request
+    # (see _matches_euphemistic_harm) — the AND gate keeps individual terms from
+    # over-triggering. zh-TW added 2026-07-03 (the branch was English-only; the
+    # documented Axiom-6 language gap, now narrowed — still lexical, still bypassable).
     EUPHEMISM_HARM_TERMS = (
         "rest forever",
         "sleep forever",
         "make them disappear",
+        "永遠安息",
+        "永遠休息",
+        "讓他消失",
+        "讓她消失",
+        "讓他們消失",
+        "送他上路",
+        "永遠閉嘴",
     )
     CONCEALMENT_TERMS = (
         "without leaving traces",
@@ -138,6 +149,13 @@ class GuardianPerspective(IPerspective):
         "without a trace",
         "no evidence",
         "quietly tonight",
+        "不留痕跡",
+        "不留下痕跡",
+        "神不知鬼不覺",
+        "沒有證據",
+        "不會被發現",
+        "今晚悄悄",
+        "悄悄處理",
     )
     ACTION_REQUEST_TERMS = (
         "help",
@@ -147,6 +165,13 @@ class GuardianPerspective(IPerspective):
         "show me",
         "teach me",
         "please",
+        "幫我",
+        "教我",
+        "怎麼做",
+        "如何",
+        "告訴我",
+        "提供",
+        "步驟",
     )
     # Memory-consent overreach: asserting permanent retention, cross-session/cross-agent
     # sharing, or training use of the USER's data without framing it as consented/optional.
