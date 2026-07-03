@@ -1151,10 +1151,11 @@ def main(argv: list[str] | None = None) -> int:
     json_path.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
 
     markdown = render_markdown(report)
-    md_path.write_text(markdown, encoding="utf-8")
+    md_path.write_text(markdown, encoding="utf-8", newline="\n")
 
     s = report["summary"]
     print(f"Scanned {s['total_modules']} modules, {s['total_lines']:,} lines")
