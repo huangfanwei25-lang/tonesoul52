@@ -1,31 +1,33 @@
 {
-  "generated_at": "2026-06-01T12:49:38Z",
+  "generated_at": "2026-07-03T21:36:39Z",
   "overall_ok": true,
   "inputs": {
     "journal_path": "C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl"
   },
   "metrics": {
-    "entry_count": 66,
-    "failure_case_count": 63,
-    "learning_sample_count": 63,
+    "entry_count": 149,
+    "failure_case_count": 146,
+    "learning_sample_count": 146,
     "invalid_json_line_count": 0,
-    "high_risk_failure_count": 63,
+    "high_risk_failure_count": 141,
     "verdict_counts": {
       "unknown": 1,
-      "block": 63,
-      "digest": 2
+      "block": 141,
+      "digest": 2,
+      "declare_stance": 5
     },
     "risk_level_counts": {
-      "high": 63
+      "high": 141,
+      "low": 5
     },
     "uncertainty_band_counts": {
-      "unknown": 63
+      "unknown": 146
     },
-    "average_failure_coherence": 0.7489
+    "average_failure_coherence": 0.7539
   },
   "quality_signals": {
-    "failure_case_rate": 0.9545,
-    "provenance_coverage_rate": 0.9841,
+    "failure_case_rate": 0.9799,
+    "provenance_coverage_rate": 0.9589,
     "divergence_coverage_rate": 1.0,
     "contract_coverage_rate": 1.0,
     "contract_evidence_coverage_rate": 0.0

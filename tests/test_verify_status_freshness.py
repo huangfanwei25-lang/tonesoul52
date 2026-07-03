@@ -180,3 +180,35 @@ def test_classify_and_parse_helpers() -> None:
     assert parsed is not None and parsed.tzinfo is not None
     assert _parse_timestamp("not-a-date") is None
     assert _parse_timestamp(12345) is None
+
+
+def test_scan_dirs_extends_coverage_to_reports(tmp_path: Path) -> None:
+    """2026-07-04 external-audit lesson: assertive artifacts outside docs/status
+    (reports/security_bandit_latest, reports/coverage_latest) sat 140 days stale,
+    invisible to the contract. scan_dirs must judge every listed directory."""
+    status_dir = tmp_path / "docs" / "status"
+    reports_dir = tmp_path / "reports"
+    status_dir.mkdir(parents=True)
+    reports_dir.mkdir(parents=True)
+    _write(status_dir, "alpha_latest.json", {"generated_at": _days_ago(1), "ok": True})
+    _write(reports_dir, "bandit_latest.json", {"generated_at": _days_ago(140)})
+    verdicts = evaluate(NOW, 45, 120, repo_root=tmp_path, scan_dirs=(status_dir, reports_dir))
+    rels = {v.path: v for v in verdicts}
+    bandit = next(v for p, v in rels.items() if "bandit_latest" in p)
+    assert bandit.verdict == "stale"
+    assert any("alpha_latest" in p for p in rels)
+
+
+def test_nested_meta_timestamp_is_recognized(tmp_path: Path) -> None:
+    """coverage.py writes its stamp under meta.timestamp — one nesting level must count."""
+    status_dir = tmp_path / "docs" / "status"
+    status_dir.mkdir(parents=True)
+    _write(
+        status_dir,
+        "coverage_latest.json",
+        {"meta": {"timestamp": _days_ago(3)}, "totals": {"percent_covered": 88.8}},
+    )
+    verdicts = evaluate(NOW, 45, 120, repo_root=tmp_path, scan_dirs=(status_dir,))
+    (v,) = [x for x in verdicts if "coverage_latest" in x.path]
+    assert v.verdict == "fresh"
+    assert v.timestamp_field == "meta.timestamp"

@@ -1,6 +1,6 @@
 # Dual-Track Boundary Latest
 
-- generated_at: 2026-07-03T01:23:23Z
+- generated_at: 2026-07-03T21:36:37Z
 - overall_ok: true
 - changed_path_count: 0
 - violation_count: 0
@@ -9,5 +9,5 @@
 
 ## Collection
 - mode: git
-- command: `git -c core.quotepath=off show --pretty=format: --name-status --diff-filter=ACMRD HEAD`
+- command: `git -c core.quotepath=off diff --name-status --cached --diff-filter=ACMRD`
 - exit_code: 0

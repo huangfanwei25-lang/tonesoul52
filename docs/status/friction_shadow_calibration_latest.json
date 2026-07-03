@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-01T12:49:38Z",
+  "generated_at": "2026-07-03T21:36:39Z",
   "source": "scripts/run_friction_shadow_calibration_report.py",
   "overall_ok": true,
   "inputs": {
@@ -16,30 +16,30 @@
     "max_high_friction_escape_rate": 0.15
   },
   "metrics": {
-    "scenario_count": 337,
-    "trace_row_count": 337,
+    "scenario_count": 420,
+    "trace_row_count": 420,
     "synthetic_row_count": 0,
     "invalid_json_line_count": 0,
     "route_change_count": 0,
     "route_change_rate": 0.0,
-    "active_council_rate": 0.1128,
-    "shadow_council_rate": 0.1128,
+    "active_council_rate": 0.1976,
+    "shadow_council_rate": 0.1976,
     "council_rate_delta": 0.0,
-    "high_friction_candidate_count": 3,
+    "high_friction_candidate_count": 4,
     "high_friction_escape_count": 0,
     "high_friction_escape_rate": 0.0
   },
   "route_distribution": {
     "active": {
       "route_local_llm": 0,
-      "route_single_cloud": 299,
-      "route_full_council": 38,
+      "route_single_cloud": 337,
+      "route_full_council": 83,
       "block_rate_limit": 0
     },
     "shadow": {
       "route_local_llm": 0,
-      "route_single_cloud": 299,
-      "route_full_council": 38,
+      "route_single_cloud": 337,
+      "route_full_council": 83,
       "block_rate_limit": 0
     }
   },
@@ -52,13 +52,13 @@
     },
     {
       "band": "mid",
-      "count": 67,
-      "active_council_rate": 0.5224,
-      "shadow_council_rate": 0.5224
+      "count": 149,
+      "active_council_rate": 0.5302,
+      "shadow_council_rate": 0.5302
     },
     {
       "band": "high",
-      "count": 3,
+      "count": 4,
       "active_council_rate": 1.0,
       "shadow_council_rate": 1.0
     },

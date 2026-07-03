@@ -38,10 +38,14 @@ memory/self_journal.jsonl)、順手重構、擴 scope、放鬆任何 gate。**ex
 
 ### 5. 驗收條件(可執行,report 前必跑)
 命令 + 預期輸出。executor 回報前**必須實跑**;「應該會過」不是驗收。
-**lint/format 的檔案範圍用 `git diff --name-only` 推導,不准手抄清單**——首個判例(2026-07-04,
-de-bind 工單):手寫五檔清單漏了第六個被改的既有測試,executor 與 reviewer 照單一起漏,
-master 上非 required 的 ruff job 紅了一輪(CI #1094)。同時記住:**required checks 綠 ≠ 全部
-workflow 綠**,merge 後掃一眼全部 checks。
+**lint/format 的檔案範圍從 git 推導,不准手抄清單**——首個判例(2026-07-04,de-bind 工單):
+手寫五檔清單漏了第六個被改的既有測試,executor 與 reviewer 照單一起漏,master 上非 required
+的 ruff job 紅了一輪(CI #1094)。**公式要同時涵蓋 untracked 新檔**(第二判例,doctor 工單:
+`git diff --name-only` 不列新檔,codex 的 sandbox 又不能 `git add -N`):
+`{ git diff --name-only --diff-filter=ACM; git ls-files -o --exclude-standard; } | grep '\.py$'`。
+sandbox 內跑 pytest 用 `--basetemp=tmp/pytest`;**但含非 ASCII 路徑的 Windows 本機不要用該旗標**
+(pytest 清理會炸,doctor 工單第三判例)——驗收以各自環境能跑的形式寫死。
+同時記住:**required checks 綠 ≠ 全部 workflow 綠**,merge 後掃一眼全部 checks。
 - ✅ 「跑 `python scripts/analyze_codebase_graph.py` 後,`python -c "print(open('docs/status/codebase_graph_latest.md','rb').read().count(b'\r\n'))"` 輸出 0;black+ruff 兩檔全過。」
 - ❌ 「確保沒有 CRLF。」(不可執行=每個人驗的東西不一樣)
 

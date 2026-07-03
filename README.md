@@ -102,8 +102,19 @@ pip install tonesoul52
 # source install
 git clone --depth 1 https://github.com/Fan1234-1/tonesoul52.git
 cd tonesoul52
-pip install -e .
+pip install -e ".[dev]"        # [dev] extras = pytest/hypothesis/freezegun etc.; needed to run the test suite
+
+python scripts/doctor.py       # one-shot environment diagnostic: tells you exactly what's missing and how to fix it
 ```
+
+**About the `OpenClaw-Memory/` directory**: it is an *optional* git submodule (a public
+vector-memory framework; real memory data lives outside any repo). A GitHub zip/tarball
+download ships it as an empty directory — that is expected, not breakage. To populate it:
+`git submodule update --init`. Nothing in the core engine or the test suite requires it.
+
+**Deployment boundary** (two separate deploy targets, easy to misread from the file tree):
+root `api/*.py` = serverless API endpoints; `apps/web/` = a separate Next.js frontend with
+its own `vercel.json`. Full topology: [docs/ARCHITECTURE_DEPLOYED.md](docs/ARCHITECTURE_DEPLOYED.md).
 
 **Try it on your own output (30 seconds):**
 

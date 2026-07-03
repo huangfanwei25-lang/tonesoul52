@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-01T12:49:38Z",
+  "generated_at": "2026-07-03T21:36:39Z",
   "source": "scripts/run_friction_shadow_replay_export.py",
   "overall_ok": true,
   "inputs": {
@@ -14,26 +14,26 @@
     "min_scenario_count_ratio": 0.2
   },
   "metrics": {
-    "scenario_count": 337,
-    "source_journal_count": 64,
+    "scenario_count": 420,
+    "source_journal_count": 147,
     "source_discussion_count": 273,
     "source_synthetic_count": 0,
-    "free_tier_count": 189,
-    "premium_tier_count": 148,
+    "free_tier_count": 228,
+    "premium_tier_count": 192,
     "journal_invalid_json_line_count": 0,
     "discussion_invalid_json_line_count": 0,
     "invalid_json_line_count": 0,
-    "average_initial_tension": 0.3553,
-    "average_friction_score": 0.3249,
-    "high_friction_scenario_count": 3,
-    "high_friction_scenario_rate": 0.0089,
+    "average_initial_tension": 0.3977,
+    "average_friction_score": 0.3789,
+    "high_friction_scenario_count": 4,
+    "high_friction_scenario_rate": 0.0095,
     "drift": {
       "has_previous_snapshot": true,
       "guard_applied": true,
       "guard_skip_reason": null,
-      "scenario_count_ratio": 1.006,
+      "scenario_count_ratio": 1.0048,
       "average_initial_tension_delta": 0.0008,
-      "average_friction_score_delta": 0.0015,
+      "average_friction_score_delta": 0.0011,
       "high_friction_scenario_rate_delta": -0.0001
     }
   },

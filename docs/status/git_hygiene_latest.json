@@ -1,23 +1,23 @@
 {
-  "generated_at": "2026-06-01T12:49:36Z",
-  "overall_ok": false,
+  "generated_at": "2026-07-03T21:36:37Z",
+  "overall_ok": true,
   "config": {
     "max_dangling": 50,
     "max_loose_count": 5000,
     "max_tracked_ignored": 28
   },
   "metrics": {
-    "loose_count": 2304,
-    "in_pack": 14133,
-    "packs": 3,
-    "size": "12.93 MiB",
-    "size_pack": "116.27 MiB",
-    "dangling_count": 78,
+    "loose_count": 0,
+    "in_pack": 19260,
+    "packs": 1,
+    "size": "0 bytes",
+    "size_pack": "130.33 MiB",
+    "dangling_count": 22,
     "fsck_prefix_counts": {
-      "dangling": 78
+      "dangling": 22
     },
     "fsck_unexpected_count": 0,
-    "tracked_ignored_count": 15
+    "tracked_ignored_count": 17
   },
   "checks": [
     {
@@ -25,19 +25,19 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.1,
+      "duration_seconds": 0.02,
       "command": "git count-objects -vH",
-      "stdout_tail": "count: 2304\nsize: 12.93 MiB\nin-pack: 14133\npacks: 3\nsize-pack: 116.27 MiB\nprune-packable: 82\ngarbage: 0\nsize-garbage: 0 bytes",
+      "stdout_tail": "count: 0\nsize: 0 bytes\nin-pack: 19260\npacks: 1\nsize-pack: 130.33 MiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
       "stderr_tail": ""
     },
     {
       "name": "fsck",
-      "status": "fail",
-      "ok": false,
+      "status": "pass",
+      "ok": true,
       "exit_code": 0,
-      "duration_seconds": 2.88,
+      "duration_seconds": 3.09,
       "command": "git fsck --no-reflogs",
-      "stdout_tail": "73b6050790b7b229110c0b089\ndangling commit 23e5e82f9d0aaf18a134e0ad4d700528c82d606e\ndangling blob 3868598d61ae7d8df3b4d143b42206cce61e50fb\ndangling tree e569889c9d8aa11db4060914fe96f2f457f1c684\ndangling blob a56a7f91108e7e4bfb91150c7014bf3c592aebbd\ndangling commit c06b1acbbe983808f3b00a8bc9a975a37a773872\ndangling commit fdeca4bc0dcc6c79a0b91799932869aa1357ab80\ndangling blob 046e6aa800f2ffbb8928c4fafa79dd4889646963\ndangling commit 74ef4bb10056eee50fc705d7258994b2f4496fd4\ndangling commit bdefb2ae5d7fc28ff7b87c3ad199db7a127f1e12\ndangling commit 1770a37d35f549e46f79f62ea5fa5c6a3964821b\ndangling blob 2af0c86af35893bac8808eb9bcc51b9d50bc4312\ndangling blob 247114e385759df139a5330fee177a7cf6ef7fb8\ndangling commit 4a721ca3b495cc2754df6833b2df4aa6034d91f2\ndangling blob 6b720237d03dde120ec62122b6a183a153d9111d\ndangling tree 597420c9187b2ce0373930f4a984ea16920d7d16\ndangling tree a1f5614b76a336dc228e140e0532d62be154d354\ndangling commit 6bf7fd45f81c7b802ed9e6336cd27b18d35ac2c9\ndangling blob 56f852e160614d502390b5cffaf461d89bb6b9c3\ndangling commit e9fcf55efbeb77e51127d3e23604382fae0c6b62\ndangling tree 5cfe1282bf42abae88efe579a2970dd93d2ffdf4\ndangling commit f27fe8bb436237f09993d734ba7381c7dc5e79c5",
+      "stdout_tail": "14a\ndangling commit 9222a7d7e3b392f59f0e17d1ef46cf3f4b5dc9a5\ndangling commit c03458603545161bffb079205e45ae5d9b670505\ndangling commit 5640fe4b94fb74f443afaed9d7dc76c969b03453\ndangling commit 894a718b409fc5a1f5cc8acb895015d94a6ce4d5\ndangling commit 7c68c2b31cfe8615ebf99c2ad14c293e8fa3e424\ndangling commit 356f3a0b354b901a0edcd894917b82e9982e5961\ndangling commit ee7e98350b7c5437b1fa89386405e36da8149eee\ndangling commit 6684956d3dea5aab91a1ed99da9f452a029f342d\ndangling commit 2e875fbb30488c242beddf25881bc081c01815d4\ndangling commit 6598f494d551b54d988ee76677fba5b6b5044ff5\ndangling commit 9a9a16818d159c7cb0c4d3702db098710a9ce0bf\ndangling commit 1cb1c8a5d7663c7497fcd52b7109034e009c775a\ndangling commit fbc63697520fc83c2b56ff36b70481d5f2297f70\ndangling commit eccddc37cb19aa99b6f32b16dee3a3800d25e15a\ndangling commit e1d56bc409f6510856f5b4a792c2b90d8a1206cf\ndangling commit 3ad98de8f7b46e2ca1600b183e5f9ede3ca15a00\ndangling commit 0cdb72aec728c0b42725460874e7e39ad01a56bb\ndangling commit eadfe3e74c97d82a0da6affc6c43053e6350fa51\ndangling commit 72e41e0079ddf8c7bb648185e5d3002f336de61d\ndangling commit d3e461c5b8e6b1a7ec37d0b38199ab69f4f9fa28\ndangling commit fef317c81e6b48a058c8e72d863d3d5e33fce981",
       "stderr_tail": ""
     },
     {
@@ -45,17 +45,22 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.11,
+      "duration_seconds": 0.09,
       "command": "git ls-files -ci --exclude-standard",
-      "stdout_tail": "data/YuHun_v2.6_knowledgebase.json\ndata/YuHun_v2.6_knowledgebase_extended.json\ndata/semantic_spine_fixtures.json\ndata/yuhun_academy_knowledgebase_v1.1.txt\n\"data/\\350\\252\\236\\351\\255\\202\\345\\212\\207\\345\\240\\264_API_\\346\\234\\200\\347\\265\\202\\347\\211\\210_v1.3.json\"\ndocs/chronicles/task_archive_phase_570-854.md\ndocs/status/persona_swarm_framework_latest.json\nexperiments/tsd1_pilot/data/prompts.json\nexperiments/tsd1_pilot/data/responses.json\nmemory/autonomous/session_traces.jsonl\nmemory/autonomous/zone_registry.json\nmemory/crystals.jsonl\nmemory/memory_base/tonesoul_cognitive.index\nmemory/memory_base/tonesoul_metadata.jsonl\nspec/wfgy_semantic_control_spec.md",
+      "stdout_tail": ".claude/skills/codex-second-opinion/SKILL.md\n.claude/skills/delegation-dispatch/SKILL.md\n.claude/skills/fanwei-voice-essays/SKILL.md\n.claude/skills/honest-judgment/SKILL.md\n.claude/skills/navigation-grammar-checker/SKILL.md\n.claude/skills/tonesoul-thesis-defender/SKILL.md\n.claude/skills/tonesoul-thesis-defender/patterns.md\ndata/YuHun_v2.6_knowledgebase.json\ndata/YuHun_v2.6_knowledgebase_extended.json\ndata/semantic_spine_fixtures.json\ndata/yuhun_academy_knowledgebase_v1.1.txt\n\"data/\\350\\252\\236\\351\\255\\202\\345\\212\\207\\345\\240\\264_API_\\346\\234\\200\\347\\265\\202\\347\\211\\210_v1.3.json\"\ndocs/chronicles/task_archive_phase_570-854.md\ndocs/status/persona_swarm_framework_latest.json\nexperiments/tsd1_pilot/data/prompts.json\nexperiments/tsd1_pilot/data/responses.json\nspec/wfgy_semantic_control_spec.md",
       "stderr_tail": ""
     }
   ],
-  "issues": [
-    "dangling objects 78 exceeds threshold 50"
-  ],
+  "issues": [],
   "fsck_unexpected_lines": [],
   "tracked_ignored_paths": [
+    ".claude/skills/codex-second-opinion/SKILL.md",
+    ".claude/skills/delegation-dispatch/SKILL.md",
+    ".claude/skills/fanwei-voice-essays/SKILL.md",
+    ".claude/skills/honest-judgment/SKILL.md",
+    ".claude/skills/navigation-grammar-checker/SKILL.md",
+    ".claude/skills/tonesoul-thesis-defender/SKILL.md",
+    ".claude/skills/tonesoul-thesis-defender/patterns.md",
     "data/YuHun_v2.6_knowledgebase.json",
     "data/YuHun_v2.6_knowledgebase_extended.json",
     "data/semantic_spine_fixtures.json",
@@ -65,11 +70,6 @@
     "docs/status/persona_swarm_framework_latest.json",
     "experiments/tsd1_pilot/data/prompts.json",
     "experiments/tsd1_pilot/data/responses.json",
-    "memory/autonomous/session_traces.jsonl",
-    "memory/autonomous/zone_registry.json",
-    "memory/crystals.jsonl",
-    "memory/memory_base/tonesoul_cognitive.index",
-    "memory/memory_base/tonesoul_metadata.jsonl",
     "spec/wfgy_semantic_control_spec.md"
   ]
 }

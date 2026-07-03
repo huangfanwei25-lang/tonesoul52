@@ -1,6 +1,6 @@
 # Repo Intelligence Latest
 
-- generated_at: 2026-06-01T12:49:38Z
+- generated_at: 2026-07-03T21:36:40Z
 - status: ready
 - primary_status_line: `repo_intelligence_ready | available_surfaces=5/7 protected_files=5 watched_dirs=3 adoption=sidecar_only`
 - runtime_status_line: `entrypoints | repo=repo_healthcheck_latest.json atlas=repo_semantic_atlas_latest.json integrity=agent_integrity_latest.json settlement=repo_governance_settlement_latest.json review=runtime_source_change_groups_latest.json weekly=true_verification_task_status_latest.json scribe=scribe_status_latest.json semantic_protocol=unavailable semantic_first=unavailable`
@@ -61,7 +61,7 @@
 - `MEMORY.md` (exists: `true`)
 
 ## Watched Directories
-- `skills/` (exists: `false`)
+- `skills/` (exists: `true`)
 - `.agent/` (exists: `true`)
 - `.agents/` (exists: `false`)
 
