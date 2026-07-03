@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-07-03): unwired — only imported by tests/helpers.py and tests/test_loop_*.py; no live module, entry point, or script references this package. See docs/SUCCESSOR_MAP.md §6a / docs/status/repo_atlas_2026-07-03.md §2.7.
 """
 ToneSoul Loop Module
 

@@ -170,6 +170,59 @@ def step_codebase_graph_freshness(ttl_hours: int) -> dict[str, Any]:
     return out
 
 
+def step_status_freshness_report_age(ttl_days: int) -> dict[str, Any]:
+    # The status-freshness verifier (scripts/verify_status_freshness.py) is not
+    # wired into CI or any schedule -- it runs only when someone remembers to run
+    # it. This step makes the sweep notice when the verifier's own report has
+    # expired, so the meta-check cannot silently rot (found 2026-07-03: the
+    # 2026-07-02 report was the only thing standing between "16 debts cleared"
+    # and nobody ever re-checking).
+    report_path = REPO_ROOT / "docs" / "status" / "status_freshness_latest.json"
+    if not report_path.exists():
+        return {
+            "step": "status_freshness_report",
+            "status": "missing",
+            "path": str(report_path.relative_to(REPO_ROOT)),
+            "recommendation": "run: python scripts/verify_status_freshness.py",
+        }
+    try:
+        data = json.loads(report_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return {
+            "step": "status_freshness_report",
+            "status": "failed",
+            "reason": f"json decode: {exc}",
+        }
+    gen_at = data.get("generated_at")
+    if not gen_at:
+        return {"step": "status_freshness_report", "status": "no_timestamp"}
+    try:
+        gen_dt = datetime.strptime(gen_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except ValueError:
+        return {
+            "step": "status_freshness_report",
+            "status": "bad_timestamp",
+            "generated_at": gen_at,
+        }
+    age = _now_utc() - gen_dt
+    age_days = round(age.total_seconds() / 86400, 1)
+    is_stale = age > timedelta(days=ttl_days)
+    out: dict[str, Any] = {
+        "step": "status_freshness_report",
+        "status": "stale" if is_stale else "fresh",
+        "generated_at": gen_at,
+        "age_days": age_days,
+        "ttl_days": ttl_days,
+    }
+    if is_stale:
+        out["recommendation"] = (
+            "run: python scripts/verify_status_freshness.py "
+            "(the freshness report itself is older than its TTL -- stale-assertive "
+            "debt may have accumulated unseen)"
+        )
+    return out
+
+
 def step_gh_repo_list(github_user: str) -> dict[str, Any]:
     rc, stdout, stderr = _run(
         [
@@ -311,6 +364,12 @@ def main() -> int:
         default=DEFAULT_CODEBASE_GRAPH_TTL_HOURS,
         help="codebase_graph staleness threshold in hours (default 24)",
     )
+    parser.add_argument(
+        "--freshness-report-ttl-days",
+        type=int,
+        default=7,
+        help="status_freshness_latest.json staleness threshold in days (default 7)",
+    )
     parser.add_argument("--quiet", action="store_true", help="suppress stdout summary")
     parser.add_argument(
         "--strict",
@@ -329,6 +388,7 @@ def main() -> int:
 
     steps.append(step_branch_drift())
     steps.append(step_codebase_graph_freshness(args.ttl_hours))
+    steps.append(step_status_freshness_report_age(args.freshness_report_ttl_days))
 
     if args.skip_gh:
         steps.append({"step": "gh_repo_list", "status": "skipped", "reason": "--skip-gh"})
