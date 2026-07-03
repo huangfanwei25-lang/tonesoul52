@@ -106,16 +106,18 @@ class PreOutputCouncil:
             for perspective in self.perspectives
         ]
 
-        # Apply evolved voting weights if available
+        # Apply evolved voting weights only when explicitly enabled. The evolution
+        # record/evolve/summary chain remains owned by runtime and stays observable.
         weights = None
-        try:
-            from tonesoul.council.voting_evolution import CouncilEvolution
+        if SOUL.council.evolution_weights_applied:
+            try:
+                from tonesoul.council.voting_evolution import CouncilEvolution
 
-            if not hasattr(self, "_evolution"):
-                self._evolution = CouncilEvolution()
-            weights = self._evolution.get_weights()
-        except Exception:
-            pass
+                if not hasattr(self, "_evolution"):
+                    self._evolution = CouncilEvolution()
+                weights = self._evolution.get_weights()
+            except Exception:
+                pass
 
         coherence = compute_coherence(votes, weights=weights)
         verdict = generate_verdict(

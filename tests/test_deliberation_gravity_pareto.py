@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 
+import pytest
+import tonesoul.deliberation.gravity as gravity_module
 from tonesoul.deliberation.gravity import SemanticGravity
 from tonesoul.deliberation.persona_track_record import PersonaTrackRecord
 from tonesoul.deliberation.types import DeliberationContext, PerspectiveType, ViewPoint
@@ -14,6 +17,18 @@ def _vp(p: PerspectiveType, confidence: float, risk: float) -> ViewPoint:
         proposed_response=f"{p.value} response",
         confidence=confidence,
         safety_risk=risk,
+    )
+
+
+def _set_persona_multiplier(monkeypatch: pytest.MonkeyPatch, enabled: bool) -> None:
+    council = replace(
+        gravity_module.SOUL.council,
+        persona_multiplier_applied=enabled,
+    )
+    monkeypatch.setattr(
+        gravity_module,
+        "SOUL",
+        replace(gravity_module.SOUL, council=council),
     )
 
 
@@ -58,7 +73,11 @@ def test_pareto_frontier_keeps_all_when_tradeoff_exists() -> None:
     assert len(frontier) == 3
 
 
-def test_calculate_weights_applies_persona_track_bias(tmp_path: Path) -> None:
+def test_calculate_weights_applies_persona_track_bias(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # De-bind makes persona multipliers default-off; this test covers the opt-in path.
+    _set_persona_multiplier(monkeypatch, True)
     track = PersonaTrackRecord.create(tmp_path / "ptr.json")
     # Muse historically strong, Logos historically weak
     for _ in range(10):
