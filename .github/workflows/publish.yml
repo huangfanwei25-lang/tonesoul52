@@ -65,9 +65,10 @@ jobs:
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          # Preferred: configure Trusted Publisher on PyPI (no token needed)
-          # Fallback: set PYPI_API_TOKEN secret in repo Settings → Secrets
-          password: ${{ secrets.PYPI_API_TOKEN }}
+          # Trusted Publishing (OIDC) — no token. Requires (a) the `pypi`
+          # environment (exists; owner-approval gated) and (b) a Trusted
+          # Publisher entry on pypi.org pointing at this repo + workflow +
+          # environment. Decided 2026-07-04 (owner option 1).
           skip-existing: true
 
   publish-testpypi:
@@ -91,5 +92,6 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          # Trusted Publishing (OIDC) — needs a Trusted/Pending Publisher on
+          # test.pypi.org for the `testpypi` environment before first use.
           skip-existing: true
