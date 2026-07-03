@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-01T12:49:37Z",
+  "generated_at": "2026-07-03T01:23:23Z",
   "overall_ok": true,
-  "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
+  "repo_root": "C:\\Users\\user\\Desktop\\codex_worktrees\\mem-hygiene-20260703",
   "config": {
     "allow_private_paths": false,
     "blocked_prefixes": [
@@ -46,9 +46,9 @@
   "collection": {
     "ok": true,
     "mode": "git",
-    "command": "git -c core.quotepath=off diff --name-status --cached --diff-filter=ACMRD",
+    "command": "git -c core.quotepath=off show --pretty=format: --name-status --diff-filter=ACMRD HEAD",
     "exit_code": 0,
-    "duration_seconds": 0.03,
+    "duration_seconds": 0.02,
     "stdout_tail": "",
     "stderr_tail": "",
     "entries": [],
