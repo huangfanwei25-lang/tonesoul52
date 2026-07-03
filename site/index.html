@@ -115,6 +115,20 @@
     .site-nav a {
       color: var(--text-muted); text-decoration: none; padding: 0.5rem 1rem; border-radius: 6px; transition: all 0.2s; cursor: pointer;
     }
+    .nav-burger { display: none; background: none; border: 1px solid var(--glass-border); border-radius: 6px; font-size: 1.2rem; padding: 0.3rem 0.7rem; cursor: pointer; color: var(--text); margin-left: 0.5rem; }
+    .lang-toggle { cursor: pointer; border: 1px solid var(--glass-border); border-radius: 6px; padding: 0.3rem 0.7rem; background: none; color: var(--text-muted); font: inherit; }
+    body.lang-zh .l-en { display: none; }
+    body.lang-en .l-zh { display: none; }
+    @media (max-width: 820px) {
+      .site-nav { flex-wrap: wrap; height: auto; min-height: 52px; padding: 0.4rem 0.6rem; justify-content: flex-start; }
+      .site-nav a[data-route], .site-nav a.nav-item { display: none; width: 100%; padding: 0.7rem 1rem; }
+      .site-nav.open a[data-route], .site-nav.open a.nav-item { display: block; }
+      .nav-burger { display: inline-block; margin-left: auto; }
+      .hero-title { font-size: clamp(2.2rem, 10vw, 3.5rem); }
+      .cta-row { flex-wrap: wrap; }
+      .terminal-box { overflow-x: auto; }
+      table { display: block; overflow-x: auto; }
+    }
     .site-nav a:hover, .site-nav a.active {
       color: var(--accent); background: rgba(135,206,250,0.15);
     }
@@ -248,14 +262,16 @@
   <!-- NAVIGATION -->
   <nav class="site-nav">
     <a data-route="home" href="#home" style="margin-right: auto; margin-left: 2rem; font-weight: 900; font-size: 1.1rem; color: var(--text);">ToneSoul</a>
-    <a data-route="home" href="#home" class="active">Home</a>
-    <a data-route="philosophy" href="#philosophy">Philosophy</a>
-    <a data-route="getting-started" href="#getting-started">Get Started</a>
-    <a data-route="origin" href="#origin">Origin</a>
-    <a href="accountability.html">Accountability</a>
-    <a href="judgments/index.html">Judgments</a>
-    <a href="essays/index.html">Essays</a>
-    <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener">GitHub</a>
+    <a data-route="home" href="#home" class="active"><span class="l-en">Home</span><span class="l-zh">首頁</span></a>
+    <a data-route="philosophy" href="#philosophy"><span class="l-en">Philosophy</span><span class="l-zh">哲學</span></a>
+    <a data-route="getting-started" href="#getting-started"><span class="l-en">Get Started</span><span class="l-zh">開始使用</span></a>
+    <a data-route="origin" href="#origin"><span class="l-en">Origin</span><span class="l-zh">起源</span></a>
+    <a class="nav-item" href="accountability.html"><span class="l-en">Accountability</span><span class="l-zh">問責</span></a>
+    <a class="nav-item" href="judgments/index.html"><span class="l-en">Judgments</span><span class="l-zh">判斷書</span></a>
+    <a class="nav-item" href="essays/index.html"><span class="l-en">Essays</span><span class="l-zh">文章</span></a>
+    <a class="nav-item" href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener">GitHub</a>
+    <button class="lang-toggle" id="lang-toggle" aria-label="switch language">中</button>
+    <button class="nav-burger" id="nav-burger" aria-label="menu">&#9776;</button>
   </nav>
 
   <!-- THE CSS 3D GEOMETRY STAGE -->
@@ -289,11 +305,12 @@
         <div class="hero-tc">治理是以結構表達的愛</div>
         <div class="hero-sub" style="margin-top: 1rem; color: var(--accent); font-family: 'JetBrains Mono';">Governance is Love Expressed as Structure.</div>
         <div class="sec-text" style="margin-top: 2rem; font-weight: 600;">
-          A runnable, <strong>model-free</strong> accountability layer for AI output. Paste a draft answer and it flags claim-boundary crossings and unsupported confidence, preserves per-perspective dissent, and — unusually — <strong>publishes its own misses</strong>, not just its catches.
+          <span class="l-en">A runnable, <strong>model-free</strong> accountability layer for AI output. Paste a draft answer and it flags claim-boundary crossings and unsupported confidence, preserves per-perspective dissent, and — unusually — <strong>publishes its own misses</strong>, not just its catches.</span>
+          <span class="l-zh">一層可以跑起來的、<strong>不需要模型</strong>的 AI 輸出問責層。貼上一段草稿,它會標出越界的宣稱與沒有根據的自信、保留每個視角的異議——而且很少見地——<strong>連自己的失誤也公開</strong>,不只秀戰績。</span>
         </div>
         <div class="sec-text" style="font-style: italic; opacity: 0.78; font-size: 1.0rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">It does not make a model correct or safe. It makes a draft's claims, boundaries, and dissent inspectable before the answer is treated as final.</div>
         <div class="sec-text" style="font-family: 'JetBrains Mono'; font-size: 0.9rem; margin-bottom: 2rem;">Python 3.10+ | Apache 2.0 | model-free runtime | try it with zero install ↓</div>
-        <div style="display: flex; gap: 1.5rem; font-family: 'JetBrains Mono'; font-size: 0.95rem;">
+        <div class="cta-row" style="display: flex; gap: 1.5rem; font-family: 'JetBrains Mono'; font-size: 0.95rem;">
           <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: none; border: 1px solid var(--accent); padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">View on GitHub →</a>
           <a data-route="getting-started" href="#getting-started" style="color: var(--bg); background: var(--accent); text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Get Started →</a>
           <a href="demo/" style="color: var(--accent); text-decoration: none; border: 1px solid var(--accent); padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Live Demo →</a>
@@ -968,6 +985,26 @@ python scripts/gateway.py --port 7700 --token YOUR_SECRET
     }
 
     navLinks.forEach(link => {
+      // mobile burger + language toggle (progressive; unpaired content stays as-is)
+      (function(){
+        const nav = document.querySelector('.site-nav');
+        const burger = document.getElementById('nav-burger');
+        if (burger) burger.addEventListener('click', () => nav.classList.toggle('open'));
+        const saved = localStorage.getItem('ts-lang') || 'en';
+        document.body.classList.add('lang-' + saved);
+        const bt = document.getElementById('lang-toggle');
+        if (bt) {
+          bt.textContent = saved === 'en' ? '中' : 'EN';
+          bt.addEventListener('click', () => {
+            const zh = document.body.classList.toggle('lang-zh');
+            document.body.classList.toggle('lang-en', !zh);
+            bt.textContent = zh ? 'EN' : '中';
+            localStorage.setItem('ts-lang', zh ? 'zh' : 'en');
+          });
+        }
+        document.querySelectorAll('.site-nav a').forEach(a =>
+          a.addEventListener('click', () => nav.classList.remove('open')));
+      })();
       link.addEventListener('click', (e) => {
         const route = link.getAttribute('data-route');
         if (route) {
