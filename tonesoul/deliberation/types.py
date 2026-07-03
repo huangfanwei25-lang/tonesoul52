@@ -15,6 +15,9 @@ from typing import Any, Dict, List, Optional
 __ts_layer__ = "governance"
 __ts_purpose__ = "Deliberation type definitions: round, vote, and outcome data structures."
 
+# Post-normalize minimum share floor; raw clamp != normalized share floor.
+MIN_SHARE = 0.15
+
 
 class PerspectiveType(Enum):
     """The three internal perspectives."""
@@ -166,12 +169,55 @@ class DeliberationWeights:
     aegis: float = 0.30
 
     def normalize(self):
-        """Ensure weights sum to 1.0"""
+        """Ensure weights sum to 1.0 while preserving a minimum normalized share."""
         total = self.muse + self.logos + self.aegis
         if total > 0:
             self.muse /= total
             self.logos /= total
             self.aegis /= total
+            self._apply_min_share_floor()
+
+    def _apply_min_share_floor(self):
+        values = {
+            "muse": self.muse,
+            "logos": self.logos,
+            "aegis": self.aegis,
+        }
+        floored = set()
+        names = tuple(values)
+
+        for _ in names:
+            newly_floored = {
+                name for name in names if name not in floored and values[name] < MIN_SHARE
+            }
+            if not newly_floored:
+                break
+
+            floored.update(newly_floored)
+            flexible = [name for name in names if name not in floored]
+            remaining_share = 1.0 - (MIN_SHARE * len(floored))
+
+            for name in floored:
+                values[name] = MIN_SHARE
+
+            if not flexible:
+                even_share = 1.0 / len(names)
+                values = {name: even_share for name in names}
+                break
+
+            flexible_total = sum(values[name] for name in flexible)
+            if flexible_total <= 0:
+                even_share = remaining_share / len(flexible)
+                for name in flexible:
+                    values[name] = even_share
+                continue
+
+            for name in flexible:
+                values[name] = values[name] / flexible_total * remaining_share
+
+        self.muse = values["muse"]
+        self.logos = values["logos"]
+        self.aegis = values["aegis"]
 
     def to_dict(self) -> dict:
         return {

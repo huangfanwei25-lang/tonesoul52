@@ -102,6 +102,13 @@ class CouncilConfig:
     block_threshold: float = 0.3  # below = BLOCK
     high_risk_coherence: float = 0.65  # stricter threshold under high risk
     high_risk_block: float = 0.4  # stricter block threshold under high risk
+    # Council evolution de-bind. Default OFF: historical weights are still recorded,
+    # evolved, summarized, and surfaced for suppression observability; they are not
+    # applied to pre-output coherence unless explicitly enabled.
+    evolution_weights_applied: bool = False
+    # Persona track-record de-bind. Default OFF: persona outcomes remain recorded,
+    # but synthesis weights are not biased by historical multipliers unless enabled.
+    persona_multiplier_applied: bool = False
     # Tier 5 semantic overclaim sensor (advisory). Default OFF: it needs an embedding
     # model and is a RECORDED signal only (DESIGN Inv3 — Advisory != Canonical), never
     # a gate. Measured limits: docs/status/semantic_overclaim_eval_2026-06-15.md.

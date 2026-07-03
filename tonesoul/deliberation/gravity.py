@@ -12,6 +12,8 @@ is context-dependent.
 from itertools import combinations
 from typing import List, Optional
 
+from tonesoul.soul_config import SOUL
+
 from .persona_track_record import PersonaTrackRecord
 from .types import (
     DeliberationContext,
@@ -226,8 +228,8 @@ class SemanticGravity:
             elif vp.perspective == PerspectiveType.AEGIS:
                 weights.aegis += self.PARETO_BOOST
 
-        # Historical perspective performance bias (Phase 539)
-        if self._track_record is not None:
+        # Historical perspective performance bias (Phase 539), de-bound by default.
+        if self._track_record is not None and SOUL.council.persona_multiplier_applied:
             weights.muse *= self._track_record.get_multiplier(
                 "muse",
                 resonance_state=context.resonance_state,
