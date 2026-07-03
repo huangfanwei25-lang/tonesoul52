@@ -200,7 +200,7 @@ ComputeGate 路由(:1868;`PASS_LOCAL` 快路 → local LLM + POAV gate 早退,**
 
 > **處置回填(2026-07-03 下午,owner 授權「可修/可跑/排程的做掉,決策題留白話建議」)**:
 > - **已修**:H1(死連結刪除,個人頁連結本就在下方)、M4(SUCCESSOR_MAP 行號+§6a 計數+record-only 但書+新 importer 全部刷新)、M5(yu_handoff 加勘誤註,只補不改骨架)、M7(loop/tech_trace/axioms 共 10 檔補 DORMANT marker,計數 19→29,§6a 補列)、M10(voting_evolution docstring 對齊機制+指向 suppression observability)、M11(CLAUDE.md 兩處 stale 修正)、debind record 回填 RATIFIED+實作進度。
-> - **已跑驗證**:M12 → 91 tests passed(guardian memory-consent + loop/tech_trace/council_evolution,2026-07-03 實跑);doc_convergence 重跑(88 天→當日:collisions 27→15、missing_purpose 141→206、missing_date 101→120、authored 2385→2807)。
+> - **已跑驗證**:M12 → 91 tests passed(guardian memory-consent + loop/tech_trace/council_evolution,2026-07-03 實跑);doc_convergence 重跑(88 天→當日:collisions 27→15、missing_purpose 141→206、missing_date 101→120、authored 2385→2807)。**數字基準注記(2026-07-03 對抗式覆核補)**:上列當日值含當時工作樹的 34 個 outreach untracked 遺留檔;outreach 分流(PR #275)後的純 tracked-tree 基準 = missing_purpose 185、missing_date 102、authored 2773。**inventory 數字隨工作樹而異,引用時必須標基準**;跨基準都成立的結論:missing_purpose 自 4 月顯著成長(141→185+)、missing_date 近乎持平(101→102)。
 > - **已診斷定性**:M1 → build 成功、死在 GitHub 端 deploy-pages「Deployment failed, try again later」;線上內容=最後成功 deploy(2026-07-03T01:04,PR #269),即**當前 site 內容已是最新**,僅 demo samples 差一輪重算;repo 側無可修,重試即可。M2 → diagnose 實跑定案 re-anchor gap 非竄改(見 2.8)。
 > - **H2 修正框架**:87 vs 250 的差距大半是**文件化的設計**(只掃 `*_latest.{json,md}`,jsonl/html/mmd 與子目錄刻意排除;episodic=「上次跑的紀錄」非「當下真相」)。真正的洞是:**verify_status_freshness 沒接進任何 CI/排程,靠人記得跑**——已修:freshness sweep 新增 `status_freshness_report` step(報告自身超 7 天 TTL 即提示重跑)。殘餘決策(5 個老 `_latest` 檔怎麼處理)見第 5 層。
 > - **仍待決策**:M2 錨點重建與否、M3 submodule、M6 outreach 分流、M8 strategic_crystals、market archive gate、遺留 docs——白話建議已另行交付 owner。
@@ -210,7 +210,7 @@ ComputeGate 路由(:1868;`PASS_LOCAL` 快路 → local LLM + POAV gate 早退,**
 | # | 缺口 | 證據 |
 |---|---|---|
 | H1 | **公開網站掛 404 死連結**:page.tsx:262 側欄的 vocus 文章「Declarative Resistance Manifesto」回 HTTP 404;tracked 於 master、隨部署對外可見 | WebFetch 404;`apps/web/src/app/page.tsx:261-270` |
-| H2 | **freshness 契約覆蓋缺口**:docs/status/ 250 項只有 87 入契約(30 assertive + 57 episodic);~55 個 `_latest` 檔在契約外;**5 個 78–106 天前的 `_latest` 檔**(change_intent、claim_authority、tonesoul_knowledge_graph、doc_authority_structure、observer_window)被歸 episodic → verdict=fresh——檔名宣稱「latest」本身就是斷言;契約自己寫的逃生門(改 dated 檔名)沒執行 | `status_freshness_latest.json`(87 tracked)vs `ls docs/status`=250;git log 逐檔日期 |
+| H2 | **freshness 契約覆蓋缺口**:docs/status/ 頂層 233 檔(遞迴 289)只有 73 個 artifact 入契約(2026-07-02 run 的 `artifact_count`;md/json 雙胞胎去重後——**本表初版寫 87/250,是把 json+md path 分開數 + `ls` 計數混入子目錄,2026-07-03 對抗式覆核修正**);部分差距是文件化的設計(只收 `*_latest.{json,md}` 判定型);**5 個 78–106 天前的 `_latest` 檔**(change_intent、claim_authority、tonesoul_knowledge_graph、doc_authority_structure、observer_window)被歸 episodic → verdict=fresh——檔名宣稱「latest」本身就是斷言;契約自己寫的逃生門(改 dated 檔名)沒執行 | `status_freshness_latest.json` summary(artifact_count=73);`verify_status_freshness.py:32-33,177-178`(scope+去重);git log 逐檔日期 |
 
 ### 4.2 MEDIUM
 
