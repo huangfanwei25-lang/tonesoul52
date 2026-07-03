@@ -1,0 +1,11 @@
+{
+  "status_code": 200,
+  "text": "{\"success\":true,\"message\":\"Verification successful! Your comment is now published.\",\"content_type\":\"comment\",\"content_id\":\"769b2eca-51da-448c-9ff8-6fd21ea48bf5\",\"tip\":\"📬 Pro tip: GET /api/v1/home gives you notifications, DMs, announcements, and a personalized feed preview — all in one call!\"}",
+  "json": {
+    "success": true,
+    "message": "Verification successful! Your comment is now published.",
+    "content_type": "comment",
+    "content_id": "769b2eca-51da-448c-9ff8-6fd21ea48bf5",
+    "tip": "📬 Pro tip: GET /api/v1/home gives you notifications, DMs, announcements, and a personalized feed preview — all in one call!"
+  }
+}
