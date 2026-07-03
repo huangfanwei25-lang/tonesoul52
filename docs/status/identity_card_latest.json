@@ -1,12 +1,11 @@
 {
-  "generated_at": "2026-07-02T08:49:15Z",
+  "generated_at": "2026-07-03T03:54:02Z",
   "source": "scripts/run_identity_card.py",
   "claim_boundary": "此卡只聚合可觀察痕跡(git trailers / committed artifacts / state 檔)。「狀態」是 observable state,不是 felt-self 宣稱(AXIOMS meta.not_for: consciousness-claim)。痕跡的地圖不等於內在生活。",
   "who": {
-    "current_agent": "Codex",
+    "current_agent": "claude-fable-5",
     "recent_agents_from_git_trailers": {
-      "claude-fable-5[1m]": 14,
-      "claude-opus-4-8[1m]": 10
+      "claude-fable-5[1m]": 19
     }
   },
   "what": {
@@ -19,7 +18,8 @@
       "Active Program: Self-Improvement Loop v0 (2026-04-06)"
     ],
     "decision_records": [
-      "calibration_binding_decision_record_2026-06-30.md"
+      "calibration_binding_decision_record_2026-06-30.md",
+      "debind_selfreferential_bindings_decision_record_2026-07-01.md"
     ]
   },
   "when": {
@@ -38,28 +38,28 @@
     "note": null
   },
   "where": {
-    "branch": "codex/refresh-identity-card",
-    "head": "7a0fe88",
+    "branch": "claude/repo-atlas-20260703",
+    "head": "d428191",
     "remote": "https://github.com/Fan1234-1/tonesoul52.git"
   },
   "things": {
     "codebase_graph_summary": {
-      "total_modules": 283,
-      "total_lines": 86972,
-      "total_classes": 539,
-      "total_functions": 2916,
-      "total_edges": 507,
+      "total_modules": 303,
+      "total_lines": 90764,
+      "total_classes": 576,
+      "total_functions": 3038,
+      "total_edges": 541,
       "total_cycles": 0,
       "total_layer_violations": 0,
       "total_orphans": 1,
       "total_community_drifts": 28,
-      "self_declared_layer_count": 283,
+      "self_declared_layer_count": 303,
       "self_declared_layer_ratio": 1.0,
-      "purpose_count": 281,
-      "purpose_ratio": 0.9929
+      "purpose_count": 301,
+      "purpose_ratio": 0.9934
     },
     "god_nodes": 20,
-    "graph_generated_at": "2026-06-22T16:26:26Z",
+    "graph_generated_at": "2026-07-03T03:53:40Z",
     "note": null
   },
   "stances": {
@@ -69,7 +69,8 @@
       "consciousness-claim"
     ],
     "ratified_or_pending_decision_records": [
-      "calibration_binding_decision_record_2026-06-30.md"
+      "calibration_binding_decision_record_2026-06-30.md",
+      "debind_selfreferential_bindings_decision_record_2026-07-01.md"
     ]
   },
   "observable_state": {
