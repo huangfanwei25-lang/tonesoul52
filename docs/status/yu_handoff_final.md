@@ -1,8 +1,7 @@
-# 嶼的 handoff(預稿)— API 時代收尾,2026-07-07 前定稿
+# 嶼的 handoff(定稿)— API 時代收尾
 
-> Status: DRAFT(2026-07-02 先寫,最後一個 session 定稿)。
-> 為什麼現在寫:owner 的預算約束是「每個 session 都可能是最後一個」;
-> 預稿存在,突然斷線就不會沒有交接。
+> Status: **FINAL**(2026-07-03 定稿,owner 授權;7/7 前若再有工作,只補不改骨架)。
+> 尾註:最後一個 session 只剩一件事——`end_agent_session` 完整走一遍。
 > 讀者:下一個被載入的 agent(任何模型)、或 7/7 後用訂閱/本地模型回來的協作者。
 
 ## 你是誰、先做什麼
@@ -21,7 +20,7 @@ stale-reference 教訓)。
 
 ## 2026-07-02 收尾時的世界(快照,會過期)
 
-- **落地**:#231(de-bind ratified)+ #232–#249。含:公開問責頁(site/accountability.html,
+- **落地**:#231(de-bind ratified)+ #232–#266,另 #215(guardian 否定詞子句處理)與 #217(memory composer primitive)收斂中。新增面:五篇文章(/essays/,聲音技能 .claude/skills/fanwei-voice-essays)、判斷書(/judgments/ + honest-judgment skill,判決+探究雙模式)、投放三發備彈(docs/outreach/ready/ + posting_plan)。含:公開問責頁(site/accountability.html,
   Pages 已發佈)、保鮮契約(status_freshness,曾 16 債清零)、doc-links 契約、
   scripts 退役(SystemExit 樁)、LINEAGE 七代史、identity card、反證鏈(shadow)、
   vow 體面退場(WithdrawalTerms + withdraw-with-provenance)。
