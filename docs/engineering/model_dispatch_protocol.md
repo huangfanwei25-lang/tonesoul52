@@ -15,7 +15,8 @@
 | Claude 主 agent(現 Fable 5;7/7 後=訂閱可用的最強型號) | 本 session 即是 | — |
 | Claude subagent(Agent tool:sonnet / haiku / opus / fable + effort 參數) | 可用 | harness 內建 |
 | codex CLI | **0.134.0 已裝**(compute 是另一回事,派工時實測) | `codex --version`;compute 探測=實跑一次小 review,看 `scripts/codex_review.py` 是否 degrade |
-| Gemini / AGY CLI | **本機未偵測到**(owner 宣稱另有安裝;裝了再填上版本) | PowerShell:`Get-Command gemini,agy,antigravity -ErrorAction SilentlyContinue`;bash:`which gemini agy antigravity` |
+| gemini-cli(headless) | **裝了(0.49.0)但個人版 OAuth 已被 Google 停用**——2026-07-04 實測回 `IneligibleTierError: migrate to Antigravity`。headless 復活的唯一路=owner 自設 `GEMINI_API_KEY`(免費 AI Studio key;**owner 在自己終端 `setx` 設,不經對話傳遞**——PyPI token 判例) | `gemini -p "test"` 看是否還報 IneligibleTier |
+| Antigravity IDE(Gemini 訂閱的家) | **已裝**(`%LOCALAPPDATA%\Programs\Antigravity`),owner 已 OAuth。**GUI IDE,無 headless CLI**——第三隻眼走**檔案契約**:owner 在 Antigravity 裡下 review、要求它把 findings 寫進 `tmp/agy_review_<topic>.md`,agent 讀檔仲裁(owner 自己發明的工作法,與仲裁協議天然相容) | 目錄存在 + owner 確認登入 |
 | 本地 qwen(ollama) | **服務起著**:qwen2.5:1.5b + nomic-embed-text,port 11434 OPEN | `ollama list`;port 探測(雙 shell 通用):`python -c "import socket;s=socket.socket();s.settimeout(0.5);print('OPEN' if s.connect_ex(('127.0.0.1',11434))==0 else 'closed')"` |
 | lmstudio | port 1234 closed(未起) | 同上,port 改 1234 |
 
@@ -30,7 +31,7 @@
 | 機械批量(格式化、改名、補 marker、跑既定腳本) | Claude subagent(**haiku/sonnet, effort low**)或 codex | 批次,一單多檔 | 模式已解出後降級批次套用;不值得強模型 |
 | 大面積唯讀探勘/盤點/掃 repo | Claude subagent 扇出(Explore / general-purpose,**effort low-medium**) | Workflow 或 Agent tool;結論回主對話,長產物寫檔傳路徑 | 2026-07-03 atlas:11 個唯讀 agent 扇出,主對話只進結論 |
 | 外眼審查(governance / fail-closed / security-critical code) | **與修復者不同的模型**(codex 修→Claude 審;Claude 修→codex 審) | `codex-second-opinion` skill / `scripts/codex_review.py` | 同模型審自己不算數(紅隊在「0 bypass」找到 2 個);同模型對 fail-closed 核心會產出自信但錯的 fix(2026-06-29 判例)。**判準是「審 ≠ 修」,不是「審=codex」**(2026-07-04 haiku 實測抓到的歧義) |
-| 第二 reviewer(有 Gemini/AGY 時) | Gemini/AGY | review-only;**findings 一律走 `review_adjudication_protocol.md`,不得直達 executor** | 異質錯誤分佈值得要;幻覺率也高——所以仲裁是必要配套,不是可選 |
+| 第二 reviewer(Gemini,經 Antigravity) | Antigravity IDE(owner 觸發)→ findings 寫 `tmp/agy_review_*.md` → agent 仲裁 | review-only;**findings 一律走 `review_adjudication_protocol.md`,不得直達 executor** | 異質錯誤分佈值得要;幻覺率也高——所以仲裁是必要配套,不是可選。headless 版見 §0 gemini-cli 列 |
 | shadow 第二眼(7/7 後常駐) | 本地 qwen(ollama) | **shadow-only:記 divergence、不 gate、不改輸出** | yu_handoff 談定的設計;弱模型的安全位置是「不放大你錯誤的位置」 |
 | 品味判斷、道德兩難、產品方向、風險接受 | **人類 owner** | 攤開張力交還(DECLARE_STANCE 模式) | 判斷分層的出口:AXIOMS meta.not_for、honest-judgment skill「道德兩難不裁決」 |
 
