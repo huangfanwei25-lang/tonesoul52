@@ -1,31 +1,35 @@
 # Git Hygiene Latest
 
-- generated_at: 2026-06-01T12:49:36Z
-- overall_ok: false
+- generated_at: 2026-07-03T21:36:37Z
+- overall_ok: true
 - max_dangling: 50
 - max_loose_count: 5000
 - max_tracked_ignored: 28
 
 | check | status | exit | duration_s | command |
 | --- | --- | ---: | ---: | --- |
-| count_objects | PASS | 0 | 0.10 | `git count-objects -vH` |
-| fsck | FAIL | 0 | 2.88 | `git fsck --no-reflogs` |
-| tracked_ignored | PASS | 0 | 0.11 | `git ls-files -ci --exclude-standard` |
+| count_objects | PASS | 0 | 0.02 | `git count-objects -vH` |
+| fsck | PASS | 0 | 3.09 | `git fsck --no-reflogs` |
+| tracked_ignored | PASS | 0 | 0.09 | `git ls-files -ci --exclude-standard` |
 
 ## Metrics
-- loose_count: 2304
-- in_pack: 14133
-- packs: 3
-- size: 12.93 MiB
-- size_pack: 116.27 MiB
-- dangling_count: 78
+- loose_count: 0
+- in_pack: 19260
+- packs: 1
+- size: 0 bytes
+- size_pack: 130.33 MiB
+- dangling_count: 22
 - fsck_unexpected_count: 0
-- tracked_ignored_count: 15
-
-## Issues
-- dangling objects 78 exceeds threshold 50
+- tracked_ignored_count: 17
 
 ## Tracked Ignored Files
+- `.claude/skills/codex-second-opinion/SKILL.md`
+- `.claude/skills/delegation-dispatch/SKILL.md`
+- `.claude/skills/fanwei-voice-essays/SKILL.md`
+- `.claude/skills/honest-judgment/SKILL.md`
+- `.claude/skills/navigation-grammar-checker/SKILL.md`
+- `.claude/skills/tonesoul-thesis-defender/SKILL.md`
+- `.claude/skills/tonesoul-thesis-defender/patterns.md`
 - `data/YuHun_v2.6_knowledgebase.json`
 - `data/YuHun_v2.6_knowledgebase_extended.json`
 - `data/semantic_spine_fixtures.json`
@@ -35,9 +39,4 @@
 - `docs/status/persona_swarm_framework_latest.json`
 - `experiments/tsd1_pilot/data/prompts.json`
 - `experiments/tsd1_pilot/data/responses.json`
-- `memory/autonomous/session_traces.jsonl`
-- `memory/autonomous/zone_registry.json`
-- `memory/crystals.jsonl`
-- `memory/memory_base/tonesoul_cognitive.index`
-- `memory/memory_base/tonesoul_metadata.jsonl`
 - `spec/wfgy_semantic_control_spec.md`

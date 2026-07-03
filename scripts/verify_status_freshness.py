@@ -52,6 +52,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 STATUS_DIR = REPO_ROOT / "docs" / "status"
+REPORTS_DIR = REPO_ROOT / "reports"
 
 JSON_FILENAME = "status_freshness_latest.json"
 MARKDOWN_FILENAME = "status_freshness_latest.md"
@@ -113,6 +114,14 @@ def _extract_json_timestamp(data: object) -> tuple[datetime | None, str | None]:
             parsed = _parse_timestamp(data.get(key))
             if parsed is not None:
                 return parsed, key
+    # One level of nesting: coverage.py puts its stamp under meta.timestamp.
+    meta = data.get("meta")
+    if isinstance(meta, dict):
+        for key in TIMESTAMP_KEYS:
+            if key in meta:
+                parsed = _parse_timestamp(meta.get(key))
+                if parsed is not None:
+                    return parsed, f"meta.{key}"
     return None, None
 
 
@@ -135,9 +144,17 @@ def evaluate(
     episodic_max_age: int,
     status_dir: Path = STATUS_DIR,
     repo_root: Path = REPO_ROOT,
+    scan_dirs: tuple[Path, ...] | None = None,
 ) -> list[ArtifactVerdict]:
+    # scan_dirs extends coverage beyond docs/status. Added 2026-07-04 after an
+    # external audit caught reports/ as a contract blind spot: security_bandit_latest
+    # and coverage_latest sat there 140 days stale (the real coverage turned out to be
+    # 88.8%, not the fossilized 43%) — assertive-named artifacts outside the scanned
+    # tree are exactly the masking pathology this verifier exists to catch.
+    dirs = list(scan_dirs) if scan_dirs is not None else [status_dir]
     verdicts: list[ArtifactVerdict] = []
-    for path in sorted(status_dir.glob("*_latest.json")):
+    json_paths = [p for d in dirs for p in sorted(d.glob("*_latest.json")) if d.is_dir()]
+    for path in json_paths:
         if path.name in SELF_PATHS:
             continue
         rel = path.relative_to(repo_root).as_posix()
@@ -171,7 +188,8 @@ def evaluate(
         verdicts.append(ArtifactVerdict(rel, kind, stamp.isoformat(), field, age, verdict, note))
 
     # Markdown-only artifacts (no JSON twin): check via inline timestamp.
-    for path in sorted(status_dir.glob("*_latest.md")):
+    md_paths = [p for d in dirs for p in sorted(d.glob("*_latest.md")) if d.is_dir()]
+    for path in md_paths:
         if path.name in SELF_PATHS:
             continue
         if path.with_suffix(".json").exists():
@@ -313,7 +331,12 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     args = build_parser().parse_args()
     now = datetime.now(timezone.utc)
-    verdicts = evaluate(now, args.assertive_max_age, args.episodic_max_age)
+    verdicts = evaluate(
+        now,
+        args.assertive_max_age,
+        args.episodic_max_age,
+        scan_dirs=(STATUS_DIR, REPORTS_DIR),
+    )
     payload = build_payload(verdicts, now, args.assertive_max_age, args.episodic_max_age)
     if not args.no_write:
         (STATUS_DIR / JSON_FILENAME).write_text(

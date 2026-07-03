@@ -128,7 +128,9 @@ class SemanticGraph:
     def _generate_node_id(self, label: str, node_type: NodeType) -> str:
         """Generate unique node ID."""
         content = f"{label}:{node_type.value}:{len(self._nodes)}"
-        return hashlib.md5(content.encode()).hexdigest()[:12]
+        # Node-ID dedup hash, not a security boundary — declared so bandit B324
+        # (the 2026-07-04 audit sweep's single HIGH) doesn't cry wolf over it.
+        return hashlib.md5(content.encode(), usedforsecurity=False).hexdigest()[:12]
 
     def add_node(
         self, label: str, node_type: NodeType, weight: float = 1.0, metadata: Optional[Dict] = None

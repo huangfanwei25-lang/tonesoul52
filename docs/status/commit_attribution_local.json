@@ -1,10 +1,10 @@
 {
   "event_name": "local",
   "mode": "local_incremental",
-  "range_spec": "db1c30c2ad79a0e198561995c65d35165e179d76..HEAD",
+  "range_spec": "490850d682d61ea515bd8a9c30740168df5aa5cc..HEAD",
   "base_ref": "origin/master",
   "checked_revisions": [
-    "b94f444dddb11321b48fb3ca5672c4c20c007c20"
+    "HEAD"
   ],
   "enforcement_anchor": null,
   "anchor_override_used": false,
@@ -15,21 +15,16 @@
   "results": [
     {
       "ok": true,
-      "summary": "feat(council): 864c deliberation trace — every verdict records its reasoning path",
-      "agent": "claude-opus-4-6",
-      "topic": "phase-864c-deliberation-trace",
-      "has_agent": true,
-      "has_topic": true,
-      "changed_files": [
-        "tests/test_deliberation_trace.py",
-        "tonesoul/council/deliberation_trace.py",
-        "tonesoul/council/types.py",
-        "tonesoul/council/verdict.py"
-      ],
+      "summary": "Merge pull request #288 from Fan1234-1/claude/essay-006-20260704",
+      "agent": null,
+      "topic": null,
+      "has_agent": false,
+      "has_topic": false,
+      "changed_files": [],
       "docs_only": false,
-      "exempted": false,
-      "exemption_reason": null,
-      "rev": "b94f444dddb11321b48fb3ca5672c4c20c007c20",
+      "exempted": true,
+      "exemption_reason": "synthetic_merge_commit",
+      "rev": "HEAD",
       "exit_code": 0
     }
   ],

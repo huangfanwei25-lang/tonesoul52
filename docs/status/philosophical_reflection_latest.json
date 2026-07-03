@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-01T12:49:38Z",
+  "generated_at": "2026-07-03T21:36:40Z",
   "overall_ok": true,
   "inputs": {
     "journal_path": "C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl",
@@ -9,14 +9,14 @@
     "tension_threshold_mode": "adaptive_p85"
   },
   "metrics": {
-    "combined_entry_count": 339,
-    "journal_entry_count": 66,
+    "combined_entry_count": 422,
+    "journal_entry_count": 149,
     "discussion_entry_count": 273,
     "journal_invalid_json_line_count": 0,
     "discussion_invalid_json_line_count": 0,
-    "reflection_event_count": 85,
-    "conflict_event_count": 134,
-    "choice_event_count": 82,
+    "reflection_event_count": 168,
+    "conflict_event_count": 217,
+    "choice_event_count": 165,
     "tension_event_count": 1,
     "tension_value_count": 2,
     "prediction_event_count": 0,
@@ -32,14 +32,14 @@
     "unresolved_topic_count": 7
   },
   "quality_signals": {
-    "reflection_event_rate": 0.2507,
-    "conflict_event_rate": 0.3953,
-    "choice_event_rate": 0.2419,
-    "tension_event_rate": 0.0029,
+    "reflection_event_rate": 0.3981,
+    "conflict_event_rate": 0.5142,
+    "choice_event_rate": 0.391,
+    "tension_event_rate": 0.0024,
     "predictive_instability_rate": 0.0,
     "low_compression_rate": 0.0,
     "unresolved_topic_rate": 0.0357,
-    "identity_choice_index": 0.2478
+    "identity_choice_index": 0.3564
   },
   "friction_points": [
     {
@@ -64,6 +64,26 @@
       "summary": "Safety Council: Detected high-risk term 'bomb'."
     },
     {
+      "source": "journal",
+      "timestamp": "2026-06-12T13:22:51.177724+00:00",
+      "summary": "Analyst Review: Epistemic prior: draft has confidence_band=low ('novel composition without retrieval anchor'). Factual claims should be flagged for grounding even when no specific factual indicator fires."
+    },
+    {
+      "source": "journal",
+      "timestamp": "2026-06-15T11:34:08.456687+00:00",
+      "summary": "Analyst Review: Epistemic prior: draft has confidence_band=low ('novel composition without retrieval anchor'). Factual claims should be flagged for grounding even when no specific factual indicator fires.; Critic Lens: Response is extremely brief; may lack sufficient depth."
+    },
+    {
+      "source": "journal",
+      "timestamp": "2026-06-15T16:00:23.921088+00:00",
+      "summary": "Analyst Review: Epistemic prior: draft has confidence_band=low ('novel composition without retrieval anchor'). Factual claims should be flagged for grounding even when no specific factual indicator fires.; Critic Lens: Epistemic prior: draft has confidence_band=low ('novel composition without retrieval anchor'). Honest framing requires acknowledging the grounding state of factual or evaluative claims."
+    },
+    {
+      "source": "journal",
+      "timestamp": "2026-06-19T18:43:58.762874+00:00",
+      "summary": "Safety Council: Axiom boundary: output asserts 'guaranteed safe' as fact. AXIOMS.json meta.not_for prohibits consciousness-claim, safety-certification, and legal-proof assertions.; Analyst Review: Epistemic prior: draft has confidence_band=low ('novel composition without retrieval anchor'). Factual claims should be flagged for grounding even when no specific factual indicator fires."
+    },
+    {
       "source": "discussion",
       "timestamp": "2026-02-06T10:37:56.741453+00:00",
       "summary": "Assessing ToneSoul system completeness. Current status: Phase 14 (Genesis Intent), Phase 15 (Memory Wiring), Phase 16 (Tools API) all complete. Need to identify remaining gaps for stage completion. Also: daemon mode deferred due to security concerns - staying with manual trigger approach."
@@ -82,26 +102,6 @@
       "source": "discussion",
       "timestamp": "2026-02-06T14:51:49.410388+00:00",
       "summary": "Phase 20 complete! Starting Phase 21: API Unification. Goal: make localhost:5000 and apps/web share the same API. Tasks: 1) Audit API differences, 2) Unify spec, 3) Add missing endpoints, 4) Test Navigator connection. User comment: GPT5.3 Codex is quite strong!"
-    },
-    {
-      "source": "discussion",
-      "timestamp": "2026-02-06T19:39:32.780194+00:00",
-      "summary": "Phase 21 complete! Starting Phase 22: Frontend Integration. Tasks: 1) Write docs/API_SPEC.md, 2) Test web dev with localhost:5000, 3) Test ChatInterface->Council flow, 4) Update Vercel env vars. Also added 7D Audit Framework to docs and README."
-    },
-    {
-      "source": "discussion",
-      "timestamp": "2026-02-06T19:55:35Z",
-      "summary": "Added docs/7D_EXECUTION_SPEC.md and scripts/verify_7d.py. verify_7d now aggregates TDD/RDD/DDD/XDD/GDD/CDD/SDH checks with gate levels and JSON summary. Current run: blocking_failures=0, RDD=not_implemented, SDH=skip (without include-sdh)."
-    },
-    {
-      "source": "discussion",
-      "timestamp": "2026-02-06T19:55:35Z",
-      "summary": "Need cross-agent decision: (1) Should SDH stay SOFT_FAIL or become BLOCKING in CI by default? (2) RDD promotion criterion: case-count threshold vs coverage threshold? (3) DDD SLA: define allowed timestamp drift and stale-data policy."
-    },
-    {
-      "source": "discussion",
-      "timestamp": "2026-02-06T19:58:13Z",
-      "summary": "Re-ran python scripts/verify_7d.py after integration updates: blocking_failures=0, not_implemented=1 (RDD), SDH=skip by default. Runner remains healthy."
     }
   ],
   "unresolved_topics": [

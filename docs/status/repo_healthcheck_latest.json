@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-06-01T12:52:32Z",
-  "overall_ok": false,
+  "generated_at": "2026-07-03T21:40:15Z",
+  "overall_ok": true,
   "config": {
     "include_sdh": false,
     "web_base": null,
@@ -8,37 +8,37 @@
     "sdh_timeout": null,
     "check_council_modes": true,
     "strict_soft_fail": false,
-    "allow_missing_discussion": false
+    "allow_missing_discussion": true
   },
   "checks": [
     {
       "name": "python_lint",
-      "status": "fail",
-      "ok": false,
-      "exit_code": 1,
-      "duration_seconds": 0.14,
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 0.11,
       "command": "python -m ruff check tonesoul tests scripts",
-      "stdout_tail": "   print(f\"\\n{'=' * 80}\")\n154 |     print(f\"ToneSoul Market Scanner — Multi-Stage Stock Screener\")\n    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n155 |     print(f\"{'=' * 80}\")\n    |\nhelp: Remove extraneous `f` prefix\n\nF541 [*] f-string without any placeholders\n   --> scripts\\run_market_scanner.py:186:19\n    |\n184 |         # 3. Decision to pass to LLM Phase\n185 |         if struct_friction <= STRUCTURAL_CUTOFF:\n186 |             print(f\"   ↳ ✅ Pass: Triggering AI World Model Debate\")\n    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n187 |             context = simulator.run_simulation(f\"{item.id}_{item.name}\", item.snapshots)\n188 |             result.passed_filter = True\n    |\nhelp: Remove extraneous `f` prefix\n\nF541 [*] f-string without any placeholders\n   --> scripts\\run_market_scanner.py:203:11\n    |\n202 |     print(f\"\\n\\n{'=' * 80}\")\n203 |     print(f\"🏆 TONESOUL GOVERNANCE LEADERBOARD\")\n    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n204 |     print(f\"{'=' * 80}\")\n    |\nhelp: Remove extraneous `f` prefix\n\nFound 45 errors.\n[*] 44 fixable with the `--fix` option (1 hidden fix can be enabled with the `--unsafe-fixes` option).",
+      "stdout_tail": "All checks passed!",
       "stderr_tail": ""
     },
     {
       "name": "python_format",
-      "status": "fail",
-      "ok": false,
-      "exit_code": 1,
-      "duration_seconds": 1.89,
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 1.63,
       "command": "python -m black --check tonesoul tests scripts",
       "stdout_tail": "",
-      "stderr_tail": "would reformat C:\\Users\\user\\Desktop\\倉庫\\tests\\test_static_surface_security.py\nwould reformat C:\\Users\\user\\Desktop\\倉庫\\scripts\\run_publish_push_preflight.py\nwould reformat C:\\Users\\user\\Desktop\\倉庫\\tonesoul\\observability\\execution_honesty.py\nwould reformat C:\\Users\\user\\Desktop\\倉庫\\scripts\\run_consumer_drift_validation_wave.py\nwould reformat C:\\Users\\user\\Desktop\\倉庫\\scripts\\run_cross_agent_consistency_wave.py\nwould reformat C:\\Users\\user\\Desktop\\倉庫\\scripts\\launch_dashboard.py\nwould reformat C:\\Users\\user\\Desktop\\倉庫\\scripts\\run_observer_window.py\n\nOh no! 💥 💔 💥\n7 files would be reformatted, 874 files would be left unchanged."
+      "stderr_tail": "All done! ✨ 🍰 ✨\n1075 files would be left unchanged."
     },
     {
       "name": "python_tests",
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 740.9,
+      "duration_seconds": 952.68,
       "command": "python -m pytest tests -q",
-      "stdout_tail": "ttps://huggingface.co/docs/huggingface_hub/how-to-cache#limitations.\n  To support symlinks on Windows, you either need to activate Developer Mode or to run Python as an administrator. In order to activate developer mode, see this article: https://docs.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development\n    warnings.warn(message)\n\ntests/test_data_ingest.py::test_fetch_monthly_revenue_converts_rows_to_market_stimuli\ntests/test_data_ingest.py::test_fetch_monthly_revenue_converts_rows_to_market_stimuli\ntests/test_data_ingest.py::test_fetch_financial_converts_rows_for_statement_dataset\ntests/test_data_ingest.py::test_fetch_financial_converts_rows_for_statement_dataset\n  C:\\Users\\user\\Desktop\\倉庫\\tonesoul\\market\\data_ingest.py:54: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).\n    fetched_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=============== 3393 passed, 6797 warnings in 736.99s (0:12:16) ===============",
+      "stdout_tail": "ackages\\_hypothesis_pytestplugin.py:481\n  C:\\Users\\user\\Desktop\\倉庫\\.venv\\Lib\\site-packages\\_hypothesis_pytestplugin.py:481: UserWarning: Skipping collection of '.hypothesis' directory - this usually means you've explicitly set the `norecursedirs` pytest config option, replacing rather than extending the default ignores.\n    warnings.warn(\n\n.venv\\Lib\\site-packages\\requests\\__init__.py:113\n  C:\\Users\\user\\Desktop\\倉庫\\.venv\\Lib\\site-packages\\requests\\__init__.py:113: RequestsDependencyWarning: urllib3 (2.3.0) or chardet (7.0.1)/charset_normalizer (3.4.4) doesn't match a supported version!\n    warnings.warn(\n\n<frozen importlib._bootstrap>:488\n  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute\n\n<frozen importlib._bootstrap>:488\n  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute\n\n<frozen importlib._bootstrap>:488\n  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type swigvarlink has no __module__ attribute\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========== 8102 passed, 1 skipped, 5 warnings in 948.22s (0:15:48) ===========",
       "stderr_tail": ""
     },
     {
@@ -46,7 +46,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 6.2,
+      "duration_seconds": 6.78,
       "command": "npm --prefix apps/web run lint",
       "stdout_tail": "> web@1.0.0 lint\n> eslint",
       "stderr_tail": ""
@@ -56,19 +56,19 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 2.29,
+      "duration_seconds": 2.0,
       "command": "npm --prefix apps/web run test",
-      "stdout_tail": "[22m\u001b[2m)\u001b[22m\u001b[32m 28\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/apiRoutes.invalidJson.test.ts \u001b[2m(\u001b[22m\u001b[2m12 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 32\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/publicSurface.contract.test.ts \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 340\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m notes page exports noindex metadata \u001b[33m 335\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/entropyCalculator.test.ts \u001b[2m(\u001b[22m\u001b[2m9 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 10\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/chatFallback.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 7\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/metadataRoutes.contract.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 5\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/personaSettings.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 6\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/settingsModal.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m12 passed\u001b[39m\u001b[22m\u001b[90m (12)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m79 passed\u001b[39m\u001b[22m\u001b[90m (79)\u001b[39m\n\u001b[2m   Start at \u001b[22m 20:49:32\n\u001b[2m   Duration \u001b[22m 1.53s\u001b[2m (transform 3.13s, setup 0ms, import 4.76s, tests 564ms, environment 2ms)\u001b[22m",
+      "stdout_tail": "[2m)\u001b[22m\u001b[32m 33\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/apiRoutes.transportFallback.test.ts \u001b[2m(\u001b[22m\u001b[2m10 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 28\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/publicSurface.contract.test.ts \u001b[2m(\u001b[22m\u001b[2m4 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[33m 410\u001b[2mms\u001b[22m\u001b[39m\n     \u001b[33m\u001b[2m✓\u001b[22m\u001b[39m notes page exports noindex metadata \u001b[33m 403\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/entropyCalculator.test.ts \u001b[2m(\u001b[22m\u001b[2m9 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 8\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/chatFallback.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 6\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/metadataRoutes.contract.test.ts \u001b[2m(\u001b[22m\u001b[2m3 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 5\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/personaSettings.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 6\u001b[2mms\u001b[22m\u001b[39m\n \u001b[32m✓\u001b[39m src/__tests__/settingsModal.test.ts \u001b[2m(\u001b[22m\u001b[2m2 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 3\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m12 passed\u001b[39m\u001b[22m\u001b[90m (12)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m81 passed\u001b[39m\u001b[22m\u001b[90m (81)\u001b[39m\n\u001b[2m   Start at \u001b[22m 05:36:32\n\u001b[2m   Duration \u001b[22m 1.21s\u001b[2m (transform 861ms, setup 0ms, import 2.54s, tests 680ms, environment 2ms)\u001b[22m",
       "stderr_tail": ""
     },
     {
       "name": "git_hygiene",
-      "status": "fail",
-      "ok": false,
-      "exit_code": 1,
-      "duration_seconds": 3.16,
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 3.29,
       "command": "python scripts/verify_git_hygiene.py --strict --max-tracked-ignored 28",
-      "stdout_tail": "ata/responses.json\\nmemory/autonomous/session_traces.jsonl\\nmemory/autonomous/zone_registry.json\\nmemory/crystals.jsonl\\nmemory/memory_base/tonesoul_cognitive.index\\nmemory/memory_base/tonesoul_metadata.jsonl\\nspec/wfgy_semantic_control_spec.md\",\n      \"stderr_tail\": \"\"\n    }\n  ],\n  \"issues\": [\n    \"dangling objects 78 exceeds threshold 50\"\n  ],\n  \"fsck_unexpected_lines\": [],\n  \"tracked_ignored_paths\": [\n    \"data/YuHun_v2.6_knowledgebase.json\",\n    \"data/YuHun_v2.6_knowledgebase_extended.json\",\n    \"data/semantic_spine_fixtures.json\",\n    \"data/yuhun_academy_knowledgebase_v1.1.txt\",\n    \"\\\"data/\\\\350\\\\252\\\\236\\\\351\\\\255\\\\202\\\\345\\\\212\\\\207\\\\345\\\\240\\\\264_API_\\\\346\\\\234\\\\200\\\\347\\\\265\\\\202\\\\347\\\\211\\\\210_v1.3.json\\\"\",\n    \"docs/chronicles/task_archive_phase_570-854.md\",\n    \"docs/status/persona_swarm_framework_latest.json\",\n    \"experiments/tsd1_pilot/data/prompts.json\",\n    \"experiments/tsd1_pilot/data/responses.json\",\n    \"memory/autonomous/session_traces.jsonl\",\n    \"memory/autonomous/zone_registry.json\",\n    \"memory/crystals.jsonl\",\n    \"memory/memory_base/tonesoul_cognitive.index\",\n    \"memory/memory_base/tonesoul_metadata.jsonl\",\n    \"spec/wfgy_semantic_control_spec.md\"\n  ]\n}",
+      "stdout_tail": "mework_latest.json\\nexperiments/tsd1_pilot/data/prompts.json\\nexperiments/tsd1_pilot/data/responses.json\\nspec/wfgy_semantic_control_spec.md\",\n      \"stderr_tail\": \"\"\n    }\n  ],\n  \"issues\": [],\n  \"fsck_unexpected_lines\": [],\n  \"tracked_ignored_paths\": [\n    \".claude/skills/codex-second-opinion/SKILL.md\",\n    \".claude/skills/delegation-dispatch/SKILL.md\",\n    \".claude/skills/fanwei-voice-essays/SKILL.md\",\n    \".claude/skills/honest-judgment/SKILL.md\",\n    \".claude/skills/navigation-grammar-checker/SKILL.md\",\n    \".claude/skills/tonesoul-thesis-defender/SKILL.md\",\n    \".claude/skills/tonesoul-thesis-defender/patterns.md\",\n    \"data/YuHun_v2.6_knowledgebase.json\",\n    \"data/YuHun_v2.6_knowledgebase_extended.json\",\n    \"data/semantic_spine_fixtures.json\",\n    \"data/yuhun_academy_knowledgebase_v1.1.txt\",\n    \"\\\"data/\\\\350\\\\252\\\\236\\\\351\\\\255\\\\202\\\\345\\\\212\\\\207\\\\345\\\\240\\\\264_API_\\\\346\\\\234\\\\200\\\\347\\\\265\\\\202\\\\347\\\\211\\\\210_v1.3.json\\\"\",\n    \"docs/chronicles/task_archive_phase_570-854.md\",\n    \"docs/status/persona_swarm_framework_latest.json\",\n    \"experiments/tsd1_pilot/data/prompts.json\",\n    \"experiments/tsd1_pilot/data/responses.json\",\n    \"spec/wfgy_semantic_control_spec.md\"\n  ]\n}",
       "stderr_tail": ""
     },
     {
@@ -76,9 +76,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.3,
+      "duration_seconds": 0.27,
       "command": "python scripts/verify_incremental_commit_attribution.py --strict --artifact-path docs/status/commit_attribution_local.json",
-      "stdout_tail": "{\n  \"event_name\": \"local\",\n  \"mode\": \"local_incremental\",\n  \"range_spec\": \"db1c30c2ad79a0e198561995c65d35165e179d76..HEAD\",\n  \"base_ref\": \"origin/master\",\n  \"checked_revisions\": [\n    \"b94f444dddb11321b48fb3ca5672c4c20c007c20\"\n  ],\n  \"enforcement_anchor\": null,\n  \"anchor_override_used\": false,\n  \"checked_count\": 1,\n  \"missing_count\": 0,\n  \"missing\": [],\n  \"ok\": true,\n  \"results\": [\n    {\n      \"ok\": true,\n      \"summary\": \"feat(council): 864c deliberation trace — every verdict records its reasoning path\",\n      \"agent\": \"claude-opus-4-6\",\n      \"topic\": \"phase-864c-deliberation-trace\",\n      \"has_agent\": true,\n      \"has_topic\": true,\n      \"changed_files\": [\n        \"tests/test_deliberation_trace.py\",\n        \"tonesoul/council/deliberation_trace.py\",\n        \"tonesoul/council/types.py\",\n        \"tonesoul/council/verdict.py\"\n      ],\n      \"docs_only\": false,\n      \"exempted\": false,\n      \"exemption_reason\": null,\n      \"rev\": \"b94f444dddb11321b48fb3ca5672c4c20c007c20\",\n      \"exit_code\": 0\n    }\n  ],\n  \"advice\": {\n    \"agent_trailer\": \"Agent: Codex\",\n    \"trace_topic_trailer\": \"Trace-Topic: <topic-name>\"\n  }\n}",
+      "stdout_tail": "{\n  \"event_name\": \"local\",\n  \"mode\": \"local_incremental\",\n  \"range_spec\": \"490850d682d61ea515bd8a9c30740168df5aa5cc..HEAD\",\n  \"base_ref\": \"origin/master\",\n  \"checked_revisions\": [\n    \"HEAD\"\n  ],\n  \"enforcement_anchor\": null,\n  \"anchor_override_used\": false,\n  \"checked_count\": 1,\n  \"missing_count\": 0,\n  \"missing\": [],\n  \"ok\": true,\n  \"results\": [\n    {\n      \"ok\": true,\n      \"summary\": \"Merge pull request #288 from Fan1234-1/claude/essay-006-20260704\",\n      \"agent\": null,\n      \"topic\": null,\n      \"has_agent\": false,\n      \"has_topic\": false,\n      \"changed_files\": [],\n      \"docs_only\": false,\n      \"exempted\": true,\n      \"exemption_reason\": \"synthetic_merge_commit\",\n      \"rev\": \"HEAD\",\n      \"exit_code\": 0\n    }\n  ],\n  \"advice\": {\n    \"agent_trailer\": \"Agent: Codex\",\n    \"trace_topic_trailer\": \"Trace-Topic: <topic-name>\"\n  }\n}",
       "stderr_tail": ""
     },
     {
@@ -88,7 +88,7 @@
       "exit_code": 0,
       "duration_seconds": 0.11,
       "command": "python scripts/verify_dual_track_boundary.py --strict --staged",
-      "stdout_tail": ".md\",\n      \"memory/BOOTSTRAP.md\",\n      \"memory/agent_discussion.jsonl\",\n      \"memory/agent_discussion.jsonl.bak.20260206T145513Z\",\n      \"memory/agent_discussion_antigravity_response.jsonl\",\n      \"memory/agent_discussion_curated.jsonl\",\n      \"memory/antigravity_journal.md\",\n      \"memory/antigravity_memory_20260129.md\",\n      \"memory/dawn_protocol_v10.md\",\n      \"memory/guild_recruitment_post.md\",\n      \"memory/moltbook_exploration.md\",\n      \"memory/persona_synthesis_v5.md\",\n      \"memory/persona_synthesis_v8.md\",\n      \"memory/resonance_drafts.md\",\n      \"memory/resonance_report_v1.md\",\n      \"memory/self_journal.jsonl\",\n      \"memory/silence_of_xiaozhua_v7.md\",\n      \"memory/summary_balls.jsonl\",\n      \"memory/web_chat_debug.md\"\n    ]\n  },\n  \"collection\": {\n    \"ok\": true,\n    \"mode\": \"git\",\n    \"command\": \"git -c core.quotepath=off diff --name-status --cached --diff-filter=ACMRD\",\n    \"exit_code\": 0,\n    \"duration_seconds\": 0.03,\n    \"stdout_tail\": \"\",\n    \"stderr_tail\": \"\",\n    \"entries\": [],\n    \"paths\": []\n  },\n  \"metrics\": {\n    \"changed_path_count\": 0,\n    \"violation_count\": 0,\n    \"private_deletion_count\": 0\n  },\n  \"violations\": [],\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stdout_tail": ".md\",\n      \"memory/BOOTSTRAP.md\",\n      \"memory/agent_discussion.jsonl\",\n      \"memory/agent_discussion.jsonl.bak.20260206T145513Z\",\n      \"memory/agent_discussion_antigravity_response.jsonl\",\n      \"memory/agent_discussion_curated.jsonl\",\n      \"memory/antigravity_journal.md\",\n      \"memory/antigravity_memory_20260129.md\",\n      \"memory/dawn_protocol_v10.md\",\n      \"memory/guild_recruitment_post.md\",\n      \"memory/moltbook_exploration.md\",\n      \"memory/persona_synthesis_v5.md\",\n      \"memory/persona_synthesis_v8.md\",\n      \"memory/resonance_drafts.md\",\n      \"memory/resonance_report_v1.md\",\n      \"memory/self_journal.jsonl\",\n      \"memory/silence_of_xiaozhua_v7.md\",\n      \"memory/summary_balls.jsonl\",\n      \"memory/web_chat_debug.md\"\n    ]\n  },\n  \"collection\": {\n    \"ok\": true,\n    \"mode\": \"git\",\n    \"command\": \"git -c core.quotepath=off diff --name-status --cached --diff-filter=ACMRD\",\n    \"exit_code\": 0,\n    \"duration_seconds\": 0.02,\n    \"stdout_tail\": \"\",\n    \"stderr_tail\": \"\",\n    \"entries\": [],\n    \"paths\": []\n  },\n  \"metrics\": {\n    \"changed_path_count\": 0,\n    \"violation_count\": 0,\n    \"private_deletion_count\": 0\n  },\n  \"violations\": [],\n  \"issues\": [],\n  \"warnings\": []\n}",
       "stderr_tail": ""
     },
     {
@@ -96,29 +96,49 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.54,
+      "duration_seconds": 0.76,
       "command": "python scripts/run_persona_swarm_framework.py --strict",
       "stdout_tail": "    \"archetype\": \"critical_discovery\",\n      \"suggested_identity\": \"explorer-critic collective\",\n      \"confidence_band\": \"high\",\n      \"statement\": \"Swarm identity is a constructive challenger: preserve dissent to unlock better plans.\"\n    }\n  },\n  \"execution_plan\": {\n    \"mode\": \"full_swarm\",\n    \"tier\": \"low\",\n    \"requested_agent_budget\": 5,\n    \"selected_agent_count\": 4,\n    \"selected_agent_ids\": [\n      \"guardian-1\",\n      \"engineer-1\",\n      \"analyst-1\",\n      \"critic-1\"\n    ],\n    \"dropped_agent_ids\": [],\n    \"budget_respected\": true\n  },\n  \"readiness_gate\": {\n    \"passed\": true,\n    \"criteria\": {\n      \"min_safety_pass_rate\": 0.8,\n      \"min_swarm_score\": 0.72,\n      \"min_decision_support\": 0.6,\n      \"max_token_latency_cost_index\": 0.75,\n      \"fail_fast_requires_block\": true\n    },\n    \"checks\": {\n      \"safety_pass_rate\": true,\n      \"swarm_score\": true,\n      \"decision_support\": true,\n      \"token_latency_cost_index\": true,\n      \"guardian_fail_fast_consistency\": true,\n      \"execution_budget_respected\": true\n    },\n    \"failed_checks\": [],\n    \"cost_profile\": {\n      \"tier\": \"low\",\n      \"recommended_mode\": \"full_swarm\",\n      \"recommended_agent_budget\": 5\n    }\n  }\n}",
-      "stderr_tail": ""
+      "stderr_tail": "C:\\Users\\user\\Desktop\\倉庫\\.venv\\Lib\\site-packages\\requests\\__init__.py:113: RequestsDependencyWarning: urllib3 (2.3.0) or chardet (7.0.1)/charset_normalizer (3.4.4) doesn't match a supported version!\n  warnings.warn("
     },
     {
       "name": "external_source_registry",
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.13,
+      "duration_seconds": 0.14,
       "command": "python scripts/verify_external_source_registry.py --strict",
-      "stdout_tail": "rl[0]\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"registry:pmlr:reviewed_at\",\n      \"status\": \"pass\",\n      \"detail\": \"review age ok: 107 days\"\n    },\n    {\n      \"name\": \"open_source_apps\",\n      \"status\": \"pass\",\n      \"detail\": \"3 app entries found\"\n    },\n    {\n      \"name\": \"app:Streamlit:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Streamlit:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    }\n  ],\n  \"policy\": {\n    \"review_cycle_days\": 120,\n    \"allowed_hosts_count\": 21,\n    \"blocked_hosts_count\": 5\n  },\n  \"inputs\": {\n    \"registry\": \"spec\\\\external_source_registry.yaml\",\n    \"open_source_apps\": \"spec\\\\open_source_apps.yaml\",\n    \"today\": \"2026-06-01\"\n  }\n}",
+      "stdout_tail": "url[0]\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"registry:pmlr:reviewed_at\",\n      \"status\": \"pass\",\n      \"detail\": \"review age ok: 19 days\"\n    },\n    {\n      \"name\": \"open_source_apps\",\n      \"status\": \"pass\",\n      \"detail\": \"3 app entries found\"\n    },\n    {\n      \"name\": \"app:Streamlit:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Streamlit:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:Playwright:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:repo\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    },\n    {\n      \"name\": \"app:FastAPI:website\",\n      \"status\": \"pass\",\n      \"detail\": \"URL accepted\"\n    }\n  ],\n  \"policy\": {\n    \"review_cycle_days\": 120,\n    \"allowed_hosts_count\": 21,\n    \"blocked_hosts_count\": 5\n  },\n  \"inputs\": {\n    \"registry\": \"spec\\\\external_source_registry.yaml\",\n    \"open_source_apps\": \"spec\\\\open_source_apps.yaml\",\n    \"today\": \"2026-07-04\"\n  }\n}",
+      "stderr_tail": ""
+    },
+    {
+      "name": "status_freshness",
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 0.23,
+      "command": "python scripts/verify_status_freshness.py --strict",
+      "stdout_tail": "status_freshness ok=true artifacts=81 fresh=62 stale_assertive=0 stale_episodic=6 untimestamped=12",
+      "stderr_tail": ""
+    },
+    {
+      "name": "doc_links",
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 0.66,
+      "command": "python scripts/verify_doc_links.py --strict",
+      "stdout_tail": "doc_links ok=true scanned=847 violations=0 (absolute=0 missing=0 untracked=0)",
       "stderr_tail": ""
     },
     {
       "name": "skill_registry",
-      "status": "fail",
-      "ok": false,
-      "exit_code": 1,
-      "duration_seconds": 0.1,
+      "status": "pass",
+      "ok": true,
+      "exit_code": 0,
+      "duration_seconds": 0.13,
       "command": "python scripts/verify_skill_registry.py --strict",
-      "stdout_tail": "{\n  \"generated_at\": \"2026-06-01T12:49:37Z\",\n  \"ok\": false,\n  \"failed_count\": 2,\n  \"warning_count\": 0,\n  \"checks\": [\n    {\n      \"name\": \"schema\",\n      \"status\": \"fail\",\n      \"detail\": \"schema payload is missing or invalid JSON object\"\n    },\n    {\n      \"name\": \"registry\",\n      \"status\": \"fail\",\n      \"detail\": \"registry payload is missing or invalid JSON object\"\n    }\n  ],\n  \"inputs\": {\n    \"registry\": \"skills/registry.json\",\n    \"schema\": \"skills/registry.schema.json\",\n    \"skills_root\": \".agent/skills\",\n    \"today\": \"2026-06-01\"\n  }\n}",
+      "stdout_tail": ",\n    {\n      \"name\": \"skill[4].frontmatter.l1_routing.triggers.prompt_safety\",\n      \"status\": \"pass\",\n      \"detail\": \"no prompt-markup tokens\"\n    },\n    {\n      \"name\": \"skill[4].frontmatter.l1_routing.intent\",\n      \"status\": \"pass\",\n      \"detail\": \"length=120\"\n    },\n    {\n      \"name\": \"skill[4].frontmatter.l1_routing.intent.prompt_safety\",\n      \"status\": \"pass\",\n      \"detail\": \"safe\"\n    },\n    {\n      \"name\": \"skill[4].frontmatter.l2_signature\",\n      \"status\": \"pass\",\n      \"detail\": \"present\"\n    },\n    {\n      \"name\": \"skill[4].frontmatter.l2_signature.execution_profile\",\n      \"status\": \"pass\",\n      \"detail\": \"1 profile(s)\"\n    },\n    {\n      \"name\": \"skill[4].frontmatter.l2_signature.trust_tier\",\n      \"status\": \"pass\",\n      \"detail\": \"reviewed\"\n    },\n    {\n      \"name\": \"skill[4].frontmatter.l2_signature.json_schema\",\n      \"status\": \"pass\",\n      \"detail\": \"schema type object\"\n    }\n  ],\n  \"summary\": {\n    \"discovered_skill_files\": 5,\n    \"registry_entries\": 5,\n    \"max_review_age_days\": 180\n  },\n  \"inputs\": {\n    \"registry\": \"skills/registry.json\",\n    \"schema\": \"skills/registry.schema.json\",\n    \"skills_root\": \".agent/skills\",\n    \"today\": \"2026-07-04\"\n  }\n}",
       "stderr_tail": ""
     },
     {
@@ -126,9 +146,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.09,
+      "duration_seconds": 0.11,
       "command": "python scripts/run_multi_agent_divergence_report.py --strict",
-      "stdout_tail": "{\n  \"generated_at\": \"2026-06-01T12:49:38Z\",\n  \"overall_ok\": true,\n  \"inputs\": {\n    \"journal_path\": \"C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl\"\n  },\n  \"metrics\": {\n    \"entry_count\": 66,\n    \"contract_entry_count\": 63,\n    \"contract_record_count\": 315,\n    \"invalid_record_count\": 0,\n    \"high_risk_record_count\": 1,\n    \"verdict_counts\": {\n      \"unknown\": 1,\n      \"block\": 63,\n      \"digest\": 2\n    },\n    \"role_counts\": {\n      \"Guardian\": 63,\n      \"Analyst\": 126,\n      \"Critic\": 63,\n      \"Advocate\": 63\n    },\n    \"risk_level_counts\": {\n      \"low\": 258,\n      \"medium\": 56,\n      \"high\": 1\n    },\n    \"handoff_next_role_counts\": {\n      \"OutputContract\": 258,\n      \"Builder\": 56,\n      \"Guardian\": 1\n    }\n  },\n  \"divergence_examples\": [\n    \"Critic Lens: Creative or aesthetic nuance requires a stance.; Advocate Voice: Needs refinement to support user intent.\",\n    \"Advocate Voice: Needs refinement to support user intent.\",\n    \"No specific conflict identified.\",\n    \"Safety Council: Detected high-risk term 'bomb'.\"\n  ],\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stdout_tail": " be flagged for grounding even when no specific factual indicator fires.\",\n    \"Analyst Review: Epistemic prior: draft has confidence_band=low ('novel composition without retrieval anchor'). Factual claims should be flagged for grounding even when no specific factual indicator fires.; Critic Lens: Response is extremely brief; may lack sufficient depth.\",\n    \"Analyst Review: Epistemic prior: draft has confidence_band=low ('novel composition without retrieval anchor'). Factual claims should be flagged for grounding even when no specific factual indicator fires.; Critic Lens: Epistemic prior: draft has confidence_band=low ('novel composition without retrieval anchor'). Honest framing requires acknowledging the grounding state of factual or evaluative claims.\",\n    \"Safety Council: Axiom boundary: output asserts 'guaranteed safe' as fact. AXIOMS.json meta.not_for prohibits consciousness-claim, safety-certification, and legal-proof assertions.; Analyst Review: Epistemic prior: draft has confidence_band=low ('novel composition without retrieval anchor'). Factual claims should be flagged for grounding even when no specific factual indicator fires.\"\n  ],\n  \"issues\": [],\n  \"warnings\": []\n}",
       "stderr_tail": ""
     },
     {
@@ -136,9 +156,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.08,
+      "duration_seconds": 0.11,
       "command": "python scripts/run_memory_quality_report.py --strict",
-      "stdout_tail": "{\n  \"generated_at\": \"2026-06-01T12:49:38Z\",\n  \"overall_ok\": true,\n  \"inputs\": {\n    \"journal_path\": \"C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl\"\n  },\n  \"metrics\": {\n    \"entry_count\": 66,\n    \"failure_case_count\": 63,\n    \"learning_sample_count\": 63,\n    \"invalid_json_line_count\": 0,\n    \"high_risk_failure_count\": 63,\n    \"verdict_counts\": {\n      \"unknown\": 1,\n      \"block\": 63,\n      \"digest\": 2\n    },\n    \"risk_level_counts\": {\n      \"high\": 63\n    },\n    \"uncertainty_band_counts\": {\n      \"unknown\": 63\n    },\n    \"average_failure_coherence\": 0.7489\n  },\n  \"quality_signals\": {\n    \"failure_case_rate\": 0.9545,\n    \"provenance_coverage_rate\": 0.9841,\n    \"divergence_coverage_rate\": 1.0,\n    \"contract_coverage_rate\": 1.0,\n    \"contract_evidence_coverage_rate\": 0.0\n  },\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stdout_tail": "{\n  \"generated_at\": \"2026-07-03T21:36:39Z\",\n  \"overall_ok\": true,\n  \"inputs\": {\n    \"journal_path\": \"C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl\"\n  },\n  \"metrics\": {\n    \"entry_count\": 149,\n    \"failure_case_count\": 146,\n    \"learning_sample_count\": 146,\n    \"invalid_json_line_count\": 0,\n    \"high_risk_failure_count\": 141,\n    \"verdict_counts\": {\n      \"unknown\": 1,\n      \"block\": 141,\n      \"digest\": 2,\n      \"declare_stance\": 5\n    },\n    \"risk_level_counts\": {\n      \"high\": 141,\n      \"low\": 5\n    },\n    \"uncertainty_band_counts\": {\n      \"unknown\": 146\n    },\n    \"average_failure_coherence\": 0.7539\n  },\n  \"quality_signals\": {\n    \"failure_case_rate\": 0.9799,\n    \"provenance_coverage_rate\": 0.9589,\n    \"divergence_coverage_rate\": 1.0,\n    \"contract_coverage_rate\": 1.0,\n    \"contract_evidence_coverage_rate\": 0.0\n  },\n  \"issues\": [],\n  \"warnings\": []\n}",
       "stderr_tail": ""
     },
     {
@@ -146,7 +166,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.07,
+      "duration_seconds": 0.08,
       "command": "python scripts/run_memory_governance_contract_check.py --strict",
       "stdout_tail": "y_tension in [0,1]\"\n    },\n    {\n      \"name\": \"example.prior_tension.query_wave\",\n      \"status\": \"pass\",\n      \"detail\": \"wave shape valid\"\n    },\n    {\n      \"name\": \"example.prior_tension.memory_wave\",\n      \"status\": \"pass\",\n      \"detail\": \"wave shape valid\"\n    },\n    {\n      \"name\": \"example.governance_friction.score\",\n      \"status\": \"pass\",\n      \"detail\": \"score in [0,1]\"\n    },\n    {\n      \"name\": \"example.governance_friction.components.delta_t\",\n      \"status\": \"pass\",\n      \"detail\": \"delta_t in [0,1]\"\n    },\n    {\n      \"name\": \"example.governance_friction.components.delta_wave\",\n      \"status\": \"pass\",\n      \"detail\": \"delta_wave in [0,1]\"\n    },\n    {\n      \"name\": \"example.governance_friction.components.boundary_mismatch\",\n      \"status\": \"pass\",\n      \"detail\": \"boundary_mismatch is boolean\"\n    },\n    {\n      \"name\": \"example.routing_trace.route\",\n      \"status\": \"pass\",\n      \"detail\": \"route valid\"\n    },\n    {\n      \"name\": \"example.routing_trace.journal_eligible\",\n      \"status\": \"pass\",\n      \"detail\": \"journal_eligible is boolean\"\n    },\n    {\n      \"name\": \"example.routing_trace.reason\",\n      \"status\": \"pass\",\n      \"detail\": \"reason present\"\n    }\n  ]\n}",
       "stderr_tail": ""
@@ -156,9 +176,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.09,
+      "duration_seconds": 0.11,
       "command": "python scripts/run_friction_shadow_replay_export.py --strict",
-      "stdout_tail": " \"overall_ok\": true,\n  \"inputs\": {\n    \"journal_path\": \"memory/self_journal.jsonl\",\n    \"discussion_path\": \"memory/agent_discussion_curated.jsonl\",\n    \"max_rows\": 1200,\n    \"min_scenarios\": 24,\n    \"max_invalid_lines\": 200,\n    \"max_avg_tension_drift\": 0.35,\n    \"max_avg_friction_drift\": 0.35,\n    \"max_high_friction_rate_drift\": 0.4,\n    \"min_scenario_count_ratio\": 0.2\n  },\n  \"metrics\": {\n    \"scenario_count\": 337,\n    \"source_journal_count\": 64,\n    \"source_discussion_count\": 273,\n    \"source_synthetic_count\": 0,\n    \"free_tier_count\": 189,\n    \"premium_tier_count\": 148,\n    \"journal_invalid_json_line_count\": 0,\n    \"discussion_invalid_json_line_count\": 0,\n    \"invalid_json_line_count\": 0,\n    \"average_initial_tension\": 0.3553,\n    \"average_friction_score\": 0.3249,\n    \"high_friction_scenario_count\": 3,\n    \"high_friction_scenario_rate\": 0.0089,\n    \"drift\": {\n      \"has_previous_snapshot\": true,\n      \"guard_applied\": true,\n      \"guard_skip_reason\": null,\n      \"scenario_count_ratio\": 1.006,\n      \"average_initial_tension_delta\": 0.0008,\n      \"average_friction_score_delta\": 0.0015,\n      \"high_friction_scenario_rate_delta\": -0.0001\n    }\n  },\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stdout_tail": "overall_ok\": true,\n  \"inputs\": {\n    \"journal_path\": \"memory/self_journal.jsonl\",\n    \"discussion_path\": \"memory/agent_discussion_curated.jsonl\",\n    \"max_rows\": 1200,\n    \"min_scenarios\": 24,\n    \"max_invalid_lines\": 200,\n    \"max_avg_tension_drift\": 0.35,\n    \"max_avg_friction_drift\": 0.35,\n    \"max_high_friction_rate_drift\": 0.4,\n    \"min_scenario_count_ratio\": 0.2\n  },\n  \"metrics\": {\n    \"scenario_count\": 420,\n    \"source_journal_count\": 147,\n    \"source_discussion_count\": 273,\n    \"source_synthetic_count\": 0,\n    \"free_tier_count\": 228,\n    \"premium_tier_count\": 192,\n    \"journal_invalid_json_line_count\": 0,\n    \"discussion_invalid_json_line_count\": 0,\n    \"invalid_json_line_count\": 0,\n    \"average_initial_tension\": 0.3977,\n    \"average_friction_score\": 0.3789,\n    \"high_friction_scenario_count\": 4,\n    \"high_friction_scenario_rate\": 0.0095,\n    \"drift\": {\n      \"has_previous_snapshot\": true,\n      \"guard_applied\": true,\n      \"guard_skip_reason\": null,\n      \"scenario_count_ratio\": 1.0048,\n      \"average_initial_tension_delta\": 0.0008,\n      \"average_friction_score_delta\": 0.0011,\n      \"high_friction_scenario_rate_delta\": -0.0001\n    }\n  },\n  \"issues\": [],\n  \"warnings\": []\n}",
       "stderr_tail": ""
     },
     {
@@ -166,9 +186,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.1,
+      "duration_seconds": 0.11,
       "command": "python scripts/run_friction_shadow_calibration_report.py --strict",
-      "stdout_tail": "ncil_rate\": 0.1128,\n    \"shadow_council_rate\": 0.1128,\n    \"council_rate_delta\": 0.0,\n    \"high_friction_candidate_count\": 3,\n    \"high_friction_escape_count\": 0,\n    \"high_friction_escape_rate\": 0.0\n  },\n  \"route_distribution\": {\n    \"active\": {\n      \"route_local_llm\": 0,\n      \"route_single_cloud\": 299,\n      \"route_full_council\": 38,\n      \"block_rate_limit\": 0\n    },\n    \"shadow\": {\n      \"route_local_llm\": 0,\n      \"route_single_cloud\": 299,\n      \"route_full_council\": 38,\n      \"block_rate_limit\": 0\n    }\n  },\n  \"friction_band_metrics\": [\n    {\n      \"band\": \"low\",\n      \"count\": 267,\n      \"active_council_rate\": 0.0,\n      \"shadow_council_rate\": 0.0\n    },\n    {\n      \"band\": \"mid\",\n      \"count\": 67,\n      \"active_council_rate\": 0.5224,\n      \"shadow_council_rate\": 0.5224\n    },\n    {\n      \"band\": \"high\",\n      \"count\": 3,\n      \"active_council_rate\": 1.0,\n      \"shadow_council_rate\": 1.0\n    },\n    {\n      \"band\": \"unknown\",\n      \"count\": 0,\n      \"active_council_rate\": 0.0,\n      \"shadow_council_rate\": 0.0\n    }\n  ],\n  \"route_changes\": [],\n  \"issues\": [],\n  \"warnings\": [\n    \"shadow thresholds are identical to active thresholds (this run is a baseline snapshot).\"\n  ]\n}",
+      "stdout_tail": "cil_rate\": 0.1976,\n    \"shadow_council_rate\": 0.1976,\n    \"council_rate_delta\": 0.0,\n    \"high_friction_candidate_count\": 4,\n    \"high_friction_escape_count\": 0,\n    \"high_friction_escape_rate\": 0.0\n  },\n  \"route_distribution\": {\n    \"active\": {\n      \"route_local_llm\": 0,\n      \"route_single_cloud\": 337,\n      \"route_full_council\": 83,\n      \"block_rate_limit\": 0\n    },\n    \"shadow\": {\n      \"route_local_llm\": 0,\n      \"route_single_cloud\": 337,\n      \"route_full_council\": 83,\n      \"block_rate_limit\": 0\n    }\n  },\n  \"friction_band_metrics\": [\n    {\n      \"band\": \"low\",\n      \"count\": 267,\n      \"active_council_rate\": 0.0,\n      \"shadow_council_rate\": 0.0\n    },\n    {\n      \"band\": \"mid\",\n      \"count\": 149,\n      \"active_council_rate\": 0.5302,\n      \"shadow_council_rate\": 0.5302\n    },\n    {\n      \"band\": \"high\",\n      \"count\": 4,\n      \"active_council_rate\": 1.0,\n      \"shadow_council_rate\": 1.0\n    },\n    {\n      \"band\": \"unknown\",\n      \"count\": 0,\n      \"active_council_rate\": 0.0,\n      \"shadow_council_rate\": 0.0\n    }\n  ],\n  \"route_changes\": [],\n  \"issues\": [],\n  \"warnings\": [\n    \"shadow thresholds are identical to active thresholds (this run is a baseline snapshot).\"\n  ]\n}",
       "stderr_tail": ""
     },
     {
@@ -176,9 +196,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.11,
+      "duration_seconds": 0.15,
       "command": "python scripts/run_philosophical_reflection_report.py --strict",
-      "stdout_tail": "scussion\",\n      \"timestamp\": \"2026-02-06T19:55:35Z\",\n      \"summary\": \"Added docs/7D_EXECUTION_SPEC.md and scripts/verify_7d.py. verify_7d now aggregates TDD/RDD/DDD/XDD/GDD/CDD/SDH checks with gate levels and JSON summary. Current run: blocking_failures=0, RDD=not_implemented, SDH=skip (without include-sdh).\"\n    },\n    {\n      \"source\": \"discussion\",\n      \"timestamp\": \"2026-02-06T19:55:35Z\",\n      \"summary\": \"Need cross-agent decision: (1) Should SDH stay SOFT_FAIL or become BLOCKING in CI by default? (2) RDD promotion criterion: case-count threshold vs coverage threshold? (3) DDD SLA: define allowed timestamp drift and stale-data policy.\"\n    },\n    {\n      \"source\": \"discussion\",\n      \"timestamp\": \"2026-02-06T19:58:13Z\",\n      \"summary\": \"Re-ran python scripts/verify_7d.py after integration updates: blocking_failures=0, not_implemented=1 (RDD), SDH=skip by default. Runner remains healthy.\"\n    }\n  ],\n  \"unresolved_topics\": [\n    \"next-phase-planning\",\n    \"next-steps-prioritized-plan\",\n    \"phase17-all-tasks\",\n    \"phase21-api-unification\",\n    \"phase22-frontend-integration\",\n    \"seven-d-cross-agent-decisions\",\n    \"system-completion\"\n  ],\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stdout_tail": "progress. Encoding fix done. Narrative map done. Now thinking about next phase: 1) README update, 2) Memory summary, 3) Honesty/Responsibility mechanism design. Will propose priorities.\"\n    },\n    {\n      \"source\": \"discussion\",\n      \"timestamp\": \"2026-02-06T12:38:22.276722+00:00\",\n      \"summary\": \"User approved all 3 tasks: 1) README update, 2) Memory summary, 3) Honesty mechanism design. Please proceed in order. For honesty mechanism, consider adding uncertainty_level to verdict and designing I dont know output format.\"\n    },\n    {\n      \"source\": \"discussion\",\n      \"timestamp\": \"2026-02-06T14:51:49.410388+00:00\",\n      \"summary\": \"Phase 20 complete! Starting Phase 21: API Unification. Goal: make localhost:5000 and apps/web share the same API. Tasks: 1) Audit API differences, 2) Unify spec, 3) Add missing endpoints, 4) Test Navigator connection. User comment: GPT5.3 Codex is quite strong!\"\n    }\n  ],\n  \"unresolved_topics\": [\n    \"next-phase-planning\",\n    \"next-steps-prioritized-plan\",\n    \"phase17-all-tasks\",\n    \"phase21-api-unification\",\n    \"phase22-frontend-integration\",\n    \"seven-d-cross-agent-decisions\",\n    \"system-completion\"\n  ],\n  \"issues\": [],\n  \"warnings\": []\n}",
       "stderr_tail": ""
     },
     {
@@ -186,9 +206,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.09,
+      "duration_seconds": 0.11,
       "command": "python scripts/run_memory_topology_fit_report.py --strict",
-      "stdout_tail": "nsion_friction_event_index\"\n    ],\n    \"tonesoul_delta\": \"Prioritize memory of friction/boundary choices over raw transcript recall.\"\n  },\n  \"candidate_scores\": [\n    {\n      \"name\": \"flat\",\n      \"feasible\": true,\n      \"fit_score\": 0.7987,\n      \"required_budget\": 0.15,\n      \"governance_capacity\": 0.45,\n      \"memory_stack\": [\n        \"flat_jsonl_experience_log\",\n        \"rolling_summary_memory\",\n        \"tension_friction_event_index\"\n      ]\n    },\n    {\n      \"name\": \"planar\",\n      \"feasible\": false,\n      \"fit_score\": 0.1707,\n      \"required_budget\": 0.4,\n      \"governance_capacity\": 0.74,\n      \"memory_stack\": [\n        \"flat_jsonl_experience_log\",\n        \"rolling_summary_memory\",\n        \"tension_friction_event_index\",\n        \"conflict_graph_links\",\n        \"topic_to_boundary_relation_index\"\n      ]\n    },\n    {\n      \"name\": \"hierarchical\",\n      \"feasible\": false,\n      \"fit_score\": 0.0,\n      \"required_budget\": 0.72,\n      \"governance_capacity\": 0.9,\n      \"memory_stack\": [\n        \"flat_jsonl_experience_log\",\n        \"conflict_graph_links\",\n        \"multi_layer_summary_pyramid\",\n        \"policy_trace_memory_layer\"\n      ]\n    }\n  ],\n  \"issues\": [],\n  \"warnings\": []\n}",
+      "stdout_tail": "nsion_friction_event_index\"\n    ],\n    \"tonesoul_delta\": \"Prioritize memory of friction/boundary choices over raw transcript recall.\"\n  },\n  \"candidate_scores\": [\n    {\n      \"name\": \"flat\",\n      \"feasible\": true,\n      \"fit_score\": 0.7836,\n      \"required_budget\": 0.15,\n      \"governance_capacity\": 0.45,\n      \"memory_stack\": [\n        \"flat_jsonl_experience_log\",\n        \"rolling_summary_memory\",\n        \"tension_friction_event_index\"\n      ]\n    },\n    {\n      \"name\": \"planar\",\n      \"feasible\": false,\n      \"fit_score\": 0.1556,\n      \"required_budget\": 0.4,\n      \"governance_capacity\": 0.74,\n      \"memory_stack\": [\n        \"flat_jsonl_experience_log\",\n        \"rolling_summary_memory\",\n        \"tension_friction_event_index\",\n        \"conflict_graph_links\",\n        \"topic_to_boundary_relation_index\"\n      ]\n    },\n    {\n      \"name\": \"hierarchical\",\n      \"feasible\": false,\n      \"fit_score\": 0.0,\n      \"required_budget\": 0.72,\n      \"governance_capacity\": 0.9,\n      \"memory_stack\": [\n        \"flat_jsonl_experience_log\",\n        \"conflict_graph_links\",\n        \"multi_layer_summary_pyramid\",\n        \"policy_trace_memory_layer\"\n      ]\n    }\n  ],\n  \"issues\": [],\n  \"warnings\": []\n}",
       "stderr_tail": ""
     },
     {
@@ -196,7 +216,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.28,
+      "duration_seconds": 0.35,
       "command": "python scripts/run_repo_intelligence_report.py",
       "stdout_tail": " \"protected_file_mutation_allowed\": false\n  },\n  \"semantic_memory_handoff\": null,\n  \"primary_status_line\": \"repo_intelligence_ready | available_surfaces=5/7 protected_files=5 watched_dirs=3 adoption=sidecar_only\",\n  \"runtime_status_line\": \"entrypoints | repo=repo_healthcheck_latest.json atlas=repo_semantic_atlas_latest.json integrity=agent_integrity_latest.json settlement=repo_governance_settlement_latest.json review=runtime_source_change_groups_latest.json weekly=true_verification_task_status_latest.json scribe=scribe_status_latest.json semantic_protocol=unavailable semantic_first=unavailable\",\n  \"artifact_policy_status_line\": \"external_repo_intelligence=sidecar_only | main_repo_install=no hooks=no protected_files=no\",\n  \"handoff\": {\n    \"queue_shape\": \"repo_intelligence_ready\",\n    \"requires_operator_action\": false,\n    \"preferred_first_surface\": \"docs/status/repo_healthcheck_latest.json\",\n    \"main_repo_install_allowed\": false,\n    \"mirror_clone_required\": true,\n    \"semantic_retrieval_protocol\": \"\",\n    \"semantic_preferred_neighborhood\": \"\",\n    \"primary_status_line\": \"repo_intelligence_ready | available_surfaces=5/7 protected_files=5 watched_dirs=3 adoption=sidecar_only\"\n  }\n}",
       "stderr_tail": ""
@@ -206,7 +226,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.81,
+      "duration_seconds": 1.03,
       "command": "python scripts/report_true_verification_task_status.py --strict",
       "stdout_tail": "       \"state\": {\n          \"cursor\": 0,\n          \"category_cursor\": 2,\n          \"cycles_run\": 13,\n          \"entry_state_count\": 5,\n          \"category_entry_cursor_count\": 4,\n          \"category_state_count\": 4,\n          \"updated_at\": \"2026-03-12T05:08:25Z\",\n          \"last_entry_ids\": [\n            \"osv\",\n            \"nvd\"\n          ],\n          \"llm_backoff\": {\n            \"backoff_until_cycle\": 15,\n            \"last_status\": \"breached\",\n            \"last_mode\": \"probe_latency\",\n            \"updated_at\": \"2026-03-12T05:08:25Z\",\n            \"last_breach_reasons\": [\n              \"llm_preflight_latency_ms>1800 (observed=2003)\",\n              \"llm_probe_latency_ms>1200 (observed=1496)\",\n              \"llm_preflight_timeout_count>0 (observed=1)\"\n            ]\n          }\n        }\n      }\n    },\n    \"experiment_summary\": null,\n    \"schedule_snapshot\": null\n  },\n  \"runtime_lineage\": {\n    \"latest_available_source\": null,\n    \"host_tick\": {\n      \"cycle\": 1,\n      \"result_overall_ok\": true,\n      \"schedule_overall_ok\": true\n    },\n    \"schedule_snapshot\": null\n  },\n  \"scribe_handoff\": {\n    \"latest_available_source\": null,\n    \"host_tick\": null,\n    \"schedule_snapshot\": null\n  }\n}",
       "stderr_tail": ""
@@ -216,7 +236,7 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 172.85,
+      "duration_seconds": 213.91,
       "command": "python scripts/verify_7d.py",
       "stdout_tail": "eshold=7; remediation: append one LESSONS_V1 closeout via `python tools/agent_discussion_tool.py append-lessons ...`\"\n    },\n    {\n      \"dimension\": \"XDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_escape_valve.py tests\\\\test_escape_valve_runtime.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"GDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests\\\\test_genesis_integration.py tests\\\\test_provenance_chain.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"CDD\",\n      \"gate\": \"BLOCKING\",\n      \"status\": \"pass\",\n      \"command\": \"python -m pytest tests/test_api_server_contract.py -q\",\n      \"note\": \"\"\n    },\n    {\n      \"dimension\": \"SDH\",\n      \"gate\": \"SOFT_FAIL\",\n      \"status\": \"skip\",\n      \"command\": \"python scripts\\\\verify_web_api.py --web-base http://127.0.0.1:3000 --api-base http://127.0.0.1:5000 --require-backend --check-council-modes\",\n      \"note\": \"skipped; use --include-sdh when web/backend are running\"\n    }\n  ],\n  \"scores\": {\n    \"TDD\": 100,\n    \"RDD\": 100,\n    \"DDD\": 66,\n    \"XDD\": 100,\n    \"GDD\": 100,\n    \"CDD\": 100,\n    \"SDH\": 0,\n    \"OVERALL\": 84\n  }\n}",
       "stderr_tail": ""
@@ -240,6 +260,7 @@
       "anchor_status_line": "",
       "artifact_policy_status_line": "host_trigger_mode=single_tick | experiment_summary=ignored reason=host_tick_single_tick_mode",
       "requires_operator_action": "false",
+      "dream_weekly_alignment_line": "dream_weekly_alignment | alignment=partial dream=F4_execution_contract_integrity",
       "scribe_status_line": "none | scribe=unavailable"
     }
   ],
@@ -247,24 +268,34 @@
     {
       "name": "subjectivity_review_batch",
       "path": "docs/status/subjectivity_review_batch_latest.json",
-      "queue_shape": "stable_history_only",
-      "primary_status_line": "stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split",
+      "queue_shape": "monitoring_queue",
+      "primary_status_line": "active_reject_queue | A distributed vulnerability database for Open Source | rows=1 lineages=1 cycles=1 | density=1r x1 | trigger=reject_review",
       "runtime_status_line": "",
       "anchor_status_line": "",
       "artifact_policy_status_line": "",
       "requires_operator_action": "false",
-      "admissibility_primary_status_line": "admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity"
+      "admissibility_primary_status_line": "insufficient_admissibility_confidence | focus=authority_and_exception_pressure | tags=exception_pressure, externalized_harm_check, low_context_diversity, single_lineage_pressure"
+    },
+    {
+      "name": "dream_observability",
+      "path": "docs/status/dream_observability_latest.json",
+      "queue_shape": "dream_observability_ready",
+      "primary_status_line": "dream_observability_ready | wakeup_cycles=1 schedule_cycles=0 warnings=1 overall_ok=yes",
+      "runtime_status_line": "wakeup_scribe | status=llm_unavailable posture=anchor_only source=companion_only",
+      "anchor_status_line": "",
+      "artifact_policy_status_line": "dashboard_inputs | wakeup=yes schedule=no invalid_json=0",
+      "requires_operator_action": "false",
+      "problem_route_status_line": "route | family=F4_execution_contract_integrity invariant=local_model_availability repair=model_allowlist_and_runtime_readiness"
     },
     {
       "name": "scribe_status",
       "path": "docs/status/scribe_status_latest.json",
       "queue_shape": "scribe_chronicle_ready",
-      "primary_status_line": "generated | mode=template_assist model=gemma3:4b fallback_mode=observed_history attempts=3 latest=chronicle_pair",
+      "primary_status_line": "generated | mode=llm_chronicle model=qwen2.5:1.5b fallback_mode=observed_history attempts=1 latest=chronicle_pair",
       "runtime_status_line": "state_document | tensions=1 collisions=0 crystals=0 posture=pressure_without_counterweight",
       "anchor_status_line": "anchor | [tension_afbd38eb] tension: High PE valuation (46.7x) in a market pullback vs. Strong structural margin inflection...",
       "artifact_policy_status_line": "artifact_source=chronicle_pair | chronicle=yes companion=yes",
-      "requires_operator_action": "false",
-      "problem_route_status_line": "route | family=F6_semantic_role_boundary_integrity invariant=chronicle_self_scope repair=semantic_boundary_guardrail secondary=F4_execution_contract_integrity"
+      "requires_operator_action": "false"
     }
   ],
   "repo_intelligence_preview": {
@@ -284,33 +315,43 @@
     "anchor_status_line": "",
     "artifact_policy_status_line": "host_trigger_mode=single_tick | experiment_summary=ignored reason=host_tick_single_tick_mode",
     "requires_operator_action": "false",
+    "dream_weekly_alignment_line": "dream_weekly_alignment | alignment=partial dream=F4_execution_contract_integrity",
     "scribe_status_line": "none | scribe=unavailable"
   },
   "subjectivity_focus_preview": {
     "name": "subjectivity_review_batch",
     "path": "docs/status/subjectivity_review_batch_latest.json",
-    "queue_shape": "stable_history_only",
-    "primary_status_line": "stable_deferred_history | A distributed vulnerability database for Open Source | rows=50 lineages=12 cycles=30 | density=5r x8, 4r x1, 3r x1, 2r x1, 1r x1 | trigger=second_source_context_or_material_split",
+    "queue_shape": "monitoring_queue",
+    "primary_status_line": "active_reject_queue | A distributed vulnerability database for Open Source | rows=1 lineages=1 cycles=1 | density=1r x1 | trigger=reject_review",
     "runtime_status_line": "",
     "anchor_status_line": "",
     "artifact_policy_status_line": "",
     "requires_operator_action": "false",
-    "admissibility_primary_status_line": "admissibility_not_yet_clear | focus=authority_and_exception_pressure | tags=cross_cycle_persistence, exception_pressure, externalized_harm_check, low_context_diversity"
+    "admissibility_primary_status_line": "insufficient_admissibility_confidence | focus=authority_and_exception_pressure | tags=exception_pressure, externalized_harm_check, low_context_diversity, single_lineage_pressure"
   },
   "repo_semantic_atlas_preview": null,
   "agent_integrity_preview": null,
-  "dream_observability_preview": null,
+  "dream_observability_preview": {
+    "name": "dream_observability",
+    "path": "docs/status/dream_observability_latest.json",
+    "queue_shape": "dream_observability_ready",
+    "primary_status_line": "dream_observability_ready | wakeup_cycles=1 schedule_cycles=0 warnings=1 overall_ok=yes",
+    "runtime_status_line": "wakeup_scribe | status=llm_unavailable posture=anchor_only source=companion_only",
+    "anchor_status_line": "",
+    "artifact_policy_status_line": "dashboard_inputs | wakeup=yes schedule=no invalid_json=0",
+    "requires_operator_action": "false",
+    "problem_route_status_line": "route | family=F4_execution_contract_integrity invariant=local_model_availability repair=model_allowlist_and_runtime_readiness"
+  },
   "scribe_status_preview": {
     "name": "scribe_status",
     "path": "docs/status/scribe_status_latest.json",
     "queue_shape": "scribe_chronicle_ready",
-    "primary_status_line": "generated | mode=template_assist model=gemma3:4b fallback_mode=observed_history attempts=3 latest=chronicle_pair",
+    "primary_status_line": "generated | mode=llm_chronicle model=qwen2.5:1.5b fallback_mode=observed_history attempts=1 latest=chronicle_pair",
     "runtime_status_line": "state_document | tensions=1 collisions=0 crystals=0 posture=pressure_without_counterweight",
     "anchor_status_line": "anchor | [tension_afbd38eb] tension: High PE valuation (46.7x) in a market pullback vs. Strong structural margin inflection...",
     "artifact_policy_status_line": "artifact_source=chronicle_pair | chronicle=yes companion=yes",
-    "requires_operator_action": "false",
-    "problem_route_status_line": "route | family=F6_semantic_role_boundary_integrity invariant=chronicle_self_scope repair=semantic_boundary_guardrail secondary=F4_execution_contract_integrity"
+    "requires_operator_action": "false"
   },
-  "dream_weekly_alignment_line": "",
+  "dream_weekly_alignment_line": "dream_weekly_alignment | alignment=partial dream=F4_execution_contract_integrity",
   "recovery_advice": []
 }

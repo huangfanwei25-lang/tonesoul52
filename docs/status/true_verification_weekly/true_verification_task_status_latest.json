@@ -7,8 +7,8 @@
     "TaskPath": "\\",
     "State": "Ready",
     "Enabled": true,
-    "LastRunTime": "2026-06-01T19:08:08.0000000+08:00",
-    "NextRunTime": "2026-06-01T22:08:08.0000000+08:00",
+    "LastRunTime": "2026-07-04T04:08:08.0000000+08:00",
+    "NextRunTime": "2026-07-04T07:08:08.0000000+08:00",
     "LastTaskResult": 1,
     "NumberOfMissedRuns": 0
   },
@@ -36,7 +36,7 @@
   "anchor_status_line": "",
   "problem_route_status_line": "",
   "problem_route_secondary_labels": "",
-  "dream_weekly_alignment_line": "",
+  "dream_weekly_alignment_line": "dream_weekly_alignment | alignment=partial dream=F4_execution_contract_integrity",
   "artifact_policy_status_line": "host_trigger_mode=single_tick | experiment_summary=ignored reason=host_tick_single_tick_mode",
   "admissibility_primary_status_line": "",
   "handoff": {
@@ -46,7 +46,8 @@
     "anchor_status_line": "",
     "problem_route_status_line": "",
     "artifact_policy_status_line": "host_trigger_mode=single_tick | experiment_summary=ignored reason=host_tick_single_tick_mode",
-    "requires_operator_action": false
+    "requires_operator_action": false,
+    "dream_weekly_alignment_line": "dream_weekly_alignment | alignment=partial dream=F4_execution_contract_integrity"
   },
   "artifact_policy": {
     "host_trigger_mode": "single_tick",
