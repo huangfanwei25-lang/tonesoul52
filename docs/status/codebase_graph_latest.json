@@ -1,27 +1,27 @@
 {
-  "generated_at": "2026-06-22T16:26:26Z",
+  "generated_at": "2026-07-03T03:53:40Z",
   "source": "scripts/analyze_codebase_graph.py",
   "root_package": "tonesoul",
   "summary": {
-    "total_modules": 283,
-    "total_lines": 86972,
-    "total_classes": 539,
-    "total_functions": 2916,
-    "total_edges": 507,
+    "total_modules": 303,
+    "total_lines": 90764,
+    "total_classes": 576,
+    "total_functions": 3038,
+    "total_edges": 541,
     "total_cycles": 0,
     "total_layer_violations": 0,
     "total_orphans": 1,
     "total_community_drifts": 28,
-    "self_declared_layer_count": 283,
+    "self_declared_layer_count": 303,
     "self_declared_layer_ratio": 1.0,
-    "purpose_count": 281,
-    "purpose_ratio": 0.9929
+    "purpose_count": 301,
+    "purpose_ratio": 0.9934
   },
   "annotation_coverage": {
-    "self_declared_layer_count": 283,
+    "self_declared_layer_count": 303,
     "self_declared_layer_ratio": 1.0,
-    "purpose_count": 281,
-    "purpose_ratio": 0.9929
+    "purpose_count": 301,
+    "purpose_ratio": 0.9934
   },
   "god_nodes": [
     {
@@ -181,6 +181,32 @@
       "purpose": "5-stage psychological + semantic analysis engine: tone, trajectory, commitment, entropy, self-commit."
     },
     {
+      "module": "tonesoul.cli.main",
+      "path": "tonesoul/cli/main.py",
+      "in_degree": 2,
+      "out_degree": 9,
+      "total_degree": 11,
+      "lines": 322,
+      "classes": 0,
+      "functions": 12,
+      "layer": "surface",
+      "layer_source": "self_declared",
+      "purpose": "Unified CLI entry point: dispatch operator subcommands to the right subsystem."
+    },
+    {
+      "module": "tonesoul.dream_engine",
+      "path": "tonesoul/dream_engine.py",
+      "in_degree": 2,
+      "out_degree": 9,
+      "total_degree": 11,
+      "lines": 1028,
+      "classes": 4,
+      "functions": 33,
+      "layer": "evolution",
+      "layer_source": "self_declared",
+      "purpose": "Offline dream cycle: crystallize memory and update subjectivity layers between waking sessions."
+    },
+    {
       "module": "tonesoul.governance.kernel",
       "path": "tonesoul/governance/kernel.py",
       "in_degree": 4,
@@ -220,19 +246,6 @@
       "purpose": "Compose the YSS gate stack (DCS, POAV, frame router, seed, acceptance) into one policy pass."
     },
     {
-      "module": "tonesoul.cli.main",
-      "path": "tonesoul/cli/main.py",
-      "in_degree": 2,
-      "out_degree": 8,
-      "total_degree": 10,
-      "lines": 261,
-      "classes": 0,
-      "functions": 10,
-      "layer": "surface",
-      "layer_source": "self_declared",
-      "purpose": "Unified CLI entry point: dispatch operator subcommands to the right subsystem."
-    },
-    {
       "module": "tonesoul.council.base",
       "path": "tonesoul/council/base.py",
       "in_degree": 9,
@@ -246,17 +259,17 @@
       "purpose": "Abstract IPerspective contract implemented by every council perspective."
     },
     {
-      "module": "tonesoul.dream_engine",
-      "path": "tonesoul/dream_engine.py",
-      "in_degree": 2,
-      "out_degree": 8,
+      "module": "tonesoul.responsibility_runtime",
+      "path": "tonesoul/responsibility_runtime/__init__.py",
+      "in_degree": 1,
+      "out_degree": 9,
       "total_degree": 10,
-      "lines": 1001,
-      "classes": 4,
-      "functions": 33,
-      "layer": "evolution",
+      "lines": 83,
+      "classes": 0,
+      "functions": 0,
+      "layer": "governance",
       "layer_source": "self_declared",
-      "purpose": "Offline dream cycle: crystallize memory and update subjectivity layers between waking sessions."
+      "purpose": "Responsibility runtime contracts for deterministic intent validation."
     },
     {
       "module": "tonesoul.council",
@@ -270,19 +283,6 @@
       "layer": "governance",
       "layer_source": "self_declared",
       "purpose": "Council package: deliberation, verdict types, dossier, and swarm framework exports."
-    },
-    {
-      "module": "tonesoul.schemas",
-      "path": "tonesoul/schemas.py",
-      "in_degree": 9,
-      "out_degree": 0,
-      "total_degree": 9,
-      "lines": 800,
-      "classes": 30,
-      "functions": 39,
-      "layer": "shared",
-      "layer_source": "self_declared",
-      "purpose": "Pydantic data contracts shared across council, LLM, and governance layers."
     }
   ],
   "cycles": [],
@@ -292,10 +292,10 @@
   ],
   "subpackage_stats": {
     "(root)": {
-      "files": 96,
-      "lines": 40095,
-      "classes": 192,
-      "functions": 1180
+      "files": 100,
+      "lines": 41276,
+      "classes": 200,
+      "functions": 1211
     },
     "axioms": {
       "files": 2,
@@ -311,15 +311,21 @@
     },
     "cli": {
       "files": 3,
-      "lines": 283,
+      "lines": 344,
       "classes": 0,
-      "functions": 10
+      "functions": 12
+    },
+    "cognition": {
+      "files": 2,
+      "lines": 353,
+      "classes": 4,
+      "functions": 13
     },
     "council": {
       "files": 40,
-      "lines": 11240,
+      "lines": 11357,
       "classes": 67,
-      "functions": 355
+      "functions": 356
     },
     "deliberation": {
       "files": 7,
@@ -383,7 +389,7 @@
     },
     "memory": {
       "files": 33,
-      "lines": 10775,
+      "lines": 10777,
       "classes": 55,
       "functions": 426
     },
@@ -398,6 +404,18 @@
       "lines": 1030,
       "classes": 5,
       "functions": 30
+    },
+    "responsibility_runtime": {
+      "files": 10,
+      "lines": 1554,
+      "classes": 22,
+      "functions": 56
+    },
+    "reviewer": {
+      "files": 4,
+      "lines": 524,
+      "classes": 3,
+      "functions": 19
     },
     "scribe": {
       "files": 4,
@@ -445,12 +463,13 @@
   "subpackage_coupling": {
     "(root)": {
       "ystm": 24,
-      "(root)": 103,
+      "(root)": 104,
       "governance": 12,
       "llm": 3,
       "memory": 18,
       "perception": 3,
       "scribe": 3,
+      "responsibility_runtime": 1,
       "council": 8,
       "gateway": 2,
       "shared": 2,
@@ -471,7 +490,12 @@
       "cli": 2,
       "(root)": 4,
       "council": 3,
-      "ystm": 1
+      "ystm": 1,
+      "reviewer": 1
+    },
+    "cognition": {
+      "cognition": 1,
+      "responsibility_runtime": 1
     },
     "council": {
       "council": 74,
@@ -531,6 +555,12 @@
     },
     "perception": {
       "perception": 2
+    },
+    "responsibility_runtime": {
+      "responsibility_runtime": 25
+    },
+    "reviewer": {
+      "reviewer": 4
     },
     "scribe": {
       "llm": 1,
@@ -707,6 +737,6 @@
     "generated": true,
     "canonical": false,
     "source_command": "python scripts/analyze_codebase_graph.py",
-    "updated_at": "2026-06-22T16:26:26Z"
+    "updated_at": "2026-07-03T03:53:40Z"
   }
 }

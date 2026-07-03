@@ -1,6 +1,8 @@
 # Successor Cognitive Map — read this before deleting, refactoring, or "cleaning up"
 
-> Last Updated: 2026-06-16
+> Last Updated: 2026-07-03 (all §1 rows re-verified against master d428191; three line
+> numbers had drifted and were refreshed — line numbers in this map WILL drift again,
+> so verify by grepping the import string, not by trusting the cached `:NNN`.)
 > Audience: the next AI agent (or human) who picks up this repo cold.
 > Purpose: the single page that prevents the failure that almost happened on
 > 2026-06-13 — a "consolidation" PR that nearly deleted `yss_gates`, a module
@@ -55,12 +57,12 @@ delete or "consolidate" them without re-verifying against current code:
 
 | Module | Looks like | Actually | Proof |
 |---|---|---|---|
-| `tonesoul/yss_gates.py` | part of the dead "yss" chain | **runtime POAV gate** | `unified_pipeline.py:643` `from tonesoul.yss_gates import poav_gate` (high-risk 0.92 / normal 0.70 gate) |
+| `tonesoul/yss_gates.py` | part of the dead "yss" chain | **runtime POAV gate** — but enforce is CONDITIONAL: it blocks only in lockdown / risk-danger zones; everyday traffic is record-only (`unified_pipeline.py:648` `enforce = high_risk_mode`, `:667`) | `unified_pipeline.py:638` `from tonesoul.yss_gates import poav_gate`; thresholds now live in `soul_config.py:139-140` (0.92 high-risk / 0.70 low-risk), not at the import site; extra importer `tools/eval/egress_gate_characterization.py:24` |
 | `tonesoul/tsr_metrics.py` | yss helper | **council runtime + public demo** | `council/intent_reconstructor.py:8` (→ `council/runtime.py` main line); `examples/quickstart.py:81` |
-| `tonesoul/action_set.py` | yss helper | **runtime policy** | `unified_pipeline.py:2588,3529` `from tonesoul.action_set import ACTION_POLICY` |
+| `tonesoul/action_set.py` | yss helper | **runtime policy** | `unified_pipeline.py:2615,3585` `from tonesoul.action_set import ACTION_POLICY` |
 | `tonesoul/memory_manager.py` | yss helper | **live CLI** | `scripts/memory_compact.py` (has `main()`/`__main__`) |
 | `tonesoul/skill_gate.py` | yss helper | **live CLI** | `scripts/skill_gate.py` (has `main()`/`__main__`) |
-| `tonesoul/skill_promoter.py` | yss helper | **transitively live** | `skill_gate.py:59` imports it inside a function |
+| `tonesoul/skill_promoter.py` | yss helper | **transitively live** | `skill_gate.py:57` imports it inside a function |
 | `tonesoul/drift_monitor.py` | one of two drift impls | **canonical runtime drift** | wired into the dispatch trace; `drift_tracker.py` was the deletable duplicate (removed in PR5) |
 
 **Lesson encoded:** the "yss subsystem" is NOT a clean dead island. The dead
@@ -191,8 +193,13 @@ Decision frame for all of the above: each is *revive*, *archive*, or *mark-and-w
 
 A 37-agent adversarial verification sweep (each module independently checked
 unwired, then a second skeptic tried to *refute* dormancy — the exact discipline
-§0 demands) confirmed **18 modules** carry zero non-test live importers. They are
-now tagged in-file with a uniform, greppable marker:
+§0 demands) confirmed **18 modules** carry zero non-test live importers, tagged
+in-file with a uniform, greppable marker. **The grep below is the source of
+truth, not this paragraph's count** — as of 2026-07-03 it returns **29 files**:
+the original 18, minus `corpus/` 4 (archived, §6b), plus `market/` 4 and
+`yuhun/context_assembler` (marked later, §6b), plus `loop/` 4 + `tech_trace/` 4 +
+`axioms/` 2 (verified unwired and marked 2026-07-03 — they had been a coverage
+hole in this convention):
 
 ```
 # DORMANT (as of 2026-06-15): <reason>
@@ -215,6 +222,9 @@ module: `docs/architecture/architecture_legibility_2026-06-15.md`.
 | `observability/self_claim_audit.py` | first-person claim reducer | same — package facade unused at runtime |
 | `inter_soul/{__init__,bridge,negotiation,sovereignty,types}.py` | cross-agent tension/sovereignty protocol | Phase-8 substrate; zero live importers (also the §6 row) |
 | ~~`corpus/{__init__,consent,pipeline,storage}.py`~~ | privacy-first training-data corpus | **ARCHIVED 2026-06-15** (owner decision — parked duplicate of the live Supabase consent path). Removed from the tracked tree; recover via `git checkout b497c68 -- tonesoul/corpus`; local copy in `.archive/corpus_archived_2026-06-15/`. See §6b. |
+| `loop/{__init__,config,engine,events}.py` | iterative execution engine + event streaming | only importers are tests/helpers.py + tests/test_loop_*.py (marked 2026-07-03) |
+| `tech_trace/{__init__,capture,normalize,validate}.py` | Tech-Trace ingestion/normalize/validate helpers | only importers are tests/test_tech_trace_*.py (marked 2026-07-03) |
+| `axioms/{__init__,living_insights}.py` | provisional philosophical observations store | zero live importers; the live axiom carrier is repo-root `AXIOMS.json`, not this package (marked 2026-07-03) |
 
 **Caught as ACTUALLY LIVE — NOT marked dormant (the verification's safety win):**
 `gse/element.py` — the `GSEElement` dataclass is imported by `gse/registry.py`
