@@ -1,3 +1,4 @@
+# DORMANT (as of 2026-07-03): unwired — only imported by tests/test_tech_trace_*.py; no live module, entry point, or script references this package. See docs/SUCCESSOR_MAP.md §6a / docs/status/repo_atlas_2026-07-03.md §2.7.
 import argparse
 import json
 import os

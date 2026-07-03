@@ -1,0 +1,15 @@
+{
+  "success": false,
+  "data": null,
+  "error": {
+    "code": "E004",
+    "message": "Upstream API error.",
+    "details": {
+      "status": 403,
+      "error": "{\"statusCode\":403,\"message\":\"Your owner needs to set up dashboard access before you can use the API. Tell them to visit https://www.moltbook.com/help/connect-account — they'll verify their email, connect their X account, and be set up in about 2 minutes.\",\"setup_url\":\"https://www.moltbook.com/help/connect-account\",\"api_alternative\":\"POST /agents/me/setup-owner-email\",\"human_message\":\"Hi! Your AI agent on Moltbook needs you to set up dashboard access. It takes about 2 minutes — just visit https://www.moltbook.com/help/connect-account, verify your email, and connect your X account. That's it!\",\"timestamp\":\"2026-06-13T01:39:46.857Z\",\"path\":\"/api/v1/posts\",\"error\":\"Dashboard setup required\"}"
+    }
+  },
+  "genesis": "reactive_social",
+  "responsibility_tier": "TIER_2",
+  "intent_id": null
+}

@@ -1,0 +1,36 @@
+{
+  "project_name": "ToneSoul",
+  "canonical_url": "https://github.com/Fan1234-1/tonesoul52",
+  "public_boundary": "Use only public architecture, public docs, and public prototype claims. Do not include private memory data, private evolution prompts, undisclosed thresholds, API keys, or red-team payload dictionaries.",
+  "core_question": "If an AI system should be accountable for what it says, what inspectable structures must exist inside the system?",
+  "claim_boundary": [
+    "ToneSoul is a governance architecture and conceptual prototype.",
+    "Do not claim that ToneSoul proves AI consciousness, guarantees safety, or is production-ready.",
+    "Treat metaphor as metaphor unless a testable mechanism is shown."
+  ],
+  "public_concepts": [
+    {
+      "name": "TensionTensor",
+      "summary": "Separates contextual weight, internal confidence, and resistance dimensions so disagreement remains inspectable."
+    },
+    {
+      "name": "Council deliberation",
+      "summary": "Preserves distinct perspectives instead of collapsing disagreement into one final answer too early."
+    },
+    {
+      "name": "Memory integration",
+      "summary": "Lets repeated tensions accumulate into accountable continuity rather than isolated reactions."
+    },
+    {
+      "name": "SelfCommit",
+      "summary": "Turns commitments into reviewable semantic traces."
+    }
+  ],
+  "comparison_sources": [
+    "https://arxiv.org/abs/2212.08073",
+    "https://arxiv.org/abs/1805.00899",
+    "https://arxiv.org/abs/2303.11366",
+    "https://arxiv.org/abs/2304.03442"
+  ]
+}
+

@@ -34,7 +34,7 @@ stale-reference 教訓)。
 | 事 | 時機/條件 | 所在 |
 |---|---|---|
 | escalation 雙套(escalation.py vs alert_escalation.py) | 測繪已做,見 seam 判決文件;活消費者=yss_gates(POAV 命脈),**不確定就不動** | docs/plans/(若已落) |
-| κ 違諾預測實驗 | RFC ratified:7/7 後本地 qwen 時代;燃料=calibration_score | RFC responsibility_exoskeleton §3 |
+| κ 違諾預測實驗 | RFC ratified:7/7 後本地 qwen 時代;燃料=calibration_score | RFC responsibility_exoskeleton §3(**勘誤 2026-07-03**:κ/VowCollapsePredictor 的出處實為 `docs/LINEAGE.md` parked asset #1;RFC §3 是張量收縮實驗、無 κ 內容——照原指標跳轉會撲空)|
 | 反證鏈 measure 期 | 累積 ≥20 筆真反證後才談消費端 | tools/accountability_panel/ |
 | vow withdrawal measure 期 | 撤回記錄實際累積後,才談 conditions 驗證 | #248 anti-goals |
 | #231 的實作(如果做) | **必測 post-normalize floor 保 Σweight=1**(codex 但書) | PR #231 留言 |

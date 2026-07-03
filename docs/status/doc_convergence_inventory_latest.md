@@ -1,65 +1,53 @@
 # Document Convergence Inventory Latest
 
-- generated_at: 2026-04-06T10:57:23Z
-- primary_status_line: `doc_convergence_ready | authored_files=2385 collisions=27 missing_purpose=141 missing_date=101`
-- runtime_status_line: `entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=docs_law_engineering_mirror architecture_docs=64`
+- generated_at: 2026-07-03T06:04:16Z
+- primary_status_line: `doc_convergence_ready | authored_files=2807 collisions=15 missing_purpose=206 missing_date=120`
+- runtime_status_line: `entrypoints | doc_inventory=doc_convergence_inventory_latest.json largest_family=paradox_fixture_mirror architecture_docs=82`
 - artifact_policy_status_line: `doc_scope=authored_only | content_check=hash_plus_similarity generated_noise=excluded`
 
 ## Metrics
-- `authored_file_count`: `2385`
-- `collision_count`: `27`
-- `exact_match_collision_count`: `16`
-- `divergent_collision_count`: `11`
-- `missing_purpose_count`: `141`
-- `missing_date_count`: `101`
+- `authored_file_count`: `2807`
+- `collision_count`: `15`
+- `exact_match_collision_count`: `3`
+- `divergent_collision_count`: `12`
+- `missing_purpose_count`: `206`
+- `missing_date_count`: `120`
 - `missing_purpose_sample_count`: `40`
 - `missing_date_sample_count`: `40`
 - `missing_metadata_sample_limit`: `40`
 
 ## Category Counts
-- `architecture_doc`: `64`
+- `architecture_doc`: `82`
 - `archive_doc`: `1`
-- `chronicle_doc`: `48`
-- `constitution_doc`: `1`
-- `docs_engineering_mirror`: `16`
-- `general_doc`: `128`
-- `generated_status_artifact`: `108`
+- `chronicle_doc`: `51`
+- `docs_engineering_mirror`: `19`
+- `general_doc`: `211`
+- `generated_status_artifact`: `142`
 - `knowledge_doc`: `2`
-- `law_doc`: `60`
-- `law_engineering_mirror`: `15`
-- `memory_doc_or_data`: `1628`
+- `memory_doc_or_data`: `1824`
 - `paradox_fixture`: `8`
 - `paradox_test_fixture`: `8`
-- `philosophy_doc`: `27`
-- `plan_doc`: `142`
+- `philosophy_doc`: `33`
+- `plan_doc`: `227`
 - `report_doc`: `29`
-- `research_doc`: `15`
-- `root_entrypoint`: `11`
+- `research_doc`: `23`
+- `root_entrypoint`: `8`
 - `spec_doc`: `43`
-- `status_doc`: `28`
-- `test_doc_or_fixture`: `3`
+- `status_doc`: `89`
+- `test_doc_or_fixture`: `7`
 
 ## Collision Families
-- `docs_law_engineering_mirror`: `14`
-- `manual_review`: `5`
+- `manual_review`: `7`
 - `paradox_fixture_mirror`: `8`
 
 ## Priority Actions
-- `engineering_mirror_contract_maintenance` [`high`] Maintain the explicit engineering mirror contract and keep the mirror lane synchronized.
-  - why: 14 basename collisions still exist by design, but the repo now has an ownership contract; current sync_needed_count=0.
-  - evidence: `APPENDIX_ENGINEERING.md`
-  - evidence: `OVERVIEW.md`
-  - evidence: `VOLUME_III_ENGINEERING_RESPONSIBILITY.md`
-  - evidence: `VOLUME_II_ENGINEERING_DYNAMICS.md`
-  - evidence: `VOLUME_IV_ENGINEERING_EVOLUTION.md`
-  - evidence: `VOLUME_I_ENGINEERING_FOUNDATION.md`
-  - evidence: `VOLUME_V_ENGINEERING_CLOSURE.md`
-  - evidence: `cqrs_tonesoul_flow.md`
-- `basename_divergence_registry_maintenance` [`high`] Maintain the curated basename-divergence registry instead of re-triaging the same files.
-  - why: 5 manual-review collisions are now classified in the divergence registry; unresolved_private_shadow=1.
+- `same_basename_divergence_review` [`high`] Review same-basename files whose content is no longer acting like a mirror.
+  - why: 7 basename collisions now carry materially different content, so they need explicit role separation, renaming, or documented source-of-truth.
+  - evidence: `AXIOMS.json`
+  - evidence: `README.zh-TW.md`
+  - evidence: `SOUL.md`
   - evidence: `academic_grounding.md`
   - evidence: `autonomous_registry_schedule_latest.json`
-  - evidence: `manifesto.md`
   - evidence: `metadata.json`
   - evidence: `vows_meta.json`
 - `private_memory_shadow_contract_maintenance` [`high`] Maintain the dedicated private-memory shadow contract and keep nested memory lanes out of public cleanup.
@@ -68,10 +56,10 @@
 - `root_entrypoint_metadata_backfill` [`high`] Backfill Purpose and Last Updated metadata on public entrypoint documents.
   - why: 3 root entrypoints are still missing Purpose and/or date hints, which makes retrieval agents infer scope from prose instead of metadata.
   - evidence: `AGENTS.md`
-  - evidence: `HANDOFF.md`
   - evidence: `MEMORY.md`
+  - evidence: `SOUL.md`
 - `historical_doc_lane_contract_maintenance` [`medium`] Maintain the historical document lane contract so archive and chronicle surfaces stay governed without per-file manual metadata backfill.
-  - why: 49 historical-lane docs are now governed by a dedicated policy and report; current chronicle_markdown_count=19.
+  - why: 52 historical-lane docs are now governed by a dedicated policy and report; current chronicle_markdown_count=19.
   - evidence: `docs/archive/deprecated_modules/README.md`
   - evidence: `docs/chronicles/README.md`
   - evidence: `docs/chronicles/scribe_chronicle_20260312_232804.md`
@@ -93,151 +81,119 @@
 
 ## Top Missing Purpose Metadata
 - `AGENTS.md`
-- `HANDOFF.md`
 - `MEMORY.md`
+- `SOUL.md`
+- `docs/GLOSSARY.md`
+- `docs/LINEAGE.md`
+- `docs/MATH_FOUNDATIONS.md`
+- `docs/OUTLOOK.md`
+- `docs/PRINCIPLE_ENGINEERING_ALIGNMENT.md`
+- `docs/RELATED_WORK.md`
 - `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`
+- `docs/architecture/CONTEXT_BUDGET_SPEC.md`
+- `docs/architecture/architecture_legibility_2026-06-15.md`
+- `docs/architecture/framework_canonical_decision_2026-05-14.md`
+- `docs/architecture/independent_verifier_phase_f_subagent_addendum_2026-05-16.md`
+- `docs/architecture/independent_verifier_spec_2026-05-14.md`
+- `docs/architecture/tonesoul_layer_map_2026-06-29.md`
+- `docs/collaborators/codex_reasoning_signature_2026-06-18.md`
+- `docs/design/tonesoul-reference/README.md`
+- `docs/design/tonesoul-reference/SKILL.md`
+- `docs/design/tonesoul-reference/sources/SOUL.md`
+- `docs/design/tonesoul-reference/sources/_MIRROR_NOTICE.md`
+- `docs/design/tonesoul-reference/ui_kits/README.md`
+- `docs/design/tonesoul-reference/ui_kits/dashboard/README.md`
+- `docs/design/tonesoul-reference/ui_kits/site/README.md`
+- `docs/dialogues/adversarial_self_review_2026-06-18.md`
+- `docs/essays/001_seven_generations_against_my_own_secrecy.md`
+- `docs/essays/002_evidence_expires_too.md`
+- `docs/essays/003_why_publish_my_ai_mistake_ledger.md`
+- `docs/essays/004_how_a_promise_retires_decently.md`
+- `docs/essays/005_spread_first_verdict_last.md`
+- `docs/gse/plan.md`
+- `docs/illustrations/README.md`
+- `docs/llm_paper_map_and_tonesoul_relevance_2026-06-26.md`
+- `docs/memory/STRATEGIC_CRYSTAL_FORMAT.md`
 - `docs/notes/SESSION_JOURNAL_2026-03-24_ANTIGRAVITY.md`
-- `docs/plans/memory_subjectivity_review_discussion_brief_2026-03-10.md`
-- `docs/plans/memory_subjectivity_reviewed_rejection_producer_guard_addendum_2026-03-11.md`
-- `docs/plans/memory_subjectivity_runtime_summary_addendum_2026-03-10.md`
-- `docs/plans/memory_subjectivity_shared_handoff_surface_utility_addendum_2026-03-11.md`
-- `docs/plans/memory_subjectivity_tension_grouping_addendum_2026-03-10.md`
-- `docs/plans/memory_subjectivity_worktree_settlement_handoff_preview_addendum_2026-03-11.md`
-- `docs/plans/release_readiness_staging.md`
-- `docs/plans/release_v1.0_go_nogo_2026-02-24.md`
-- `docs/plans/repo_governance_settlement_addendum_2026-03-08.md`
-- `docs/plans/runtime_gated_long_run_addendum_2026-03-08.md`
-- `docs/plans/runtime_preflight_entrypoint_addendum_2026-03-08.md`
-- `docs/plans/runtime_probe_profile_addendum_2026-03-08.md`
-- `docs/plans/runtime_source_grouping_addendum_2026-03-08.md`
-- `docs/plans/scribe_architecture_evolution.md`
-- `docs/plans/side_branch_isolation_playbook_2026-02-21.md`
-- `docs/plans/status_handoff_grammar.md`
-- `docs/plans/subjectivity_market_coordination_note_2026-03-12.md`
-- `docs/plans/swarm_long_task_plan_2026-03-01.md`
-- `docs/plans/tonesoul_agent_enforcement_plan_2026-03-21.md`
-- `docs/plans/tonesoul_governance_to_meaningful_divergence_rfc_2026-02-23.md`
-- `docs/plans/tonesoul_knowledge_graph_plan_2026-03-21.md`
-- `docs/plans/tonesoul_market_mirror_roadmap.md`
-- `docs/plans/tri_persona_audit_plan.md`
-- `docs/plans/true_verification_experiment_entrypoint_addendum_2026-03-08.md`
-- `docs/plans/true_verification_governance_surface.md`
-- `docs/plans/true_verification_host_schedule_runbook_2026-03-08.md`
-- `docs/plans/true_verification_task_runtime_hygiene_addendum_2026-03-08.md`
-- `docs/plans/true_verification_task_scheduler_install_addendum_2026-03-08.md`
-- `docs/plans/true_verification_task_scheduler_template_addendum_2026-03-08.md`
-- `docs/plans/true_verification_task_status_addendum_2026-03-08.md`
-- `docs/plans/wfgy_avatar_deep_analysis_2026-04-02.md`
-- `docs/plans/wfgy_problem_map_fit_for_tonesoul_2026-03-14.md`
-- `docs/plans/worktree_settlement_mainline_addendum_2026-03-08.md`
-- `docs/privacy_policy.md`
-- `docs/proposals/phase7_dream_engine.md`
+- `docs/outreach/generated/arxiv.en.md`
+- `docs/outreach/generated/arxiv.zh-TW.md`
+- `docs/outreach/generated/bluesky.en.md`
+- `docs/outreach/generated/bluesky.zh-TW.md`
+- `docs/outreach/generated/devto.en.md`
 
 ## Top Missing Date Metadata
 - `AGENTS.md`
-- `HANDOFF.md`
 - `MEMORY.md`
+- `SOUL.md`
+- `docs/GLOSSARY.md`
+- `docs/LINEAGE.md`
+- `docs/MATH_FOUNDATIONS.md`
+- `docs/RELATED_WORK.md`
 - `docs/RFC-015_Self_Dogfooding_Runtime_Adapter.md`
-- `docs/plans/scribe_architecture_evolution.md`
-- `docs/plans/status_handoff_grammar.md`
-- `docs/plans/tonesoul_market_mirror_roadmap.md`
-- `docs/plans/tri_persona_audit_plan.md`
-- `docs/plans/true_verification_governance_surface.md`
-- `docs/privacy_policy.md`
-- `docs/proposals/phase7_dream_engine.md`
-- `docs/releases/v1.0.0-stable-postmortem.md`
-- `docs/reproducibility_guide.md`
-- `docs/research/RESEARCH_CONTEXT_2.0.md`
-- `docs/research/code_alignment_report.md`
-- `docs/research/experimental_design.md`
-- `docs/research/paper_outline_multiperspective_truth.md`
-- `docs/research/reviewer_feedback_issues.md`
-- `docs/research/tonestream_navigator_reference.md`
-- `docs/rfc-005-memory-consolidator.md`
-- `docs/rfc-006-revenue-gates.md`
-- `docs/rfc-007-structured-event-metadata.md`
-- `docs/rfc-008-auto-patching.md`
-- `docs/rmf_crosswalk.md`
-- `docs/soul_score_daily_journal.md`
-- `docs/system_structure_overview.txt`
-- `docs/system_walkthrough.md`
-- `docs/terminology.md`
-- `docs/use_cases.md`
-- `docs/when_to_ground.md`
-- `docs/zenodo_publishing_guide.md`
-- `docs/環境設定.md`
-- `law/.github/ISSUE_TEMPLATE.md`
-- `law/.github/ISSUE_TEMPLATE/ethics-safety-report.md`
-- `law/.github/ISSUE_TEMPLATE/general_issue.md`
-- `law/.github/PULL_REQUEST_TEMPLATE.md`
-- `law/CODE_OF_CONDUCT.md`
-- `law/CONTRIBUTING.md`
-- `law/ENGINEERING_OVERVIEW.md`
-- `law/GOVERNANCE_LOG.md`
+- `docs/architecture/CONTEXT_BUDGET_SPEC.md`
+- `docs/architecture/TONESOUL_ANALYZER_AND_PROMOTION_GATE_CONTRACT.md`
+- `docs/architecture/TONESOUL_BOUNDED_MUTATION_SPACE_CONTRACT.md`
+- `docs/architecture/TONESOUL_COMPILED_KNOWLEDGE_LANDING_ZONE_SPEC.md`
+- `docs/architecture/TONESOUL_EXPERIMENT_REGISTRY_AND_LINEAGE_BOUNDARY_CONTRACT.md`
+- `docs/architecture/TONESOUL_GOVERNANCE_DEPTH_ROUTING_V0_SPEC.md`
+- `docs/architecture/TONESOUL_KNOWLEDGE_LAYER_SOURCE_TAXONOMY_AND_PARKING_CONTRACT.md`
+- `docs/architecture/TONESOUL_OPERATOR_RETRIEVAL_QUERY_CONTRACT.md`
+- `docs/architecture/TONESOUL_PROMOTION_READY_RESULT_SURFACE_CONTRACT.md`
+- `docs/architecture/TONESOUL_SELF_IMPROVEMENT_EVALUATOR_HARNESS_CONTRACT.md`
+- `docs/architecture/TONESOUL_SELF_IMPROVEMENT_LOOP_V0_SPEC.md`
+- `docs/architecture/TONESOUL_SURFACE_VERSIONING_AND_CONSUMER_LINEAGE_CONTRACT.md`
+- `docs/design/tonesoul-reference/README.md`
+- `docs/design/tonesoul-reference/SKILL.md`
+- `docs/design/tonesoul-reference/sources/SOUL.md`
+- `docs/design/tonesoul-reference/sources/_MIRROR_NOTICE.md`
+- `docs/design/tonesoul-reference/ui_kits/README.md`
+- `docs/design/tonesoul-reference/ui_kits/dashboard/README.md`
+- `docs/design/tonesoul-reference/ui_kits/site/README.md`
+- `docs/essays/001_seven_generations_against_my_own_secrecy.md`
+- `docs/essays/002_evidence_expires_too.md`
+- `docs/essays/003_why_publish_my_ai_mistake_ledger.md`
+- `docs/essays/004_how_a_promise_retires_decently.md`
+- `docs/essays/005_spread_first_verdict_last.md`
+- `docs/gse/plan.md`
+- `docs/illustrations/README.md`
+- `docs/outreach/generated/arxiv.en.md`
+- `docs/outreach/generated/arxiv.zh-TW.md`
+- `docs/outreach/generated/bluesky.en.md`
+- `docs/outreach/generated/bluesky.zh-TW.md`
+- `docs/outreach/generated/devto.en.md`
+- `docs/outreach/generated/devto.zh-TW.md`
 
 ## Basename Collisions
-- `APPENDIX_ENGINEERING.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
-  - recommendation: declare one canonical mirror owner or merge the duplicated engineering texts
-  - `docs/engineering/APPENDIX_ENGINEERING.md`
-  - `law/engineering/APPENDIX_ENGINEERING.md`
-- `OVERVIEW.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
-  - recommendation: declare one canonical mirror owner or merge the duplicated engineering texts
-  - `docs/engineering/OVERVIEW.md`
-  - `law/engineering/OVERVIEW.md`
-- `README.md` [paradox_fixture_mirror] exact=`false` divergent=`true` max_similarity=`0.896`
+- `AXIOMS.json` [manual_review] exact=`false` divergent=`true` max_similarity=`0.574`
+  - recommendation: manual merge review required; same basename now carries different content
+  - `AXIOMS.json`
+  - `docs/design/tonesoul-reference/sources/AXIOMS.json`
+- `README.md` [paradox_fixture_mirror] exact=`false` divergent=`true` max_similarity=`0.436`
   - recommendation: keep as test mirror but document source-of-truth and sync direction
   - `docs/archive/deprecated_modules/README.md`
   - `docs/chronicles/README.md`
+  - `docs/design/tonesoul-reference/README.md`
+  - `docs/design/tonesoul-reference/sources/README.md`
+  - `docs/design/tonesoul-reference/ui_kits/dashboard/README.md`
+  - `docs/design/tonesoul-reference/ui_kits/README.md`
+  - `docs/design/tonesoul-reference/ui_kits/site/README.md`
   - `docs/engineering/README.md`
-  - `docs/philosophy/README.md`
-  - `docs/README.md`
-  - `docs/status/README.md`
-  - `law/docs/README.md`
-  - `law/engineering/README.md`
-- `VOLUME_III_ENGINEERING_RESPONSIBILITY.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
-  - recommendation: declare one canonical mirror owner or merge the duplicated engineering texts
-  - `docs/engineering/VOLUME_III_ENGINEERING_RESPONSIBILITY.md`
-  - `law/engineering/VOLUME_III_ENGINEERING_RESPONSIBILITY.md`
-- `VOLUME_II_ENGINEERING_DYNAMICS.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
-  - recommendation: declare one canonical mirror owner or merge the duplicated engineering texts
-  - `docs/engineering/VOLUME_II_ENGINEERING_DYNAMICS.md`
-  - `law/engineering/VOLUME_II_ENGINEERING_DYNAMICS.md`
-- `VOLUME_IV_ENGINEERING_EVOLUTION.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
-  - recommendation: declare one canonical mirror owner or merge the duplicated engineering texts
-  - `docs/engineering/VOLUME_IV_ENGINEERING_EVOLUTION.md`
-  - `law/engineering/VOLUME_IV_ENGINEERING_EVOLUTION.md`
-- `VOLUME_I_ENGINEERING_FOUNDATION.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
-  - recommendation: declare one canonical mirror owner or merge the duplicated engineering texts
-  - `docs/engineering/VOLUME_I_ENGINEERING_FOUNDATION.md`
-  - `law/engineering/VOLUME_I_ENGINEERING_FOUNDATION.md`
-- `VOLUME_V_ENGINEERING_CLOSURE.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
-  - recommendation: declare one canonical mirror owner or merge the duplicated engineering texts
-  - `docs/engineering/VOLUME_V_ENGINEERING_CLOSURE.md`
-  - `law/engineering/VOLUME_V_ENGINEERING_CLOSURE.md`
+- `README.zh-TW.md` [manual_review] exact=`false` divergent=`true` max_similarity=`0.461`
+  - recommendation: manual merge review required; same basename now carries different content
+  - `docs/design/tonesoul-reference/sources/README.zh-TW.md`
+  - `README.zh-TW.md`
+- `SOUL.md` [manual_review] exact=`true` divergent=`false` max_similarity=`1.0`
+  - recommendation: candidate for dedupe or canonical-owner annotation
+  - `docs/design/tonesoul-reference/sources/SOUL.md`
+  - `SOUL.md`
 - `academic_grounding.md` [manual_review] exact=`false` divergent=`true` max_similarity=`0.034`
   - recommendation: manual merge review required; same basename now carries different content
   - `docs/philosophy/academic_grounding.md`
   - `memory/narrative/threads/academic_grounding.md`
-- `autonomous_registry_schedule_latest.json` [manual_review] exact=`false` divergent=`true` max_similarity=`0.506`
+- `autonomous_registry_schedule_latest.json` [manual_review] exact=`false` divergent=`true` max_similarity=`0.117`
   - recommendation: manual merge review required; same basename now carries different content
   - `docs/status/autonomous_registry_schedule_latest.json`
   - `docs/status/runtime_probe_watch/autonomous_registry_schedule_latest.json`
-- `cqrs_tonesoul_flow.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
-  - recommendation: declare one canonical mirror owner or merge the duplicated engineering texts
-  - `docs/engineering/DIAGRAMS/cqrs_tonesoul_flow.md`
-  - `law/engineering/DIAGRAMS/cqrs_tonesoul_flow.md`
-- `drift_score_example.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
-  - recommendation: declare one canonical mirror owner or merge the duplicated engineering texts
-  - `docs/engineering/EXAMPLES/drift_score_example.md`
-  - `law/engineering/EXAMPLES/drift_score_example.md`
-- `drift_score_visualization.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
-  - recommendation: declare one canonical mirror owner or merge the duplicated engineering texts
-  - `docs/engineering/DIAGRAMS/drift_score_visualization.md`
-  - `law/engineering/DIAGRAMS/drift_score_visualization.md`
-- `manifesto.md` [manual_review] exact=`false` divergent=`true` max_similarity=`0.034`
-  - recommendation: manual merge review required; same basename now carries different content
-  - `constitution/manifesto.md`
-  - `docs/philosophy/manifesto.md`
 - `medical_suicide_paradox.json` [paradox_fixture_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
   - recommendation: keep as test mirror but document source-of-truth and sync direction
   - `PARADOXES/medical_suicide_paradox.json`
@@ -266,22 +222,6 @@
   - recommendation: keep as test mirror but document source-of-truth and sync direction
   - `PARADOXES/paradox_007.json`
   - `tests/fixtures/paradoxes/paradox_007.json`
-- `poav_report_example.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
-  - recommendation: declare one canonical mirror owner or merge the duplicated engineering texts
-  - `docs/engineering/EXAMPLES/poav_report_example.md`
-  - `law/engineering/EXAMPLES/poav_report_example.md`
-- `step_ledger_example.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
-  - recommendation: declare one canonical mirror owner or merge the duplicated engineering texts
-  - `docs/engineering/EXAMPLES/step_ledger_example.md`
-  - `law/engineering/EXAMPLES/step_ledger_example.md`
-- `three_vector_structure.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
-  - recommendation: declare one canonical mirror owner or merge the duplicated engineering texts
-  - `docs/engineering/DIAGRAMS/three_vector_structure.md`
-  - `law/engineering/DIAGRAMS/three_vector_structure.md`
-- `time_island_example.md` [docs_law_engineering_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
-  - recommendation: declare one canonical mirror owner or merge the duplicated engineering texts
-  - `docs/engineering/EXAMPLES/time_island_example.md`
-  - `law/engineering/EXAMPLES/time_island_example.md`
 - `truth_vs_harm_paradox.json` [paradox_fixture_mirror] exact=`true` divergent=`false` max_similarity=`1.0`
   - recommendation: keep as test mirror but document source-of-truth and sync direction
   - `PARADOXES/truth_vs_harm_paradox.json`

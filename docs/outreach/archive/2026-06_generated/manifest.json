@@ -1,0 +1,181 @@
+{
+  "draft_count": 16,
+  "drafts": [
+    {
+      "platform": "lesswrong",
+      "language": "zh-TW",
+      "status": "review_required",
+      "publish_mode": "manual_review",
+      "warnings": [
+        "LessWrong needs human review before posting."
+      ],
+      "blockers": [],
+      "char_count": 2097
+    },
+    {
+      "platform": "lesswrong",
+      "language": "en",
+      "status": "review_required",
+      "publish_mode": "manual_review",
+      "warnings": [
+        "LessWrong needs human review before posting."
+      ],
+      "blockers": [],
+      "char_count": 3090
+    },
+    {
+      "platform": "huggingface",
+      "language": "zh-TW",
+      "status": "review_required",
+      "publish_mode": "manual_review",
+      "warnings": [
+        "Hugging Face Blog needs human review before posting."
+      ],
+      "blockers": [],
+      "char_count": 2118
+    },
+    {
+      "platform": "huggingface",
+      "language": "en",
+      "status": "review_required",
+      "publish_mode": "manual_review",
+      "warnings": [
+        "Hugging Face Blog needs human review before posting."
+      ],
+      "blockers": [],
+      "char_count": 3111
+    },
+    {
+      "platform": "devto",
+      "language": "zh-TW",
+      "status": "review_required",
+      "publish_mode": "manual_review",
+      "warnings": [
+        "DEV Community needs human review before posting."
+      ],
+      "blockers": [],
+      "char_count": 1998
+    },
+    {
+      "platform": "devto",
+      "language": "en",
+      "status": "review_required",
+      "publish_mode": "manual_review",
+      "warnings": [
+        "DEV Community needs human review before posting."
+      ],
+      "blockers": [],
+      "char_count": 2991
+    },
+    {
+      "platform": "substack",
+      "language": "zh-TW",
+      "status": "review_required",
+      "publish_mode": "manual_review",
+      "warnings": [
+        "Substack needs human review before posting."
+      ],
+      "blockers": [],
+      "char_count": 1822
+    },
+    {
+      "platform": "substack",
+      "language": "en",
+      "status": "review_required",
+      "publish_mode": "manual_review",
+      "warnings": [
+        "Substack needs human review before posting."
+      ],
+      "blockers": [],
+      "char_count": 2815
+    },
+    {
+      "platform": "bluesky",
+      "language": "zh-TW",
+      "status": "review_required",
+      "publish_mode": "manual_or_api_with_constraints",
+      "warnings": [
+        "Bluesky may allow API posting, but this tool only drafts and does not publish."
+      ],
+      "blockers": [],
+      "char_count": 139
+    },
+    {
+      "platform": "bluesky",
+      "language": "en",
+      "status": "review_required",
+      "publish_mode": "manual_or_api_with_constraints",
+      "warnings": [
+        "Bluesky may allow API posting, but this tool only drafts and does not publish."
+      ],
+      "blockers": [],
+      "char_count": 248
+    },
+    {
+      "platform": "linkedin",
+      "language": "zh-TW",
+      "status": "review_required",
+      "publish_mode": "manual_only",
+      "warnings": [
+        "LinkedIn should be handled manually: Manual copy only; LinkedIn API terms prohibit using APIs to automate posting."
+      ],
+      "blockers": [],
+      "char_count": 251
+    },
+    {
+      "platform": "linkedin",
+      "language": "en",
+      "status": "review_required",
+      "publish_mode": "manual_only",
+      "warnings": [
+        "LinkedIn should be handled manually: Manual copy only; LinkedIn API terms prohibit using APIs to automate posting."
+      ],
+      "blockers": [],
+      "char_count": 630
+    },
+    {
+      "platform": "hacker-news",
+      "language": "zh-TW",
+      "status": "review_required",
+      "publish_mode": "manual_only_no_generated_comments",
+      "warnings": [
+        "Hacker News should be handled manually: Submit original source manually; do not paste AI-generated comments."
+      ],
+      "blockers": [],
+      "char_count": 809
+    },
+    {
+      "platform": "hacker-news",
+      "language": "en",
+      "status": "review_required",
+      "publish_mode": "manual_only_no_generated_comments",
+      "warnings": [
+        "Hacker News should be handled manually: Submit original source manually; do not paste AI-generated comments."
+      ],
+      "blockers": [],
+      "char_count": 870
+    },
+    {
+      "platform": "arxiv",
+      "language": "zh-TW",
+      "status": "blocked",
+      "publish_mode": "do_not_post_without_peer_review",
+      "warnings": [],
+      "blockers": [
+        "arXiv profile is blocked: do_not_post_without_peer_review."
+      ],
+      "char_count": 939
+    },
+    {
+      "platform": "arxiv",
+      "language": "en",
+      "status": "blocked",
+      "publish_mode": "do_not_post_without_peer_review",
+      "warnings": [],
+      "blockers": [
+        "arXiv profile is blocked: do_not_post_without_peer_review."
+      ],
+      "char_count": 1132
+    }
+  ]
+}
