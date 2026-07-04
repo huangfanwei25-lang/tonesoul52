@@ -14,7 +14,7 @@
 |---|---|---|
 | Claude 主 agent(現 Fable 5;7/7 後=訂閱可用的最強型號) | 本 session 即是 | — |
 | Claude subagent(Agent tool:sonnet / haiku / opus / fable + effort 參數) | 可用 | harness 內建 |
-| codex CLI | **0.134.0 已裝**(compute 是另一回事,派工時實測) | `codex --version`;compute 探測=實跑一次小 review,看 `scripts/codex_review.py` 是否 degrade |
+| codex CLI | **0.134.0 已裝**(compute 是另一回事,派工時實測)。**判例(2026-07-04,兩敗一成):在 git repo 內派「審文件」,codex 會壓倒性地改審 diff,prompt 拉不回——把待審檔複製到無 git 目錄再 `--dir` 過去;隔離時被引用檔不在包內會生「缺檔」假陽性,focus 要聲明勿以缺檔立案**(全程:`docs/status/tiandao_codex_review_adjudication_2026-07-04.md`) | `codex --version`;compute 探測=實跑一次小 review,看 `scripts/codex_review.py` 是否 degrade |
 | gemini-cli(headless) | **裝了(0.49.0)但個人版 OAuth 已被 Google 停用**——2026-07-04 實測回 `IneligibleTierError: migrate to Antigravity`。headless 復活的唯一路=owner 自設 `GEMINI_API_KEY`(免費 AI Studio key;**owner 在自己終端 `setx` 設,不經對話傳遞**——PyPI token 判例) | `gemini -p "test"` 看是否還報 IneligibleTier |
 | Antigravity IDE(Gemini 訂閱的家) | **已裝**(`%LOCALAPPDATA%\Programs\Antigravity`),owner 已 OAuth。**GUI IDE,無 headless CLI**——第三隻眼走**檔案契約**:owner 在 Antigravity 裡下 review、要求它把 findings 寫進 `tmp/agy_review_<topic>.md`,agent 讀檔仲裁(owner 自己發明的工作法,與仲裁協議天然相容) | 目錄存在 + owner 確認登入 |
 | 本地 qwen(ollama) | **服務起著**:qwen2.5:1.5b + nomic-embed-text,port 11434 OPEN | `ollama list`;port 探測(雙 shell 通用):`python -c "import socket;s=socket.socket();s.settimeout(0.5);print('OPEN' if s.connect_ex(('127.0.0.1',11434))==0 else 'closed')"` |
