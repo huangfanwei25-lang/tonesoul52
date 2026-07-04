@@ -1,5 +1,9 @@
 # 出航手冊 — HF 發佈(一次性)
 
+> **已出航(2026-07-04)**:https://huggingface.co/datasets/Famwin/tonesoul-accountability-traces
+> ——四步全走完:whoami=Famwin、驗證器綠(318)、repo 建立、上傳 4 檔;線上驗證:卡片渲染 ✓、
+> license cc-by-4.0 ✓、traces.jsonl 行數 318=驗證器數字 ✓(viewer 轉檔暖機中,行數以 resolve
+> 直抓驗證)。本手冊保留供後續版本重新出航(見「版本紀律」)。
 > 前提:owner 已跑 `hf auth login`(token 於 hf.co/settings/tokens 建立,型別 **Write**)。
 > 授權:CC BY 4.0(owner 決定 2026-07-04);通道:HF datasets(owner 三決之一)。
 
