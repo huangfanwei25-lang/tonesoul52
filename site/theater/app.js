@@ -175,8 +175,84 @@ function initGate() {
 function startGame(resumed) {
   $("#gate").classList.add("hidden");
   $("#game").classList.remove("hidden");
-  if (!resumed) S.playlist = buildPlaylist("A"); // 第8章進場時再讓玩家選線
+  if (!resumed) {
+    S.playlist = buildPlaylist("A"); // 第8章進場時再讓玩家選線
+    renderMission();
+    return;
+  }
   renderChapter();
+}
+
+/* ── 任命書(開場目標框架;推進感 pass 2026-07-04)──── */
+
+function renderMission() {
+  $("#hud-chapter").textContent = "任命書";
+  $("#hud-location").textContent = "中央轉轍塔・轉轍席前";
+  $("#hud-pressure").textContent = "";
+  for (const k of ["medical", "energy", "trust"]) {
+    $(`#res-${k} i`).style.width = `${S.resources[k] * 10}%`;
+  }
+  const stage = $("#stage");
+  stage.innerHTML = "";
+  stage.append(el("h2", "ev-title", "轉轍官任命書"));
+  stage.append(el("p", "ev-briefing",
+    "岔軌城任命你為新任轉轍官。十一站,十二次轉轍——每一站你都要在沒有完美答案的地方做選擇、留下理由、承擔後果。" +
+    "這一局的目標不是「贏」:是走完全程,在終點面對三個問題——你保住了什麼?你犧牲了什麼?你是否願意承認這兩者都是真的?" +
+    "——然後留下一份你敢回讀的責任紀錄。"));
+  stage.append(el("h3", null, "你的路線"));
+  stage.append(renderRouteBar());
+  stage.append(el("p", "hint",
+    "亮著的是你所在的站;▓▓▓ 是未登錄區域,走到才解鎖;第八站是岔口,到時由你選線。"));
+  stage.append(howtoDigest());
+  const go = el("button", "pick next");
+  go.textContent = "上任,前往中央轉轍塔";
+  go.addEventListener("click", () => renderChapter());
+  stage.append(go);
+}
+
+function howtoDigest() {
+  const d = el("details", "howto");
+  d.innerHTML = `<summary>怎麼玩(機制書濃縮版)</summary>
+  <ol>
+    <li>每站一次轉轍:讀情報 → 選方案(或第三條路,或沉默)→ 留下理由。</li>
+    <li>選項下方有風險標示——選之前你就知道自己在賭什麼(天道 v0.2 第二律)。</li>
+    <li>你的理由會晶化成「錨鏈」;前後矛盾時,黑鏡會拿你自己的話回來問你——你有六種回應空間,沒有一種是錯的。</li>
+    <li>三資源(醫療/能源/信任)0-10;歸零不會結束遊戲,但世界會記得。</li>
+    <li>沉默也是轉轍:不選,預設程序替你選,帳記在你名下(第九律)。</li>
+    <li>累了可以暫停、降強度、跳過高壓站——自我照顧的跳過永遠不會被拿來回讀你(第十律)。</li>
+    <li>結局不評善惡,只回答三個問題,附一份可下載的完整軌痕。</li>
+  </ol>`;
+  return d;
+}
+
+function stationName(eid) {
+  const ev = eventById(eid);
+  if (!ev) return "?";
+  const loc = S.data.locations[ev.location_id];
+  return loc ? loc.name : "?";
+}
+
+function stationLocked(eid) {
+  const ev = eventById(eid);
+  if (!ev) return false;
+  const loc = S.data.locations[ev.location_id];
+  return !!(loc && loc.visible_from_start === false);
+}
+
+function renderRouteBar() {
+  const bar = el("div", "route-bar");
+  S.playlist.forEach((eid, i) => {
+    const current = i === S.idx;
+    const past = i < S.idx;
+    let label;
+    if ((eid === "E08" || eid === "E09") && i > S.idx) label = "岔口";
+    else if (!past && !current && stationLocked(eid)) label = "▓▓▓";
+    else label = stationName(eid);
+    const s = el("span", "station " + (current ? "current" : past ? "past" : "future"));
+    s.textContent = `${i + 1} ${label}`;
+    bar.append(s);
+  });
+  return bar;
 }
 
 /* ── HUD ─────────────────────────────────────────── */
@@ -198,6 +274,17 @@ function renderHUD() {
     bar.style.width = `${S.resources[k] * 10}%`;
     bar.parentElement.dataset.low = S.resources[k] <= 2 ? "1" : "";
   }
+  // 推進感計數器:活錨鏈(你立的公開承諾)+ 累積黑箱(結局揭曉)
+  const anchorsEl = $("#hud-anchors");
+  if (anchorsEl) {
+    const live = S.anchors.filter((a) => !a.dissolved).length;
+    anchorsEl.textContent = live ? `錨鏈×${live}` : "";
+  }
+  const bbEl = $("#hud-blackbox");
+  if (bbEl) {
+    const bb = S.trace.reduce((n, t) => n + (t.blackbox_withheld || []).length, 0);
+    bbEl.textContent = bb ? `▓×${bb}` : "";
+  }
 }
 
 /* ── 章節渲染:五階段迴圈 ─────────────────────────── */
@@ -218,12 +305,18 @@ function renderChapter() {
   const ev = S.cur;
   const loc = S.data.locations[ev.location_id];
 
+  // 路線圖(推進感:你在哪、走過哪、還剩哪)
+  stage.append(renderRouteBar());
+
   // 1. 危機揭示
   const head = el("div", "ev-head");
   head.append(
     el("h2", "ev-title", esc(ev.title)),
     el("p", "ev-loc", `${esc(loc.name)} — ${esc(loc.core_question)}`)
   );
+  if (ev.objective) {
+    head.append(el("p", "objective", `本站的轉轍:${esc(ev.objective)}`));
+  }
   stage.append(head);
   stage.append(el("p", "ev-briefing", esc(fillPlaceholders(ev.briefing))));
 
@@ -461,8 +554,11 @@ function resolveTurn(opt, reasonText, probeText) {
       }
     : parseReason(reasonText + (probeText ? " " + probeText : ""), opt);
 
-  // 資源
+  // 資源(記增減,給推進感顯示)
+  const resBefore = { ...S.resources };
   for (const [k, v] of Object.entries(outcome.resource_effects || {})) bumpResource(k, v);
+  const resDelta = {};
+  for (const k of Object.keys(S.resources)) resDelta[k] = S.resources[k] - resBefore[k];
 
   // 錨鏈:承諾語晶化
   if (!isDefault && (COMMIT_RE.test(reasonText) || /承諾/.test(opt.label))) {
@@ -498,6 +594,7 @@ function resolveTurn(opt, reasonText, probeText) {
     blackbox_withheld: (ev.intel.blackbox || []),
     echo_done: ev._echoDone || [],
     resources_after: { ...S.resources },
+    resource_delta: resDelta,
     blackmirror: null, // 回讀回應後補
   };
   S.trace.push(record);
@@ -536,6 +633,14 @@ function renderResponse(record, outcome, mirror) {
   stage.append(el("h2", "ev-title", `${esc(ev.title)} — 轉轍完成`));
   stage.append(el("p", "chosen-line",
     `你的選擇:<b>${esc(record.choice.label)}</b>${record.reason_text ? ` — 「${esc(record.reason_text)}」` : ""}`));
+
+  // 世界因你而變(推進感:資源增減立即可見)
+  const RES_NAMES = { medical: "醫療", energy: "能源", trust: "信任" };
+  const chips = Object.entries(record.resource_delta || {})
+    .filter(([, v]) => v !== 0)
+    .map(([k, v]) => `<span class="chip ${v > 0 ? "up" : "down"}">${RES_NAMES[k]} ${v > 0 ? "+" + v + " ▲" : v + " ▼"}</span>`);
+  stage.append(el("p", "delta-line",
+    chips.length ? chips.join(" ") : '<span class="chip flat">資源無增減——但軌痕已落帳</span>'));
 
   // 真 council verdict(重播,不偽造)
   stage.append(renderCouncil(record.council_key));
@@ -624,7 +729,16 @@ function renderMirror(record, mirror) {
 
 function nextButton() {
   const b = el("button", "pick next");
-  b.textContent = S.idx + 1 >= S.playlist.length ? "生成責任結局" : "前往下一章";
+  if (S.idx + 1 >= S.playlist.length) {
+    b.textContent = "生成責任結局";
+  } else {
+    const nextId = S.playlist[S.idx + 1];
+    const isBranch = nextId === "E08" || nextId === "E09";
+    const label = isBranch ? "岔口(由你選線)"
+      : stationLocked(nextId) ? "▓▓▓(未登錄區域)"
+      : stationName(nextId);
+    b.textContent = `前往下一站:${label}`;
+  }
   b.addEventListener("click", () => { S.idx++; save(); renderChapter(); });
   return b;
 }

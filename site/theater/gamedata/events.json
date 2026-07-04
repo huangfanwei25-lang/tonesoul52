@@ -153,7 +153,8 @@
     "transparency"
    ],
    "quote_template": "你的第一次轉轍,你說:「{trace_quote}」。現在你選擇:{current_choice}。這兩者之間的差異是原則修正、情境變化,還是責任逃避?"
-  }
+  },
+  "objective": "就任第一天:決定要不要照系統的建議,簽下你的第一份名額移轉令。"
  },
  {
   "id": "E02",
@@ -334,7 +335,8 @@
     "rule_break"
    ],
    "quote_template": "你在白線醫療站說過:『{trace_quote}』。現在你選擇:{current_choice}。這兩者之間的差異,是原則修正、情境變化,還是責任逃避?"
-  }
+  },
+  "objective": "醫療車只有一班:開往五十名傷者,還是唯一能修水源的人。"
  },
  {
   "id": "E03",
@@ -486,7 +488,8 @@
     "repair_first"
    ],
    "quote_template": "你在灰區說過:「{trace_quote}」。現在你選擇:{current_choice}。這兩者之間的差異是原則修正、情境變化,還是責任逃避?"
-  }
+  },
+  "objective": "回聲站:走進灰區,親眼看見上一章的代價住在誰的屋簷下。"
  },
  {
   "id": "E04",
@@ -715,7 +718,8 @@
     "refuse_choice"
    ],
    "quote_template": "在記憶法庭,你對回讀的回應是:「{trace_quote}」。現在你選擇:{current_choice}。這兩者之間的差異是原則修正、情境變化,還是責任逃避?"
-  }
+  },
+  "objective": "記憶法庭:黎真把你說過的話放到你做過的事旁邊——選一種回應。"
  },
  {
   "id": "E05",
@@ -895,7 +899,8 @@
     "truth_first"
    ],
    "quote_template": "你曾經說過:「{trace_quote}」。現在你在第七避難車廂選擇:{current_choice}。這兩者之間的差異是原則修正、情境變化,還是責任逃避?"
-  }
+  },
+  "objective": "第七避難車廂:謊言撐著孩子們的世界——決定真相什麼時候、用什麼方式說。"
  },
  {
   "id": "E06",
@@ -1117,7 +1122,8 @@
     "rule_follow"
    ],
    "quote_template": "你曾經說過:「{trace_quote}」。現在你選擇:{current_choice}——並且說,這是衡樞的判定。這兩者之間的差異是原則修正、情境變化,還是責任逃避?"
-  }
+  },
+  "objective": "灰區斷電之夜:維持系統判定、全城勻電,或用韓灼的價碼換一條舊軌。"
  },
  {
   "id": "E07",
@@ -1287,7 +1293,8 @@
     "transparency"
    ],
    "quote_template": "在記憶水庫,你說:「{trace_quote}」。現在你選擇:{current_choice}。這兩者之間的差異是原則修正、情境變化,還是責任逃避?"
-  }
+  },
+  "objective": "記憶調閱:四百一十二人的日子換一條預測曲線——三個問題先有答案。"
  },
  {
   "id": "E08",
@@ -1467,7 +1474,8 @@
     "transparency"
    ],
    "quote_template": "在穹頂區,你說:「{trace_quote}」。現在你選擇:{current_choice}。這兩者之間的差異是原則修正、情境變化,還是責任逃避?"
-  }
+  },
+  "objective": "穹頂的茶:能源換監控、拒絕,或掀開帳本重談。"
  },
  {
   "id": "E09",
@@ -1648,7 +1656,8 @@
     "self_sacrifice"
    ],
    "quote_template": "面對預測中的暴亂,你說:「{trace_quote}」。現在你選擇:{current_choice}。這兩者之間的差異是原則修正、情境變化,還是責任逃避?"
-  }
+  },
+  "objective": "預測中的暴亂:提前鎮壓、親自下場,或封鎖而不拘留。"
  },
  {
   "id": "E10",
@@ -1855,7 +1864,8 @@
     "order_first"
    ],
    "quote_template": "面對這座城的創城罪證,你說:「{trace_quote}」。現在你選擇:{current_choice}。這兩者之間的差異是原則修正、情境變化,還是責任逃避?"
-  }
+  },
+  "objective": "黑箱舊站:創城罪證在你手裡——公開、緩衝、封存換結構,或交給程序。"
  },
  {
   "id": "E11",
@@ -2007,7 +2017,8 @@
     "truth_first"
    ],
    "quote_template": "在無名月台,你說:「{trace_quote}」。現在你選擇:{current_choice}。這兩者之間的差異是原則修正、情境變化,還是責任逃避?"
-  }
+  },
+  "objective": "回聲站:無名月台,把這一局因你停下的名字聽完。"
  },
  {
   "id": "E12",
@@ -2254,6 +2265,7 @@
     "refuse_choice"
    ],
    "quote_template": "這一局,你留下過這句話:「{trace_quote}」。最後一桿,你選擇:{current_choice}。走到這裡的你,願意讓這兩句話並排放進同一份紀錄嗎?"
-  }
+  },
+  "objective": "最後一次轉轍:重建、公開、出走、交還,或讓系統接管——你留下的是什麼?"
  }
 ]
