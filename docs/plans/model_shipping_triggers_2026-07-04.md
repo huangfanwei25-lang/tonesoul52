@@ -17,7 +17,8 @@
 2. **7/7 後本地 qwen LoRA 時代就位**——掛進已排程的 κ 違諾預測實驗
    (`docs/LINEAGE.md` parked asset #1),做成「訓了 vs 沒訓」的量測實驗
    (measure, don't claim)。
-3. **資料集 v0 先出海**(`dataset/v0/PUBLISH.md`,等 owner `hf auth login`)。
+3. **資料集 v0 先出海** — **已達成(2026-07-04)**:
+   https://huggingface.co/datasets/Famwin/tonesoul-accountability-traces(318 筆,CC BY 4.0)。
 
 ## 倉庫決策(同日一併記)
 
