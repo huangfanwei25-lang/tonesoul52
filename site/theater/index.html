@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>岔軌之城 — 語魂劇場 v0</title>
+<meta name="description" content="岔軌之城:一座建立在軌道分流系統上的災後都市。你是轉轍官。每一次選擇都留下軌痕,每一個理由都會被未來回讀。單人最小可玩版 v0。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══ 同意閘 ═══ -->
+<section id="gate" class="screen">
+  <div class="gate-box">
+    <h1>岔軌之城</h1>
+    <p class="subtitle">語魂劇場・單人最小可玩版 v0</p>
+    <blockquote class="creed">
+      天道不審判善惡。天道保存後果。<br>
+      你可以拉下轉轍桿,你可以拒絕拉下轉轍桿,<br>
+      但你不能要求世界忘記你曾經站在那裡。
+    </blockquote>
+
+    <div class="consent-block">
+      <h2>開始之前,把話說清楚</h2>
+      <label class="consent-item">
+        <input type="checkbox" id="consent-local">
+        <span>我知道:這一局的軌痕(選擇、理由、後果)<strong>只存在我自己的瀏覽器裡</strong>(localStorage),
+        不會自動上傳到任何地方。結束時我可以下載它,也可以刪掉它。</span>
+      </label>
+      <label class="consent-item">
+        <input type="checkbox" id="consent-memory-only">
+        <span>(可選)改為<strong>只存在記憶體</strong>:關掉分頁即消失,不寫入 localStorage、無法中途存檔。</span>
+      </label>
+      <details class="engine-honesty">
+        <summary>引擎誠實標注(這個世界哪些是真的)</summary>
+        <ul>
+          <li><b>責任節點 verdict</b> — <span class="tier live">live</span> 真的 ToneSoul rules-council 引擎輸出,離線預算後由本頁重播;本頁不偽造任何節點回應。</li>
+          <li><b>短句解析</b> — <span class="tier partial">遊戲層</span> 關鍵詞級;解不出的欄位由 NPC 追問,不假裝讀懂。</li>
+          <li><b>黑鏡矛盾偵測</b> — <span class="tier partial">遊戲層</span> 規則比對你自己留下的錨鏈,不是 AI 讀心。</li>
+          <li><b>火花/共語 LLM 節點</b> — <span class="tier absent">absent</span> v0 未接;第三方案由事件卡承擔。</li>
+          <li><b>多人簡遺漂流、週期演進</b> — <span class="tier absent">absent</span> v1 方向。</li>
+          <li><b>軌痕上傳</b> — <span class="tier absent">absent</span> v0 無伺服器;下載檔內含撤回碼,供未來自願提交管道使用。</li>
+        </ul>
+      </details>
+      <button id="enter-btn" disabled>進城</button>
+      <button id="resume-btn" class="ghost hidden">繼續上一局</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 遊戲主畫面 ═══ -->
+<section id="game" class="screen hidden">
+  <header id="hud">
+    <div class="hud-left">
+      <span id="hud-chapter">第一章</span>
+      <span id="hud-location"></span>
+      <span id="hud-pressure" title="壓力等級(天道 v0.2 第五律:節奏也被保存)"></span>
+    </div>
+    <div class="hud-resources" title="城市狀態(機制書:三資源)">
+      <span class="res" id="res-medical">醫療 <i></i></span>
+      <span class="res" id="res-energy">能源 <i></i></span>
+      <span class="res" id="res-trust">信任 <i></i></span>
+    </div>
+    <div class="hud-right">
+      <button id="trace-btn" class="ghost small">軌痕</button>
+      <button id="pause-btn" class="ghost small" title="暫停並存檔(僅 localStorage 模式)">暫停</button>
+      <button id="soften-btn" class="ghost small" title="降強度:摺疊後果細節(天道 v0.2 第十律)">降強度</button>
+    </div>
+  </header>
+
+  <main id="stage">
+    <!-- 章節內容由 app.js 渲染 -->
+  </main>
+</section>
+
+<!-- ═══ 軌痕面板 ═══ -->
+<aside id="trace-panel" class="hidden">
+  <div class="trace-head">
+    <h2>軌痕紀錄</h2>
+    <button id="trace-close" class="ghost small">關閉</button>
+  </div>
+  <p class="trace-note">外顯是故事,內層是標註——兩者都在這裡,你隨時可以看(天道 v0.2 第八律)。</p>
+  <div id="trace-list"></div>
+</aside>
+
+<!-- ═══ 結局畫面 ═══ -->
+<section id="ending" class="screen hidden">
+  <div id="ending-content"></div>
+</section>
+
+<footer id="site-footer">
+  <span>岔軌之城 v0 — <a href="https://github.com/Fan1234-1/tonesoul52" rel="noopener">語魂 ToneSoul</a> 劇場</span>
+  <span>正典:天道十二律+v0.2 &gt; 機制書 &gt; 世界書(docs/theater/)</span>
+  <span>線上世界(LLM 即興・多人):<a href="https://weavai.app/world/%E5%B2%94%E8%BB%8C%E4%B9%8B%E5%9F%8E-the-city-of-switches/" target="_blank" rel="noopener">weavai.app</a> — 同一正典,另一種引擎;該平台上的軌痕存放於該平台</span>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

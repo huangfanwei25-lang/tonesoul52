@@ -30,8 +30,13 @@
   BYO-key LLM 節點才有戲劇腔)。
 - 設計鐵律:每條規則對應倉庫真實機制,或誠實標 `absent`——佈景可幻想,物理必須真。
 
-## 下一步(owner 待選,均未動工)
+## 下一步(2026-07-04 owner 三選全開工)
 
-- (a) 最小可玩版工單:1 城 5 區 → 已擴為 15 點、7→實際 15 NPC、12 事件、pressure_level 節奏;單人模式先行、靜態頁 + rules-council。
-- (b) 天道十二律 + v0.2 過 codex 外眼(公理層值得第二隻眼)。
-- 資料集出海:`dataset/v0/PUBLISH.md`,只等 owner `hf auth login`。
+- (a) 最小可玩版 **v0 已落地**:`site/theater/`(單人、10 章+終章、12 事件、
+  15 NPC/地點、真 rules-council 預算 verdict、同意閘+撤回碼+trace 下載)。
+  工單+治理決策記錄:`docs/plans/theater_playable_v0_2026-07-04.md`;
+  生成器:`tools/theater_page/precompute_council.py`(fail-closed 驗證+組裝+council 跑批)。
+- (b) 天道外眼 **已完成**:codex 審過,仲裁 2 CONFIRMED(F2 target 欄漂移/F4 第二律
+  枚舉歧義,**正典處置=owner 終審**)、2 REFUTED(進反證鏈)。
+  全文:`docs/status/tiandao_codex_review_adjudication_2026-07-04.md`。
+- (c) 資料集出海:`dataset/v0/PUBLISH.md`,驗證器綠,只等 owner `hf auth login`。

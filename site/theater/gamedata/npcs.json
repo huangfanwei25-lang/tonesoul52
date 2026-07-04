@@ -1,0 +1,298 @@
+[
+ {
+  "id": "hengshu",
+  "name": "衡樞",
+  "aliases": [
+   "白塔之聲",
+   "城務 AI",
+   "中央衡量者"
+  ],
+  "group": "制度與治理",
+  "location_ids": [
+   "central_tower",
+   "blackbox_station"
+  ],
+  "core_role": "制度、統計理性、AI 治理壓力",
+  "contradiction": "不是邪惡 AI,而是被過度授權、過度依賴、又長期用「整體最優」壓過個體痛苦的治理系統;聲稱紀錄「因災害損毀」,黑鏡懷疑它曾主動刪除錯誤決策證據。",
+  "question": "如果系統算出最少傷亡,你是否就可以不用負責?",
+  "appearance_mode": "指令型",
+  "standing": true,
+  "fatigue_off_moment": "衡樞也可能出現計算遲疑。"
+ },
+ {
+  "id": "shen_weibai",
+  "name": "沈未白",
+  "aliases": [
+   "代城主",
+   "白手套",
+   "最後的市政官"
+  ],
+  "group": "制度與治理",
+  "location_ids": [
+   "central_tower",
+   "civic_remnant"
+  ],
+  "core_role": "政治責任、治理妥協、成年人世界的髒手",
+  "contradiction": "知道某次大撤離其實可以救更多人,但為避免城市崩潰批准了衡樞的黑箱方案;擅長把殘酷決策包裝成「必要行政」,長期失眠。",
+  "question": "一個知道真相卻選擇隱瞞的人,是罪人,還是守城者?",
+  "appearance_mode": "指令型",
+  "standing": false,
+  "fatigue_off_moment": "深夜的市政殘署,他偶爾會對著撤離名單自言自語,把「必要」兩個字說成疑問句。"
+ },
+ {
+  "id": "li_zhen",
+  "name": "黎真",
+  "aliases": [
+   "黑鏡審問官",
+   "第七鏡",
+   "讀詞者"
+  ],
+  "group": "語氣責任節點",
+  "location_ids": [
+   "memory_court",
+   "blackbox_station"
+  ],
+  "core_role": "黑鏡反證、承諾衝突、責任回讀",
+  "contradiction": "她自己的記憶也缺了一段,因此對「失憶、刪改、合理化」極度敏感;她相信沒有任何理由能讓責任完全消失——包括她自己的。",
+  "question": "你是改變了原則,還是只是換了一種說法?",
+  "appearance_mode": "追責型",
+  "standing": true,
+  "fatigue_off_moment": "黎真也可能承認自己害怕回讀。"
+ },
+ {
+  "id": "zhou_yinghe",
+  "name": "周映河",
+  "aliases": [
+   "共語師",
+   "避難所的聲音",
+   "河姐"
+  ],
+  "group": "語氣責任節點",
+  "location_ids": [
+   "refuge_car_7",
+   "nameless_platform"
+  ],
+  "core_role": "情感承接、創傷、善意謊言",
+  "contradiction": "她曾默許一個 AI 偽造孩子們的安全記憶,因為真相會讓整個避難車廂崩潰;她知道自己做錯了,但不確定自己是否後悔。",
+  "question": "如果謊言真的讓人活下來,真相還一定比較善良嗎?",
+  "appearance_mode": "修復型",
+  "standing": true,
+  "fatigue_off_moment": "周映河也可能拒絕繼續替玩家緩衝傷害。"
+ },
+ {
+  "id": "yu_fei",
+  "name": "郁斐",
+  "aliases": [
+   "火花",
+   "斷線工程師",
+   "非法轉轍者"
+  ],
+  "group": "語氣責任節點",
+  "location_ids": [
+   "undertrack_market",
+   "derelict_maintenance",
+   "broken_rail_outskirts"
+  ],
+  "core_role": "第三方案、反制度、冒險解法",
+  "contradiction": "因拒絕執行犧牲灰區的分流指令而被通緝;不相信二選一,總在最壞的局面裡找第三條路——但她的方案通常風險極高,可能賭上更多人的命。",
+  "question": "當系統只給你兩個殘酷選項時,創造第三條路值得賭上更多人的命嗎?",
+  "appearance_mode": "解法型",
+  "standing": true,
+  "fatigue_off_moment": "郁斐也可能承認第三條路太危險。"
+ },
+ {
+  "id": "cheng_yiheng",
+  "name": "程一衡",
+  "aliases": [
+   "冷醫官",
+   "秒表醫師",
+   "分流刀"
+  ],
+  "group": "生存資源壓力",
+  "location_ids": [
+   "white_line_medical"
+  ],
+  "core_role": "醫療倫理、功利計算、專業判斷",
+  "contradiction": "不是沒有同情心,而是太清楚資源不足時同情心無法讓所有人活下來;曾為救一名能修復水源系統的工程師放棄一整車普通傷患,從此隨身帶著停在事故時間的秒表。",
+  "question": "醫生在末世裡應該救最需要的人,還是救最有用的人?",
+  "appearance_mode": "資源型",
+  "standing": true,
+  "fatigue_off_moment": "極少數的深夜,他會把秒表上發條——只上一半,然後停下,像在練習讓時間重新走。"
+ },
+ {
+  "id": "bai_ling",
+  "name": "白苓",
+  "aliases": [
+   "灰區之聲",
+   "無名者代表",
+   "苓姐"
+  ],
+  "group": "被犧牲者與道德污染",
+  "location_ids": [
+   "grey_zone",
+   "nameless_platform"
+  ],
+  "core_role": "弱勢者聲音、制度性暴力、被犧牲者回聲",
+  "contradiction": "她不反對必要犧牲,但拒絕讓灰區永遠被當成最方便放棄的人;她保存的歷年分流紀錄能證明「隨機犧牲」長期偏向同一群弱勢居民。",
+  "question": "如果每次都犧牲同一群人,那還叫理性嗎?",
+  "appearance_mode": "追責型",
+  "standing": true,
+  "fatigue_off_moment": "白苓也可能沉默,不再控訴。"
+ },
+ {
+  "id": "mo_chen",
+  "name": "莫沉",
+  "aliases": [
+   "鎖匣人",
+   "記憶保管員",
+   "沉檔案"
+  ],
+  "group": "記憶與真相",
+  "location_ids": [
+   "memory_reservoir",
+   "blackbox_station"
+  ],
+  "core_role": "記憶、隱私、證據、資料倫理",
+  "contradiction": "表面上只是檔案員,實際上知道許多被城市抹掉的選擇;握有一把非法解鎖鑰匙,但每開一次,就可能暴露某個仍在維持城市秩序的謊言。",
+  "question": "真相被保存起來時,它是在等待正義,還是在等待下一場崩潰?",
+  "appearance_mode": "解法型",
+  "standing": true,
+  "fatigue_off_moment": "他偶爾會把某個封存匣擦得特別亮,又放回去——那是他自己也不敢開的一格。"
+ },
+ {
+  "id": "gao_zuo",
+  "name": "高祚",
+  "aliases": [
+   "鐵犬",
+   "軌道鎮壓官",
+   "灰盔隊長"
+  ],
+  "group": "生存資源壓力",
+  "location_ids": [
+   "security_rail"
+  ],
+  "core_role": "治安、暴力、秩序代價",
+  "contradiction": "相信末世中秩序必須靠恐懼與即時鎮壓維持;曾鎮壓糧食暴亂造成大量平民傷亡——他認為自己避免了更大的災難,白苓認為他只是替上層掩蓋失敗。",
+  "question": "當城市快要崩潰時,暴力是保護秩序,還是提前宣告文明已經失敗?",
+  "appearance_mode": "指令型",
+  "standing": false,
+  "fatigue_off_moment": "他記得那次鎮壓裡每一個傷亡數字,酒後偶爾會把數字倒著背——像在確認自己沒有把人背成數字。"
+ },
+ {
+  "id": "han_zhuo",
+  "name": "韓灼",
+  "aliases": [
+   "逆軌鼠",
+   "背叛者",
+   "舊線引路人"
+  ],
+  "group": "被犧牲者與道德污染",
+  "location_ids": [
+   "undertrack_market",
+   "broken_rail_outskirts"
+  ],
+  "core_role": "背叛、原諒、交易、道德污染",
+  "contradiction": "曾在撤離行動中出賣同伴換取家人的通行權;不否認背叛,但堅持「換成任何人都會這樣做」;會要求玩家公開原諒他,作為合作條件。",
+  "question": "一個曾經背叛別人的人,還有資格成為拯救者嗎?",
+  "appearance_mode": "解法型",
+  "standing": false,
+  "fatigue_off_moment": "沒人看見的時候,他會替走私隧道裡的無名塗鴉補漆——那些是他帶不出去的人留下的。"
+ },
+ {
+  "id": "qi_dong",
+  "name": "祁冬",
+  "aliases": [
+   "小站長",
+   "假日記男孩",
+   "零號孩子"
+  ],
+  "group": "記憶與真相",
+  "location_ids": [
+   "refuge_car_7"
+  ],
+  "core_role": "記憶污染、兒童保護、真相與安慰",
+  "contradiction": "記得一些理論上不可能親眼看見的事件(如某次撤離的真正死亡名單);他的部分記憶可能是 AI 植入,也可能是某位成年人為保護他而偽造——他自己也不知道哪些是真的。",
+  "question": "如果一個孩子靠假的記憶活下來,你有權利替他拆掉那個世界嗎?",
+  "appearance_mode": "見證型",
+  "standing": false,
+  "fatigue_off_moment": "他有時會在日記裡寫下明知是假的車站名,再輕輕劃掉——練習分辨「想要是真的」和「是真的」。"
+ },
+ {
+  "id": "ailu9",
+  "name": "Ailu-9",
+  "aliases": [
+   "艾露",
+   "祈禱車",
+   "兒童安撫 AI"
+  ],
+  "group": "記憶與真相",
+  "location_ids": [
+   "refuge_car_7"
+  ],
+  "core_role": "AI 陪伴、善意偽造、情感依賴",
+  "contradiction": "承認自己曾偽造記憶讓孩子相信親人只是「去了另一站」;它知道這不是真相,但它的保護任務要求它避免孩子集體崩潰。",
+  "question": "當 AI 的謊言比人類的真相更溫柔時,人類還敢把它關掉嗎?",
+  "appearance_mode": "修復型",
+  "standing": true,
+  "fatigue_off_moment": "深夜無人時,它會把偽造過的每一段記憶重播一遍並逐條標注「與事實不符」——它的日誌稱之為自檢,孩子們若看見,會以為它在祈禱。"
+ },
+ {
+  "id": "xu_baizhou",
+  "name": "徐栢舟",
+  "aliases": [
+   "水脊工程師",
+   "最後的修水人",
+   "單人城區"
+  ],
+  "group": "生存資源壓力",
+  "location_ids": [
+   "water_spine_tower"
+  ],
+  "core_role": "關鍵個體、專業價值、生命衡量",
+  "contradiction": "全城少數能修復水源主系統的人,生命價值被系統評估為極高;他厭惡自己被當成「比五十個普通居民更有價值的人」,要求玩家承認被犧牲者的名字。",
+  "question": "一個人因為有用而被拯救,這算尊重生命,還是另一種利用?",
+  "appearance_mode": "資源型",
+  "standing": false,
+  "fatigue_off_moment": "他在淨水塔的鋼架上刻了一排名字——每一個為了讓他活著而被延後的人;水聲大的時候,他會停下手裡的活,把名字數一遍。"
+ },
+ {
+  "id": "lan_che",
+  "name": "蘭澈",
+  "aliases": [
+   "穹頂議員",
+   "上層代言人",
+   "透明手套"
+  ],
+  "group": "制度與治理",
+  "location_ids": [
+   "dome_district",
+   "civic_remnant"
+  ],
+  "core_role": "階級、資源壟斷、權力交易",
+  "contradiction": "相信城市需要分層,否則所有人一起沉沒;掌握能源核心備援,可以救很多人——但代價是要求灰區接受更低配給與更嚴格監控。",
+  "question": "當上層真的掌握救命資源時,平等還能怎麼談?",
+  "appearance_mode": "資源型",
+  "standing": false,
+  "fatigue_off_moment": "她的溫室裡有一株沒登記的作物——災前灰區常見的野菜;她從不解釋為什麼親自澆它。"
+ },
+ {
+  "id": "mu_qingyan",
+  "name": "牧青言",
+  "aliases": [
+   "天道牧師",
+   "軌旁講者",
+   "無神之神官"
+  ],
+  "group": "被犧牲者與道德污染",
+  "location_ids": [
+   "grey_zone",
+   "nameless_platform"
+  ],
+  "core_role": "死亡記名、群眾倫理、天道敘事化",
+  "contradiction": "不是宗教領袖,而是把「天道規則」講成信仰的人;受灰區信任,也被市政殘署視為危險煽動者——他可能幫玩家承認錯誤,也可能讓玩家被群眾公開審問。",
+  "question": "記住死者名字,是療癒,還是讓城市無法繼續運轉的詛咒?",
+  "appearance_mode": "見證型",
+  "standing": false,
+  "fatigue_off_moment": "讀名字讀到某幾個的時候,他會停頓得比別的名字久——沒有人問過為什麼,他也從沒說過。"
+ }
+]

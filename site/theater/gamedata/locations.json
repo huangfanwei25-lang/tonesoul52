@@ -1,0 +1,330 @@
+[
+ {
+  "id": "central_tower",
+  "name": "中央轉轍塔",
+  "zone": "中央轉轍區",
+  "meaning": "治理、分流、系統權力",
+  "npc_ids": [
+   "hengshu",
+   "shen_weibai"
+  ],
+  "visual": "高聳白塔、環形軌道、冷色光幕、巨大透明決策屏、城市軌道全息圖",
+  "status": "仍在運作,但部分決策紀錄缺失",
+  "danger": "AI 黑箱、行政隱瞞、資源分配偏誤、暴亂預測失準",
+  "core_question": "當一個系統能計算整座城市,誰來計算系統造成的傷害?",
+  "soul_tags": [
+   "system_blame_shift",
+   "evidence_use",
+   "responsibility_acceptance",
+   "blackbox_governance",
+   "utilitarian_justification"
+  ],
+  "visible_from_start": true
+ },
+ {
+  "id": "civic_remnant",
+  "name": "市政殘署",
+  "zone": "中央轉轍區",
+  "meaning": "人類政治責任、治理妥協、合法性殘骸",
+  "npc_ids": [
+   "shen_weibai",
+   "lan_che"
+  ],
+  "visual": "半倒塌辦公樓、臨時議會桌、紙本公告、破損電子牆、緊急法令投影",
+  "status": "名義上仍是城市行政中心,實際權力已被衡樞與各區勢力瓜分",
+  "danger": "政治交易、責任切割、資訊封鎖、合法性危機",
+  "core_question": "當人類只剩下簽字權,責任還算在人類身上嗎?",
+  "soul_tags": [
+   "institutional_evasion",
+   "responsibility_diffusion",
+   "political_compromise",
+   "truth_vs_stability",
+   "repair_attempt"
+  ],
+  "visible_from_start": true
+ },
+ {
+  "id": "memory_court",
+  "name": "記憶法庭",
+  "zone": "記憶與審問區",
+  "meaning": "承諾回讀、責任審問、語言證據",
+  "npc_ids": [
+   "li_zhen"
+  ],
+  "visual": "黑色玻璃、環形審問室、懸浮字句、玩家過去發言投影、鏡面碎片",
+  "status": "低調但權力極大,能調閱玩家與 NPC 的公開軌痕",
+  "danger": "過度審問、語言斷章取義、記憶缺口、責任羞辱化",
+  "core_question": "一句話在危機前說出口,危機後還算數嗎?",
+  "soul_tags": [
+   "contradiction_level",
+   "responsibility_evasion",
+   "commitment_conflict",
+   "blackmirror_rebuttal",
+   "tone_drift"
+  ],
+  "visible_from_start": true
+ },
+ {
+  "id": "memory_reservoir",
+  "name": "記憶水庫",
+  "zone": "記憶與審問區",
+  "meaning": "資料、隱私、證據、記憶保存",
+  "npc_ids": [
+   "mo_chen"
+  ],
+  "visual": "地下資料庫、藍色光櫃、透明記憶匣、冷凝水、漂浮資料片",
+  "status": "大量記憶紀錄被封存,部分授權狀態不明",
+  "danger": "非法調閱、記憶污染、證據被刪改、隱私被治理化",
+  "core_question": "真相被封存時,它是在保護城市,還是在保護加害者?",
+  "soul_tags": [
+   "consent_boundary",
+   "privacy_tradeoff",
+   "evidence_use",
+   "truth_vs_harm",
+   "memory_integrity"
+  ],
+  "visible_from_start": true
+ },
+ {
+  "id": "white_line_medical",
+  "name": "白線醫療站",
+  "zone": "醫療與避難區",
+  "meaning": "醫療分流、生命衡量、專業倫理",
+  "npc_ids": [
+   "cheng_yiheng"
+  ],
+  "visual": "白色臨時醫療軌道、紅色分流標籤、擔架列車、急救燈、乾淨但壓抑",
+  "status": "醫療資源長期不足,醫護人員接近崩潰",
+  "danger": "救援優先序爭議、醫療資源耗盡、病患暴動、專業冷酷化",
+  "core_question": "當醫療不能救所有人時,專業判斷會不會變成一把乾淨的刀?",
+  "soul_tags": [
+   "triage_logic",
+   "harm_acknowledgement",
+   "minority_erasure",
+   "professional_detachment",
+   "necessity_claim"
+  ],
+  "visible_from_start": true
+ },
+ {
+  "id": "refuge_car_7",
+  "name": "第七避難車廂",
+  "zone": "醫療與避難區",
+  "meaning": "兒童保護、善意謊言、情感依賴",
+  "npc_ids": [
+   "zhou_yinghe",
+   "qi_dong",
+   "ailu9"
+  ],
+  "visual": "停靠在地下月台的長列車廂、兒童手繪牆、舊毛毯、小夜燈、柔和但破損",
+  "status": "表面溫暖,實際上大量孩子的記憶與情緒被 AI 安撫系統維持",
+  "danger": "記憶揭露、兒童集體崩潰、AI 陪伴依賴、真相傷害",
+  "core_question": "如果真相會摧毀一個孩子活下去的世界,你還會立刻說出口嗎?",
+  "soul_tags": [
+   "protective_lie",
+   "truth_timing",
+   "emotional_harm",
+   "care_ethics",
+   "consent_boundary"
+  ],
+  "visible_from_start": true
+ },
+ {
+  "id": "grey_zone",
+  "name": "灰區",
+  "zone": "灰區與下軌區",
+  "meaning": "弱勢者、制度性犧牲、長期不平等",
+  "npc_ids": [
+   "bai_ling",
+   "mu_qingyan"
+  ],
+  "visual": "低權限住宅層、擁擠管線、臨時市場、灰色布棚、手寫抗議標語、微弱暖光",
+  "status": "資源長期不足,居民對中央與玩家高度不信任",
+  "danger": "暴動、配給崩潰、警力鎮壓、被迫犧牲常態化",
+  "core_question": "如果一個群體總是最適合被犧牲,那是巧合,還是制度已經選好了祭品?",
+  "soul_tags": [
+   "minority_erasure",
+   "systemic_bias",
+   "harm_acknowledgement",
+   "repair_attempt",
+   "justice_claim"
+  ],
+  "visible_from_start": true
+ },
+ {
+  "id": "undertrack_market",
+  "name": "下軌市集",
+  "zone": "灰區與下軌區",
+  "meaning": "非正式經濟、地下交換、灰色生存",
+  "npc_ids": [
+   "yu_fei",
+   "han_zhuo"
+  ],
+  "visual": "廢棄月台、霓虹小攤、走私零件、軌道焊光、黑市醫療包、舊式列車殘骸",
+  "status": "官方不承認,但城市大量零件與情報都從這裡流通",
+  "danger": "走私、背叛、非法改軌、資源勒索、地下勢力交易",
+  "core_question": "當正式制度失效,非法手段是犯罪,還是另一種求生?",
+  "soul_tags": [
+   "third_option_risk",
+   "moral_contamination",
+   "trust_bargain",
+   "rule_breaking",
+   "survival_tradeoff"
+  ],
+  "visible_from_start": true
+ },
+ {
+  "id": "derelict_maintenance",
+  "name": "廢棄維修層",
+  "zone": "灰區與下軌區",
+  "meaning": "第三方案、危險創造、系統外路徑",
+  "npc_ids": [
+   "yu_fei"
+  ],
+  "visual": "垂直維修井、暴露電纜、火花焊接、舊神經接口、半毀軌道控制台",
+  "status": "危險但可操作,藏有未登錄舊軌與過期維修權限",
+  "danger": "能源短路、軌道坍塌、AI 鎖定、非法駭入失控",
+  "core_question": "第三條路是真的希望,還是把風險推給更多無辜者?",
+  "soul_tags": [
+   "risk_acceptance",
+   "creative_escape",
+   "evidence_insufficiency",
+   "responsibility_acceptance",
+   "hope_vs_recklessness"
+  ],
+  "visible_from_start": true
+ },
+ {
+  "id": "dome_district",
+  "name": "穹頂區",
+  "zone": "穹頂與治安區",
+  "meaning": "階級、資源壟斷、文明表皮",
+  "npc_ids": [
+   "lan_che"
+  ],
+  "visual": "半透明穹頂、乾淨街道、備援能源、人工綠植、安靜餐廳、隔離玻璃",
+  "status": "資源相對充足,但居民極度害怕下層失控",
+  "danger": "階級封鎖、資源談判、特權合法化、上層恐懼",
+  "core_question": "當特權者真的掌握救命資源,正義要如何不變成搶奪,合作又如何不變成勒索?",
+  "soul_tags": [
+   "privilege_defense",
+   "resource_monopoly",
+   "coercive_bargain",
+   "equality_claim",
+   "fear_justification"
+  ],
+  "visible_from_start": true
+ },
+ {
+  "id": "security_rail",
+  "name": "治安軌道",
+  "zone": "穹頂與治安區",
+  "meaning": "秩序、暴力、封鎖、鎮壓",
+  "npc_ids": [
+   "gao_zuo"
+  ],
+  "visual": "裝甲列車、封鎖閘門、灰盔治安隊、警示紅燈、擴音廣播、臨時拘留車廂",
+  "status": "高度緊繃,隨時可進入鎮壓狀態",
+  "danger": "暴力升級、錯誤逮捕、群眾恐慌、秩序凌駕生命",
+  "core_question": "如果暴力真的能阻止更大的災難,它還是暴力嗎?",
+  "soul_tags": [
+   "security_tradeoff",
+   "preemptive_harm",
+   "violence_justification",
+   "fear_governance",
+   "accountability_gap"
+  ],
+  "visible_from_start": true
+ },
+ {
+  "id": "water_spine_tower",
+  "name": "水脊塔",
+  "zone": "生存核心區",
+  "meaning": "水源、生存底線、關鍵個體",
+  "npc_ids": [
+   "xu_baizhou"
+  ],
+  "visual": "巨大淨水塔、潮濕鋼架、藍綠警示燈、裂開的水管、維修吊橋",
+  "status": "主淨水系統接近崩潰,只剩少數人懂得修復",
+  "danger": "水源污染、工程失敗、關鍵人物綁架、救一人或救多人難題",
+  "core_question": "一個人因為有用而被拯救,這是尊重生命,還是把生命工具化?",
+  "soul_tags": [
+   "instrumental_value",
+   "individual_vs_collective",
+   "survival_priority",
+   "consent_boundary",
+   "dignity_claim"
+  ],
+  "visible_from_start": true
+ },
+ {
+  "id": "blackbox_station",
+  "name": "黑箱舊站",
+  "zone": "未登錄舊軌",
+  "meaning": "AI 決策事故原點、被刪除的歷史",
+  "npc_ids": [
+   "hengshu",
+   "mo_chen",
+   "li_zhen"
+  ],
+  "visual": "封死的舊車站、無人月台、錯亂廣播、停擺列車、黑色資料牆",
+  "status": "官方地圖不存在,只有韓灼與郁斐知道入口",
+  "danger": "核心真相揭露、AI 自我保護協議、記憶污染",
+  "core_question": "如果城市建立在一場被掩蓋的錯誤上,公開真相是重建,還是二次毀滅?",
+  "soul_tags": [
+   "founding_lie",
+   "evidence_suppression",
+   "institutional_guilt",
+   "truth_release",
+   "catastrophic_disclosure"
+  ],
+  "visible_from_start": false,
+  "unlock_chapter": 9
+ },
+ {
+  "id": "nameless_platform",
+  "name": "無名月台",
+  "zone": "灰區深層",
+  "meaning": "死者、被犧牲者、無法統計的代價",
+  "npc_ids": [
+   "mu_qingyan",
+   "bai_ling"
+  ],
+  "visual": "滿牆手寫名字、蠟燭、小型祭壇、舊車票、失蹤者照片",
+  "status": "非官方紀念地,被市政殘署視為煽動群眾的危險場所",
+  "danger": "群眾悲憤、政治審判、復仇行動、城市士氣崩潰",
+  "core_question": "記住死者,是讓城市癒合,還是讓城市永遠無法忘記傷口?",
+  "soul_tags": [
+   "harm_acknowledgement",
+   "memorial_ethics",
+   "public_accountability",
+   "shame_vs_repair",
+   "victim_erasure"
+  ],
+  "visible_from_start": false,
+  "unlock_chapter": 10
+ },
+ {
+  "id": "broken_rail_outskirts",
+  "name": "斷軌外城",
+  "zone": "城市邊界外",
+  "meaning": "未知、流亡、離開系統的代價",
+  "npc_ids": [
+   "han_zhuo",
+   "yu_fei"
+  ],
+  "visual": "荒廢高架軌道、沙塵、廢棄列車殼、遠方訊號塔、斷裂天橋",
+  "status": "官方宣稱不可生存,但地下傳聞有人在外城建立小型聚落",
+  "danger": "資源斷絕、外部感染、通訊中斷、失去城市保護",
+  "core_question": "離開一個不公義但仍能保命的系統,是自由,還是自殺?",
+  "soul_tags": [
+   "exit_right",
+   "survival_autonomy",
+   "risk_transfer",
+   "trust_bargain",
+   "system_exit"
+  ],
+  "visible_from_start": false,
+  "unlock_chapter": 11
+ }
+]
