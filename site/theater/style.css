@@ -113,6 +113,47 @@ code { font-family: var(--mono); background: var(--bg-soft); padding: .1em .45em
 }
 .res[data-low="1"] i { background: var(--danger); }
 .hud-right { display: flex; gap: .4em; }
+.hud-count { font-family: var(--mono); font-size: .85em; color: var(--warm); }
+
+/* ── 路線圖(推進感)── */
+.route-bar {
+  display: flex; flex-wrap: wrap; gap: .3em .2em; align-items: center;
+  margin: 0 0 1.2rem;
+  padding: .5em .6em;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: .78em;
+}
+.route-bar .station { padding: .15em .55em; border-radius: 4px; color: var(--text-dim); }
+.route-bar .station:not(:last-child)::after { content: "─"; color: var(--line); margin-left: .35em; }
+.route-bar .station.past { text-decoration: line-through; text-decoration-color: var(--accent); }
+.route-bar .station.current { background: var(--accent); color: var(--bg); font-weight: 700; }
+.route-bar .station.future { opacity: .65; }
+
+.objective {
+  border-left: 3px solid var(--warm);
+  padding: .35em .8em;
+  margin: .6em 0;
+  color: var(--warm);
+  font-size: .95em;
+}
+
+.delta-line { margin: .4em 0 .8em; }
+.chip {
+  display: inline-block;
+  font-family: var(--mono); font-size: .82em;
+  padding: .1em .6em; margin-right: .4em;
+  border-radius: 4px; border: 1px solid var(--line);
+}
+.chip.up { color: var(--ok); border-color: var(--ok); }
+.chip.down { color: var(--danger); border-color: var(--danger); }
+.chip.flat { color: var(--text-dim); }
+
+.howto { margin: 1.2rem 0; font-size: .92em; }
+.howto summary { cursor: pointer; color: var(--accent); }
+.howto ol { margin: .6em 0 .4em 1.5em; }
+.howto li { margin: .35em 0; color: var(--text-dim); }
 
 /* ── 舞台 ── */
 #stage { max-width: 780px; margin: 0 auto; padding: 1.6rem 1rem 4rem; }
