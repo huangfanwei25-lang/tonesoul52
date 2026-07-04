@@ -258,6 +258,17 @@ table.risk td { padding: .2em 0; color: var(--text-dim); }
   padding: .6em .9em; margin: .5em 0;
   font-size: .88em;
 }
+.ledger-line {
+  font-family: var(--mono);
+  font-size: .85em;
+  background: var(--bg-card);
+  border-left: 3px solid var(--accent);
+  padding: .5em .8em;
+  margin: .4em 0 .8em;
+}
+.rb-meta { color: var(--text-dim); font-size: .85em; }
+.rb-mirror { color: var(--warm); font-size: .88em; }
+.rb-harms { color: var(--warm); font-size: .85em; margin-top: .3em; }
 .trace-parse summary { cursor: pointer; color: var(--text-dim); font-size: .85em; }
 .trace-parse pre {
   font-size: .78em; overflow-x: auto;

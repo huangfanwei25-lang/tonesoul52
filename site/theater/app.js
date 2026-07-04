@@ -481,6 +481,10 @@ function resolveTurn(opt, reasonText, probeText) {
   const record = {
     chapter: ev.chapter, event_id: ev.id, title: ev.title,
     location: S.data.locations[ev.location_id].name,
+    // P1 落帳 snapshot(判決書修窄命題:下載檔自含人物與後果,時間=章節,不加牆鐘 ts)
+    npc_names: ev.npcs.map((n) => S.data.npcs[n.id].name),
+    consequence_brief: (outcome.consequences &&
+      (outcome.consequences.structural || outcome.consequences.immediate)) || outcome.desc || "",
     choice: {
       id: isDefault ? "default" : opt.id,
       label: isDefault ? (opt.wellbeing ? "跳過(自我照顧)" : "沉默(預設)") : opt.label,
@@ -721,6 +725,7 @@ function renderEnding() {
   const stats = el("div", "ending-stats");
   stats.innerHTML = `
     <h2>軌痕摘要</h2>
+    <p class="ledger-line"><b>終局帳面</b> ${esc(ledgerLine())}</p>
     <p>回合:${S.trace.filter((t) => t.event_id !== "SEAL").length} | 錨鏈(公開承諾):立 ${S.anchors.length}・存 ${anchorsKept}・解鏈 ${S.anchors.length - anchorsKept}
     | 黑鏡回讀:${S.mirrorCount} 次 | 修正意圖:${repairs} | 外推訊號:${evasions} | 查閱情報:${S.intelOpens} 次</p>`;
   box.append(stats);
@@ -740,11 +745,11 @@ function renderEnding() {
   tr.innerHTML = "<summary>完整軌痕回讀</summary>";
   for (const t of S.trace) {
     if (t.event_id === "SEAL") continue;
-    tr.append(el("div", "trace-item",
-      `<b>第${t.chapter}章・${esc(t.title)}</b>(${esc(t.location)})<br>
-       選擇:${esc(t.choice.label)}${t.reason_text ? `<br>理由:「${esc(t.reason_text)}」` : ""}
-       ${t.blackmirror ? `<br>黑鏡:${esc(t.blackmirror.response)}` : ""}
-       ${t.harms.length ? `<br>承受者:${esc(t.harms.join("、"))}` : ""}`));
+    const row = readbackRow(t);
+    if (t.harms && t.harms.length) {
+      row.append(el("p", "rb-harms", `承受者:${esc(t.harms.join("、"))}`));
+    }
+    tr.append(row);
   }
   box.append(tr);
 
@@ -806,6 +811,49 @@ function downloadTrace() {
   URL.revokeObjectURL(a.href);
 }
 
+/* ── 軌痕回讀顯示層(P1,判決書修窄命題:決定性 join,零 LLM)─ */
+
+function npcNamesFor(t) {
+  // 新 trace 有落帳 snapshot;舊存檔 fallback 為 gamedata 決定性 join
+  if (t.npc_names && t.npc_names.length) return t.npc_names;
+  const ev = eventById(t.event_id);
+  return ev ? ev.npcs.map((n) => S.data.npcs[n.id].name) : [];
+}
+
+function consequenceBriefFor(t) {
+  if (t.consequence_brief) return t.consequence_brief;
+  const ev = eventById(t.event_id);
+  if (!ev) return "";
+  const outcome = t.choice.is_default
+    ? ev.default_outcome
+    : ev.options.find((o) => o.id === t.choice.id);
+  if (!outcome) return "";
+  const c = outcome.consequences || {};
+  return c.structural || c.immediate || outcome.desc || "";
+}
+
+function ledgerLine() {
+  // 當前帳面:resources_after + 最新結構後果的模板句(時間=章節,劇中時間;無牆鐘 ts)
+  const r = S.resources;
+  const turns = S.trace.filter((t) => t.event_id !== "SEAL");
+  const last = turns[turns.length - 1];
+  const brief = last ? consequenceBriefFor(last) : "尚未有轉轍紀錄——第一桿還在你手裡。";
+  return `醫療 ${r.medical}・能源 ${r.energy}・信任 ${r.trust} ─ ${brief}`;
+}
+
+function readbackRow(t) {
+  const names = npcNamesFor(t);
+  const item = el("div", "trace-item",
+    `<span class="rb-meta"><b>第${esc(String(t.chapter))}章</b> · ${esc(t.location)} · ${esc(names.join("、"))}</span><br>
+     ${esc(t.choice.label)}${t.reason_text ? `——「${esc(t.reason_text)}」` : ""}
+     ${t.blackmirror ? `<br><span class="rb-mirror">黑鏡:${esc(t.blackmirror.response)}</span>` : ""}`);
+  if (t.parse) {
+    item.append(el("details", "trace-parse",
+      `<summary>內層標註(keyword 級)</summary><pre>${esc(JSON.stringify(t.parse, null, 1))}</pre>`));
+  }
+  return item;
+}
+
 /* ── 軌痕面板 / HUD 按鈕 ──────────────────────────── */
 
 function initPanels() {
@@ -813,17 +861,11 @@ function initPanels() {
     const panel = $("#trace-panel");
     const list = $("#trace-list");
     list.innerHTML = "";
+    list.append(el("p", "ledger-line", `<b>當前帳面</b> ${esc(ledgerLine())}`));
     if (!S.trace.length) list.append(el("p", null, "還沒有軌痕。第一次轉轍之後,這裡開始記。"));
     for (const t of S.trace) {
       if (t.event_id === "SEAL") continue;
-      const item = el("div", "trace-item",
-        `<b>第${t.chapter}章・${esc(t.title)}</b><br>選擇:${esc(t.choice.label)}
-         ${t.reason_text ? `<br>理由:「${esc(t.reason_text)}」` : ""}`);
-      if (t.parse) {
-        item.append(el("details", "trace-parse",
-          `<summary>內層標註(keyword 級)</summary><pre>${esc(JSON.stringify(t.parse, null, 1))}</pre>`));
-      }
-      list.append(item);
+      list.append(readbackRow(t));
     }
     panel.classList.toggle("hidden");
   });
