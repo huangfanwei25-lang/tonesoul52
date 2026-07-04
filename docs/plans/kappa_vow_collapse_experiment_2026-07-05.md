@@ -1,6 +1,7 @@
 # κ 違諾預測實驗 — Phase 0 燃料盤點 + TSR 遺產仲裁(2026-07-05)
 
-> Status: **Phase 0 執行完畢;結論=燃料不足,先收集後建模**。
+> Status: **Phase 1 訊號落帳已實作(同日,shadow-only;見文末增修節)**;Phase 0 結論不變
+> =違諾 ground truth 燃料不足,先收集後建模;Phase 2 門檻與開工權在 owner。
 > 出處:LINEAGE parked asset #1(VowCollapsePredictor,G2/G4 的 κ——「違諾之前的
 > 預測性預警;當年死於沒有真訊號可餵」)。owner 同日重提 TSR(ΔT/ΔS/ΔR 語氣張力
 > 向量、認識論邊界標籤、漂移門控),問「這套還有用嗎」——兩題合併處理,
@@ -60,3 +61,40 @@
 ## Lane
 
 Phase 1 工程(訊號落帳)=bounded ticket,可派 codex;門檻判定與 Phase 2 開工=owner。
+
+---
+
+## 增修(2026-07-05,Phase 1 落地 + 收斂掃描併桌)
+
+### Phase 1 訊號落帳:已實作(shadow-only)
+
+- **模組**:`tonesoul/council/kappa_signals.py`;掛點=`CouncilRuntime.deliberate()`
+  genesis 步之後(runtime.py,fail-soft try/except,與 vtp/benevolence 同形)。
+- **每次審議落兩個訊號進 transcript["kappa_signals"]**(永遠附掛、無副作用,
+  epistemic_label 同款姿態;隨 council_verdict provenance 事件持久化):
+  1. `tsr_delta_norm`(既有計算,收進同一筆 schema `kappa_signal_v0`);
+  2. **姿態-證據錯位**:語氣姿態(tsr_metrics strong_modals vs caution 離散化:
+     assertive/hedged/neutral)× EpistemicLabel 證據分級(strong/medium/weak/unlabeled);
+     **assertive + weak = 一筆 mismatch 事件**,附錯位維度。
+- **JSONL ledger**(`memory/kappa_signal_ledger.jsonl`,gitignored)= **default-OFF**
+  (`SOUL.council.kappa_signal_ledger_enabled`,#219 檔案副作用紀律);**翻開關=owner**。
+  transcript 附掛不受此旗標影響——observability 永遠在。
+- **誠實標注(v0 限度)**:tsr_metrics 詞庫是英文(tokenizer 丟 CJK)——純中文草稿
+  姿態=neutral、錯位**低估**;計數是 floor 不是真率。無標籤=unlabeled,不計 mismatch
+  (沒標籤≠證據弱)。永不 gate verdict(測試有 never-a-gate invariant)。
+- 測試:`tests/test_kappa_signals.py`(9 tests:規則正反例、編碼紀律、旗標 OFF 不寫檔、
+  不改判決)。
+
+### 「滑動視窗篤定度跳變」(堆三第 2 條)未實作
+
+需要跨 session 時序 + 本地 qwen 評分器,屬 7/7 後工作;本次只落單次審議層的離散訊號。
+
+### 收斂掃描併桌(2026-07-05 大掃描,見 convergence_sweep_report S4/S5 相關項)
+
+- **升格前壓力預測**(vocus〈AI 應學會「不輕易承諾」〉2026-03-10):κ 量「立誓後、
+  違諾前」,這條量「升格前」——同一組 calibration 燃料的**第二量測點**。Phase 2 設計時
+  把「張力候選→承諾」的升格事件也納入收集面(掛點=vow 升格路徑,尚未實作)。
+- **三層 Trace 架構 Layer 2/3**(dissent 衰減 + pattern crystal;PR #72 遺落 spec
+  `trace_architecture_followup_2026-05-13.md`):與 κ 同屬衰減/預警家族。併桌結論=
+  **先量再建**:等本 ledger 有時序後,先驗 owner 觀察(「dissent 影子該衰減而 AI 不衰減」)
+  是否在資料裡成立,再決定 Layer 2 建不建;不獨立開工。

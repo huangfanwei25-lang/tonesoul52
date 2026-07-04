@@ -64,6 +64,7 @@ ledger.jsonl
 bridge_debug.log
 .conversion_checkpoint.json
 memory/provenance_ledger.jsonl
+memory/kappa_signal_ledger.jsonl
 memory/self_journal.jsonl
 memory/agent_discussion.jsonl
 memory/agent_discussion_curated.jsonl

@@ -16,6 +16,7 @@ from ..benevolence import AuditLayer, AuditResult, filter_benevolence
 from ..escape_valve import EscapeValve, EscapeValveConfig
 from .base import IPerspective
 from .intent_reconstructor import infer_genesis
+from .kappa_signals import attach_kappa_signals
 from .model_registry import get_council_config
 from .persona_audit import audit_persona_uniqueness
 from .pre_output_council import PreOutputCouncil
@@ -388,6 +389,17 @@ class CouncilRuntime:
         except Exception as exc:
             transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
             transcript["genesis_error"] = str(exc)
+            verdict.transcript = transcript
+
+        # κ Phase 1 (shadow-only): land posture-evidence mismatch + tsr_delta_norm
+        # into the trace. A RECORDED signal, never a gate (DESIGN Inv3); runs after
+        # the genesis step so tsr_delta_norm and epistemic_label are both populated.
+        # See docs/plans/kappa_vow_collapse_experiment_2026-07-05.md Phase 1.
+        try:
+            attach_kappa_signals(verdict, draft_output=request.draft_output)
+        except Exception as exc:
+            transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
+            transcript["kappa_signals_error"] = str(exc)
             verdict.transcript = transcript
 
         try:

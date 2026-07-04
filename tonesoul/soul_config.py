@@ -117,6 +117,12 @@ class CouncilConfig:
     # escalates beyond the agent's OWN intent + suggests contracting; records a signal,
     # never auto-edits/blocks (DESIGN Inv3). See intent_proportionality_eval_2026-06-15.md.
     intent_proportionality_advisory_enabled: bool = False
+    # κ Phase 1 signal ledger (shadow-only). The per-deliberation kappa_signals
+    # transcript attachment is always on (side-effect-free, like epistemic_label);
+    # this flag gates only the JSONL ledger file append (default OFF — file side
+    # effects follow the #219 shadow-seam discipline; flip = owner decision).
+    # See docs/plans/kappa_vow_collapse_experiment_2026-07-05.md Phase 1.
+    kappa_signal_ledger_enabled: bool = False
 
 
 # ---------------------------------------------------------------------------
