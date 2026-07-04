@@ -17,6 +17,12 @@
    OpenClaw-Memory 本機資料——零讀取、零引用(Axiom 8)。
 2. **只收公開 repo 已存在的痕跡**(= owner 已決定公開的);**排除任何第三方內容**
    (如 moltbook 回應中他人的文字/profile——v0 一律不進)。
+   **修正案 A(owner ratify 2026-07-04,「可以」)**:**經明示同意、以 CC BY 4.0 讓渡的
+   第一人稱貢獻**視為在範圍內(語魂劇場 v2 判斷間收集通道),不可談判的四配套:
+   (a) API key 永遠只存使用者客戶端,零經手;(b) 預設匿名,v0 無帳號;
+   (c) 提交即發撤回碼,憑碼刪除(Axiom 8 延伸到貢獻者);
+   (d) 每筆貢獻先過 council validate 門神,再入 human lane——與 incident 痕跡**分艙,
+   絕不混標**(`label_provenance: human`、evidence ≤ E1)。
 3. **標籤的標籤**:每個標籤標注它怎麼來的——`incident`(真實事件打上)>`human`(人工標)
    >`model`(模型標,標明哪個模型)。模型標註永遠不冒充事件標註。
 
