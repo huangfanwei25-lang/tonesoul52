@@ -185,5 +185,16 @@
     "method": "重跑 doc_convergence + verify_status_freshness 後逐數對照",
     "outcome": "refuted",
     "evidence_ref": "docs/status/repo_atlas_2026-07-03.md H2 列與處置回填(修正 commit 529d936)"
+  },
+  {
+    "lane": "co-observer",
+    "claim": "「痕跡資料集 v0 標籤全為 incident,即代表記錄內容為真」(DATASHEET 初版的隱含框架)",
+    "evidence_at_claim": "E1",
+    "held": false,
+    "caught_by": "梵威(owner,發佈決策前)",
+    "correction": "事件真值≠內容真值:incident 只認證「這筆紀錄在那個時間被簽下」(git 錨定);紀錄**裡面**的宣稱——尤其 293 筆 commit 訊息——是當期模型的自我評估,真偽未驗(已有判例:「8055 全綠」係推論碰巧為真)。DATASHEET 補限制第 7 條,消費者須把 claim_or_action 當歷史發語,不當 ground truth",
+    "method": "owner 讀 v0 組成後對舊資料評估來源的質疑(「可能是舊模型那時候的自我評估」)",
+    "outcome": "narrowed",
+    "evidence_ref": "dataset/v0/DATASHEET.md 限制第 7 條;姊妹判例=feedback_completeness_claims(8055)"
   }
 ]

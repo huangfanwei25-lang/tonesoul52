@@ -201,7 +201,7 @@ class LMStudioClient:
             "stream": False,
         }
         try:
-            response = requests.post(
+            response = requests.post(  # nosec B113  # computed timeout bounds local LLM request.
                 f"{self.host}/v1/chat/completions",
                 json=payload,
                 timeout=self._request_timeout(deadline),
@@ -264,7 +264,7 @@ class LMStudioClient:
         """Check if LM Studio server is running."""
         try:
             deadline = self._deadline(2.0)
-            response = requests.get(
+            response = requests.get(  # nosec B113  # computed timeout bounds local LLM request.
                 f"{self.host}/v1/models",
                 timeout=self._request_timeout(deadline),
             )
@@ -276,7 +276,7 @@ class LMStudioClient:
         """List available models."""
         try:
             deadline = self._deadline(timeout_seconds)
-            response = requests.get(
+            response = requests.get(  # nosec B113  # computed timeout bounds local LLM request.
                 f"{self.host}/v1/models",
                 timeout=self._request_timeout(deadline),
             )

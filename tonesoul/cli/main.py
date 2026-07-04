@@ -76,7 +76,11 @@ def _cmd_ystm(argv: List[str]) -> int:
     from tonesoul.ystm.demo import DEFAULT_SEGMENTS, write_demo_outputs
 
     parser = argparse.ArgumentParser(prog="ts ystm")
-    parser.add_argument("--output-dir", default="/tmp/tonesoul_ystm_demo", help="Output directory")
+    parser.add_argument(
+        "--output-dir",
+        default="/tmp/tonesoul_ystm_demo",  # nosec B108  # demo-only artifacts; caller can override.
+        help="Output directory",
+    )
     parser.add_argument(
         "--export-png", action="store_true", help="Also export PNG (requires cairosvg or Pillow)"
     )

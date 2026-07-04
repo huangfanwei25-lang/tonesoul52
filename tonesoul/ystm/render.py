@@ -302,7 +302,9 @@ def render_html(svg: str, visual_params: Dict[str, object], nodes: Sequence[Node
             }
         )
     nodes_json = json.dumps(node_payload, indent=2)
-    return f"""<!doctype html>
+    return (
+        f""  # nosec B608  # HTML template only; no SQL is executed.
+        f"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -505,3 +507,4 @@ def render_html(svg: str, visual_params: Dict[str, object], nodes: Sequence[Node
 </body>
 </html>
 """
+    )
