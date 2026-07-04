@@ -196,5 +196,38 @@
     "method": "owner 讀 v0 組成後對舊資料評估來源的質疑(「可能是舊模型那時候的自我評估」)",
     "outcome": "narrowed",
     "evidence_ref": "dataset/v0/DATASHEET.md 限制第 7 條;姊妹判例=feedback_completeness_claims(8055)"
+  },
+  {
+    "lane": "self-check",
+    "claim": "codex F1(High):「劇場 README 引用的支撐檔案(機制書/世界書/NPC/地點/憲章/出海手冊)全數缺失,索引不可執行、削弱『每條規則對應真實機制』宣稱」(2026-07-04 天道外眼審)",
+    "evidence_at_claim": "E1",
+    "held": false,
+    "caught_by": "fable 主 agent 仲裁(獨立重現:倉庫 docs/theater/ 內六個被引檔案全部存在且本 session 已逐檔讀過)",
+    "correction": "缺檔是審查打包造成——為繞開 codex exec 在 git repo 內只審 diff 的偏向(同日兩次失敗判例),只複製 3 檔到無 git 的 scratch 目錄跑第三次。假陽性成因在派工方的打包,不在正典;隔離審查時要嘛補齊被引檔,要嘛在 focus 聲明「引用檔不在包內,勿以缺檔立案」",
+    "method": "對倉庫 docs/theater/ 逐檔重現存在性;比對 scratch 目錄內容清單",
+    "outcome": "refuted",
+    "evidence_ref": "tmp/codex_review_tiandao_20260704.md F1;docs/theater/README.md"
+  },
+  {
+    "lane": "self-check",
+    "claim": "codex F3(Medium):「laws 檔宣稱『一字未改』卻含嶼的對照注記(lines 5-9),封存原文與策展注記未清楚分離」(2026-07-04 天道外眼審)",
+    "evidence_at_claim": "E1",
+    "held": false,
+    "caught_by": "fable 主 agent 仲裁(獨立重現:五份 owner 原稿檔頭皆同一慣例)",
+    "correction": "分離慣例存在且全系列一致:策展注記在 blockquote 檔頭、具名「(嶼,2026-07-04)」,owner 原稿在 --- 分隔線之後;『一字未改』指分隔線以下。降級為 style 建議(是否要更強的 provenance 分離語法)交 owner 選擇",
+    "method": "對 laws/v0.2/mechanics/npc_roster/locations 五檔檔頭逐一重現同一 blockquote+--- 慣例",
+    "outcome": "refuted",
+    "evidence_ref": "docs/theater/tiandao_laws_owner_draft_2026-07-04.md:1-10"
+  },
+  {
+    "lane": "self-check",
+    "claim": "「自家 trace 欄位是 weavai 摘要格式的超集」(weavai 結晶判斷證據簡報條目 7,2026-07-04)",
+    "evidence_at_claim": "E2",
+    "held": false,
+    "caught_by": "codex 異模型 Critic 的程序 caveat(要求真 trace 樣本)→ 主 agent 親驗 app.js:481-498 → 裁決 agent 覆驗調解",
+    "correction": "record 物件無時間欄(ts 不存在)、npcs 靠事件卡 join——trace 單獨不是超集,trace+gamedata 聯集才是;時間欄語義=章節(劇中時間)決定性可用。已反映進 P1 修窄命題(資料來源明寫 join、不新增牆鐘 ts)",
+    "method": "三方各自讀同段代碼(Analyst/主 agent/裁決 agent),語義層衝突由裁決調解",
+    "outcome": "narrowed",
+    "evidence_ref": "docs/plans/weavai_crystallization_decision_2026-07-04.md;site/theater/app.js:481-498"
   }
 ]

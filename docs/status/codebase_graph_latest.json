@@ -1,27 +1,27 @@
 {
-  "generated_at": "2026-07-03T03:53:40Z",
+  "generated_at": "2026-07-04T05:28:08Z",
   "source": "scripts/analyze_codebase_graph.py",
   "root_package": "tonesoul",
   "summary": {
-    "total_modules": 303,
-    "total_lines": 90764,
-    "total_classes": 576,
-    "total_functions": 3038,
-    "total_edges": 541,
+    "total_modules": 299,
+    "total_lines": 89502,
+    "total_classes": 560,
+    "total_functions": 3004,
+    "total_edges": 540,
     "total_cycles": 0,
     "total_layer_violations": 0,
     "total_orphans": 1,
     "total_community_drifts": 28,
-    "self_declared_layer_count": 303,
+    "self_declared_layer_count": 299,
     "self_declared_layer_ratio": 1.0,
-    "purpose_count": 301,
-    "purpose_ratio": 0.9934
+    "purpose_count": 297,
+    "purpose_ratio": 0.9933
   },
   "annotation_coverage": {
-    "self_declared_layer_count": 303,
+    "self_declared_layer_count": 299,
     "self_declared_layer_ratio": 1.0,
-    "purpose_count": 301,
-    "purpose_ratio": 0.9934
+    "purpose_count": 297,
+    "purpose_ratio": 0.9933
   },
   "god_nodes": [
     {
@@ -121,7 +121,7 @@
       "in_degree": 3,
       "out_degree": 15,
       "total_degree": 18,
-      "lines": 426,
+      "lines": 428,
       "classes": 1,
       "functions": 9,
       "layer": "governance",
@@ -186,7 +186,7 @@
       "in_degree": 2,
       "out_degree": 9,
       "total_degree": 11,
-      "lines": 322,
+      "lines": 326,
       "classes": 0,
       "functions": 12,
       "layer": "surface",
@@ -293,13 +293,13 @@
   "subpackage_stats": {
     "(root)": {
       "files": 100,
-      "lines": 41276,
+      "lines": 41283,
       "classes": 200,
       "functions": 1211
     },
     "axioms": {
       "files": 2,
-      "lines": 376,
+      "lines": 378,
       "classes": 3,
       "functions": 14
     },
@@ -311,7 +311,7 @@
     },
     "cli": {
       "files": 3,
-      "lines": 344,
+      "lines": 348,
       "classes": 0,
       "functions": 12
     },
@@ -323,15 +323,15 @@
     },
     "council": {
       "files": 40,
-      "lines": 11357,
+      "lines": 11363,
       "classes": 67,
       "functions": 356
     },
     "deliberation": {
       "files": 7,
-      "lines": 1922,
+      "lines": 1970,
       "classes": 18,
-      "functions": 86
+      "functions": 87
     },
     "evolution": {
       "files": 4,
@@ -377,19 +377,13 @@
     },
     "loop": {
       "files": 4,
-      "lines": 634,
+      "lines": 638,
       "classes": 16,
       "functions": 23
     },
-    "market": {
-      "files": 4,
-      "lines": 1342,
-      "classes": 16,
-      "functions": 35
-    },
     "memory": {
       "files": 33,
-      "lines": 10777,
+      "lines": 10779,
       "classes": 55,
       "functions": 426
     },
@@ -437,7 +431,7 @@
     },
     "tech_trace": {
       "files": 4,
-      "lines": 590,
+      "lines": 594,
       "classes": 0,
       "functions": 29
     },
@@ -449,7 +443,7 @@
     },
     "ystm": {
       "files": 13,
-      "lines": 2215,
+      "lines": 2218,
       "classes": 21,
       "functions": 60
     },
@@ -507,7 +501,8 @@
       "gse": 2
     },
     "deliberation": {
-      "deliberation": 14
+      "deliberation": 14,
+      "(root)": 1
     },
     "evolution": {
       "evolution": 4,
@@ -540,10 +535,6 @@
     "loop": {
       "loop": 6,
       "shared": 2
-    },
-    "market": {
-      "llm": 1,
-      "market": 1
     },
     "memory": {
       "memory": 53,
@@ -737,6 +728,6 @@
     "generated": true,
     "canonical": false,
     "source_command": "python scripts/analyze_codebase_graph.py",
-    "updated_at": "2026-07-03T03:53:40Z"
+    "updated_at": "2026-07-04T05:28:08Z"
   }
 }
