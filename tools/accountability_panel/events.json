@@ -229,5 +229,16 @@
     "method": "三方各自讀同段代碼(Analyst/主 agent/裁決 agent),語義層衝突由裁決調解",
     "outcome": "narrowed",
     "evidence_ref": "docs/plans/weavai_crystallization_decision_2026-07-04.md;site/theater/app.js:481-498"
+  },
+  {
+    "lane": "co-observer",
+    "claim": "「Tianji 語料=13k 條 LLM(Claude/DeepSeek)批量生成 QA」(Tianji 對照筆記初版+對話陳述,2026-07-04)",
+    "evidence_at_claim": "E2",
+    "held": false,
+    "caught_by": "梵威(owner,對照 HF 資料集頁面發現描述不符)",
+    "correction": "HF repo 實為兩個艙:艙一=13,133 列 RAG 知識塊(text 欄,來源未標,無證據為 AI 生成);艙二=7,037 條去重微調 QA(其 GitHub 文檔載明 Claude/DeepSeek 生成,探針掃的是這艙)。初版把兩艙的數字與性質接錯。「無帳」批評不變且對兩艙皆成立(dataset card 全空,WebFetch 親驗)",
+    "method": "owner 對照 HF 頁面 → agent WebFetch 原文覆驗 → 對照筆記勘誤(#296 更新)",
+    "outcome": "narrowed",
+    "evidence_ref": "docs/status/tianji_contrast_note_2026-07-04.md 勘誤段;https://huggingface.co/datasets/sanbu/tianji-chinese"
   }
 ]
