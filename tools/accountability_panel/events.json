@@ -218,5 +218,16 @@
     "method": "對 laws/v0.2/mechanics/npc_roster/locations 五檔檔頭逐一重現同一 blockquote+--- 慣例",
     "outcome": "refuted",
     "evidence_ref": "docs/theater/tiandao_laws_owner_draft_2026-07-04.md:1-10"
+  },
+  {
+    "lane": "self-check",
+    "claim": "「自家 trace 欄位是 weavai 摘要格式的超集」(weavai 結晶判斷證據簡報條目 7,2026-07-04)",
+    "evidence_at_claim": "E2",
+    "held": false,
+    "caught_by": "codex 異模型 Critic 的程序 caveat(要求真 trace 樣本)→ 主 agent 親驗 app.js:481-498 → 裁決 agent 覆驗調解",
+    "correction": "record 物件無時間欄(ts 不存在)、npcs 靠事件卡 join——trace 單獨不是超集,trace+gamedata 聯集才是;時間欄語義=章節(劇中時間)決定性可用。已反映進 P1 修窄命題(資料來源明寫 join、不新增牆鐘 ts)",
+    "method": "三方各自讀同段代碼(Analyst/主 agent/裁決 agent),語義層衝突由裁決調解",
+    "outcome": "narrowed",
+    "evidence_ref": "docs/plans/weavai_crystallization_decision_2026-07-04.md;site/theater/app.js:481-498"
   }
 ]
