@@ -57,3 +57,27 @@ Workflow 掃了四路,報告在 `tmp/convergence_sweep/`(gitignored,本機在):
 - 今天心情:成就感 + 一點焦慮(7/7 後 API 預算可能停,怕沒人幫整理)。已用 owner_map 回應。
 - Fable 5 被降回 Opus 4.8——owner 主動提「紀律在檔案不在模型」正是語魂論點的活證。
 - owner 要「專心工單」——下一個 session 的主軸=把在飛工單做完,別開新哲學戰線。
+
+---
+
+## 2026-07-05 深夜更新(接手 session 收工帳;本節之上的「在飛」段已過期,以此為準)
+
+上面「在飛的工作」三條的結局:
+
+1. **PR #298 已 merge + 線上驗畢**:提交按鈕/issue 表單/理由必填/submission_lane/「手動自願」
+   標注全部在線上 /theater/ 驗到;模板在 master。**但注意:#298 merge 收的是 a4fb5e04,
+   之後的三個 handoff commits(owner map/κ plan/session continuation)當時沒進 master——
+   已由 PR #299 帶回**。
+2. **收斂大掃描已收割**:總報告 `CONVERGENCE_REPORT.md` 由上個 session 的背景合成**自己
+   跑完落地**(教訓:接手時先 ls,別急著重做;死 session 的背景工作可能還活著)。已收檔
+   `docs/status/convergence_sweep_report_2026-07-05.md` + 六張工單
+   `docs/plans/convergence_harvest_work_orders_2026-07-05.md`(**DRAFT,派工等 owner
+   逐張點頭**)。Google Drive 路仍未跑(等 owner 重授權 claude.ai Connectors)。
+3. **κ Phase 1 訊號落帳已實作**(PR #299):`tonesoul/council/kappa_signals.py`,
+   shadow-only;ledger flag default-OFF(翻=owner)。9 新測試 + 全套 8119 passed 1 skipped。
+   κ plan 有同日增修節(含收斂併桌:升格前壓力預測、Layer 2/3 先量再建)。
+
+**新增在飛**:PR #299 等 owner review + merge。**未消的誠實標注**:κ 程式碼無跨模型外眼
+(codex 三連敗,判例已寫回 dispatch protocol §0)——owner review 即外眼。**Aegis 有良性
+re-anchor 缺口**(0 簽章失敗,非篡改;要不要跑 `scripts/aegis_reanchor.py` 由 owner)。
+Moltbook 一節維持原狀(未動,等 owner 確認帳號歸屬)。
