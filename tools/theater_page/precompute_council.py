@@ -137,6 +137,8 @@ def validate_card(card: dict, errors: list[str]) -> None:
         err("chapter must be int")
     if card.get("pressure_level") not in (1, 2, 3, 4):
         err("pressure_level must be 1-4")
+    if not card.get("objective"):
+        err("missing objective line (progression pass, 2026-07-04)")
 
     npcs = card.get("npcs", [])
     if not 1 <= len(npcs) <= 4:

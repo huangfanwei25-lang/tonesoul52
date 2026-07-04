@@ -86,6 +86,16 @@ repair_attempt / trace_quality` —— 進入資料集憲章修正案 A 的 huma
 - 「由帳頁織成章節」:essays 管線只會**排版**不會**織**——織章需要一個生成步驟
   (`absent`,誠實標注;v1 候選:帳頁→LLM 草稿→owner 過目→管線排版)。
 
+## 勘注(2026-07-04;owner 核可,原稿依約不動、勘注記於合併版)
+
+- **v0.2 第三律 vs 第八律的 `target` 欄**:第三律解析欄位含 `target`(行動影響誰),
+  第八律內部保存清單漏列——**以第三律為準,內部 schema 含 target(超集)**;
+  可玩版 trace 已照此實作。(外眼審 F2,CONFIRMED)
+- **v0.2 第二律「三項中的兩項」**:原文後列八個標示項,枚舉歧義——**採嚴格讀法:
+  成功可能/主要代價/失敗後果三項中至少標二**,其餘五項為加分標示;可玩版驗證器
+  已照此 fail-closed 執行。(外眼審 F4,CONFIRMED)
+- 審查與仲裁全文:`docs/status/tiandao_codex_review_adjudication_2026-07-04.md`。
+
 ## 核心句(owner 原稿)
 
 > 大逃殺問:「誰會活下來?」
