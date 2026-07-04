@@ -482,6 +482,16 @@ function renderReason(opt) {
   submit.textContent = "留下理由";
   submit.addEventListener("click", () => {
     const text = ta.value.trim();
+    // 機制書§二6:理由陳述(強制)——選了方案就至少留一個字;「怕。」也算理由。
+    // 真正的沉默走「保持沉默」那顆獨立按鈕(第九律),不從這裡空白通過。
+    if (!text) {
+      if (!box.dataset.nagged) {
+        box.dataset.nagged = "1";
+        box.append(el("p", "hint reason-nag",
+          "至少留一個字——「怕。」也算理由。真正想沉默,請回上面用「保持沉默」,那也是一種轉轍。"));
+      }
+      return;
+    }
     const parse = parseReason(text, opt);
     const needProbe = text.length < 30 &&
       (parse.harm_awareness === "未知" || parse.responsibility_position === "未明");
@@ -867,21 +877,34 @@ function renderEnding() {
   }
   box.append(tr);
 
-  // 下載 + 撤回碼
+  // 下載 + 撤回碼 + 自願提交(GitHub Issue 管道;門神審核,非自動上傳)
   const dl = el("div", "ending-dl");
   dl.append(el("p", null,
-    `<b>撤回碼:</b><code>${esc(S.code)}</code> — 妥善保存。v0 沒有上傳管道(誠實標注:absent);
-     未來若你自願提交這份軌痕進入責任痕跡資料集,此碼是你隨時撤回它的鑰匙。`));
+    `<b>撤回碼:</b><code>${esc(S.code)}</code> — 妥善保存。這座城不會自動上傳任何東西;
+     若你「自願」把這份軌痕交給作者(經審核才可能收錄進公開資料集,CC BY 4.0),
+     此碼是你隨時撤回它的鑰匙。`));
   const dlBtn = el("button", "pick");
   dlBtn.textContent = "下載我的軌痕(JSON)";
   dlBtn.addEventListener("click", downloadTrace);
+  const submitBtn = el("button", "pick");
+  submitBtn.textContent = "自願提交軌痕(GitHub)";
+  submitBtn.title = "需要 GitHub 帳號。先下載 JSON,再貼進開啟的提交表單。";
+  submitBtn.addEventListener("click", () => {
+    downloadTrace(); // 先確保玩家手上有檔
+    const url = "https://github.com/Fan1234-1/tonesoul52/issues/new" +
+      "?template=trace-submission.yml&title=" +
+      encodeURIComponent(`軌痕提交:${S.code}`);
+    window.open(url, "_blank", "noopener");
+  });
+  dl.append(el("p", "hint",
+    "提交是兩步:JSON 已自動下載到你的電腦 → 在開啟的 GitHub 表單裡勾同意、貼上 JSON 內容、送出。提交 ≠ 自動收錄;審核後才可能進資料集。"));
   const again = el("button", "pick ghost");
   again.textContent = "再開一局";
   again.addEventListener("click", () => {
     if (!S.memoryOnly) { try { localStorage.removeItem(SAVE_KEY); } catch (_) {} }
     location.reload();
   });
-  dl.append(dlBtn, again);
+  dl.append(dlBtn, submitBtn, again);
   box.append(dl);
   window.scrollTo(0, 0);
 }
@@ -897,7 +920,8 @@ function downloadTrace() {
     generated_by: "site/theater (City of Switches playable v0)",
     withdrawal_code: S.code,
     consent: { storage: S.memoryOnly ? "memory-only" : "localStorage", uploaded: false,
-      note: "此檔由玩家本人下載;v0 無伺服器、無自動收集。" },
+      submission_lane: "github-issue (manual, opt-in, gatekeeper-reviewed)",
+      note: "此檔由玩家本人下載;無伺服器、無自動收集。提交=玩家親手經 GitHub Issue,審核後才可能收錄。" },
     turns: S.trace,
     anchors: S.anchors,
     labels: {
