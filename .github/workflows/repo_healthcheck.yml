@@ -1,6 +1,13 @@
 name: Repo Healthcheck
 
 on:
+  schedule:
+    # Weekly artifact-refresh lane (Mondays 02:00 UTC). Why: the committed
+    # repo_healthcheck_latest.json drifted to a June-false fossil because this
+    # workflow only ever uploaded artifacts and never committed them back —
+    # found by the 2026-07-04 external audit. The refresh job below opens a PR
+    # (never pushes master directly); a human still merges.
+    - cron: "0 2 * * 1"
   push:
     branches: [master, main]
     paths:
@@ -134,3 +141,63 @@ jobs:
             docs/status/dual_track_boundary_latest.md
           if-no-files-found: error
           retention-days: 90
+
+  refresh-committed-artifact:
+    # Weekly lane only. Opens/updates a PR with the regenerated healthcheck
+    # artifacts so the committed copy cannot fossilize again (2026-07-04 audit:
+    # the June overall_ok=false artifact sat for a month while CI ran green).
+    # Deliberately commits the verdict EVEN IF RED — a fresh honest red beats
+    # a stale false anything. Never pushes master; a human merges.
+    name: Refresh committed healthcheck artifact (weekly PR)
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pip install hypothesis pytest-cov pytest-asyncio
+
+      - name: Regenerate healthcheck artifacts (non-strict; verdict recorded as-is)
+        run: python scripts/run_repo_healthcheck.py --allow-missing-discussion || true
+
+      - name: Open or update refresh PR when artifacts changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- docs/status/; then
+            echo "no artifact drift; nothing to refresh"
+            exit 0
+          fi
+          git config user.name "repo-healthcheck-bot"
+          git config user.email "actions@github.com"
+          BRANCH="auto/healthcheck-artifact-refresh"
+          git checkout -B "$BRANCH"
+          git add docs/status/
+          {
+            echo "chore(status): weekly healthcheck artifact refresh"
+            echo ""
+            echo "Scheduled regeneration so the committed verdict tracks reality instead of"
+            echo "fossilizing (2026-07-04 audit finding). Verdict committed as-is, red or green."
+            echo ""
+            echo "Agent: repo-healthcheck-bot"
+            echo "Trace-Topic: weekly healthcheck artifact refresh (scheduled lane)"
+          } > /tmp/refresh_msg.txt
+          git commit -F /tmp/refresh_msg.txt
+          git push -f origin "$BRANCH"
+          gh pr create --base master --head "$BRANCH" \
+            --title "chore(status): weekly healthcheck artifact refresh" \
+            --body "Scheduled artifact refresh. Committed verdict mirrors the latest run — red or green. Review and merge; the freshness contract watches the age either way." \
+            2>/dev/null || echo "PR already open; branch updated"

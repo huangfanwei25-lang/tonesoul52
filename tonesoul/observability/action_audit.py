@@ -167,7 +167,7 @@ class ActionAuditor:
         if conditions:
             where = "WHERE " + " AND ".join(conditions)
 
-        query = f"SELECT * FROM actions {where} ORDER BY timestamp DESC LIMIT ?"
+        query = f"SELECT * FROM actions {where} ORDER BY timestamp DESC LIMIT ?"  # nosec B608  # fixed WHERE fragments; values are parameterized.
         params.append(limit)
 
         with self._connect() as conn:

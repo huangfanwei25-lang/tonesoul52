@@ -193,7 +193,7 @@ class OllamaClient:
             "stream": False,
         }
         try:
-            response = requests.post(
+            response = requests.post(  # nosec B113  # computed timeout bounds local LLM request.
                 f"{self.host}/api/generate",
                 json=payload,
                 timeout=self._request_timeout(deadline),
@@ -255,7 +255,7 @@ class OllamaClient:
         """Check if Ollama service is running."""
         try:
             deadline = self._deadline(2.0)
-            response = requests.get(
+            response = requests.get(  # nosec B113  # computed timeout bounds local LLM request.
                 f"{self.host}/api/tags",
                 timeout=self._request_timeout(deadline),
             )
@@ -267,7 +267,7 @@ class OllamaClient:
         """List available models."""
         try:
             deadline = self._deadline(timeout_seconds)
-            response = requests.get(
+            response = requests.get(  # nosec B113  # computed timeout bounds local LLM request.
                 f"{self.host}/api/tags",
                 timeout=self._request_timeout(deadline),
             )
@@ -466,7 +466,7 @@ class OllamaClient:
         }
 
         try:
-            response = requests.post(
+            response = requests.post(  # nosec B113  # explicit scalar timeout bounds chat request.
                 f"{self.host}/api/chat",
                 json=payload,
                 timeout=max(1.0, float(timeout_seconds)),
