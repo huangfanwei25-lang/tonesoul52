@@ -1,23 +1,23 @@
 # ToneSoul Codebase Graph Analysis
 
-Generated: 2026-07-03T03:53:40Z
+Generated: 2026-07-04T05:28:08Z
 Package: `tonesoul`
 
 ## Summary
 
 | Metric | Value |
 | --- | ---: |
-| Modules | 303 |
-| Lines | 90,764 |
-| Classes | 576 |
-| Functions | 3,038 |
-| Import edges | 541 |
+| Modules | 299 |
+| Lines | 89,502 |
+| Classes | 560 |
+| Functions | 3,004 |
+| Import edges | 540 |
 | Circular deps | 0 |
 | Layer violations | 0 |
 | Orphan modules | 1 |
 | Community drifts | 28 |
-| Self-declared layer | 303 / 303 (100.0%) |
-| Purpose declared | 301 / 303 (99.3%) |
+| Self-declared layer | 299 / 299 (100.0%) |
+| Purpose declared | 297 / 299 (99.3%) |
 
 ## God Nodes (Top 20 by coupling)
 
@@ -56,13 +56,13 @@ Nobody imports these. Potential dead code or standalone entry points.
 
 | Subpackage | Layer | Files | Lines | Classes | Functions |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `(root)` | — | 100 | 41,276 | 200 | 1211 |
-| `axioms` | — | 2 | 376 | 3 | 14 |
+| `(root)` | — | 100 | 41,283 | 200 | 1211 |
+| `axioms` | — | 2 | 378 | 3 | 14 |
 | `backends` | infrastructure | 2 | 905 | 2 | 72 |
-| `cli` | surface | 3 | 344 | 0 | 12 |
+| `cli` | surface | 3 | 348 | 0 | 12 |
 | `cognition` | — | 2 | 353 | 4 | 13 |
-| `council` | governance | 40 | 11,357 | 67 | 356 |
-| `deliberation` | governance | 7 | 1,922 | 18 | 86 |
+| `council` | governance | 40 | 11,363 | 67 | 356 |
+| `deliberation` | governance | 7 | 1,970 | 18 | 87 |
 | `evolution` | evolution | 4 | 1,155 | 5 | 46 |
 | `gates` | governance | 2 | 406 | 6 | 13 |
 | `gateway` | infrastructure | 3 | 198 | 4 | 16 |
@@ -70,9 +70,8 @@ Nobody imports these. Potential dead code or standalone entry points.
 | `gse` | — | 8 | 1,030 | 7 | 69 |
 | `inter_soul` | surface | 5 | 496 | 9 | 40 |
 | `llm` | infrastructure | 5 | 1,457 | 7 | 73 |
-| `loop` | orchestration | 4 | 634 | 16 | 23 |
-| `market` | domain | 4 | 1,342 | 16 | 35 |
-| `memory` | memory | 33 | 10,777 | 55 | 426 |
+| `loop` | orchestration | 4 | 638 | 16 | 23 |
+| `memory` | memory | 33 | 10,779 | 55 | 426 |
 | `observability` | observability | 7 | 1,143 | 10 | 42 |
 | `perception` | perception | 4 | 1,030 | 5 | 30 |
 | `responsibility_runtime` | — | 10 | 1,554 | 22 | 56 |
@@ -80,9 +79,9 @@ Nobody imports these. Potential dead code or standalone entry points.
 | `scribe` | domain | 4 | 1,815 | 7 | 61 |
 | `semantic` | semantic | 3 | 193 | 3 | 18 |
 | `shared` | shared | 4 | 289 | 7 | 8 |
-| `tech_trace` | observability | 4 | 590 | 0 | 29 |
+| `tech_trace` | observability | 4 | 594 | 0 | 29 |
 | `tonebridge` | domain | 12 | 3,543 | 39 | 130 |
-| `ystm` | domain | 13 | 2,215 | 21 | 60 |
+| `ystm` | domain | 13 | 2,218 | 21 | 60 |
 | `yuhun` | semantic | 7 | 2,045 | 28 | 32 |
 
 ## Cross-Package Coupling (top edges)
