@@ -27,7 +27,10 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 SRC = REPO / "tmp" / "theater_content"
-OUT = REPO / "site" / "theater" / "data"
+# NOTE: "gamedata", not "data" — the repo root .gitignore has a bare `data/`
+# pattern that swallows any directory named data/ (bit us on first commit:
+# the page shipped without its JSON).
+OUT = REPO / "site" / "theater" / "gamedata"
 
 EVENT_IDS = [f"E{i:02d}" for i in range(1, 13)]
 

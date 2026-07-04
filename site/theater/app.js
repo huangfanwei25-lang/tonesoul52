@@ -1,7 +1,7 @@
 /* 岔軌之城 v0 — 單人最小可玩版
  *
  * 純 vanilla JS、無建置步驟(demo_ui 範式)。誠實分層:
- *  - 責任節點 verdict:真 rules-council 引擎輸出,離線預算(data/council_verdicts.json),
+ *  - 責任節點 verdict:真 rules-council 引擎輸出,離線預算(gamedata/council_verdicts.json),
  *    本檔只重播,絕不偽造節點回應。
  *  - 短句解析/黑鏡矛盾偵測/資源數值:遊戲層規則,關鍵詞級,如實標注。
  *  - 火花/共語 LLM 節點:absent(v0 未接)。
@@ -93,7 +93,7 @@ const esc = (s) =>
 async function loadData() {
   const [events, npcs, locations, verdicts] = await Promise.all(
     ["events", "npcs", "locations", "council_verdicts"].map((n) =>
-      fetch(`data/${n}.json`).then((r) => {
+      fetch(`gamedata/${n}.json`).then((r) => {
         if (!r.ok) throw new Error(`${n}.json ${r.status}`);
         return r.json();
       })
