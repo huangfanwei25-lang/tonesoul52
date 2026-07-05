@@ -173,7 +173,9 @@ codex 0.134.0 read-only 獨立重掃,**找到同模型盤點漏列的入口**。
 
 ## §7 下一步(2026-07-05 裁示後更新)
 
-**前置水管工單(owner 已裁方向,派工時機另定;兩張都不觸「什麼算信念」)**:
+**前置水管工單(owner 2026-07-05 已授權派工:「就這個吧」;下個 session 帶新鮮上下文開工,
+當時 agent 剩 7% 誠實不開刀。兩張都不觸「什麼算信念」;lane=下個 Claude session 或 codex
+(工單八欄照 work_order_template 補齊後派);governance 層,merge 前 owner 過目)**:
 - **WO-P1 旁路腳本上鎖**:`scripts/update_governance_state.py` 現況繞過 Aegis commit
   lock 與 shield,且常數與 SOUL config 平行實作(§1 關鍵事實 c)。形狀:改為經
   runtime_adapter 的正門 commit(或至少過 shield + lock),平行常數收斂到 SOUL config。
