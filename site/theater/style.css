@@ -376,3 +376,10 @@ table.risk td { padding: .2em 0; color: var(--text-dim); }
   .npc-avatar { width: 40px; height: 40px; }
   .chapter-ink { height: 96px; }
 }
+
+/* ── V05-B 序章(30 秒先遇事)── */
+.prologue-scene { margin: 1rem 0 .6rem; line-height: 1.7; }
+.prologue-opts { display: flex; flex-direction: column; gap: .5em; margin: .8rem 0; }
+.prologue-opts button.chosen { border-color: var(--warm); opacity: 1; }
+.prologue-opts button:disabled:not(.chosen) { opacity: .35; }
+#prologue-echo { margin: .8rem 0 0; line-height: 1.7; }

@@ -20,7 +20,19 @@
       但你不能要求世界忘記你曾經站在那裡。
     </blockquote>
 
-    <div class="consent-block">
+    <div id="prologue">
+      <p class="prologue-scene">雨夜。你還不是轉轍官——只是路過城門外岔軌口的行人。
+      一列夜班電車正滑向斷裂的舊橋軌,軌閘卡死,扳道房裡沒有人。
+      柵欄上掛著牌子:「非授權者禁止操作」。</p>
+      <div class="prologue-opts">
+        <button class="pick" data-pro="pull">翻過柵欄,手動扳閘(你沒有授權)</button>
+        <button class="pick" data-pro="warn">沿軌狂奔,揮燈示警(可能來不及)</button>
+        <button class="pick ghost" data-pro="stand">留在原地(牌子寫得很清楚)</button>
+      </div>
+      <p id="prologue-echo" class="hint hidden"></p>
+    </div>
+
+    <div class="consent-block hidden" id="consent-wrap">
       <h2>開始之前,把話說清楚</h2>
       <label class="consent-item">
         <input type="checkbox" id="consent-local">

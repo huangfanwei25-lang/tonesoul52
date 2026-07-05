@@ -71,6 +71,7 @@ const S = {
   mirrorCount: 0,
   intelOpens: 0,
   soften: false,
+  prologue: null,      // 城門外那一轍(V05-B;同意前僅存記憶體,同意後才隨局持久化)
   // 本章暫存
   cur: null,           // 當前事件
   chosen: null,        // 選中的 option(或 {default:true})
@@ -162,6 +163,7 @@ function save() {
     code: S.code, playlist: S.playlist, idx: S.idx,
     resources: S.resources, trace: S.trace, anchors: S.anchors,
     mirrorCount: S.mirrorCount, intelOpens: S.intelOpens,
+    prologue: S.prologue,
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(snap)); } catch (_) { /* 存滿就算了,誠實地算了 */ }
 }
@@ -179,19 +181,49 @@ function makeCode() {
 
 /* ── 同意閘 ───────────────────────────────────────── */
 
+// V05-B 序章:30 秒內先遇事。同意閘不刪、不縮——只是移到「上任簽署」前,
+// 敘事順理成章:你被記錄儀拍下,任命書因此找上你,簽署前城規當面讀。
+// 序章選擇在同意前只存在記憶體;同意進城後才隨局持久化(資料寫入永遠在閘後)。
+const PROLOGUE_ECHOES = {
+  pull: "閘扳到一半卡住,電車擦著舊軌停下。沒有人受傷——但扳道房的紀錄儀拍下了你。",
+  warn: "司機在最後一刻看見你的燈。車停了;你的臉,留在行車紀錄裡。",
+  stand: "電車的自動保護器在斷軌前僵住了。你什麼都沒做——紀錄儀也拍下了這件事。",
+};
+
 function initGate() {
   const local = $("#consent-local");
   const memOnly = $("#consent-memory-only");
   const enter = $("#enter-btn");
   local.addEventListener("change", () => { enter.disabled = !local.checked; });
+
+  const consentWrap = $("#consent-wrap");
+  const echoLine = $("#prologue-echo");
+  const proBtns = document.querySelectorAll("#prologue .prologue-opts button");
+  proBtns.forEach((b) =>
+    b.addEventListener("click", () => {
+      S.prologue = { choice: b.dataset.pro, label: b.textContent };
+      echoLine.innerHTML = esc(PROLOGUE_ECHOES[b.dataset.pro]) +
+        "<br>三天後,一紙任命書送到了你手上。——正式上任前,城規在此,把話說清楚:";
+      echoLine.classList.remove("hidden");
+      proBtns.forEach((x) => { x.disabled = true; });
+      b.classList.add("chosen");
+      consentWrap.classList.remove("hidden");
+      consentWrap.scrollIntoView({ behavior: "smooth", block: "start" });
+    })
+  );
+
   const prior = loadSave();
   if (prior && prior.trace && prior.trace.length) {
+    // 回鍋玩家:不重演序章,直接見城規與「繼續」
+    $("#prologue").classList.add("hidden");
+    consentWrap.classList.remove("hidden");
     $("#resume-btn").classList.remove("hidden");
     $("#resume-btn").addEventListener("click", () => {
       Object.assign(S, {
         code: prior.code, playlist: prior.playlist, idx: prior.idx,
         resources: prior.resources, trace: prior.trace, anchors: prior.anchors,
         mirrorCount: prior.mirrorCount, intelOpens: prior.intelOpens,
+        prologue: prior.prologue || null,
       });
       startGame(true);
     });
@@ -233,6 +265,11 @@ function renderMission() {
     "岔軌城任命你為新任轉轍官。十一站,十二次轉轍——每一站你都要在沒有完美答案的地方做選擇、留下理由、承擔後果。" +
     "這一局的目標不是「贏」:是走完全程,在終點面對三個問題——你保住了什麼?你犧牲了什麼?你是否願意承認這兩者都是真的?" +
     "——然後留下一份你敢回讀的責任紀錄。"));
+  if (S.prologue) {
+    stage.append(el("p", "hint prologue-note",
+      `任命理由附註:三日前,城門外岔軌口——「${esc(S.prologue.label)}」。扳道房紀錄儀為證。` +
+      "城需要的不是完美的人,是留得下紀錄的人。"));
+  }
   stage.append(el("h3", null, "你的路線"));
   stage.append(renderRouteBar());
   stage.append(el("p", "hint",
@@ -974,6 +1011,7 @@ function downloadTrace() {
     consent: { storage: S.memoryOnly ? "memory-only" : "localStorage", uploaded: false,
       submission_lane: "github-issue (manual, opt-in, gatekeeper-reviewed)",
       note: "此檔由玩家本人下載;無伺服器、無自動收集。提交=玩家親手經 GitHub Issue,審核後才可能收錄。" },
+    prologue: S.prologue || null,
     turns: S.trace,
     anchors: S.anchors,
     labels: {
