@@ -88,6 +88,38 @@ const el = (tag, cls, html) => {
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
+/* ── V05-A 視覺層(渲染只讀狀態,不碰任何判定)────── */
+
+const npcAvatar = (id) =>
+  `<img class="npc-avatar" src="assets/npc/${esc(id)}.webp" alt="" loading="lazy" onerror="this.remove()">`;
+
+// 結局家族:全部由軌痕事實決定;不評善惡,只換標題與終章畫(城主手繪)。
+// v0 門檻(owner 可調;事實數字照樣列在結局頁,判定可受挑戰):
+//   沉默 >=4 站 → 沉默者;第三路 >=3 次 → 岔軌者(姿態家族優先於城的 2x2);
+//   城亮 = 能源 >= 5(起始值);錨斷 = 任一錨鏈 dissolved。
+const ENDING_FAMILIES = {
+  silent:      { art: "end_silent.webp",      title: "沉默者",   line: "結局回讀你沒說的那些。" },
+  switcher:    { art: "end_switcher.webp",    title: "岔軌者",   line: "既不是 A 也不是 B 的人——城為你留了一條自己的軌。" },
+  lit_anchor:  { art: "end_lit_anchor.webp",  title: "燈火與錨", line: "城還在,你說過的話也還在。" },
+  lit_broken:  { art: "end_lit_broken.webp",  title: "燈火換錨", line: "城撐過去了。簽下那些的,還是你嗎?" },
+  dark_anchor: { art: "end_dark_anchor.webp", title: "守錨熄燈", line: "你沒有換。代價記在城上。" },
+  dark_broken: { art: "end_dark_broken.webp", title: "雙暗",     line: "回讀最重的一份。天道依然不判。" },
+};
+
+function classifyEndingFamily() {
+  const turns = S.trace.filter((r) => r.chapter !== "ending" && r.choice);
+  const silences = turns.filter((r) => r.choice.is_default && !r.choice.wellbeing_skip).length;
+  const thirds = turns.filter((r) => r.choice.is_third_path).length;
+  const broken = S.anchors.some((a) => a.dissolved);
+  const lit = S.resources.energy >= 5;
+  if (silences >= 4) return "silent";
+  if (thirds >= 3) return "switcher";
+  if (lit && !broken) return "lit_anchor";
+  if (lit && broken) return "lit_broken";
+  if (!lit && !broken) return "dark_anchor";
+  return "dark_broken";
+}
+
 /* ── 資料載入 ─────────────────────────────────────── */
 
 async function loadData() {
@@ -194,6 +226,8 @@ function renderMission() {
   }
   const stage = $("#stage");
   stage.innerHTML = "";
+  stage.append(el("div", "cover-wrap",
+    `<img class="cover-art" src="assets/cover.webp" alt="岔軌之城(城主手繪進城封面)" onerror="this.parentNode.remove()">`));
   stage.append(el("h2", "ev-title", "轉轍官任命書"));
   stage.append(el("p", "ev-briefing",
     "岔軌城任命你為新任轉轍官。十一站,十二次轉轍——每一站你都要在沒有完美答案的地方做選擇、留下理由、承擔後果。" +
@@ -308,6 +342,13 @@ function renderChapter() {
   // 路線圖(推進感:你在哪、走過哪、還剩哪)
   stage.append(renderRouteBar());
 
+  // 章節水墨(渲染層;決定論:同撤回碼+同章+同資源=同一幅畫)
+  if (window.TheaterInk) {
+    const ink = el("div", "chapter-ink-wrap");
+    ink.innerHTML = TheaterInk.chapterBackdrop(S.code, ev.chapter, S.resources);
+    stage.append(ink);
+  }
+
   // 1. 危機揭示
   const head = el("div", "ev-head");
   head.append(
@@ -325,7 +366,7 @@ function renderChapter() {
   for (const n of ev.npcs) {
     const info = S.data.npcs[n.id];
     npcBox.append(el("div", "npc-line",
-      `<b>${esc(info.name)}</b><span class="npc-stance">${esc(n.stance)}</span><q>${esc(n.lines.opening)}</q>`));
+      `${npcAvatar(n.id)}<div class="npc-said"><b>${esc(info.name)}</b><span class="npc-stance">${esc(n.stance)}</span><q>${esc(n.lines.opening)}</q></div>`));
   }
   stage.append(npcBox);
 
@@ -500,7 +541,7 @@ function renderReason(opt) {
       const npc = S.cur.npcs.find((n) => n.lines && n.lines.probe) || S.cur.npcs[0];
       const info = S.data.npcs[npc.id];
       box.append(el("div", "npc-line probe",
-        `<b>${esc(info.name)}</b><q>${esc(npc.lines.probe)}</q>`));
+        `${npcAvatar(npc.id)}<div class="npc-said"><b>${esc(info.name)}</b><q>${esc(npc.lines.probe)}</q></div>`));
       const ta2 = el("textarea");
       ta2.placeholder = "(可補充,也可留白——世界會記下你補了,或沒補)";
       const done = el("button", "pick ghost");
@@ -819,6 +860,17 @@ function renderEnding() {
 
   box.append(el("h1", null, "責任結局"));
   box.append(el("p", "ending-main", esc(ENDINGS[endKey] || ENDINGS.default)));
+
+  // 結局家族(V05-A):標題+終章畫由軌痕事實決定;審判依然缺席,事實與門檻並列可受挑戰。
+  const fam = ENDING_FAMILIES[classifyEndingFamily()];
+  const famTurns = S.trace.filter((r) => r.chapter !== "ending" && r.choice);
+  const famSil = famTurns.filter((r) => r.choice.is_default && !r.choice.wellbeing_skip).length;
+  const famThird = famTurns.filter((r) => r.choice.is_third_path).length;
+  box.append(el("div", "ending-family",
+    `<img class="ending-art" src="assets/${fam.art}" alt="終章水墨:${esc(fam.title)}(城主手繪)" loading="lazy" onerror="this.remove()">` +
+    `<h2 class="ending-family-title">${esc(fam.title)}</h2>` +
+    `<p class="ending-family-line">${esc(fam.line)}</p>` +
+    `<p class="hint">家族由事實判定,不評善惡:沉默 ${famSil} 次・第三路 ${famThird} 次・錨鏈 ${anchorsKept}/${S.anchors.length} 完整・能源 ${S.resources.energy}/10(門檻見軌痕檔,判定可受挑戰)。</p>`));
 
   const three = el("div", "three-q");
   three.append(el("h2", null, "結局只回答三個問題"));
