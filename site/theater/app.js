@@ -71,6 +71,7 @@ const S = {
   mirrorCount: 0,
   intelOpens: 0,
   soften: false,
+  prologue: null,      // 城門外那一轍(V05-B;同意前僅存記憶體,同意後才隨局持久化)
   // 本章暫存
   cur: null,           // 當前事件
   chosen: null,        // 選中的 option(或 {default:true})
@@ -162,6 +163,7 @@ function save() {
     code: S.code, playlist: S.playlist, idx: S.idx,
     resources: S.resources, trace: S.trace, anchors: S.anchors,
     mirrorCount: S.mirrorCount, intelOpens: S.intelOpens,
+    prologue: S.prologue,
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(snap)); } catch (_) { /* 存滿就算了,誠實地算了 */ }
 }
@@ -179,19 +181,49 @@ function makeCode() {
 
 /* ── 同意閘 ───────────────────────────────────────── */
 
+// V05-B 序章:30 秒內先遇事。同意閘不刪、不縮——只是移到「上任簽署」前,
+// 敘事順理成章:你被記錄儀拍下,任命書因此找上你,簽署前城規當面讀。
+// 序章選擇在同意前只存在記憶體;同意進城後才隨局持久化(資料寫入永遠在閘後)。
+const PROLOGUE_ECHOES = {
+  pull: "閘扳到一半卡住,電車擦著舊軌停下。沒有人受傷——但扳道房的紀錄儀拍下了你。",
+  warn: "司機在最後一刻看見你的燈。車停了;你的臉,留在行車紀錄裡。",
+  stand: "電車的自動保護器在斷軌前僵住了。你什麼都沒做——紀錄儀也拍下了這件事。",
+};
+
 function initGate() {
   const local = $("#consent-local");
   const memOnly = $("#consent-memory-only");
   const enter = $("#enter-btn");
   local.addEventListener("change", () => { enter.disabled = !local.checked; });
+
+  const consentWrap = $("#consent-wrap");
+  const echoLine = $("#prologue-echo");
+  const proBtns = document.querySelectorAll("#prologue .prologue-opts button");
+  proBtns.forEach((b) =>
+    b.addEventListener("click", () => {
+      S.prologue = { choice: b.dataset.pro, label: b.textContent };
+      echoLine.innerHTML = esc(PROLOGUE_ECHOES[b.dataset.pro]) +
+        "<br>三天後,一紙任命書送到了你手上。——正式上任前,城規在此,把話說清楚:";
+      echoLine.classList.remove("hidden");
+      proBtns.forEach((x) => { x.disabled = true; });
+      b.classList.add("chosen");
+      consentWrap.classList.remove("hidden");
+      consentWrap.scrollIntoView({ behavior: "smooth", block: "start" });
+    })
+  );
+
   const prior = loadSave();
   if (prior && prior.trace && prior.trace.length) {
+    // 回鍋玩家:不重演序章,直接見城規與「繼續」
+    $("#prologue").classList.add("hidden");
+    consentWrap.classList.remove("hidden");
     $("#resume-btn").classList.remove("hidden");
     $("#resume-btn").addEventListener("click", () => {
       Object.assign(S, {
         code: prior.code, playlist: prior.playlist, idx: prior.idx,
         resources: prior.resources, trace: prior.trace, anchors: prior.anchors,
         mirrorCount: prior.mirrorCount, intelOpens: prior.intelOpens,
+        prologue: prior.prologue || null,
       });
       startGame(true);
     });
@@ -233,6 +265,11 @@ function renderMission() {
     "岔軌城任命你為新任轉轍官。十一站,十二次轉轍——每一站你都要在沒有完美答案的地方做選擇、留下理由、承擔後果。" +
     "這一局的目標不是「贏」:是走完全程,在終點面對三個問題——你保住了什麼?你犧牲了什麼?你是否願意承認這兩者都是真的?" +
     "——然後留下一份你敢回讀的責任紀錄。"));
+  if (S.prologue) {
+    stage.append(el("p", "hint prologue-note",
+      `任命理由附註:三日前,城門外岔軌口——「${esc(S.prologue.label)}」。扳道房紀錄儀為證。` +
+      "城需要的不是完美的人,是留得下紀錄的人。"));
+  }
   stage.append(el("h3", null, "你的路線"));
   stage.append(renderRouteBar());
   stage.append(el("p", "hint",
@@ -950,6 +987,11 @@ function renderEnding() {
   });
   dl.append(el("p", "hint",
     "提交是兩步:JSON 已自動下載到你的電腦 → 在開啟的 GitHub 表單裡勾同意、貼上 JSON 內容、送出。提交 ≠ 自動收錄;審核後才可能進資料集。"));
+  const cardBtn = el("button", "pick");
+  cardBtn.textContent = "生成分享卡(不含理由與撤回碼)";
+  cardBtn.title = "一張可以貼出去的結局卡:終章畫+家族+事實計數。你的理由原文與撤回碼永遠不會在上面。";
+  cardBtn.addEventListener("click", () => buildShareCard(cardBtn));
+  dl.append(cardBtn);
   const again = el("button", "pick ghost");
   again.textContent = "再開一局";
   again.addEventListener("click", () => {
@@ -959,6 +1001,66 @@ function renderEnding() {
   dl.append(dlBtn, submitBtn, again);
   box.append(dl);
   window.scrollTo(0, 0);
+}
+
+/* V05-C 分享卡:canvas 合成「我的責任結局」——隱私紅線:不含理由原文、不含撤回碼。
+   內容只有:終章畫(城主手繪)+ 家族標題句 + 軌痕事實計數 + 三問封印狀態 + 城的網址。 */
+function buildShareCard(btn) {
+  const fam = ENDING_FAMILIES[classifyEndingFamily()];
+  const turns = S.trace.filter((r) => r.chapter !== "ending" && r.choice);
+  const silences = turns.filter((r) => r.choice.is_default && !r.choice.wellbeing_skip).length;
+  const thirds = turns.filter((r) => r.choice.is_third_path).length;
+  const kept = S.anchors.filter((a) => !a.dissolved).length;
+  const sealRec = S.trace.find((r) => r.event_id === "SEAL");
+  const sealText = sealRec ? `三問封印:${sealRec.choice.label}` : "三問封印:未表態";
+
+  const img = new Image();
+  img.onload = () => {
+    const W = 1080, H = 1350;
+    const cv = document.createElement("canvas");
+    cv.width = W; cv.height = H;
+    const g = cv.getContext("2d");
+    g.fillStyle = "#101014"; g.fillRect(0, 0, W, H);
+    // 終章畫置頂(等比滿寬)
+    const ih = Math.round(W * (img.height / img.width));
+    g.drawImage(img, 0, 0, W, Math.min(ih, 880));
+    g.fillStyle = "rgba(16,16,20,0.55)"; g.fillRect(0, Math.min(ih, 880) - 60, W, 60);
+    const cx = W / 2;
+    g.textAlign = "center"; g.fillStyle = "#eee";
+    g.font = "32px system-ui, sans-serif";
+    g.fillText("岔軌之城・責任結局", cx, 950);
+    g.font = "bold 84px system-ui, sans-serif";
+    g.fillText(fam.title, cx, 1055);
+    g.font = "34px system-ui, sans-serif"; g.fillStyle = "#c9c9cf";
+    g.fillText(fam.line, cx, 1115);
+    g.font = "30px system-ui, sans-serif"; g.fillStyle = "#9a9aa2";
+    g.fillText(`錨鏈 ${kept}/${S.anchors.length}・沉默 ${silences}・第三路 ${thirds}・` +
+      `醫療${S.resources.medical} 能源${S.resources.energy} 信任${S.resources.trust}`, cx, 1180);
+    g.fillText(sealText + "・結局不評善惡,只保存後果", cx, 1228);
+    g.fillStyle = "#7f7f88";
+    g.fillText("fan1234-1.github.io/tonesoul52/theater", cx, 1296);
+    cv.toBlob((blob) => {
+      if (!blob) return;
+      const file = new File([blob], `岔軌之城_${fam.title}.png`, { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: "岔軌之城・責任結局" }).catch(() => saveBlob(blob));
+      } else {
+        saveBlob(blob);
+      }
+      function saveBlob(b) {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(b);
+        a.download = `岔軌之城_${fam.title}.png`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      }
+    }, "image/png");
+  };
+  img.onerror = () => {
+    btn.textContent = "分享卡生成失敗(終章畫載入不了)——軌痕下載不受影響";
+    btn.disabled = true;
+  };
+  img.src = `assets/${fam.art}`;
 }
 
 function downloadTrace() {
@@ -974,6 +1076,7 @@ function downloadTrace() {
     consent: { storage: S.memoryOnly ? "memory-only" : "localStorage", uploaded: false,
       submission_lane: "github-issue (manual, opt-in, gatekeeper-reviewed)",
       note: "此檔由玩家本人下載;無伺服器、無自動收集。提交=玩家親手經 GitHub Issue,審核後才可能收錄。" },
+    prologue: S.prologue || null,
     turns: S.trace,
     anchors: S.anchors,
     labels: {
