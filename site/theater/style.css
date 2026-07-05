@@ -383,3 +383,24 @@ table.risk td { padding: .2em 0; color: var(--text-dim); }
 .prologue-opts button.chosen { border-color: var(--warm); opacity: 1; }
 .prologue-opts button:disabled:not(.chosen) { opacity: .35; }
 #prologue-echo { margin: .8rem 0 0; line-height: 1.7; }
+
+/* ── V05-E 地點背景/內嵌軌痕/序章畫(城主手繪)── */
+.loc-banner { margin: .4rem 0 1rem; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.loc-art { width: 100%; max-height: 42vh; object-fit: cover; display: block; }
+.loc-banner.ink-fallback { border: none; }
+.loc-banner .chapter-ink { width: 100%; height: 130px; display: block; }
+.prologue-art {
+  width: 100%; max-width: 560px; max-height: 40vh; object-fit: cover;
+  border-radius: 10px; border: 1px solid var(--line); display: block; margin: 0 auto .8rem;
+}
+.trace-inline { margin: 1rem 0; text-align: left; }
+.trace-text {
+  width: 100%; min-height: 220px; font-family: ui-monospace, "Cascadia Code", monospace;
+  font-size: .78em; line-height: 1.45; background: #0d0d10; color: #c9c9cf;
+  border: 1px solid var(--line); border-radius: 8px; padding: .7em; resize: vertical;
+  white-space: pre; overflow: auto;
+}
+@media (max-width: 480px) {
+  .loc-art { max-height: 32vh; }
+  .trace-text { min-height: 160px; font-size: .72em; }
+}
