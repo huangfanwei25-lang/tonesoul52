@@ -123,6 +123,11 @@ class CouncilConfig:
     # effects follow the #219 shadow-seam discipline; flip = owner decision).
     # See docs/plans/kappa_vow_collapse_experiment_2026-07-05.md Phase 1.
     kappa_signal_ledger_enabled: bool = False
+    # Principle Invocation Gate v0 (advisory). Default OFF: flags axiom-cited
+    # non-APPROVE verdicts lacking a filed_with_annotation marker (axiom-as-deferral
+    # anti-pattern, Gap 8 / 2026-05-10 case law). A RECORDED signal, never a gate
+    # (DESIGN Inv3). Work order: convergence_harvest_work_orders_2026-07-05.md WO-3.
+    principle_invocation_advisory_enabled: bool = False
 
 
 # ---------------------------------------------------------------------------

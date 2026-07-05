@@ -66,6 +66,14 @@ TAE-01 是 2026-02 那次大整合（v2.0 Awakened Kernel）— 把 5 個 archiv
 | `tonesoul-codex`（2025-12）| archived | 詳見 §2.3 backport 分析、結論為 keep archived |
 | `Philosophy-of-AI`（2026-02）| 未 archive 但建議 archive | core 已 migrated 到 tonesoul52、VOLUMEs I-V 全 migrated（本 session 完成）| `gh repo archive Fan1234-1/Philosophy-of-AI`（建議）|
 
+> **勘誤（2026-07-05,收斂掃描抓到）**:上行「VOLUMEs I-V 全 migrated(本 session 完成)」
+> **寫下時在分支上為真,但該分支對應的 PR #71 之後 CLOSED 未 merge,宣稱從此懸空**——master
+> 上實際只有 VOLUME_I、II,卷 III/IV/V 漏遷了近兩個月(anti-pattern family:completeness
+> claim without post-change trace,2026-06-29 判例的前科)。2026-07-05 已自 PR #71 分支
+> commit `a1c61ad0` verbatim 補遷三卷(WO-1,`docs/plans/convergence_harvest_work_orders_2026-07-05.md`)。
+> 「建議 archive」因 confirm 從未完成而幸運地未執行——repo 未 archive 反而保住了內容。
+> 原文一字未改,本註即是 reconcile 痕跡。
+
 ---
 
 ## 3 ─ Unique Specs Backport / Drop / Leave-in-archive 決定

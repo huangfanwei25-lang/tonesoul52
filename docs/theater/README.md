@@ -8,6 +8,10 @@
 1. **天道(公理層)**——遊戲世界的 AXIOMS.json
    - `tiandao_laws_owner_draft_2026-07-04.md` — 十二律(後果保存/理由回讀/系統不能替你承擔/記憶三問…)
    - `tiandao_v0.2_playability_owner_draft_2026-07-04.md` — **可玩性補強十律**(回聲章節/短句解析/NPC 輪替/pressure_level/第三路付代價/回讀非霸凌/標註不壓體驗)= **可玩正典,取代 v0.1**
+   - `tiandao_integrated_v1_owner_canon_2026-07-04.md` — **整合版 v1**(十二律+可玩十律
+     +卷三多人律+卷四執行手冊)= **weavai 線上世界法的封存正本**(2026-07-04 已餵入
+     weavai 服役;2026-07-05 自 owner 桌面 verbatim 收檔,WO-2)。與上列分卷**並存**:
+     整合版=投放/敘事引擎上下文版,分卷=正典來源——衝突時分卷勝(除非 owner 另裁)。
 2. **機制(規則層)**
    - `city_of_switches_mechanics_owner_draft_2026-07-04.md` — 七階段轉轍/雙數值/七衝突型/黑鏡回讀/責任結局/12 標籤
 3. **世界(佈景+持久物理)**

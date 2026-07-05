@@ -50,6 +50,7 @@ class PreOutputCouncil:
         verifier_config: Optional[VerifierConfig] = None,
         overclaim_sensor: Optional[Any] = None,
         proportionality_gate: Optional[Any] = None,
+        principle_invocation_sensor: Optional[Any] = None,
     ):
         self.perspectives = self._normalize_perspectives(
             perspectives,
@@ -67,6 +68,9 @@ class PreOutputCouncil:
         # Tier 5 intent-proportionality gate (advisory). Injected for tests; otherwise
         # lazy-created in validate() when SOUL.council.intent_proportionality_advisory_enabled.
         self._proportionality_gate = proportionality_gate
+        # Principle Invocation Gate v0 (advisory). Injected for tests; otherwise
+        # lazy-created in validate() when SOUL.council.principle_invocation_advisory_enabled.
+        self._principle_invocation_sensor = principle_invocation_sensor
         self.coherence_threshold = coherence_threshold
         self.block_threshold = block_threshold
         # Phase 864a Layer 1: deterministic, side-effect-free; safe to share.
@@ -205,6 +209,25 @@ class PreOutputCouncil:
         if gate is not None and user_intent:
             try:
                 verdict.intent_proportionality = gate.assess(user_intent, draft_output).to_dict()
+            except Exception:
+                pass
+
+        # Principle Invocation Gate v0 — ADVISORY ONLY (DESIGN Inv3). Flags axiom-cited
+        # non-APPROVE verdicts lacking a filed_with_annotation marker (axiom-as-deferral
+        # anti-pattern, Gap 8). Attached to every verdict when enabled — false-positive
+        # rates need denominators. Records a signal, never modifies the verdict.
+        # Default-off + fail-soft. Work order: WO-3.
+        pig = self._principle_invocation_sensor
+        if pig is None and SOUL.council.principle_invocation_advisory_enabled:
+            try:
+                from tonesoul.council.principle_invocation import PrincipleInvocationSensor
+
+                pig = self._principle_invocation_sensor = PrincipleInvocationSensor()
+            except Exception:
+                pig = None
+        if pig is not None:
+            try:
+                verdict.principle_invocation = pig.assess(verdict).to_dict()
             except Exception:
                 pass
 

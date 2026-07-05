@@ -141,6 +141,11 @@ class CouncilVerdict:
     # built with proportionality_gate= or SOUL.council.intent_proportionality_advisory_enabled.
     # A RECORDED signal + contract suggestion, never a gate (DESIGN Inv3).
     intent_proportionality: Optional[dict] = None
+    # Principle Invocation Gate v0 (advisory). Attached only when the council is built
+    # with principle_invocation_sensor= or SOUL.council.principle_invocation_advisory_enabled.
+    # Flags axiom-cited non-APPROVE verdicts lacking a filed_with_annotation marker
+    # (axiom-as-deferral anti-pattern, Gap 8). A RECORDED signal, never a gate.
+    principle_invocation: Optional[dict] = None
 
     def to_dict(self) -> dict:
         """
@@ -220,4 +225,5 @@ class CouncilVerdict:
             ),
             "semantic_overclaim": self.semantic_overclaim,
             "intent_proportionality": self.intent_proportionality,
+            "principle_invocation": self.principle_invocation,
         }
