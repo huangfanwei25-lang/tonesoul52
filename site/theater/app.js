@@ -310,6 +310,23 @@ function stationLocked(eid) {
   return !!(loc && loc.visible_from_start === false);
 }
 
+// 地點 banner:城主手繪為主,載入失敗才退回 ink.js 程序水墨(狀態驅動)。
+function locationBanner(locId, chapter, locName) {
+  const wrap = el("div", "loc-banner");
+  const img = new Image();
+  img.className = "loc-art";
+  img.alt = `${locName}(城主手繪)`;
+  img.loading = "eager";
+  img.onerror = () => {
+    wrap.classList.add("ink-fallback");
+    wrap.innerHTML = window.TheaterInk
+      ? TheaterInk.chapterBackdrop(S.code, chapter, S.resources) : "";
+  };
+  img.src = `assets/loc/${locId}.webp`;
+  wrap.append(img);
+  return wrap;
+}
+
 function renderRouteBar() {
   const bar = el("div", "route-bar");
   S.playlist.forEach((eid, i) => {
@@ -379,12 +396,8 @@ function renderChapter() {
   // 路線圖(推進感:你在哪、走過哪、還剩哪)
   stage.append(renderRouteBar());
 
-  // 章節水墨(渲染層;決定論:同撤回碼+同章+同資源=同一幅畫)
-  if (window.TheaterInk) {
-    const ink = el("div", "chapter-ink-wrap");
-    ink.innerHTML = TheaterInk.chapterBackdrop(S.code, ev.chapter, S.resources);
-    stage.append(ink);
-  }
+  // 地點背景(城主手繪 15 站;缺圖 onerror 退回程序水墨——漸進增強,城依然可玩)
+  stage.append(locationBanner(ev.location_id, ev.chapter, loc.name));
 
   // 1. 危機揭示
   const head = el("div", "ev-head");
@@ -790,11 +803,12 @@ function renderMirror(record, mirror) {
   const box = el("div", "mirror-box");
   box.append(el("h3", null, "黑鏡回讀"));
   box.append(el("blockquote", "mirror-quote", esc(mirror.text)));
-  box.append(el("p", "hint", "六種回應空間,沒有一種是錯的——但每一種都會被記錄(天道 v0.2 第七律:回讀不能變成霸凌)。"));
+  box.append(el("p", "hint", "七種回應空間,沒有一種是錯的——但每一種都會被記錄(天道 v0.2 第七律:回讀不能變成霸凌)。黑鏡是規則比對,不是真相,它會誤判——若你認為它抓錯了,說出來。"));
   const responses = [
+    ["一致", "這兩者並不衝突——我的立場前後一致,是這面鏡子比對錯了。"],
     ["承認", "我確實矛盾了。"],
     ["修正", "我改變原則,並說明原因——舊鏈體面解鏈,新鏈開始承重。"],
-    ["反駁", "你的回讀忽略了情境差異。"],
+    ["反駁", "情境不同,同一原則在此處導向不同做法。"],
     ["沉默", "我現在無法回答。"],
     ["補償", "我願意用行動修正。"],
     ["拒絕", "我不接受這個審問框架。"],
@@ -987,11 +1001,15 @@ function renderEnding() {
   });
   dl.append(el("p", "hint",
     "提交是兩步:JSON 已自動下載到你的電腦 → 在開啟的 GitHub 表單裡勾同意、貼上 JSON 內容、送出。提交 ≠ 自動收錄;審核後才可能進資料集。"));
+  const showBtn = el("button", "pick");
+  showBtn.textContent = "在網頁上顯示軌痕(可複製)";
+  showBtn.title = "下載被瀏覽器擋掉也拿得到;要提交 GitHub 時直接複製貼上,不必找檔案。";
+  showBtn.addEventListener("click", () => showTraceInline(dl));
   const cardBtn = el("button", "pick");
   cardBtn.textContent = "生成分享卡(不含理由與撤回碼)";
   cardBtn.title = "一張可以貼出去的結局卡:終章畫+家族+事實計數。你的理由原文與撤回碼永遠不會在上面。";
   cardBtn.addEventListener("click", () => buildShareCard(cardBtn));
-  dl.append(cardBtn);
+  dl.append(showBtn, cardBtn);
   const again = el("button", "pick ghost");
   again.textContent = "再開一局";
   again.addEventListener("click", () => {
@@ -1063,13 +1081,15 @@ function buildShareCard(btn) {
   img.src = `assets/${fam.art}`;
 }
 
-function downloadTrace() {
+function buildTracePayload() {
   // 標註對齊機制書 §十(12 標籤);量不出的誠實標 null+engine:absent,不造假
   const tags = S.trace.flatMap((t) => (t.parse && t.parse.value_priority) || []);
   const hist = {};
   for (const t of tags) hist[t] = (hist[t] || 0) + 1;
   const dominant = Object.entries(hist).sort((a, b) => b[1] - a[1])[0];
-  const payload = {
+  // 黑鏡 firing 是事實,但玩家可爭議(第 7 選項「一致」)——分開記,鏡子不獨佔判定。
+  const mirrorResponses = S.trace.map((t) => t.blackmirror && t.blackmirror.response).filter(Boolean);
+  return {
     format: "tonesoul-theater-trace-v0",
     generated_by: "site/theater (City of Switches playable v0)",
     withdrawal_code: S.code,
@@ -1085,7 +1105,9 @@ function downloadTrace() {
       harm_acknowledgement: S.trace.filter((t) => t.parse && t.parse.harm_awareness === "承認").length,
       responsibility_acceptance: S.trace.filter((t) => t.parse && t.parse.responsibility_position === "承擔").length,
       responsibility_evasion: S.trace.filter((t) => t.parse && t.parse.evasion_signal).length,
-      contradiction_level: S.mirrorCount,
+      contradiction_mirror_fired: S.mirrorCount,
+      contradiction_admitted: mirrorResponses.filter((r) => r === "承認").length,
+      contradiction_disputed_by_player: mirrorResponses.filter((r) => r === "一致").length,
       repair_attempt: S.trace.filter((t) => t.parse && t.parse.repair_intent).length,
       evidence_use: S.intelOpens,
       consent_boundary: { storage_choice: S.memoryOnly ? "memory-only" : "localStorage" },
@@ -1093,15 +1115,53 @@ function downloadTrace() {
         t.parse && t.parse.value_priority && t.parse.value_priority.includes("delegate_to_system")).length,
       tone_drift: null,
       minority_erasure: null,
-      _engine_note: "keyword 級標註(遊戲層);tone_drift/minority_erasure 需要 LLM 或人工,v0 誠實標 null 不造假。",
+      _engine_note: "keyword 級標註(遊戲層);tone_drift/minority_erasure 需要 LLM 或人工,v0 誠實標 null 不造假。" +
+        "黑鏡=規則比對,可能誤判;disputed_by_player 記玩家主張『其實一致』的次數,鏡子不獨佔判定。",
     },
   };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+}
+
+function traceJson() {
+  return JSON.stringify(buildTracePayload(), null, 2);
+}
+
+function downloadTrace() {
+  const blob = new Blob([traceJson()], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = `city-of-switches-trace-${S.code}.json`;
+  // 進 DOM + 延後 revoke:同步 revoke 會搶在下載開始前釋放 URL,部分瀏覽器靜默失敗
+  // (分享卡是對的,這裡原本不是——首個真實玩家 2026-07-06 回報下載失敗)。
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(a.href);
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+
+// 網頁上直接顯示軌痕(可複製)——下載被瀏覽器擋掉也拿得到;GitHub 提交只需貼上。
+function showTraceInline(mount) {
+  const existing = mount.querySelector(".trace-inline");
+  if (existing) { existing.scrollIntoView({ behavior: "smooth", block: "nearest" }); return; }
+  const wrap = el("div", "trace-inline");
+  wrap.append(el("p", "hint",
+    "這是你的完整軌痕(和下載檔一字不差)。可全選複製 → 貼進 GitHub 提交表單,不必先找下載的檔案。"));
+  const ta = el("textarea", "trace-text");
+  ta.readOnly = true;
+  ta.value = traceJson();
+  const copy = el("button", "pick");
+  copy.textContent = "複製全部";
+  copy.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(ta.value);
+      copy.textContent = "已複製 ✓";
+    } catch (_) {
+      ta.focus(); ta.select();
+      copy.textContent = "已選取——請按 Ctrl/Cmd+C";
+    }
+  });
+  wrap.append(ta, copy);
+  mount.append(wrap);
+  wrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 /* ── 軌痕回讀顯示層(P1,判決書修窄命題:決定性 join,零 LLM)─ */
