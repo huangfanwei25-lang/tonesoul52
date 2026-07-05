@@ -23,6 +23,24 @@ def _isolate_soul_db(tmp_path, monkeypatch):
     (tmp_path / "memory").mkdir(exist_ok=True)
 
 
+@pytest.fixture(autouse=True)
+def _isolate_aegis_chain_head(tmp_path, monkeypatch):
+    """Redirect Aegis chain-head persistence to a temp directory during tests.
+
+    Without this, any test that reaches AegisShield.save() (real commit()
+    paths) advances the repo-global .aegis/chain_head.txt while its trace log
+    stays test-isolated — reopening the recurring benign head/tail gap that
+    diagnose reports as 'compromised' (the alarm word must not depreciate).
+    Root cause + adjudicated fix shape (monkeypatch over env override):
+    docs/plans/aegis_chain_head_test_pollution_2026-07-05.md.
+    _KEYS_DIR is intentionally NOT redirected: signing keys are read-only in
+    tests and live keys must keep working.
+    """
+    import tonesoul.aegis_shield as aegis_shield_mod
+
+    monkeypatch.setattr(aegis_shield_mod, "_AEGIS_DIR", tmp_path / ".aegis")
+
+
 @pytest.fixture
 def workspace_tmpdir():
     """Provide a temporary directory rooted inside the repo workspace."""
