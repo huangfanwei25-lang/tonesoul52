@@ -1,6 +1,12 @@
 # 收斂掃描收割工單(2026-07-05)— 可撿堆 top 項 → 可驗證訊號
 
-> Status: **DRAFT — 等 owner 逐張點頭再派**(開單≠派工;governance 相關 owner 終審)。
+> Status: **EXECUTED(同日)— owner 2026-07-05 早上口頭放行全部六張**(「6工單你也可以跑」)。
+> 執行結局:WO-1 ✅ 三卷收檔+勘誤;WO-2 ✅ 整合版收檔(並存預設);WO-3 ✅ advisory sensor
+> +10 tests(default-OFF);WO-4 ✅ 第一段 spec=`belief_shift_ledger_spec_2026-07-05.md`
+> (**第二段等 owner 簽 §3/§4/§5**);WO-5 ✅ schema+8 tests(偏移:多 trigger 記全部、
+> 不發明 precedence,commit 訊息明說);WO-6 ✅ characterization(subagent 執行、主 agent
+> 仲裁,per-axis 計數、拒聚合)。全部 shadow/advisory/eval,零 enforce flip。
+> 原 DRAFT 條款留存如下,作為派工時的合約原文。
 > 開單 agent:嶼(claude-fable-5)。格式照 `docs/engineering/work_order_template.md`(八欄;
 > 機械小單摺疊四欄)。
 >
