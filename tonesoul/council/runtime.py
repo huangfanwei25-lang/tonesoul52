@@ -20,6 +20,7 @@ from .kappa_signals import attach_kappa_signals
 from .model_registry import get_council_config
 from .persona_audit import audit_persona_uniqueness
 from .pre_output_council import PreOutputCouncil
+from .refusal_provenance import maybe_refusal_provenance
 from .self_journal import record_self_memory
 from .types import CouncilVerdict, PerspectiveType, VerdictType
 from .vtp import VTP_STATUS_DEFER, VTP_STATUS_TERMINATE, evaluate_vtp
@@ -463,23 +464,31 @@ class CouncilRuntime:
 
         try:
             provenance = ProvenanceManager()
+            verdict_metadata = {
+                "verdict": verdict.verdict.value,
+                "summary": verdict.summary,
+                "genesis": (
+                    verdict.genesis.value if hasattr(verdict.genesis, "value") else verdict.genesis
+                ),
+                "responsibility_tier": verdict.responsibility_tier,
+                "intent_id": verdict.intent_id,
+                "is_mine": verdict.is_mine,
+                "tsr_delta_norm": verdict.tsr_delta_norm,
+                "collapse_warning": verdict.collapse_warning,
+            }
+            # Refusal-with-provenance v0 (WO-5): BLOCK / DECLARE_STANCE events
+            # carry their triggers so principled refusal is machine-
+            # distinguishable from malfunction. Derivation only — never gates.
+            try:
+                refusal_record = maybe_refusal_provenance(verdict)
+                if refusal_record is not None:
+                    verdict_metadata["refusal_provenance"] = refusal_record
+            except Exception as exc:
+                verdict_metadata["refusal_provenance_error"] = str(exc)
             provenance.add_record(
                 event_type="council_verdict",
                 content=verdict.to_dict(),
-                metadata={
-                    "verdict": verdict.verdict.value,
-                    "summary": verdict.summary,
-                    "genesis": (
-                        verdict.genesis.value
-                        if hasattr(verdict.genesis, "value")
-                        else verdict.genesis
-                    ),
-                    "responsibility_tier": verdict.responsibility_tier,
-                    "intent_id": verdict.intent_id,
-                    "is_mine": verdict.is_mine,
-                    "tsr_delta_norm": verdict.tsr_delta_norm,
-                    "collapse_warning": verdict.collapse_warning,
-                },
+                metadata=verdict_metadata,
             )
         except Exception as exc:
             transcript = verdict.transcript if isinstance(verdict.transcript, dict) else {}
