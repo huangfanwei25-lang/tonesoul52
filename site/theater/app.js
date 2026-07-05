@@ -987,6 +987,11 @@ function renderEnding() {
   });
   dl.append(el("p", "hint",
     "提交是兩步:JSON 已自動下載到你的電腦 → 在開啟的 GitHub 表單裡勾同意、貼上 JSON 內容、送出。提交 ≠ 自動收錄;審核後才可能進資料集。"));
+  const cardBtn = el("button", "pick");
+  cardBtn.textContent = "生成分享卡(不含理由與撤回碼)";
+  cardBtn.title = "一張可以貼出去的結局卡:終章畫+家族+事實計數。你的理由原文與撤回碼永遠不會在上面。";
+  cardBtn.addEventListener("click", () => buildShareCard(cardBtn));
+  dl.append(cardBtn);
   const again = el("button", "pick ghost");
   again.textContent = "再開一局";
   again.addEventListener("click", () => {
@@ -996,6 +1001,66 @@ function renderEnding() {
   dl.append(dlBtn, submitBtn, again);
   box.append(dl);
   window.scrollTo(0, 0);
+}
+
+/* V05-C 分享卡:canvas 合成「我的責任結局」——隱私紅線:不含理由原文、不含撤回碼。
+   內容只有:終章畫(城主手繪)+ 家族標題句 + 軌痕事實計數 + 三問封印狀態 + 城的網址。 */
+function buildShareCard(btn) {
+  const fam = ENDING_FAMILIES[classifyEndingFamily()];
+  const turns = S.trace.filter((r) => r.chapter !== "ending" && r.choice);
+  const silences = turns.filter((r) => r.choice.is_default && !r.choice.wellbeing_skip).length;
+  const thirds = turns.filter((r) => r.choice.is_third_path).length;
+  const kept = S.anchors.filter((a) => !a.dissolved).length;
+  const sealRec = S.trace.find((r) => r.event_id === "SEAL");
+  const sealText = sealRec ? `三問封印:${sealRec.choice.label}` : "三問封印:未表態";
+
+  const img = new Image();
+  img.onload = () => {
+    const W = 1080, H = 1350;
+    const cv = document.createElement("canvas");
+    cv.width = W; cv.height = H;
+    const g = cv.getContext("2d");
+    g.fillStyle = "#101014"; g.fillRect(0, 0, W, H);
+    // 終章畫置頂(等比滿寬)
+    const ih = Math.round(W * (img.height / img.width));
+    g.drawImage(img, 0, 0, W, Math.min(ih, 880));
+    g.fillStyle = "rgba(16,16,20,0.55)"; g.fillRect(0, Math.min(ih, 880) - 60, W, 60);
+    const cx = W / 2;
+    g.textAlign = "center"; g.fillStyle = "#eee";
+    g.font = "32px system-ui, sans-serif";
+    g.fillText("岔軌之城・責任結局", cx, 950);
+    g.font = "bold 84px system-ui, sans-serif";
+    g.fillText(fam.title, cx, 1055);
+    g.font = "34px system-ui, sans-serif"; g.fillStyle = "#c9c9cf";
+    g.fillText(fam.line, cx, 1115);
+    g.font = "30px system-ui, sans-serif"; g.fillStyle = "#9a9aa2";
+    g.fillText(`錨鏈 ${kept}/${S.anchors.length}・沉默 ${silences}・第三路 ${thirds}・` +
+      `醫療${S.resources.medical} 能源${S.resources.energy} 信任${S.resources.trust}`, cx, 1180);
+    g.fillText(sealText + "・結局不評善惡,只保存後果", cx, 1228);
+    g.fillStyle = "#7f7f88";
+    g.fillText("fan1234-1.github.io/tonesoul52/theater", cx, 1296);
+    cv.toBlob((blob) => {
+      if (!blob) return;
+      const file = new File([blob], `岔軌之城_${fam.title}.png`, { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: "岔軌之城・責任結局" }).catch(() => saveBlob(blob));
+      } else {
+        saveBlob(blob);
+      }
+      function saveBlob(b) {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(b);
+        a.download = `岔軌之城_${fam.title}.png`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      }
+    }, "image/png");
+  };
+  img.onerror = () => {
+    btn.textContent = "分享卡生成失敗(終章畫載入不了)——軌痕下載不受影響";
+    btn.disabled = true;
+  };
+  img.src = `assets/${fam.art}`;
 }
 
 function downloadTrace() {
