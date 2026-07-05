@@ -121,12 +121,39 @@ calibration binding(#228:先 resolver、不綁 weight)。
 
 ## §6 盤點誠實標注
 
-- 未掃:`.archive/`、`legacy/`、OpenClaw submodule 內部、`knowledge_base/`。
-- `SqliteSoulDB.cleanup_decayed`(:915)與 `append_action_log`(:1021)未逐行驗證;
-  `memory/provenance_ledger.jsonl` 的實際寫入者未追。
+- 未掃:`.archive/`、`legacy/`、OpenClaw submodule 內部、`knowledge_base/`(**同模型與
+  異模型覆核均跳過此範圍——這塊仍是殘餘風險**)。
+- ~~`SqliteSoulDB.cleanup_decayed`(:915)與 `append_action_log`(:1021)未逐行驗證;
+  `memory/provenance_ledger.jsonl` 的實際寫入者未追。~~ → **已由異模型覆核結案(見 §6-增補)**。
 - 極 generic 的 `.save(` 命中有 head-limit 截斷,vow/governance 相關已逐條看,無關模組
   可能有漏。
 - 完整 rg 命令清單在工單回報(session 記錄);reviewer 重跑即可覆核「全部入口」宣稱。
+
+## §6-增補:異模型(codex)覆核結果(2026-07-05;五視角唯一全數共識的前置,已執行)
+
+codex 0.134.0 read-only 獨立重掃,**找到同模型盤點漏列的入口**。依裁決翻案條件 (a),
+此發現使 D2 的「緩簽案」轉強——記錄在案,判斷仍歸 owner。
+
+**漏列(平面 2 增補)**:
+- `scripts/run_subjectivity_group_review.py:215` — `--apply` 群審通過後執行
+  reviewed-promotion 寫入(**信念層 lane**:晉升審查的執行端,同模型盤點漏了它)
+- `tools/summary_ball_converter.py:202` — summary-ball 轉換 append(SUMMARY_BALLS)
+- `tonesoul/memory/soul_db.py:1138` — `migrate_from_jsonl` 遷移匯入 SqliteSoulDB
+
+**漏列(平面 3 增補)**:
+- `scripts/import_conversation.py:345` — `--update-state` 經 `--stdin` 直改 governance
+  state(原盤點記 :292-317/:425-444,此為第三個入口變體)
+
+**「未追」項全數結案**:
+- `memory/provenance_ledger.jsonl` 寫入者=`provenance_chain.py` `create_chain`:146 /
+  `add_witness`:154 / `add_record`:162;call sites=council runtime :334/:425/:435/:466、
+  `persona_audit.py:122`、`handoff_ingester.py:95`、`crystallizer.py:273`、
+  `openclaw_auditor.py:199`
+- **兩個 destructive 疑點澄清**:`cleanup_decayed`(:915)只計數不刪;`append_action_log`
+  (:1040)只 INSERT——皆非破壞性。
+
+第二段工單的 §3 判準必須把上列增補入口納入分類(尤其 run_subjectivity_group_review
+的 promotion lane)。
 
 ## §7 下一步
 
