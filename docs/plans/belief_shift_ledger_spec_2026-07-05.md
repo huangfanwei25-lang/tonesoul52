@@ -119,6 +119,22 @@ Shadow 模式語義:三段式欄位**缺=照記**(`narrative_present: false`)—
 **同族判準參照**:#219(shadow→measure→enforce,enforce flip owner-gated)、
 calibration binding(#228:先 resolver、不綁 weight)。
 
+### §5-裁示(2026-07-05,owner 口述,原文要旨留痕)
+
+owner 對「怕漏記還是怕假記」的回答:「**當然是怕假記**」——並給了這本帳的目的定位:
+「原則這件事本來就是想記錄轉變的過程……把他當作是記得過去如何失敗,而未來可以避免
+那些失敗。」
+
+**執行形狀(據此定案)**:
+1. **帳本緩開**:三段式敘事 ledger 等第一批真實資料(如劇場玩家軌痕)再議——
+   機器自填的敘事欄=假記,比沒有帳更傷誠實。
+2. **水管活先行**(兩件都不需要回答「什麼算信念」,見 §7 前置工單):旁路腳本上鎖、
+   `_withdrawals` 接線。
+3. **§4 schema 據 owner 的節點式記憶方向修正**:機械 lane 只配**薄節點**(what 變了、
+   `narrative_present: false`、指回 trace 的 pointer)——敘事欄**永不自動填**;
+   厚敘事只在人(或被明確要求敘事的 agent)真的寫過時存在。節點薄、文本厚、
+   要用才翻——帳本不擠上下文,假敘事無處寄生。
+
 ## §6 盤點誠實標注
 
 - 未掃:`.archive/`、`legacy/`、OpenClaw submodule 內部、`knowledge_base/`(**同模型與
@@ -155,7 +171,18 @@ codex 0.134.0 read-only 獨立重掃,**找到同模型盤點漏列的入口**。
 第二段工單的 §3 判準必須把上列增補入口納入分類(尤其 run_subjectivity_group_review
 的 promotion lane)。
 
-## §7 下一步
+## §7 下一步(2026-07-05 裁示後更新)
 
-owner 對 §3(判準)、§4(schema)、§5(A/B/C)三個決定點簽核後,開第二段實作工單
-(bounded,可派 codex)。在那之前,本 spec 是唯一交付物——**沒有任何行為改變**。
+**前置水管工單(owner 已裁方向,派工時機另定;兩張都不觸「什麼算信念」)**:
+- **WO-P1 旁路腳本上鎖**:`scripts/update_governance_state.py` 現況繞過 Aegis commit
+  lock 與 shield,且常數與 SOUL config 平行實作(§1 關鍵事實 c)。形狀:改為經
+  runtime_adapter 的正門 commit(或至少過 shield + lock),平行常數收斂到 SOUL config。
+  驗收:腳本改寫後 governance_state 變更出現在 Aegis 鏈上;常數單一來源。
+- **WO-P2 退場帳接線**:`VowRegistry.withdraw/_withdrawals`(vow_system.py:301-332)
+  已實作、runtime 零呼叫者(§1)。形狀:runtime vow 退役路徑(runtime_adapter.py
+  :2002-2016 的 retired 濾除)改走 withdraw(),retired vow 在 state 留 tombstone 或
+  withdrawal 記錄 pointer。驗收:退役後 `_withdrawals` 有記錄、state 可追。
+
+**敘事 ledger(§3/§4 細部)**:緩開,等真實資料;重啟條件=第一批劇場玩家軌痕過審,
+或 owner 再議。屆時 §4 依 §5-裁示第 3 點(薄節點/厚文本)重寫後再簽。
+在那之前,本 spec 仍然**沒有任何行為改變**。
