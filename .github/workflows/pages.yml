@@ -40,7 +40,7 @@ jobs:
   build-and-deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deploy_a.outputs.page_url || steps.deploy_b.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -76,5 +76,22 @@ jobs:
         with:
           path: _site
 
-      - id: deployment
+      # actions/deploy-pages transiently fails on GitHub-side jitter (observed
+      # 2026-07-05/06: repeated 'merged != live', manual re-dispatch to heal).
+      # Native two-attempt retry — no third-party action in this privileged
+      # (pages:write / id-token:write) workflow. Attempt 1 is non-fatal; the
+      # retry runs ONLY if it failed; a real double-failure still goes red.
+      # Both reuse the artifact from upload-pages-artifact.
+      - name: Deploy to GitHub Pages (attempt 1)
+        id: deploy_a
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+
+      - name: Pause before retry
+        if: steps.deploy_a.outcome == 'failure'
+        run: sleep 20
+
+      - name: Deploy to GitHub Pages (retry)
+        id: deploy_b
+        if: steps.deploy_a.outcome == 'failure'
         uses: actions/deploy-pages@v4
