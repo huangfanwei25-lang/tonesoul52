@@ -125,6 +125,8 @@ def test_council_attaches_assessment_when_sensor_injected():
     assert isinstance(verdict.principle_invocation, dict)
     assert verdict.principle_invocation["rule_version"] == RULE_VERSION
     assert verdict.principle_invocation["flagged"] in {True, False}
+    # Adjudication D1 follow-up 1: the not-citable caveat rides in every record.
+    assert "not citable" in verdict.principle_invocation["caveat"]
 
 
 def test_default_off_attaches_nothing():

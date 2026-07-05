@@ -74,7 +74,10 @@ dream 記錄(`dream_engine.py:322`,經 gateway)、crystals(`crystallizer.py:176`
 **入帳(是信念轉移)**:
 - vow 集合成員變動(register/withdraw/retire),**不論走哪個 lane**(runtime 主線、gateway、
   MCP、旁路腳本)
-- `drift_baseline` 變動(這是「我變得多 cautious/innovative/autonomous」——人格層)
+- `drift_baseline` 變動——**附頻率門檻(2026-07-05 裁決 M3 修正)**:`_commit_locked_posture`
+  每次 commit 都重算 drift(runtime_adapter.py:1997-2000),逐次微幅變動屬機械輸出,照原判準
+  會淹沒帳本、且與「機械 lane 不入帳」自相矛盾。修正:僅當單次變動超過閾值(建議 |Δ|≥0.05,
+  owner 可調)**或方向翻轉**(升轉降/降轉升)才入帳——「人格慢慢漂」記轉折點,不記每一步
 - soul.db `subjectivity_layer ∈ {vow, identity}` 寫入(gateway 已 gate,補記錄面)
 - sleep 晉升(working→factual/experiential:「經驗變成我信的事」,正是 VOLUME_V 的形狀)
 - crystals 的 stage 轉換(決策規則的固化/棄置)

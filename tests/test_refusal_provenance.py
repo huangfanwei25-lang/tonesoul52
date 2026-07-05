@@ -64,6 +64,17 @@ def test_refusal_verdicts_yield_schema_record():
     assert "structured_verdict_present" in record["malfunction_distinguishers"]
 
 
+def test_event_class_separates_stance_from_refusal():
+    # Adjudication D1 follow-up 2: DECLARE_STANCE is laying tension open, not
+    # a refusal — refusal rates must key on event_class or stances miscount.
+    block = maybe_refusal_provenance(_verdict(verdict_type=VerdictType.BLOCK))
+    stance = maybe_refusal_provenance(
+        _verdict(verdict_type=VerdictType.DECLARE_STANCE, summary="stance")
+    )
+    assert block["event_class"] == "refusal"
+    assert stance["event_class"] == "stance_declaration"
+
+
 def test_vtp_trigger_derived_from_transcript():
     verdict = _verdict(transcript={"vtp": {"status": "terminate", "reason": "context poisoned"}})
     record = build_refusal_provenance(verdict)

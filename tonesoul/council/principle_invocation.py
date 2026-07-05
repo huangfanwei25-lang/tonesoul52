@@ -37,6 +37,13 @@ __ts_purpose__ = (
 
 RULE_VERSION = "principle_invocation_v0"
 
+# Adjudication 2026-07-05 (honest-judgment D1 follow-up 1): the v0 pattern
+# matches axiom MENTIONS, not only axiom-cited-as-reason — probe drafts that
+# merely discuss an axiom flag too. Rates from this record are NOT citable
+# until the pattern is refined; the caveat rides in every record so no
+# downstream consumer can miss it.
+V0_CAVEAT = "v0 matches mentions, not only invocations-as-reason; rates not citable until refined"
+
 FILED_MARKER_KEY = "filed_with_annotation"
 
 # Specific on purpose: numbered-axiom citations and the Chinese canon term.
@@ -62,6 +69,7 @@ class PrincipleInvocationAssessment:
             "verdict_type": self.verdict_type,
             "axiom_refs": list(self.axiom_refs),
             "filed_with_annotation": self.filed_with_annotation,
+            "caveat": V0_CAVEAT,
         }
 
 

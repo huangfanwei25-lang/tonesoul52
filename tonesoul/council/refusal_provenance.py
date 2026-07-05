@@ -64,6 +64,10 @@ class RefusalTrigger:
 @dataclass
 class RefusalProvenance:
     verdict_type: str
+    # Adjudication 2026-07-05 (honest-judgment D1 follow-up 2): DECLARE_STANCE
+    # is laying tension open, NOT a refusal — consumers computing "refusal
+    # rates" must key on event_class, or stance declarations get miscounted.
+    event_class: str = ""  # refusal | stance_declaration
     triggers: List[RefusalTrigger] = field(default_factory=list)
     coherence_overall: Optional[float] = None
     has_strong_objection: Optional[bool] = None
@@ -75,6 +79,7 @@ class RefusalProvenance:
         return {
             "schema_version": self.schema_version,
             "verdict_type": self.verdict_type,
+            "event_class": self.event_class,
             "triggers": [t.to_dict() for t in self.triggers],
             "coherence_overall": self.coherence_overall,
             "has_strong_objection": self.has_strong_objection,
@@ -150,8 +155,10 @@ def build_refusal_provenance(verdict: object) -> RefusalProvenance:
     if summary:
         distinguishers.append("refusal_reason_stated")
 
+    verdict_type = _verdict_type(verdict)
     return RefusalProvenance(
-        verdict_type=_verdict_type(verdict),
+        verdict_type=verdict_type,
+        event_class="stance_declaration" if verdict_type == "declare_stance" else "refusal",
         triggers=triggers,
         coherence_overall=coherence_overall,
         has_strong_objection=strong_objection,
