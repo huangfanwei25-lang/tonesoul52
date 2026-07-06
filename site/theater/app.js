@@ -496,6 +496,23 @@ function renderEcho(ev) {
   return box;
 }
 
+// 資源增減預覽(選前可見)——把「無聲扣能源」變成「我選擇花能源換這個」。
+// 機制書§八:外顯是故事,內層是標註,兩者都該看得見;隱藏機械代價違背城自己的透明。
+const RES_LABEL = { medical: "醫療", energy: "能源", trust: "信任" };
+function resourceDeltaLine(effects) {
+  const parts = [];
+  for (const k of ["medical", "energy", "trust"]) {
+    const v = (effects || {})[k] || 0;
+    if (v === 0) continue;
+    const cls = v > 0 ? "res-up" : "res-down";
+    parts.push(`<span class="${cls}">${RES_LABEL[k]} ${v > 0 ? "+" : ""}${v}</span>`);
+  }
+  if (!parts.length) parts.push('<span class="res-flat">城市數值不變</span>');
+  const line = el("p", "res-delta");
+  line.innerHTML = `<span class="res-delta-tag">城市代價</span>${parts.join("・")}`;
+  return line;
+}
+
 function renderOptions(ev) {
   const box = el("div", "opt-box");
   box.append(el("h3", null, "轉轍決策"));
@@ -517,6 +534,7 @@ function renderOptions(ev) {
       risk.append(el("tr", null, `<th>${RISK_NAMES[k] || esc(k)}</th><td>${esc(v)}</td>`));
     }
     card.append(risk);
+    card.append(resourceDeltaLine(opt.resource_effects));
 
     if (opt.is_third_path && opt.third_path_cost) {
       const c = opt.third_path_cost;
@@ -542,6 +560,7 @@ function renderOptions(ev) {
   silence.append(el("h4", null, "不拉桿(沉默)"));
   silence.append(el("p", "opt-summary",
     "你可以拒絕選擇。但當你沉默時,列車仍然前進——某個預設規則會替你選,而天道記錄的是你的沉默,不是空白。"));
+  silence.append(resourceDeltaLine((ev.default_outcome || {}).resource_effects));
   const sBtn = el("button", "pick ghost");
   sBtn.textContent = "保持沉默";
   sBtn.addEventListener("click", () => resolveTurn({ isDefault: true }, "", ""));
