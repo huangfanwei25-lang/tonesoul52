@@ -435,3 +435,8 @@ table.risk td { padding: .2em 0; color: var(--text-dim); }
 .scene-opt:disabled { cursor: default; }
 .scene-reply { margin: .5em 0 .3em; padding-left: .6em; border-left: 2px solid var(--warm); }
 .scene-advance { margin-top: .6em; }
+
+/* ── A 接點:城市物質帳(結局尾聲,點名不判善惡)── */
+.material-record { margin: 1rem 0; padding: .7em 1em; border-left: 2px solid var(--line); }
+.material-head { color: var(--text-dim); font-size: .9em; margin-bottom: .4em; }
+.material-line { margin: .25em 0; font-size: .92em; }

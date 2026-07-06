@@ -139,6 +139,38 @@ function classifyEndingFamily() {
   return "dark_broken";
 }
 
+// A 接點(2026-07-06 grill 收斂):資源接回=城市物質帳。三軸各讀最終值,分三帶點名具體
+// 物質後果——**兩端都是中性事實、無褒貶**(grill/Axiomatic:≤3配≥7的褒貶對稱會暗示善惡,
+// 違「天道不判」)。純點名、不給機械好處、不決定結局家族(結局讀錨鏈守信,見 endingAxes)。
+// 門檻可調(owner 品味);讀既有 S.resources,零新狀態。
+const MATERIAL_LOW = 3, MATERIAL_HIGH = 7;
+const MATERIAL_PROSE = {
+  medical: { name: "醫療",
+    low: "白線醫療站在你任內數次拒收——有些名字沒能排進去。",
+    mid: "勉強撐住,沒有餘裕,也沒有崩。",
+    high: "傷者名單那幾晚,大多接住了。" },
+  energy: { name: "能源",
+    low: "灰區東三管線多次入夜斷電。",
+    mid: "燈忽明忽暗,但沒全滅。",
+    high: "城的燈,大致沒滅過。" },
+  trust: { name: "信任",
+    low: "灰區不再願意聽你開口。",
+    mid: "他們對你半信半疑,還沒轉身。",
+    high: "他們還願意等你把話說完。" },
+};
+function materialRecord() {
+  const box = el("div", "material-record");
+  box.append(el("p", "material-head", "<b>城市的物質帳</b>(不判善惡,只記下發生了什麼):"));
+  for (const k of ["medical", "energy", "trust"]) {
+    const raw = (S.resources && typeof S.resources[k] === "number") ? S.resources[k] : 5;
+    const v = Math.max(0, Math.min(10, raw));
+    const p = MATERIAL_PROSE[k];
+    const band = v <= MATERIAL_LOW ? "low" : v >= MATERIAL_HIGH ? "high" : "mid";
+    box.append(el("p", "material-line", `${p.name} ${v}/10 — ${esc(p[band])}`));
+  }
+  return box;
+}
+
 /* ── 資料載入 ─────────────────────────────────────── */
 
 async function loadData() {
@@ -239,7 +271,9 @@ function initGate() {
     $("#resume-btn").addEventListener("click", () => {
       Object.assign(S, {
         code: prior.code, playlist: prior.playlist, idx: prior.idx,
-        resources: prior.resources, trace: prior.trace, anchors: prior.anchors,
+        // R1(2026-07-06 grill):合併預設,舊存檔缺軸不會變 undefined→NaN→HUD/尾聲炸(今天的判例)。
+        resources: { medical: 5, energy: 5, trust: 5, ...(prior.resources || {}) },
+        trace: prior.trace, anchors: prior.anchors,
         mirrorCount: prior.mirrorCount, intelOpens: prior.intelOpens,
         prologue: prior.prologue || null,
       });
@@ -1030,8 +1064,11 @@ function renderEnding() {
 
   const three = el("div", "three-q");
   three.append(el("h2", null, "結局只回答三個問題"));
-  three.append(el("p", null, `<b>你保住了什麼?</b> ${esc(kept)};城市狀態 醫療${S.resources.medical}/能源${S.resources.energy}/信任${S.resources.trust}。`));
+  three.append(el("p", null, `<b>你保住了什麼?</b> ${esc(kept)}。`));
   three.append(el("p", null, `<b>你犧牲了什麼?</b> ${harms.length ? esc(harms.join("、")) : "帳面上沒有名字——去軌痕裡確認這是真的,還是只是沒被記下。"}`));
+  // A(2026-07-06 grill 收斂):資源接回=物質帳,點名不判善惡(兩端都是中性事實,無褒貶)。
+  // 唯一資源顯示處(grill V3:不與裸數字重印);讀既有 S.resources,零新狀態、不碰結局家族。
+  three.append(materialRecord());
   const q3 = el("div", "q3");
   q3.append(el("p", null, "<b>你是否願意承認這兩者都是真的?</b>"));
   const yes = el("button", "pick"); yes.textContent = "承認";
