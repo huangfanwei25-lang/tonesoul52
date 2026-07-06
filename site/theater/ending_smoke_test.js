@@ -13,9 +13,10 @@ const appSrc = fs.readFileSync(path.join(__dirname, "app.js"), "utf8");
 // minimal browser stubs so app.js boot() doesn't crash before defining functions
 class N { constructor(){this.children=[];this._cls=new Set();this._ev={};this.dataset={};this.style={};}
   set className(v){this._cls=new Set(String(v).split(/\s+/).filter(Boolean));} get className(){return[...this._cls].join(" ");}
-  set textContent(v){} set innerHTML(v){}
+  set textContent(v){this._html=String(v);} set innerHTML(v){this._html=String(v);} get innerHTML(){return this._html||"";}
   append(...ns){for(const n of ns) if(n instanceof N) this.children.push(n);}
   appendChild(n){this.append(n);return n;} insertBefore(n){this.append(n);return n;} remove(){}
+  get text(){return (this._html||"") + this.children.map(c=>c.text).join("");}
   addEventListener(){} get classList(){const c=this._cls;return{add:x=>c.add(x),remove:x=>c.delete(x),contains:x=>c.has(x),toggle:()=>{}};}
   scrollIntoView(){} querySelector(){return new N();} querySelectorAll(){return[];} }
 const sandbox = { document:{createElement:()=>new N(),querySelector:()=>new N(),addEventListener:()=>{},body:new N()},
@@ -94,6 +95,15 @@ try {
 } catch (e) { console.log("FAIL: materialRecord threw: "+e.message); fails++; }
 // band selection via endingAxes-independent check: verify low/mid/high boundaries don't throw at 0 and 10
 [0,3,4,6,7,10].forEach(v => { try { matLines({medical:v,energy:v,trust:v}); } catch(e){ console.log("FAIL: materialRecord threw at "+v); fails++; } });
+// bands must produce DIFFERENT prose (codex finding: child-count alone would pass even if all bands equal)
+function medLine(v){ T.S.resources={medical:v,energy:5,trust:5}; return T.materialRecord().text; }
+const lowT = medLine(2), midT = medLine(5), highT = medLine(9);
+check("低帶 prose 含拒收(≤3)", lowT.includes("拒收"), true);
+check("高帶 prose 含大多接住(≥7)", highT.includes("大多接住"), true);
+check("三帶 prose 互異", (lowT!==midT && midT!==highT && lowT!==highT), true);
+// boundary: exactly 3 = low, exactly 7 = high
+check("醫療=3 落低帶", medLine(3).includes("拒收"), true);
+check("醫療=7 落高帶", medLine(7).includes("大多接住"), true);
 
 console.log(fails === 0 ? "\nALL PASS: 6 families reachable, both /grill fixes hold, energy ignored" : `\n${fails} FAILED`);
 process.exit(fails === 0 ? 0 : 1);

@@ -384,7 +384,6 @@ table.risk td { padding: .2em 0; color: var(--text-dim); }
 .prologue-opts button:disabled:not(.chosen) { opacity: .35; }
 #prologue-echo { margin: .8rem 0 0; line-height: 1.7; }
 
-<<<<<<< Updated upstream
 /* ── V05-E 地點背景/內嵌軌痕/序章畫(城主手繪)── */
 .loc-banner { margin: .4rem 0 1rem; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
 .loc-art { width: 100%; max-height: 42vh; object-fit: cover; display: block; }
@@ -405,7 +404,7 @@ table.risk td { padding: .2em 0; color: var(--text-dim); }
   .loc-art { max-height: 32vh; }
   .trace-text { min-height: 160px; font-size: .72em; }
 }
-=======
+
 /* ── 世界前情(大改寫;可跳過,不擋冷開場)── */
 .world-intro { margin: 1rem 0; border: 1px solid var(--line); border-radius: 8px; padding: .3em .8em; background: var(--bg-card); }
 .world-intro > summary { cursor: pointer; color: var(--warm); font-size: .95em; padding: .4em 0; }
@@ -413,7 +412,6 @@ table.risk td { padding: .2em 0; color: var(--text-dim); }
 .world-intro-body strong { color: var(--text); }
 .world-intro-more { margin-top: .5em; border-top: 1px dashed var(--line); padding-top: .4em; }
 .world-intro-more > summary { cursor: pointer; color: var(--text-dim); font-size: .88em; }
->>>>>>> Stashed changes
 
 /* ── 資源代價預覽(選前可見)── */
 .res-delta { margin: .5em 0 .2em; font-size: .85em; }
