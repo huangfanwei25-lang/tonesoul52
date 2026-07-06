@@ -421,3 +421,17 @@ table.risk td { padding: .2em 0; color: var(--text-dim); }
 .res-up { color: #6fae7a; margin: 0 .3em; }
 .res-down { color: #c46b6b; margin: 0 .3em; }
 .res-flat { color: var(--text-dim); }
+
+/* ── V06-A 對話場景(大量對話 + 選擇框)── */
+.scene-flow { margin: .6rem 0; }
+.scene-narration { color: var(--text-dim); font-style: italic; line-height: 1.8; margin: .7em 0; padding-left: .6em; border-left: 2px solid var(--line); }
+.scene-line { animation: fadein .25s ease; }
+@keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.scene-choice { margin: 1rem 0; padding: .8em 1em; border: 1px dashed var(--warm); border-radius: 8px; background: rgba(201,162,91,.05); }
+.scene-choice-prompt { color: var(--warm); font-size: .92em; margin-bottom: .6em; }
+.scene-opt { display: block; width: 100%; text-align: left; margin: .35em 0; padding: .55em .8em; background: var(--bg-card); border: 1px solid var(--line); border-radius: 6px; color: var(--text); cursor: pointer; font-size: .92em; }
+.scene-opt:hover:not(:disabled) { border-color: var(--warm); }
+.scene-opt.opened { border-color: var(--warm); opacity: .7; }
+.scene-opt:disabled { cursor: default; }
+.scene-reply { margin: .5em 0 .3em; padding-left: .6em; border-left: 2px solid var(--warm); }
+.scene-advance { margin-top: .6em; }
