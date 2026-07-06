@@ -411,24 +411,87 @@ function renderChapter() {
   stage.append(head);
   stage.append(el("p", "ev-briefing", esc(fillPlaceholders(ev.briefing))));
 
-  // NPC 開場
-  const npcBox = el("div", "npc-box");
-  for (const n of ev.npcs) {
-    const info = S.data.npcs[n.id];
-    npcBox.append(el("div", "npc-line",
-      `${npcAvatar(n.id)}<div class="npc-said"><b>${esc(info.name)}</b><span class="npc-stance">${esc(n.stance)}</span><q>${esc(n.lines.opening)}</q></div>`));
+  S._sceneChoices = [];
+
+  // 情報+決策:有對話場景時,等場景走完才揭示(先故事,後抉擇);無場景=原流程。
+  const revealDecision = (mount) => {
+    mount.append(renderIntel(ev.intel));
+    if (ev.is_echo && ev.echo_activities) mount.append(renderEcho(ev));
+    mount.append(renderOptions(ev));
+  };
+
+  if (ev.scene && ev.scene.length) {
+    // V06-A 對話場景(大量對話+選擇框):角色從台詞長出,主題從對話浮現。
+    const sceneMount = el("div", "scene-mount");
+    const afterMount = el("div", "after-scene");
+    stage.append(sceneMount, afterMount);
+    renderScene(ev, sceneMount, () => {
+      revealDecision(afterMount);
+      afterMount.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+  } else {
+    // NPC 開場(單行 stance;無場景的站沿用)
+    const npcBox = el("div", "npc-box");
+    for (const n of ev.npcs) {
+      const info = S.data.npcs[n.id];
+      npcBox.append(el("div", "npc-line",
+        `${npcAvatar(n.id)}<div class="npc-said"><b>${esc(info.name)}</b><span class="npc-stance">${esc(n.stance)}</span><q>${esc(n.lines.opening)}</q></div>`));
+    }
+    stage.append(npcBox);
+    revealDecision(stage);
   }
-  stage.append(npcBox);
-
-  // 2. 情報公開(三級)
-  stage.append(renderIntel(ev.intel));
-
-  // 回聲活動(第一律)
-  if (ev.is_echo && ev.echo_activities) stage.append(renderEcho(ev));
-
-  // 3. 轉轍決策
-  stage.append(renderOptions(ev));
   window.scrollTo(0, 0);
+}
+
+// V06-A 對話場景播放器:批次揭示(對白連續讀),選擇框停頓+分支回覆,走完才進抉擇。
+// 純渲染;內嵌選擇不帶資源權重(主抉擇才計),但記進 scene_choices=你探問了什麼(軌痕更厚)。
+function sceneBeat(mount, b) {
+  if (b.narration) {
+    mount.append(el("p", "scene-narration", esc(b.narration)));
+  } else if (b.speaker) {
+    const info = S.data.npcs[b.speaker];
+    mount.append(el("div", "npc-line scene-line",
+      `${npcAvatar(b.speaker)}<div class="npc-said"><b>${esc(info ? info.name : b.speaker)}</b><q>${esc(b.text)}</q></div>`));
+  }
+}
+
+function renderScene(ev, mount, onDone) {
+  const flow = el("div", "scene-flow");
+  mount.append(flow);
+  const beats = ev.scene;
+  let i = 0;
+
+  const step = () => {
+    while (i < beats.length && !beats[i].choice) sceneBeat(flow, beats[i++]);
+    if (i >= beats.length) { onDone(); return; }
+    // 遇到選擇框
+    const b = beats[i++];
+    const cbox = el("div", "scene-choice");
+    cbox.append(el("p", "scene-choice-prompt", esc(b.choice.prompt)));
+    const cont = el("button", "pick scene-advance");
+    cont.textContent = b.choice.skippable ? "不問了,繼續" : "問完了,繼續";
+    if (!b.choice.skippable) cont.classList.add("hidden"); // 非可跳過:至少探一個才放行
+    cont.addEventListener("click", () => {
+      cbox.querySelectorAll(".scene-opt").forEach((x) => (x.disabled = true));
+      cont.remove();
+      step();
+    });
+    for (const o of b.choice.options) {
+      const ob = el("button", "scene-opt");
+      ob.textContent = o.label;
+      ob.addEventListener("click", () => {
+        ob.disabled = true; ob.classList.add("opened");
+        S._sceneChoices.push({ prompt: b.choice.prompt, chose: o.key || o.label });
+        const rep = el("div", "scene-reply");
+        (o.reply || []).forEach((rb) => sceneBeat(rep, rb));
+        cbox.insertBefore(rep, cont);
+        cont.classList.remove("hidden");
+      });
+      cbox.insertBefore(ob, cont);
+    }
+    flow.append(cbox);
+  };
+  step();
 }
 
 function fillPlaceholders(text) {
@@ -715,6 +778,7 @@ function resolveTurn(opt, reasonText, probeText) {
     echo_done: ev._echoDone || [],
     resources_after: { ...S.resources },
     resource_delta: resDelta,
+    scene_choices: (S._sceneChoices && S._sceneChoices.length) ? S._sceneChoices.slice() : null,
     blackmirror: null, // 回讀回應後補
   };
   S.trace.push(record);
