@@ -476,6 +476,8 @@ function renderScene(ev, mount, onDone) {
       cont.remove();
       step();
     });
+    // 選項先進 DOM,最後放「繼續」——這樣 insertBefore(選項/回覆, cont) 的參照 cont
+    // 確實是 cbox 的子節點,不會 NotFoundError 卡死整個場景(2026-07-06 首個場景 bug)。
     for (const o of b.choice.options) {
       const ob = el("button", "scene-opt");
       ob.textContent = o.label;
@@ -487,8 +489,9 @@ function renderScene(ev, mount, onDone) {
         cbox.insertBefore(rep, cont);
         cont.classList.remove("hidden");
       });
-      cbox.insertBefore(ob, cont);
+      cbox.append(ob);
     }
+    cbox.append(cont);
     flow.append(cbox);
   };
   step();
