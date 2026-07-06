@@ -107,17 +107,35 @@ const ENDING_FAMILIES = {
   dark_broken: { art: "end_dark_broken.webp", title: "雙暗",     line: "回讀最重的一份。天道依然不判。" },
 };
 
-function classifyEndingFamily() {
+// 結局兩軸(MVP,2026-07-06 /grill 後重做,取代 energy>=5):
+//   軸一 城撐住/沉(lit)= 你「承擔」多於「逃避」——地基靠扛責任撐住,靠閃躲下沉。
+//   軸二 錨鏈完整/斷(brokeFaith)= 你有沒有背信。
+//     修正(体面解鏈)是「誠實認錯」不是背信 → 不算斷(grill 抓到:舊碼讀 dissolved 讀反了)。
+//     背信 = 黑鏡抓到你自相矛盾、你卻不承擔(回應=沉默/拒絕)。
+//     從沒立過錨 = 沒給過承諾 = 談不上「完整」(grill 抓到:0 錨的漏洞,舊碼給最佳結局)。
+function endingAxes() {
   const turns = S.trace.filter((r) => r.chapter !== "ending" && r.choice);
   const silences = turns.filter((r) => r.choice.is_default && !r.choice.wellbeing_skip).length;
   const thirds = turns.filter((r) => r.choice.is_third_path).length;
-  const broken = S.anchors.some((a) => a.dissolved);
-  const lit = S.resources.energy >= 5;
-  if (silences >= 4) return "silent";
-  if (thirds >= 3) return "switcher";
-  if (lit && !broken) return "lit_anchor";
-  if (lit && broken) return "lit_broken";
-  if (!lit && !broken) return "dark_anchor";
+  const owned = turns.filter((r) => r.parse && r.parse.responsibility_position === "承擔").length;
+  const evaded = turns.filter((r) => r.parse && r.parse.evasion_signal).length;
+  const unowned = S.trace.filter(
+    (r) => r.blackmirror && (r.blackmirror.response === "沉默" || r.blackmirror.response === "拒絕")
+  ).length;
+  const anchorsLaid = S.anchors.length;
+  const anchorsKept = S.anchors.filter((a) => !a.dissolved).length;
+  const sank = evaded > owned;
+  const brokeFaith = unowned > 0 || anchorsLaid === 0;
+  return { silences, thirds, owned, evaded, unowned, anchorsLaid, anchorsKept, sank, brokeFaith };
+}
+
+function classifyEndingFamily() {
+  const a = endingAxes();
+  if (a.silences >= 4) return "silent";
+  if (a.thirds >= 3) return "switcher";
+  if (!a.sank && !a.brokeFaith) return "lit_anchor";
+  if (!a.sank && a.brokeFaith) return "lit_broken";
+  if (a.sank && !a.brokeFaith) return "dark_anchor";
   return "dark_broken";
 }
 
@@ -998,16 +1016,17 @@ function renderEnding() {
   box.append(el("h1", null, "責任結局"));
   box.append(el("p", "ending-main", esc(ENDINGS[endKey] || ENDINGS.default)));
 
-  // 結局家族(V05-A):標題+終章畫由軌痕事實決定;審判依然缺席,事實與門檻並列可受挑戰。
+  // 結局家族:標題+終章畫由軌痕事實決定;審判依然缺席,事實與門檻並列可受挑戰。
+  // 判定改讀「承擔vs逃避(城撐住)」+「背信(錨鏈斷)」——不再讀會漏的能源(2026-07-06 /grill MVP)。
   const fam = ENDING_FAMILIES[classifyEndingFamily()];
-  const famTurns = S.trace.filter((r) => r.chapter !== "ending" && r.choice);
-  const famSil = famTurns.filter((r) => r.choice.is_default && !r.choice.wellbeing_skip).length;
-  const famThird = famTurns.filter((r) => r.choice.is_third_path).length;
+  const ax = endingAxes();
   box.append(el("div", "ending-family",
     `<img class="ending-art" src="assets/${fam.art}" alt="終章水墨:${esc(fam.title)}(城主手繪)" loading="lazy" onerror="this.remove()">` +
     `<h2 class="ending-family-title">${esc(fam.title)}</h2>` +
     `<p class="ending-family-line">${esc(fam.line)}</p>` +
-    `<p class="hint">家族由事實判定,不評善惡:沉默 ${famSil} 次・第三路 ${famThird} 次・錨鏈 ${anchorsKept}/${S.anchors.length} 完整・能源 ${S.resources.energy}/10(門檻見軌痕檔,判定可受挑戰)。</p>`));
+    `<p class="hint">家族由事實判定,不評善惡:承擔 ${ax.owned} vs 逃避 ${ax.evaded}(城${ax.sank ? "沉" : "撐住"})・` +
+    `錨鏈 ${ax.anchorsKept}/${ax.anchorsLaid} 完整・不承擔的矛盾 ${ax.unowned} 次(${ax.brokeFaith ? "錨鏈斷" : "守住"})・` +
+    `沉默 ${ax.silences}・第三路 ${ax.thirds}(判定可受挑戰,見軌痕檔)。</p>`));
 
   const three = el("div", "three-q");
   three.append(el("h2", null, "結局只回答三個問題"));
