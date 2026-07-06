@@ -414,3 +414,10 @@ table.risk td { padding: .2em 0; color: var(--text-dim); }
 .world-intro-more { margin-top: .5em; border-top: 1px dashed var(--line); padding-top: .4em; }
 .world-intro-more > summary { cursor: pointer; color: var(--text-dim); font-size: .88em; }
 >>>>>>> Stashed changes
+
+/* ── 資源代價預覽(選前可見)── */
+.res-delta { margin: .5em 0 .2em; font-size: .85em; }
+.res-delta-tag { color: var(--text-dim); margin-right: .6em; letter-spacing: .1em; }
+.res-up { color: #6fae7a; margin: 0 .3em; }
+.res-down { color: #c46b6b; margin: 0 .3em; }
+.res-flat { color: var(--text-dim); }
