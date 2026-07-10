@@ -4,7 +4,7 @@
 > ToneSoul puts an auditable governance layer around model output: it records dissent, checks boundary claims, emits traces, and makes failures inspectable.
 
 > Purpose: public entrypoint for ToneSoul's current architecture, governance posture, and practical onboarding.
-> Last Updated: 2026-06-22
+> Last Updated: 2026-07-10
 >
 > Built by Fan-Wei Huang (黃梵威) with AI collaborators whose contributions are traceable in git history and project lineage. This is an accountability record, not a claim about AI consciousness.
 
@@ -19,6 +19,11 @@ It focuses on three practical moves:
 - **Boundary checks** - `AXIOMS.json` lists claim classes ToneSoul should not silently cross, such as consciousness claims, safety certification, and legal-proof language.
 - **Dissent preservation** - the Council records Guardian, Analyst, Critic, Advocate, and Axiomatic perspectives with evidence-chain branches instead of hiding disagreement inside one smooth answer.
 - **Evidence-bounded reporting** - generated status files and audits distinguish tested behavior, runtime-present mechanisms, document-backed contracts, and philosophy.
+
+## Two Doors, No Install
+
+- **Play it** — [City of Switches 岔軌之城](https://fan1234-1.github.io/tonesoul52/theater/): a post-collapse rail city where every choice demands a stated reason, a black mirror reads your own words back when you contradict them, and your full run exports as a downloadable trace. Real rules-council verdicts under the hood; zero server; nothing auto-uploaded. 你拉桿,城市記得。
+- **Take the data** — [tonesoul-accountability-traces](https://huggingface.co/datasets/Famwin/tonesoul-accountability-traces) (318 records, CC BY 4.0): an accountability-*event* corpus. Existing corpora label content; this one labels events — claim → bearing → verification → consequence, each record traceable to a file/commit/PR.
 
 ## Not This
 
