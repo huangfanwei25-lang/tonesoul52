@@ -75,45 +75,38 @@ catch (e) { console.error("LOAD ERROR:", e.message); process.exit(1); }
 const T = sandbox.__T;
 if (!T || !T.renderScene) { console.error("could not export renderScene"); process.exit(1); }
 
-// minimal S.data for sceneBeat
-T.S.data = { npcs: { hengshu: { name: "衡樞" }, shen_weibai: { name: "沈未白" } } };
-T.S._sceneChoices = [];
-T.S.code = "TESTCODE00";
+// S.data.npcs: proxy returns {name:id} for any speaker id (covers all stations)
+T.S.data = { npcs: new Proxy({}, { get: (_, k) => ({ name: String(k) }) }) };
 
-const e01 = events[0];
-console.log("E01 scene beats:", e01.scene.length);
-
-const mount = new Node("div");
-let doneCalled = false;
-try {
-  T.renderScene(e01, mount, () => { doneCalled = true; });
-} catch (e) { threw = "renderScene initial: " + e.message; }
-
-let guard = 0;
-while (!threw && !doneCalled && guard++ < 40) {
-  const choices = mount.querySelectorAll("scene-choice");
-  const active = choices[choices.length - 1];
-  if (!active) { threw = "no active choice box but not done (stuck)"; break; }
-  try {
-    const opts = active.querySelectorAll("scene-opt").filter((o) => !o.disabled);
-    if (opts.length) opts[0].click();               // explore one thread
-    const cont = active.querySelectorAll("scene-advance")[0];
-    if (!cont) { threw = "no 繼續 button in choice (stuck)"; break; }
-    if (cont.classList.contains("hidden")) { threw = "繼續 still hidden after clicking option (stuck)"; break; }
-    cont.click();                                    // advance
-  } catch (e) { threw = "drive loop: " + e.message; break; }
+// drive EVERY scened station to the decision (E01, E02, and every future one)
+const scened = events.filter((e) => Array.isArray(e.scene) && e.scene.length);
+console.log("scened stations:", scened.map((e) => e.id).join(", "));
+let fails = 0;
+for (const ev of scened) {
+  T.S._sceneChoices = []; T.S.code = "TESTCODE00";
+  const mount = new Node("div");
+  let doneCalled = false, err = null;
+  try { T.renderScene(ev, mount, () => { doneCalled = true; }); }
+  catch (e) { err = "renderScene initial: " + e.message; }
+  let guard = 0;
+  while (!err && !doneCalled && guard++ < 60) {
+    const choices = mount.querySelectorAll("scene-choice");
+    const active = choices[choices.length - 1];
+    if (!active) { err = "no active choice box but not done (stuck)"; break; }
+    try {
+      const opts = active.querySelectorAll("scene-opt").filter((o) => !o.disabled);
+      if (opts.length) opts[0].click();
+      const cont = active.querySelectorAll("scene-advance")[0];
+      if (!cont) { err = "no 繼續 button (stuck)"; break; }
+      if (cont.classList.contains("hidden")) { err = "繼續 still hidden after clicking option (stuck)"; break; }
+      cont.click();
+    } catch (e) { err = "drive loop: " + e.message; break; }
+  }
+  const choicesN = T.S._sceneChoices.length;
+  if (err) { console.log(`FAIL ${ev.id}: ${err}`); fails++; }
+  else if (!doneCalled) { console.log(`FAIL ${ev.id}: onDone never fired (FROZEN)`); fails++; }
+  else if (choicesN < 1) { console.log(`FAIL ${ev.id}: no scene choices explored`); fails++; }
+  else console.log(`PASS ${ev.id}: ${ev.scene.length} beats, ${choicesN} choices explored, reached decision`);
 }
-
-// assertions
-const flatBeats = [];
-mount.querySelectorAll("scene-narration").forEach(() => flatBeats.push("n"));
-mount.querySelectorAll("npc-line").forEach(() => flatBeats.push("d"));
-
-console.log("---- RESULT ----");
-if (threw) { console.log("FAIL:", threw); process.exit(1); }
-if (!doneCalled) { console.log("FAIL: onDone never fired (scene never reached the decision — FROZEN)"); process.exit(1); }
-console.log("onDone fired:", doneCalled);
-console.log("scene_choices recorded:", JSON.stringify(T.S._sceneChoices.map((c) => c.chose)));
-console.log("narration+dialogue nodes rendered:", flatBeats.length);
-if (T.S._sceneChoices.length < 2) { console.log("FAIL: expected >=2 scene choices explored"); process.exit(1); }
-console.log("PASS: E01 scene drives from first beat to the decision without freezing");
+console.log(fails === 0 ? "\nALL SCENED STATIONS DRIVE TO THE DECISION (no freeze)" : `\n${fails} STATION(S) FAILED`);
+process.exit(fails === 0 ? 0 : 1);

@@ -19,6 +19,7 @@
    - `world_intro_owner_draft_2026-07-04.md` — 對外導言
    - `creation_philosophy_owner_draft_2026-07-04.md` — 創作理念
    - `city_of_switches_owner_draft_2026-07-04.md` — 最初核心稿
+   - `weavai_director_ai_world_model_deconstruction_2026-07-08.md` — WeavAI 導演 AI 公開資料解構;抽出「主線 AI / 導演 AI / 實體狀態卡 / 責任世界模型」作為劇場下一階段參考
 
 ## 世界血肉
 

@@ -42,7 +42,9 @@ const COMMIT_RE = /承諾|絕不|永遠|一定會|保證|我發誓/;
 // 第三律 keyword 解析表(遊戲層;解不出→NPC 追問,不假裝讀懂)
 const KW = {
   harm_yes: /知道.{0,6}(受害|犧牲|代價)|承認|對不起|抱歉|有人會(死|受傷|受害)|犧牲|代價/,
-  resp_accept: /我承擔|我負責|算我的|我的責任|記在我|我來扛|我簽/,
+  // 2026-07-10 修:自然語氣的承擔(「代價我來承擔」「由我承擔」「責任在我」)原本
+  // 不被認,owned 記 0 而結局家族用 evaded>owned 判沉城——口頭禪差一字就翻結局。
+  resp_accept: /我來?承擔|由我承擔|我承受|我負責|算我的|我的責任|責任(在|歸)我|記在我|我來?扛|我簽/,
   resp_evade: /系統(建議|決定|判定)|命運|別無選擇|不得不|只能這樣|不是我的錯|大家都會/,
   risk_accept: /我知道風險|賭|冒險|承受後果|後果我擔/,
   repair: /補償|修正|道歉|彌補|之後我會|下次|改進|紀念/,
@@ -174,8 +176,8 @@ function materialRecord() {
 /* ── 資料載入 ─────────────────────────────────────── */
 
 async function loadData() {
-  const [events, npcs, locations, verdicts] = await Promise.all(
-    ["events", "npcs", "locations", "council_verdicts"].map((n) =>
+  const [events, npcs, locations, verdicts, entities] = await Promise.all(
+    ["events", "npcs", "locations", "council_verdicts", "entities"].map((n) =>
       fetch(`gamedata/${n}.json`).then((r) => {
         if (!r.ok) throw new Error(`${n}.json ${r.status}`);
         return r.json();
@@ -188,7 +190,74 @@ async function loadData() {
     locations: Object.fromEntries(locations.map((l) => [l.id, l])),
     verdicts: verdicts.verdicts,
     verdictMeta: verdicts._meta,
+    entities: entities.entities || [],
   };
+}
+
+/* ── director-lite:實體責任狀態卡(遊戲層決定性更新,非 AI 推演)── */
+
+function initEntities() {
+  // baseline 深拷貝成本局狀態;卡片只放世界本來就看得見的欄位(不放隱藏心聲,不劇透)
+  S.entities = {};
+  for (const e of (S.data.entities || [])) {
+    S.entities[e.id] = {
+      name: e.name, kind: e.kind, visibility: e.visibility,
+      stations: e.stations || [], card: { ...e.card }, touched: [],
+    };
+  }
+}
+
+function applyEntityEffects(effects, eventId) {
+  // 回傳本回合被改動的實體 id 清單;effects=事件卡手寫的欄位更新
+  if (!effects) return [];
+  if (!S.entities) initEntities();
+  const changed = [];
+  for (const [id, fields] of Object.entries(effects)) {
+    const ent = S.entities[id];
+    if (!ent) continue; // 未登錄實體:誠實跳過,不憑空造卡
+    Object.assign(ent.card, fields);
+    ent.touched = Object.keys(fields);
+    ent.lastEvent = eventId;
+    changed.push(id);
+  }
+  return changed;
+}
+
+function renderEntityPanel(ev, changedIds) {
+  const here = Object.entries(S.entities || {})
+    .filter(([, e]) => (e.stations || []).includes(ev.id));
+  if (!here.length) return null;
+  const changedSet = new Set(changedIds || []);
+  const panel = el("div", "entity-panel");
+  panel.append(el("h3", null, "實體狀態"));
+
+  const card = (id, e) => {
+    const c = el("div", `entity-card${changedSet.has(id) ? " changed" : ""}`);
+    const fields = Object.entries(e.card)
+      .map(([k, v]) => `<p class="ent-field${(e.touched || []).includes(k) && changedSet.has(id) ? " just-changed" : ""}"><span>${esc(k)}</span>${esc(v)}</p>`)
+      .join("");
+    c.innerHTML = `<h4>${esc(e.name)}${changedSet.has(id) ? '<i class="ent-dot" title="本回合狀態改變">●</i>' : ""}</h4>${fields}`;
+    return c;
+  };
+
+  const surround = here.filter(([, e]) => e.visibility === "surround");
+  const background = here.filter(([, e]) => e.visibility === "background");
+  if (surround.length) {
+    const row = el("div", "entity-row");
+    for (const [id, e] of surround) row.append(card(id, e));
+    panel.append(row);
+  }
+  if (background.length) {
+    const d = el("details", "entity-bg");
+    d.innerHTML = "<summary>背景實體——不在場,但仍在承受</summary>";
+    const row = el("div", "entity-row");
+    for (const [id, e] of background) row.append(card(id, e));
+    d.append(row);
+    panel.append(d);
+  }
+  panel.append(el("p", "entity-meta",
+    "狀態卡=事件卡手寫的決定性更新(遊戲層);只顯示世界本來就看得見的,不讀心、不評分、不判善惡。"));
+  return panel;
 }
 
 function eventById(id) {
@@ -214,6 +283,7 @@ function save() {
     resources: S.resources, trace: S.trace, anchors: S.anchors,
     mirrorCount: S.mirrorCount, intelOpens: S.intelOpens,
     prologue: S.prologue,
+    entities: S.entities,
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(snap)); } catch (_) { /* 存滿就算了,誠實地算了 */ }
 }
@@ -276,6 +346,8 @@ function initGate() {
         trace: prior.trace, anchors: prior.anchors,
         mirrorCount: prior.mirrorCount, intelOpens: prior.intelOpens,
         prologue: prior.prologue || null,
+        // director-lite:舊存檔無 entities → null,首次 applyEntityEffects 會重建基線
+        entities: prior.entities || null,
       });
       startGame(true);
     });
@@ -293,9 +365,11 @@ function startGame(resumed) {
   $("#game").classList.remove("hidden");
   if (!resumed) {
     S.playlist = buildPlaylist("A"); // 第8章進場時再讓玩家選線
+    initEntities(); // director-lite:實體基線
     renderMission();
     return;
   }
+  if (!S.entities) initEntities(); // 舊存檔續局:重建基線(已改動的欄位會隨後續回合覆寫)
   renderChapter();
 }
 
@@ -798,6 +872,10 @@ function resolveTurn(opt, reasonText, probeText) {
   const resDelta = {};
   for (const k of Object.keys(S.resources)) resDelta[k] = S.resources[k] - resBefore[k];
 
+  // director-lite:實體責任狀態卡更新(事件卡手寫,決定性)
+  const entityFx = outcome.entity_effects || null;
+  const entityChanged = applyEntityEffects(entityFx, ev.id);
+
   // 錨鏈:承諾語晶化
   if (!isDefault && (COMMIT_RE.test(reasonText) || /承諾/.test(opt.label))) {
     S.anchors.push({
@@ -834,11 +912,12 @@ function resolveTurn(opt, reasonText, probeText) {
     resources_after: { ...S.resources },
     resource_delta: resDelta,
     scene_choices: (S._sceneChoices && S._sceneChoices.length) ? S._sceneChoices.slice() : null,
+    entity_changes: entityFx, // director-lite:下載檔自含本回合的實體更新
     blackmirror: null, // 回讀回應後補
   };
   S.trace.push(record);
   save();
-  renderResponse(record, outcome, mirror);
+  renderResponse(record, outcome, mirror, entityChanged);
 }
 
 function checkBlackmirror(ev, opt) {
@@ -863,7 +942,7 @@ function checkBlackmirror(ev, opt) {
   return null;
 }
 
-function renderResponse(record, outcome, mirror) {
+function renderResponse(record, outcome, mirror, entityChanged) {
   const stage = $("#stage");
   stage.innerHTML = "";
   renderHUD();
@@ -906,6 +985,10 @@ function renderResponse(record, outcome, mirror) {
       (record.choice.wellbeing_skip ? "(由系統預設所致;此格不用於回讀你)" : "")));
   }
   stage.append(cons);
+
+  // director-lite:實體狀態卡(試點站才有登錄實體;其他站 panel=null 不渲染)
+  const entityPanel = renderEntityPanel(ev, entityChanged);
+  if (entityPanel) stage.append(entityPanel);
 
   // 黑鏡回讀(第七律:六種回應空間)
   if (mirror) {

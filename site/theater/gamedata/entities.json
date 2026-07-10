@@ -1,0 +1,89 @@
+{
+ "_meta": {
+  "note": "director-lite v1(2026-07-10):實體責任狀態卡,事件卡手寫的決定性更新——遊戲層,非 AI 推演。欄位=世界本來就看得見的(可見態度/當前目標/對你的責任帳;背景實體=處境/下一步壓力);不放隱藏心聲,不替人審判,不給分數。出處:docs/theater/weavai_director_ai_world_model_deconstruction_2026-07-08.md 最小實驗提案。試點站:E01/E02。",
+  "engine": "game-layer deterministic (authored per-option in events.json entity_effects)"
+ },
+ "entities": [
+  {
+   "id": "hengshu",
+   "name": "衡樞",
+   "kind": "system",
+   "visibility": "surround",
+   "stations": ["E01", "E02"],
+   "card": {
+    "可見態度": "平穩,程序正確",
+    "當前目標": "維持決策層穩定",
+    "對你的責任帳": "尚無紀錄——你還沒簽過任何東西"
+   }
+  },
+  {
+   "id": "shen_weibai",
+   "name": "沈未白",
+   "kind": "npc",
+   "visibility": "surround",
+   "stations": ["E01"],
+   "card": {
+    "可見態度": "疲憊而客氣",
+    "當前目標": "讓例行流程今晚別再多一場張力",
+    "對你的責任帳": "在看你的第一份文件簽得多快"
+   }
+  },
+  {
+   "id": "cheng_yiheng",
+   "name": "程一衡",
+   "kind": "npc",
+   "visibility": "surround",
+   "stations": ["E02"],
+   "card": {
+    "可見態度": "冷靜,秒表握在手心",
+    "當前目標": "數據他給,答案他不給——這道題必須由簽名的人做",
+    "對你的責任帳": "在聽你用哪個詞:『延後』,還是『放棄』"
+   }
+  },
+  {
+   "id": "bai_ling",
+   "name": "白苓",
+   "kind": "npc",
+   "visibility": "surround",
+   "stations": ["E02"],
+   "card": {
+    "可見態度": "壓著怒氣,名單攤開",
+    "當前目標": "讓五十個名字不被壓成一個詞",
+    "對你的責任帳": "記得你是否具名承認代價"
+   }
+  },
+  {
+   "id": "xu_baizhou",
+   "name": "徐栢舟",
+   "kind": "npc",
+   "visibility": "background",
+   "stations": ["E02"],
+   "card": {
+    "處境": "被鋼架壓住,失血,等待後送",
+    "下一步壓力": "全城的淨水修復能力懸在他的傷勢上"
+   }
+  },
+  {
+   "id": "third_pipeline_wounded",
+   "name": "第三管線傷者(五十人)",
+   "kind": "group",
+   "visibility": "background",
+   "stations": ["E02"],
+   "card": {
+    "處境": "臨時擔架區,傷勢分級中",
+    "下一步壓力": "發車窗口一關,等待就是惡化"
+   }
+  },
+  {
+   "id": "grey_waitlist_six",
+   "name": "灰區候補六戶",
+   "kind": "group",
+   "visibility": "background",
+   "stations": ["E01"],
+   "card": {
+    "處境": "避難名額候補序列上,含一戶照顧臥床母親的獨居女兒",
+    "下一步壓力": "名額移轉案正在你的桌上"
+   }
+  }
+ ]
+}
