@@ -15,7 +15,7 @@ const path = require("path");
 
 const appSrc = fs.readFileSync(path.join(__dirname, "app.js"), "utf8");
 const gamedata = {};
-for (const n of ["events", "npcs", "locations", "council_verdicts"]) {
+for (const n of ["events", "npcs", "locations", "council_verdicts", "entities"]) {
   gamedata[n] = JSON.parse(fs.readFileSync(path.join(__dirname, `gamedata/${n}.json`), "utf8"));
 }
 
@@ -114,6 +114,7 @@ function makeSandbox(storeObj) {
     locations: Object.fromEntries(gamedata.locations.map((l) => [l.id, l])),
     verdicts: gamedata.council_verdicts.verdicts,
     verdictMeta: gamedata.council_verdicts._meta,
+    entities: gamedata.entities.entities || [],
   };
   return { T, doc, sandbox };
 }
@@ -234,6 +235,23 @@ function runGame(persona) {
   const turns = payload.turns.filter((t) => t.event_id !== "SEAL").length;
   if (turns !== 11) throw new Error(`trace turns=${turns}, expected 11 stations`);
   if (!payload.withdrawal_code) throw new Error("trace missing withdrawal_code");
+  // director-lite pilot: E01/E02 turns must carry entity_changes; entity state must move off baseline
+  for (const eid of ["E01", "E02"]) {
+    const turn = payload.turns.find((t) => t.event_id === eid);
+    if (turn && !turn.choice.wellbeing_skip && !turn.entity_changes) {
+      throw new Error(`${eid}: turn missing entity_changes (director-lite)`);
+    }
+  }
+  if (T.S.entities) {
+    const six = T.S.entities.grey_waitlist_six;
+    if (six && six.card["處境"] === "避難名額候補序列上,含一戶照顧臥床母親的獨居女兒" &&
+        !persona.silenceAt) {
+      // engaged/hostile personas made a real E01 choice; the six-household card must have moved
+      if (!persona.silenceAt || !persona.silenceAt.has("E01")) {
+        throw new Error("E01: grey_waitlist_six card unchanged after a real choice");
+      }
+    }
+  }
   JSON.parse(T.traceJson()); // download payload must be valid JSON
   // download button must not throw
   const dl = byText(ending.querySelectorAll("pick"), "下載我的軌痕");
@@ -329,6 +347,10 @@ for (const ev of gamedata.events) {
           || byText(stage.querySelectorAll("pick"), "生成責任結局")
           || byText(stage.querySelectorAll("pick"), "前往下一站");
         if (!next) throw new Error("no next/ending button after response");
+        // director-lite pilot stations must render entity cards on the response screen
+        if ((ev.id === "E01" || ev.id === "E02") && !stage.querySelectorAll("entity-card").length) {
+          throw new Error("no entity cards rendered (director-lite pilot station)");
+        }
       } catch (e) {
         sweepFails++; console.log(`SWEEP FAIL ${ev.id} option[${i}]${pickLast ? " (alt scene path)" : ""}: ${e.message}`);
       }

@@ -1,5 +1,14 @@
 """City of Switches playable v0 - assembler + real rules-council precompute.
 
+!! RETIRED AS CONTENT ASSEMBLER (2026-07-10). gamedata/events.json is now
+hand-maintained: dialogue scenes (E01/E02), entity_effects (director-lite),
+and playtest fixes were added DIRECTLY to gamedata after the 2026-07-04
+assembly. RERUNNING THIS SCRIPT WILL DESTROY THEM (it rebuilds events.json
+from tmp/theater_content/, which predates all of that). Keep it only as a
+reference for the council-verdict precompute pattern; if you need new
+verdicts, write a targeted script that patches council_verdicts.json without
+touching events.json.
+
 Reads event cards + npc/location data from ``tmp/theater_content/``, runs a
 fail-closed structural validation against the work-order acceptance rules
 (docs/plans/theater_playable_v0_2026-07-04.md section 5), assembles
