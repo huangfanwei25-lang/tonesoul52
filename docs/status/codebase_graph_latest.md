@@ -1,23 +1,23 @@
 # ToneSoul Codebase Graph Analysis
 
-Generated: 2026-07-04T05:28:08Z
+Generated: 2026-07-09T23:48:23Z
 Package: `tonesoul`
 
 ## Summary
 
 | Metric | Value |
 | --- | ---: |
-| Modules | 299 |
-| Lines | 89,502 |
-| Classes | 560 |
-| Functions | 3,004 |
-| Import edges | 540 |
+| Modules | 302 |
+| Lines | 90,083 |
+| Classes | 566 |
+| Functions | 3,022 |
+| Import edges | 547 |
 | Circular deps | 0 |
 | Layer violations | 0 |
 | Orphan modules | 1 |
-| Community drifts | 28 |
-| Self-declared layer | 299 / 299 (100.0%) |
-| Purpose declared | 297 / 299 (99.3%) |
+| Community drifts | 29 |
+| Self-declared layer | 302 / 302 (100.0%) |
+| Purpose declared | 300 / 302 (99.3%) |
 
 ## God Nodes (Top 20 by coupling)
 
@@ -27,12 +27,12 @@ Modules with the highest total degree (in + out). High coupling = high change ri
 | ---: | --- | --- | --- | ---: | ---: | ---: | --- |
 | 1 | `unified_pipeline` | pipeline | self_declared | 0 | 35 | **35** | Top-level runtime pipeline that wires perception, council, and output surfaces. |
 | 2 | `ystm.schema` | shared | self_declared | 27 | 0 | **27** | YSTM pure-data schema: Node, WhereTime, and stable_hash used across governance, memory, and observability. |
-| 3 | `council.types` | shared | self_declared | 24 | 1 | **25** | Shared type primitives (PerspectiveType, VoteDecision, verdicts) for the council subsystem. |
+| 3 | `council.types` | shared | self_declared | 25 | 1 | **26** | Shared type primitives (PerspectiveType, VoteDecision, verdicts) for the council subsystem. |
 | 4 | `yss_pipeline` | pipeline | self_declared | 0 | 25 | **25** | Compose YSS gates, action set, and audit into one semantic-field pipeline pass. |
 | 5 | `runtime_adapter` | pipeline | self_declared | 5 | 19 | **24** | Load/commit governance state across session boundaries; the model-agnostic runtime spine. |
-| 6 | `council.runtime` | governance | self_declared | 4 | 15 | **19** | Run the multi-perspective council, return verdict + coherence + minority opinion. |
-| 7 | `memory.soul_db` | memory | self_declared | 18 | 1 | **19** | SQLite-backed memory store with decay, layered retrieval, and source attribution. |
-| 8 | `council.pre_output_council` | governance | self_declared | 3 | 15 | **18** | Convene the pre-output council: run perspectives, compute coherence, emit verdict and transcript. |
+| 6 | `council.runtime` | governance | self_declared | 4 | 17 | **21** | Run the multi-perspective council, return verdict + coherence + minority opinion. |
+| 7 | `council.pre_output_council` | governance | self_declared | 3 | 16 | **19** | Convene the pre-output council: run perspectives, compute coherence, emit verdict and transcript. |
+| 8 | `memory.soul_db` | memory | self_declared | 18 | 1 | **19** | SQLite-backed memory store with decay, layered retrieval, and source attribution. |
 | 9 | `autonomous_cycle` | orchestration | self_declared | 1 | 14 | **15** | Drive the autonomous wake/sense/dream loop without a human trigger. |
 | 10 | `council.perspective_factory` | governance | self_declared | 3 | 11 | **14** | Factory for pluggable council perspectives (rules / LLM / tool-verified). |
 | 11 | `ystm.demo` | domain | self_declared | 5 | 8 | **13** | End-to-end YSTM demo: ingest segments, build terrain, render HTML/PNG/SVG outputs. |
@@ -56,12 +56,12 @@ Nobody imports these. Potential dead code or standalone entry points.
 
 | Subpackage | Layer | Files | Lines | Classes | Functions |
 | --- | --- | ---: | ---: | ---: | ---: |
-| `(root)` | — | 100 | 41,283 | 200 | 1211 |
+| `(root)` | — | 100 | 41,294 | 200 | 1211 |
 | `axioms` | — | 2 | 378 | 3 | 14 |
 | `backends` | infrastructure | 2 | 905 | 2 | 72 |
 | `cli` | surface | 3 | 348 | 0 | 12 |
 | `cognition` | — | 2 | 353 | 4 | 13 |
-| `council` | governance | 40 | 11,363 | 67 | 356 |
+| `council` | governance | 43 | 11,933 | 73 | 374 |
 | `deliberation` | governance | 7 | 1,970 | 18 | 87 |
 | `evolution` | evolution | 4 | 1,155 | 5 | 46 |
 | `gates` | governance | 2 | 406 | 6 | 13 |
@@ -91,9 +91,9 @@ Nobody imports these. Potential dead code or standalone entry points.
 | `(root)` | `ystm` | 24 |
 | `(root)` | `memory` | 18 |
 | `(root)` | `governance` | 12 |
+| `council` | `(root)` | 10 |
 | `governance` | `(root)` | 10 |
 | `(root)` | `council` | 8 |
-| `council` | `(root)` | 8 |
 | `council` | `memory` | 5 |
 | `memory` | `(root)` | 5 |
 | `cli` | `(root)` | 4 |
@@ -126,6 +126,7 @@ Modules whose import pattern suggests they belong to a different subpackage than
 | `cli.__main__` | cli | (root) |
 | `cli.main` | cli | (root) |
 | `council.calibration` | council | (root) |
+| `council.kappa_signals` | council | (root) |
 | `escape_valve` | (root) | council |
 | `gates` | gates | (root) |
 | `gates.compute` | gates | (root) |
@@ -139,4 +140,3 @@ Modules whose import pattern suggests they belong to a different subpackage than
 | `memory.hippocampus` | memory | (root) |
 | `memory.semantic_graph` | memory | (root) |
 | `memory.visual_chain` | memory | (root) |
-| `perception.web_ingest` | perception | (root) |
