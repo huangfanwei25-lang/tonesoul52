@@ -1,27 +1,27 @@
 {
-  "generated_at": "2026-07-04T05:28:08Z",
+  "generated_at": "2026-07-09T23:48:23Z",
   "source": "scripts/analyze_codebase_graph.py",
   "root_package": "tonesoul",
   "summary": {
-    "total_modules": 299,
-    "total_lines": 89502,
-    "total_classes": 560,
-    "total_functions": 3004,
-    "total_edges": 540,
+    "total_modules": 302,
+    "total_lines": 90083,
+    "total_classes": 566,
+    "total_functions": 3022,
+    "total_edges": 547,
     "total_cycles": 0,
     "total_layer_violations": 0,
     "total_orphans": 1,
-    "total_community_drifts": 28,
-    "self_declared_layer_count": 299,
+    "total_community_drifts": 29,
+    "self_declared_layer_count": 302,
     "self_declared_layer_ratio": 1.0,
-    "purpose_count": 297,
-    "purpose_ratio": 0.9933
+    "purpose_count": 300,
+    "purpose_ratio": 0.9934
   },
   "annotation_coverage": {
-    "self_declared_layer_count": 299,
+    "self_declared_layer_count": 302,
     "self_declared_layer_ratio": 1.0,
-    "purpose_count": 297,
-    "purpose_ratio": 0.9933
+    "purpose_count": 300,
+    "purpose_ratio": 0.9934
   },
   "god_nodes": [
     {
@@ -53,10 +53,10 @@
     {
       "module": "tonesoul.council.types",
       "path": "tonesoul/council/types.py",
-      "in_degree": 24,
+      "in_degree": 25,
       "out_degree": 1,
-      "total_degree": 25,
-      "lines": 223,
+      "total_degree": 26,
+      "lines": 229,
       "classes": 7,
       "functions": 2,
       "layer": "shared",
@@ -93,14 +93,27 @@
       "module": "tonesoul.council.runtime",
       "path": "tonesoul/council/runtime.py",
       "in_degree": 4,
-      "out_degree": 15,
-      "total_degree": 19,
-      "lines": 776,
+      "out_degree": 17,
+      "total_degree": 21,
+      "lines": 797,
       "classes": 3,
       "functions": 19,
       "layer": "governance",
       "layer_source": "self_declared",
       "purpose": "Run the multi-perspective council, return verdict + coherence + minority opinion."
+    },
+    {
+      "module": "tonesoul.council.pre_output_council",
+      "path": "tonesoul/council/pre_output_council.py",
+      "in_degree": 3,
+      "out_degree": 16,
+      "total_degree": 19,
+      "lines": 451,
+      "classes": 1,
+      "functions": 9,
+      "layer": "governance",
+      "layer_source": "self_declared",
+      "purpose": "Convene the pre-output council: run perspectives, compute coherence, emit verdict and transcript."
     },
     {
       "module": "tonesoul.memory.soul_db",
@@ -114,19 +127,6 @@
       "layer": "memory",
       "layer_source": "self_declared",
       "purpose": "SQLite-backed memory store with decay, layered retrieval, and source attribution."
-    },
-    {
-      "module": "tonesoul.council.pre_output_council",
-      "path": "tonesoul/council/pre_output_council.py",
-      "in_degree": 3,
-      "out_degree": 15,
-      "total_degree": 18,
-      "lines": 428,
-      "classes": 1,
-      "functions": 9,
-      "layer": "governance",
-      "layer_source": "self_declared",
-      "purpose": "Convene the pre-output council: run perspectives, compute coherence, emit verdict and transcript."
     },
     {
       "module": "tonesoul.autonomous_cycle",
@@ -293,7 +293,7 @@
   "subpackage_stats": {
     "(root)": {
       "files": 100,
-      "lines": 41283,
+      "lines": 41294,
       "classes": 200,
       "functions": 1211
     },
@@ -322,10 +322,10 @@
       "functions": 13
     },
     "council": {
-      "files": 40,
-      "lines": 11363,
-      "classes": 67,
-      "functions": 356
+      "files": 43,
+      "lines": 11933,
+      "classes": 73,
+      "functions": 374
     },
     "deliberation": {
       "files": 7,
@@ -492,8 +492,8 @@
       "responsibility_runtime": 1
     },
     "council": {
-      "council": 74,
-      "(root)": 8,
+      "council": 79,
+      "(root)": 10,
       "semantic": 4,
       "memory": 5,
       "shared": 2,
@@ -614,6 +614,11 @@
       "community": "(root)"
     },
     {
+      "module": "tonesoul.council.kappa_signals",
+      "directory": "council",
+      "community": "(root)"
+    },
+    {
       "module": "tonesoul.escape_valve",
       "directory": "(root)",
       "community": "council"
@@ -728,6 +733,6 @@
     "generated": true,
     "canonical": false,
     "source_command": "python scripts/analyze_codebase_graph.py",
-    "updated_at": "2026-07-04T05:28:08Z"
+    "updated_at": "2026-07-09T23:48:23Z"
   }
 }

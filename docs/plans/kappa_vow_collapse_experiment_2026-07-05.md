@@ -98,3 +98,10 @@ Phase 1 工程(訊號落帳)=bounded ticket,可派 codex;門檻判定與 Phase 2
   `trace_architecture_followup_2026-05-13.md`):與 κ 同屬衰減/預警家族。併桌結論=
   **先量再建**:等本 ledger 有時序後,先驗 owner 觀察(「dissent 影子該衰減而 AI 不衰減」)
   是否在資料裡成立,再決定 Layer 2 建不建;不獨立開工。
+
+### 候選儀器(2026-07-10 增):J-lens 工作空間讀出
+Anthropic 工作空間論文(transformer-circuits 2026-07-06)+ 開源實作 jspace
+(joshhu/jspace,本地 Qwen3 可跑)——理論上可把「姿態-證據錯位」從關鍵詞地板
+升到表徵層(工作空間內已表徵 A、輸出說 B)。**狀態:停車。**門檻:CUDA GPU
+(owner 機器未測,owner 已裁示不折騰);且屬推測性併桌,等 Phase 1 ledger 有
+時序資料後再評估要不要開這條儀器線。出處:docs/status/jspace_workspace_paper_note_2026-07-10.md。
