@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T21:36:37Z",
+  "generated_at": "2026-07-20T05:32:48Z",
   "overall_ok": true,
   "config": {
     "max_dangling": 50,
@@ -8,16 +8,14 @@
   },
   "metrics": {
     "loose_count": 0,
-    "in_pack": 19260,
+    "in_pack": 2852,
     "packs": 1,
     "size": "0 bytes",
-    "size_pack": "130.33 MiB",
-    "dangling_count": 22,
-    "fsck_prefix_counts": {
-      "dangling": 22
-    },
+    "size_pack": "25.21 MiB",
+    "dangling_count": 0,
+    "fsck_prefix_counts": {},
     "fsck_unexpected_count": 0,
-    "tracked_ignored_count": 17
+    "tracked_ignored_count": 9
   },
   "checks": [
     {
@@ -25,9 +23,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.02,
+      "duration_seconds": 0.0,
       "command": "git count-objects -vH",
-      "stdout_tail": "count: 0\nsize: 0 bytes\nin-pack: 19260\npacks: 1\nsize-pack: 130.33 MiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
+      "stdout_tail": "count: 0\nsize: 0 bytes\nin-pack: 2852\npacks: 1\nsize-pack: 25.21 MiB\nprune-packable: 0\ngarbage: 0\nsize-garbage: 0 bytes",
       "stderr_tail": ""
     },
     {
@@ -35,9 +33,9 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 3.09,
+      "duration_seconds": 0.38,
       "command": "git fsck --no-reflogs",
-      "stdout_tail": "14a\ndangling commit 9222a7d7e3b392f59f0e17d1ef46cf3f4b5dc9a5\ndangling commit c03458603545161bffb079205e45ae5d9b670505\ndangling commit 5640fe4b94fb74f443afaed9d7dc76c969b03453\ndangling commit 894a718b409fc5a1f5cc8acb895015d94a6ce4d5\ndangling commit 7c68c2b31cfe8615ebf99c2ad14c293e8fa3e424\ndangling commit 356f3a0b354b901a0edcd894917b82e9982e5961\ndangling commit ee7e98350b7c5437b1fa89386405e36da8149eee\ndangling commit 6684956d3dea5aab91a1ed99da9f452a029f342d\ndangling commit 2e875fbb30488c242beddf25881bc081c01815d4\ndangling commit 6598f494d551b54d988ee76677fba5b6b5044ff5\ndangling commit 9a9a16818d159c7cb0c4d3702db098710a9ce0bf\ndangling commit 1cb1c8a5d7663c7497fcd52b7109034e009c775a\ndangling commit fbc63697520fc83c2b56ff36b70481d5f2297f70\ndangling commit eccddc37cb19aa99b6f32b16dee3a3800d25e15a\ndangling commit e1d56bc409f6510856f5b4a792c2b90d8a1206cf\ndangling commit 3ad98de8f7b46e2ca1600b183e5f9ede3ca15a00\ndangling commit 0cdb72aec728c0b42725460874e7e39ad01a56bb\ndangling commit eadfe3e74c97d82a0da6affc6c43053e6350fa51\ndangling commit 72e41e0079ddf8c7bb648185e5d3002f336de61d\ndangling commit d3e461c5b8e6b1a7ec37d0b38199ab69f4f9fa28\ndangling commit fef317c81e6b48a058c8e72d863d3d5e33fce981",
+      "stdout_tail": "",
       "stderr_tail": ""
     },
     {
@@ -45,22 +43,15 @@
       "status": "pass",
       "ok": true,
       "exit_code": 0,
-      "duration_seconds": 0.09,
+      "duration_seconds": 0.01,
       "command": "git ls-files -ci --exclude-standard",
-      "stdout_tail": ".claude/skills/codex-second-opinion/SKILL.md\n.claude/skills/delegation-dispatch/SKILL.md\n.claude/skills/fanwei-voice-essays/SKILL.md\n.claude/skills/honest-judgment/SKILL.md\n.claude/skills/navigation-grammar-checker/SKILL.md\n.claude/skills/tonesoul-thesis-defender/SKILL.md\n.claude/skills/tonesoul-thesis-defender/patterns.md\ndata/YuHun_v2.6_knowledgebase.json\ndata/YuHun_v2.6_knowledgebase_extended.json\ndata/semantic_spine_fixtures.json\ndata/yuhun_academy_knowledgebase_v1.1.txt\n\"data/\\350\\252\\236\\351\\255\\202\\345\\212\\207\\345\\240\\264_API_\\346\\234\\200\\347\\265\\202\\347\\211\\210_v1.3.json\"\ndocs/chronicles/task_archive_phase_570-854.md\ndocs/status/persona_swarm_framework_latest.json\nexperiments/tsd1_pilot/data/prompts.json\nexperiments/tsd1_pilot/data/responses.json\nspec/wfgy_semantic_control_spec.md",
+      "stdout_tail": "data/YuHun_v2.6_knowledgebase.json\ndata/YuHun_v2.6_knowledgebase_extended.json\ndata/semantic_spine_fixtures.json\ndata/yuhun_academy_knowledgebase_v1.1.txt\n\"data/\\350\\252\\236\\351\\255\\202\\345\\212\\207\\345\\240\\264_API_\\346\\234\\200\\347\\265\\202\\347\\211\\210_v1.3.json\"\ndocs/chronicles/task_archive_phase_570-854.md\ndocs/status/persona_swarm_framework_latest.json\nexperiments/tsd1_pilot/data/prompts.json\nexperiments/tsd1_pilot/data/responses.json",
       "stderr_tail": ""
     }
   ],
   "issues": [],
   "fsck_unexpected_lines": [],
   "tracked_ignored_paths": [
-    ".claude/skills/codex-second-opinion/SKILL.md",
-    ".claude/skills/delegation-dispatch/SKILL.md",
-    ".claude/skills/fanwei-voice-essays/SKILL.md",
-    ".claude/skills/honest-judgment/SKILL.md",
-    ".claude/skills/navigation-grammar-checker/SKILL.md",
-    ".claude/skills/tonesoul-thesis-defender/SKILL.md",
-    ".claude/skills/tonesoul-thesis-defender/patterns.md",
     "data/YuHun_v2.6_knowledgebase.json",
     "data/YuHun_v2.6_knowledgebase_extended.json",
     "data/semantic_spine_fixtures.json",
@@ -69,7 +60,6 @@
     "docs/chronicles/task_archive_phase_570-854.md",
     "docs/status/persona_swarm_framework_latest.json",
     "experiments/tsd1_pilot/data/prompts.json",
-    "experiments/tsd1_pilot/data/responses.json",
-    "spec/wfgy_semantic_control_spec.md"
+    "experiments/tsd1_pilot/data/responses.json"
   ]
 }

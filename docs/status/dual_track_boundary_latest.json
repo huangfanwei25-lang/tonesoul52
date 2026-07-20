@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-03T21:36:37Z",
+  "generated_at": "2026-07-20T05:32:48Z",
   "overall_ok": true,
-  "repo_root": "C:\\Users\\user\\Desktop\\倉庫",
+  "repo_root": "/home/runner/work/tonesoul52/tonesoul52",
   "config": {
     "allow_private_paths": false,
     "blocked_prefixes": [
@@ -48,7 +48,7 @@
     "mode": "git",
     "command": "git -c core.quotepath=off diff --name-status --cached --diff-filter=ACMRD",
     "exit_code": 0,
-    "duration_seconds": 0.02,
+    "duration_seconds": 0.0,
     "stdout_tail": "",
     "stderr_tail": "",
     "entries": [],

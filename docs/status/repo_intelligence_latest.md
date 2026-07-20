@@ -1,8 +1,8 @@
 # Repo Intelligence Latest
 
-- generated_at: 2026-07-03T21:36:40Z
+- generated_at: 2026-07-20T05:32:49Z
 - status: ready
-- primary_status_line: `repo_intelligence_ready | available_surfaces=5/7 protected_files=5 watched_dirs=3 adoption=sidecar_only`
+- primary_status_line: `repo_intelligence_ready | available_surfaces=4/7 protected_files=5 watched_dirs=3 adoption=sidecar_only`
 - runtime_status_line: `entrypoints | repo=repo_healthcheck_latest.json atlas=repo_semantic_atlas_latest.json integrity=agent_integrity_latest.json settlement=repo_governance_settlement_latest.json review=runtime_source_change_groups_latest.json weekly=true_verification_task_status_latest.json scribe=scribe_status_latest.json semantic_protocol=unavailable semantic_first=unavailable`
 - artifact_policy_status_line: `external_repo_intelligence=sidecar_only | main_repo_install=no hooks=no protected_files=no`
 
@@ -47,7 +47,7 @@
 - `scribe_status`
   - path: `docs/status/scribe_status_latest.json`
   - role: `chronicle_runtime`
-  - available: `yes`
+  - available: `no`
   - description: Latest Scribe chronicle/companion posture.
 
 ## Semantic Retrieval Protocol
@@ -71,4 +71,4 @@
 - preferred_first_surface: `docs/status/repo_healthcheck_latest.json`
 - semantic_retrieval_protocol: ``
 - semantic_preferred_neighborhood: ``
-- primary_status_line: `repo_intelligence_ready | available_surfaces=5/7 protected_files=5 watched_dirs=3 adoption=sidecar_only`
+- primary_status_line: `repo_intelligence_ready | available_surfaces=4/7 protected_files=5 watched_dirs=3 adoption=sidecar_only`

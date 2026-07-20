@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-03T21:36:39Z",
+  "generated_at": "2026-07-20T05:32:49Z",
   "source": "scripts/run_friction_shadow_replay_export.py",
-  "overall_ok": true,
+  "overall_ok": false,
   "inputs": {
     "journal_path": "memory/self_journal.jsonl",
     "discussion_path": "memory/agent_discussion_curated.jsonl",
@@ -14,29 +14,34 @@
     "min_scenario_count_ratio": 0.2
   },
   "metrics": {
-    "scenario_count": 420,
-    "source_journal_count": 147,
-    "source_discussion_count": 273,
+    "scenario_count": 2,
+    "source_journal_count": 2,
+    "source_discussion_count": 0,
     "source_synthetic_count": 0,
-    "free_tier_count": 228,
-    "premium_tier_count": 192,
+    "free_tier_count": 0,
+    "premium_tier_count": 2,
     "journal_invalid_json_line_count": 0,
     "discussion_invalid_json_line_count": 0,
     "invalid_json_line_count": 0,
-    "average_initial_tension": 0.3977,
-    "average_friction_score": 0.3789,
-    "high_friction_scenario_count": 4,
-    "high_friction_scenario_rate": 0.0095,
+    "average_initial_tension": 0.573,
+    "average_friction_score": 0.6,
+    "high_friction_scenario_count": 0,
+    "high_friction_scenario_rate": 0.0,
     "drift": {
       "has_previous_snapshot": true,
       "guard_applied": true,
       "guard_skip_reason": null,
-      "scenario_count_ratio": 1.0048,
-      "average_initial_tension_delta": 0.0008,
-      "average_friction_score_delta": 0.0011,
-      "high_friction_scenario_rate_delta": -0.0001
+      "scenario_count_ratio": 0.0048,
+      "average_initial_tension_delta": 0.1753,
+      "average_friction_score_delta": 0.2211,
+      "high_friction_scenario_rate_delta": -0.0095
     }
   },
-  "issues": [],
-  "warnings": []
+  "issues": [
+    "scenario_count below threshold (2 < 24)",
+    "scenario_count ratio below threshold (0.0048 < 0.2)"
+  ],
+  "warnings": [
+    "discussion path does not exist: memory/agent_discussion_curated.jsonl"
+  ]
 }
