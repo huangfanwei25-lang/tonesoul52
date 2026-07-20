@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T21:40:51Z",
+  "generated_at": "2026-07-20T05:32:48Z",
   "source": "scripts/verify_status_freshness.py",
   "overall_ok": true,
   "policy": {
@@ -22,24 +22,42 @@
     ]
   },
   "summary": {
-    "artifact_count": 81,
-    "fresh": 62,
+    "artifact_count": 80,
+    "fresh": 58,
     "stale_assertive": 0,
-    "stale_episodic": 6,
+    "stale_episodic": 10,
     "untimestamped_assertive": 0,
     "untimestamped_episodic": 12,
     "future_dated_assertive": 0,
-    "future_dated_episodic": 1,
+    "future_dated_episodic": 0,
     "failure_count": 0
   },
   "failures": [],
   "warnings": [
     {
+      "path": "docs/status/change_intent_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-18T07:15:34+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 123,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/commit_attribution_base_switch_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-08T15:43:20+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 133,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
       "path": "docs/status/persona_swarm_long_task_latest.json",
       "kind": "episodic",
       "timestamp": "2026-03-01T14:47:25+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 124,
+      "age_days": 140,
       "verdict": "stale",
       "note": ""
     },
@@ -48,7 +66,7 @@
       "kind": "episodic",
       "timestamp": "2026-03-02T14:20:34+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 123,
+      "age_days": 139,
       "verdict": "stale",
       "note": ""
     },
@@ -57,7 +75,7 @@
       "kind": "episodic",
       "timestamp": "2026-03-01T14:47:25+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 124,
+      "age_days": 140,
       "verdict": "stale",
       "note": ""
     },
@@ -66,7 +84,16 @@
       "kind": "episodic",
       "timestamp": "2026-03-02T12:32:41+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 123,
+      "age_days": 139,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "reports/model_comparison_latest.json",
+      "kind": "episodic",
+      "timestamp": "2026-03-06T23:43:22.617522+00:00",
+      "timestamp_field": "generated_at",
+      "age_days": 135,
       "verdict": "stale",
       "note": ""
     },
@@ -75,7 +102,16 @@
       "kind": "episodic",
       "timestamp": "2026-03-02T04:25:53+00:00",
       "timestamp_field": "md_inline",
-      "age_days": 123,
+      "age_days": 140,
+      "verdict": "stale",
+      "note": ""
+    },
+    {
+      "path": "docs/status/repo_hygiene_value_triage_latest.md",
+      "kind": "episodic",
+      "timestamp": "2026-03-17T00:00:00+00:00",
+      "timestamp_field": "md_inline",
+      "age_days": 125,
       "verdict": "stale",
       "note": ""
     },
@@ -84,7 +120,7 @@
       "kind": "episodic",
       "timestamp": "2026-02-14T00:00:00+00:00",
       "timestamp_field": "md_inline",
-      "age_days": 139,
+      "age_days": 156,
       "verdict": "stale",
       "note": ""
     },
@@ -195,15 +231,6 @@
       "age_days": null,
       "verdict": "untimestamped",
       "note": "no generated_at line"
-    },
-    {
-      "path": "reports/coverage_latest.json",
-      "kind": "episodic",
-      "timestamp": "2026-07-04T04:36:10.682458+00:00",
-      "timestamp_field": "meta.timestamp",
-      "age_days": -1,
-      "verdict": "future-dated",
-      "note": "timestamp is ahead of now"
     }
   ],
   "entries": [
@@ -212,7 +239,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T01:49:31+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 18,
       "verdict": "fresh",
       "note": ""
     },
@@ -221,7 +248,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T07:34:19+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -230,7 +257,7 @@
       "kind": "episodic",
       "timestamp": "2026-03-22T16:11:01+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 103,
+      "age_days": 119,
       "verdict": "fresh",
       "note": ""
     },
@@ -239,8 +266,8 @@
       "kind": "episodic",
       "timestamp": "2026-03-18T07:15:34+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 107,
-      "verdict": "fresh",
+      "age_days": 123,
+      "verdict": "stale",
       "note": ""
     },
     {
@@ -248,7 +275,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T07:34:25+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -257,16 +284,16 @@
       "kind": "episodic",
       "timestamp": "2026-03-27T14:57:52+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 98,
+      "age_days": 114,
       "verdict": "fresh",
       "note": ""
     },
     {
       "path": "docs/status/codebase_graph_latest.json",
       "kind": "episodic",
-      "timestamp": "2026-07-03T03:53:40+00:00",
+      "timestamp": "2026-07-09T23:48:23+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 0,
+      "age_days": 10,
       "verdict": "fresh",
       "note": ""
     },
@@ -275,7 +302,7 @@
       "kind": "episodic",
       "timestamp": "2026-03-30T00:00:00+00:00",
       "timestamp_field": "generated_on",
-      "age_days": 95,
+      "age_days": 112,
       "verdict": "fresh",
       "note": ""
     },
@@ -284,7 +311,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T08:01:00+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -293,7 +320,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T05:13:29+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 18,
       "verdict": "fresh",
       "note": ""
     },
@@ -302,8 +329,8 @@
       "kind": "episodic",
       "timestamp": "2026-03-08T15:43:20+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 117,
-      "verdict": "fresh",
+      "age_days": 133,
+      "verdict": "stale",
       "note": ""
     },
     {
@@ -311,7 +338,7 @@
       "kind": "episodic",
       "timestamp": "2026-06-18T00:00:00+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 15,
+      "age_days": 32,
       "verdict": "fresh",
       "note": ""
     },
@@ -320,7 +347,7 @@
       "kind": "episodic",
       "timestamp": "2026-04-16T02:12:21+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 78,
+      "age_days": 95,
       "verdict": "fresh",
       "note": ""
     },
@@ -329,7 +356,7 @@
       "kind": "episodic",
       "timestamp": "2026-06-01T12:59:44.027534+00:00",
       "timestamp_field": "timestamp",
-      "age_days": 32,
+      "age_days": 48,
       "verdict": "fresh",
       "note": ""
     },
@@ -347,7 +374,7 @@
       "kind": "episodic",
       "timestamp": "2026-04-07T13:09:21+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 87,
+      "age_days": 103,
       "verdict": "fresh",
       "note": ""
     },
@@ -356,7 +383,7 @@
       "kind": "episodic",
       "timestamp": "2026-07-03T06:04:16+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 0,
+      "age_days": 16,
       "verdict": "fresh",
       "note": ""
     },
@@ -365,7 +392,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-03T21:36:39+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 0,
+      "age_days": 16,
       "verdict": "fresh",
       "note": ""
     },
@@ -374,7 +401,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T07:34:25+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -383,7 +410,7 @@
       "kind": "episodic",
       "timestamp": "2026-07-02T07:34:19+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -399,7 +426,7 @@
     {
       "path": "docs/status/dual_track_boundary_latest.json",
       "kind": "assertive",
-      "timestamp": "2026-07-03T21:36:37+00:00",
+      "timestamp": "2026-07-20T05:32:48+00:00",
       "timestamp_field": "generated_at",
       "age_days": 0,
       "verdict": "fresh",
@@ -410,7 +437,7 @@
       "kind": "episodic",
       "timestamp": "2026-06-17T13:35:14+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 16,
+      "age_days": 32,
       "verdict": "fresh",
       "note": ""
     },
@@ -419,7 +446,7 @@
       "kind": "episodic",
       "timestamp": "2026-03-22T14:22:32+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 103,
+      "age_days": 119,
       "verdict": "fresh",
       "note": ""
     },
@@ -428,7 +455,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T07:34:20+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -437,7 +464,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-03T21:36:39+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 0,
+      "age_days": 16,
       "verdict": "fresh",
       "note": ""
     },
@@ -446,14 +473,14 @@
       "kind": "assertive",
       "timestamp": "2026-07-03T21:36:39+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 0,
+      "age_days": 16,
       "verdict": "fresh",
       "note": ""
     },
     {
       "path": "docs/status/git_hygiene_latest.json",
       "kind": "assertive",
-      "timestamp": "2026-07-03T21:36:37+00:00",
+      "timestamp": "2026-07-20T05:32:48+00:00",
       "timestamp_field": "generated_at",
       "age_days": 0,
       "verdict": "fresh",
@@ -464,7 +491,7 @@
       "kind": "episodic",
       "timestamp": "2026-03-23T07:13:15+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 102,
+      "age_days": 118,
       "verdict": "fresh",
       "note": ""
     },
@@ -482,7 +509,7 @@
       "kind": "episodic",
       "timestamp": "2026-07-03T03:54:02+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 0,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -500,7 +527,7 @@
       "kind": "episodic",
       "timestamp": "2026-03-22T10:41:23+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 103,
+      "age_days": 119,
       "verdict": "fresh",
       "note": ""
     },
@@ -509,7 +536,7 @@
       "kind": "episodic",
       "timestamp": "2026-03-22T10:40:46+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 103,
+      "age_days": 119,
       "verdict": "fresh",
       "note": ""
     },
@@ -518,7 +545,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T07:34:20+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -527,7 +554,7 @@
       "kind": "episodic",
       "timestamp": "2026-03-22T10:40:46+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 103,
+      "age_days": 119,
       "verdict": "fresh",
       "note": ""
     },
@@ -545,7 +572,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-03T21:36:39+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 0,
+      "age_days": 16,
       "verdict": "fresh",
       "note": ""
     },
@@ -554,7 +581,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-03T21:36:39+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 0,
+      "age_days": 16,
       "verdict": "fresh",
       "note": ""
     },
@@ -563,7 +590,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-03T21:36:40+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 0,
+      "age_days": 16,
       "verdict": "fresh",
       "note": ""
     },
@@ -572,7 +599,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-03T21:36:39+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 0,
+      "age_days": 16,
       "verdict": "fresh",
       "note": ""
     },
@@ -590,7 +617,7 @@
       "kind": "episodic",
       "timestamp": "2026-04-15T13:21:56+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 79,
+      "age_days": 95,
       "verdict": "fresh",
       "note": ""
     },
@@ -599,14 +626,14 @@
       "kind": "episodic",
       "timestamp": "2026-03-22T15:57:55+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 103,
+      "age_days": 119,
       "verdict": "fresh",
       "note": ""
     },
     {
       "path": "docs/status/persona_swarm_framework_latest.json",
       "kind": "episodic",
-      "timestamp": "2026-07-03T21:36:38+00:00",
+      "timestamp": "2026-07-20T05:32:48+00:00",
       "timestamp_field": "generated_at",
       "age_days": 0,
       "verdict": "fresh",
@@ -617,14 +644,14 @@
       "kind": "episodic",
       "timestamp": "2026-03-01T14:47:25+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 124,
+      "age_days": 140,
       "verdict": "stale",
       "note": ""
     },
     {
       "path": "docs/status/persona_track_record_latest.json",
       "kind": "episodic",
-      "timestamp": "2026-07-03T21:32:45.207188+00:00",
+      "timestamp": "2026-07-20T05:31:49.411118+00:00",
       "timestamp_field": "generated_at",
       "age_days": 0,
       "verdict": "fresh",
@@ -635,7 +662,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-03T21:36:40+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 0,
+      "age_days": 16,
       "verdict": "fresh",
       "note": ""
     },
@@ -644,7 +671,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T07:34:20+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -653,7 +680,7 @@
       "kind": "episodic",
       "timestamp": "2026-03-22T16:10:56+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 103,
+      "age_days": 119,
       "verdict": "fresh",
       "note": ""
     },
@@ -662,7 +689,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T07:34:20+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -671,7 +698,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T07:34:20+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -680,7 +707,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-03T21:40:15+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 0,
+      "age_days": 16,
       "verdict": "fresh",
       "note": ""
     },
@@ -689,7 +716,7 @@
       "kind": "episodic",
       "timestamp": "2026-07-03T21:36:40+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 0,
+      "age_days": 16,
       "verdict": "fresh",
       "note": ""
     },
@@ -698,16 +725,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T07:34:21+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
-      "verdict": "fresh",
-      "note": ""
-    },
-    {
-      "path": "docs/status/scribe_status_latest.json",
-      "kind": "episodic",
-      "timestamp": "2026-06-13T19:54:49+00:00",
-      "timestamp_field": "generated_at",
-      "age_days": 20,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -725,7 +743,7 @@
       "kind": "episodic",
       "timestamp": "2026-03-02T14:20:34+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 123,
+      "age_days": 139,
       "verdict": "stale",
       "note": ""
     },
@@ -734,7 +752,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T05:13:30+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 18,
       "verdict": "fresh",
       "note": ""
     },
@@ -743,7 +761,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T07:34:21+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -752,7 +770,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T07:34:21+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -761,7 +779,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T07:34:22+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -770,7 +788,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T07:34:22+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -779,7 +797,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T05:13:31+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 18,
       "verdict": "fresh",
       "note": ""
     },
@@ -788,7 +806,7 @@
       "kind": "episodic",
       "timestamp": "2026-03-01T14:47:25+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 124,
+      "age_days": 140,
       "verdict": "stale",
       "note": ""
     },
@@ -797,7 +815,7 @@
       "kind": "episodic",
       "timestamp": "2026-03-02T12:32:41+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 123,
+      "age_days": 139,
       "verdict": "stale",
       "note": ""
     },
@@ -815,7 +833,7 @@
       "kind": "episodic",
       "timestamp": "2026-04-14T15:00:03+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 80,
+      "age_days": 96,
       "verdict": "fresh",
       "note": ""
     },
@@ -824,7 +842,7 @@
       "kind": "episodic",
       "timestamp": "2026-03-22T12:48:44+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 103,
+      "age_days": 119,
       "verdict": "fresh",
       "note": ""
     },
@@ -842,7 +860,7 @@
       "kind": "episodic",
       "timestamp": "2026-04-17T12:54:45+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 77,
+      "age_days": 93,
       "verdict": "fresh",
       "note": ""
     },
@@ -851,7 +869,7 @@
       "kind": "assertive",
       "timestamp": "2026-07-02T07:34:25+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 1,
+      "age_days": 17,
       "verdict": "fresh",
       "note": ""
     },
@@ -860,9 +878,9 @@
       "kind": "episodic",
       "timestamp": "2026-07-04T04:36:10.682458+00:00",
       "timestamp_field": "meta.timestamp",
-      "age_days": -1,
-      "verdict": "future-dated",
-      "note": "timestamp is ahead of now"
+      "age_days": 16,
+      "verdict": "fresh",
+      "note": ""
     },
     {
       "path": "reports/decay_query_benchmark_latest.json",
@@ -878,16 +896,16 @@
       "kind": "episodic",
       "timestamp": "2026-03-06T23:43:22.617522+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 118,
-      "verdict": "fresh",
+      "age_days": 135,
+      "verdict": "stale",
       "note": ""
     },
     {
       "path": "reports/security_bandit_latest.json",
       "kind": "episodic",
-      "timestamp": "2026-07-03T20:19:37+00:00",
+      "timestamp": "2026-07-04T02:31:42+00:00",
       "timestamp_field": "generated_at",
-      "age_days": 0,
+      "age_days": 16,
       "verdict": "fresh",
       "note": ""
     },
@@ -905,7 +923,7 @@
       "kind": "episodic",
       "timestamp": "2026-03-02T04:25:53+00:00",
       "timestamp_field": "md_inline",
-      "age_days": 123,
+      "age_days": 140,
       "verdict": "stale",
       "note": ""
     },
@@ -914,8 +932,8 @@
       "kind": "episodic",
       "timestamp": "2026-03-17T00:00:00+00:00",
       "timestamp_field": "md_inline",
-      "age_days": 108,
-      "verdict": "fresh",
+      "age_days": 125,
+      "verdict": "stale",
       "note": ""
     },
     {
@@ -932,7 +950,7 @@
       "kind": "episodic",
       "timestamp": "2026-02-14T00:00:00+00:00",
       "timestamp_field": "md_inline",
-      "age_days": 139,
+      "age_days": 156,
       "verdict": "stale",
       "note": ""
     }

@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-03T21:36:39Z",
+  "generated_at": "2026-07-20T05:32:49Z",
   "source": "scripts/run_friction_shadow_calibration_report.py",
-  "overall_ok": true,
+  "overall_ok": false,
   "inputs": {
     "trace_path": "memory/narrative/friction_shadow_eval.jsonl",
     "active_thresholds": {
@@ -16,51 +16,51 @@
     "max_high_friction_escape_rate": 0.15
   },
   "metrics": {
-    "scenario_count": 420,
-    "trace_row_count": 420,
+    "scenario_count": 2,
+    "trace_row_count": 2,
     "synthetic_row_count": 0,
     "invalid_json_line_count": 0,
     "route_change_count": 0,
     "route_change_rate": 0.0,
-    "active_council_rate": 0.1976,
-    "shadow_council_rate": 0.1976,
+    "active_council_rate": 1.0,
+    "shadow_council_rate": 1.0,
     "council_rate_delta": 0.0,
-    "high_friction_candidate_count": 4,
+    "high_friction_candidate_count": 0,
     "high_friction_escape_count": 0,
     "high_friction_escape_rate": 0.0
   },
   "route_distribution": {
     "active": {
       "route_local_llm": 0,
-      "route_single_cloud": 337,
-      "route_full_council": 83,
+      "route_single_cloud": 0,
+      "route_full_council": 2,
       "block_rate_limit": 0
     },
     "shadow": {
       "route_local_llm": 0,
-      "route_single_cloud": 337,
-      "route_full_council": 83,
+      "route_single_cloud": 0,
+      "route_full_council": 2,
       "block_rate_limit": 0
     }
   },
   "friction_band_metrics": [
     {
       "band": "low",
-      "count": 267,
+      "count": 0,
       "active_council_rate": 0.0,
       "shadow_council_rate": 0.0
     },
     {
       "band": "mid",
-      "count": 149,
-      "active_council_rate": 0.5302,
-      "shadow_council_rate": 0.5302
+      "count": 2,
+      "active_council_rate": 1.0,
+      "shadow_council_rate": 1.0
     },
     {
       "band": "high",
-      "count": 4,
-      "active_council_rate": 1.0,
-      "shadow_council_rate": 1.0
+      "count": 0,
+      "active_council_rate": 0.0,
+      "shadow_council_rate": 0.0
     },
     {
       "band": "unknown",
@@ -70,7 +70,9 @@
     }
   ],
   "route_changes": [],
-  "issues": [],
+  "issues": [
+    "insufficient calibration scenarios: 2 (< 8)"
+  ],
   "warnings": [
     "shadow thresholds are identical to active thresholds (this run is a baseline snapshot)."
   ]

@@ -1,111 +1,44 @@
 {
-  "generated_at": "2026-03-08T15:43:20Z",
+  "generated_at": "2026-07-20T05:32:50Z",
   "source": "scripts/plan_commit_attribution_base_switch.py",
   "current_ref": "HEAD",
   "backfill_ref": "feat/env-perception-attribution-backfill",
-  "current_missing_count": 5,
-  "backfill_missing_count": 0,
-  "tree_equal": true,
-  "recommendation": "defer_until_worktree_clean",
-  "rationale": "Backfill branch is clean and tree-equivalent, but the current worktree is dirty. Do not switch branch pointers in-place until local changes are settled or moved to a clean worktree.",
-  "suggested_commands": [
-    "git worktree add <clean-path> feat/env-perception-attribution-backfill",
-    "python scripts/plan_commit_attribution_base_switch.py --current-ref HEAD --backfill-ref feat/env-perception-attribution-backfill --strict"
-  ],
+  "current_missing_count": 1,
+  "backfill_missing_count": 1,
+  "tree_equal": false,
+  "recommendation": "backfill_branch_not_viable",
+  "rationale": "Backfill branch does not currently satisfy attribution requirements, so base switching would not remove the governance debt.",
+  "suggested_commands": [],
   "worktree": {
-    "entry_count": 228,
+    "entry_count": 27,
     "staged_count": 0,
-    "unstaged_count": 90,
-    "untracked_count": 138,
+    "unstaged_count": 27,
+    "untracked_count": 0,
     "dirty": true,
     "sample_entries": [
       {
         "status": " M",
-        "path": ".agent/skills/tonesoul_governance/SKILL.md",
+        "path": "docs/status/commit_attribution_local.json",
         "staged": false,
         "unstaged": true,
         "untracked": false,
-        "category": "skills"
+        "category": "generated_status"
       },
       {
         "status": " M",
-        "path": ".agent/skills/tonesoul_philosophy/SKILL.md",
+        "path": "docs/status/doc_links_latest.json",
         "staged": false,
         "unstaged": true,
         "untracked": false,
-        "category": "skills"
+        "category": "generated_status"
       },
       {
         "status": " M",
-        "path": ".env.example",
+        "path": "docs/status/doc_links_latest.md",
         "staged": false,
         "unstaged": true,
         "untracked": false,
-        "category": "repo_misc"
-      },
-      {
-        "status": " M",
-        "path": ".github/workflows/test.yml",
-        "staged": false,
-        "unstaged": true,
-        "untracked": false,
-        "category": "tooling"
-      },
-      {
-        "status": " M",
-        "path": ".gitignore",
-        "staged": false,
-        "unstaged": true,
-        "untracked": false,
-        "category": "repo_misc"
-      },
-      {
-        "status": " M",
-        "path": "api/_shared/core.py",
-        "staged": false,
-        "unstaged": true,
-        "untracked": false,
-        "category": "runtime_apps"
-      },
-      {
-        "status": " M",
-        "path": "api/chat.py",
-        "staged": false,
-        "unstaged": true,
-        "untracked": false,
-        "category": "runtime_apps"
-      },
-      {
-        "status": " M",
-        "path": "apps/api/server.py",
-        "staged": false,
-        "unstaged": true,
-        "untracked": false,
-        "category": "runtime_apps"
-      },
-      {
-        "status": " M",
-        "path": "docs/7D_EXECUTION_SPEC.md",
-        "staged": false,
-        "unstaged": true,
-        "untracked": false,
-        "category": "docs"
-      },
-      {
-        "status": " M",
-        "path": "docs/governance/COMMUNICATION_STANDARD.md",
-        "staged": false,
-        "unstaged": true,
-        "untracked": false,
-        "category": "docs"
-      },
-      {
-        "status": " M",
-        "path": "docs/status/README.md",
-        "staged": false,
-        "unstaged": true,
-        "untracked": false,
-        "category": "docs"
+        "category": "generated_status"
       },
       {
         "status": " M",
@@ -178,22 +111,74 @@
         "unstaged": true,
         "untracked": false,
         "category": "generated_status"
+      },
+      {
+        "status": " M",
+        "path": "docs/status/memory_governance_contract_latest.md",
+        "staged": false,
+        "unstaged": true,
+        "untracked": false,
+        "category": "generated_status"
+      },
+      {
+        "status": " M",
+        "path": "docs/status/memory_learning_samples_latest.jsonl",
+        "staged": false,
+        "unstaged": true,
+        "untracked": false,
+        "category": "generated_status"
+      },
+      {
+        "status": " M",
+        "path": "docs/status/memory_quality_latest.json",
+        "staged": false,
+        "unstaged": true,
+        "untracked": false,
+        "category": "generated_status"
+      },
+      {
+        "status": " M",
+        "path": "docs/status/memory_quality_latest.md",
+        "staged": false,
+        "unstaged": true,
+        "untracked": false,
+        "category": "generated_status"
+      },
+      {
+        "status": " M",
+        "path": "docs/status/memory_topology_fit_latest.json",
+        "staged": false,
+        "unstaged": true,
+        "untracked": false,
+        "category": "generated_status"
+      },
+      {
+        "status": " M",
+        "path": "docs/status/memory_topology_fit_latest.md",
+        "staged": false,
+        "unstaged": true,
+        "untracked": false,
+        "category": "generated_status"
+      },
+      {
+        "status": " M",
+        "path": "docs/status/multi_agent_divergence_latest.json",
+        "staged": false,
+        "unstaged": true,
+        "untracked": false,
+        "category": "generated_status"
+      },
+      {
+        "status": " M",
+        "path": "docs/status/multi_agent_divergence_latest.md",
+        "staged": false,
+        "unstaged": true,
+        "untracked": false,
+        "category": "generated_status"
       }
     ],
     "category_counts": {
-      "docs": 23,
-      "experiments": 2,
-      "generated_status": 55,
-      "memory": 5,
-      "repo_misc": 8,
-      "reports": 4,
-      "runtime_apps": 3,
-      "scripts": 39,
-      "skills": 3,
-      "spec": 1,
-      "tests": 53,
-      "tonesoul": 30,
-      "tooling": 2
+      "generated_status": 27
     },
     "command_ok": true,
     "stderr_tail": ""
@@ -201,120 +186,46 @@
   "cleanup_priority": [
     {
       "category": "generated_status",
-      "count": 55,
+      "count": 27,
       "reason": "generated snapshots can usually be refreshed later"
-    },
-    {
-      "category": "reports",
-      "count": 4,
-      "reason": "derived reports should be separated from source edits early"
-    },
-    {
-      "category": "memory",
-      "count": 5,
-      "reason": "memory artifacts should be reviewed before branch movement"
-    },
-    {
-      "category": "docs",
-      "count": 23,
-      "reason": "hand-authored docs can be grouped after generated outputs"
-    },
-    {
-      "category": "scripts",
-      "count": 39,
-      "reason": "script changes affect operator and CI behavior"
-    },
-    {
-      "category": "tests",
-      "count": 53,
-      "reason": "tests should stay paired with code changes"
-    },
-    {
-      "category": "tonesoul",
-      "count": 30,
-      "reason": "core library changes are high-signal branch content"
-    },
-    {
-      "category": "runtime_apps",
-      "count": 3,
-      "reason": "runtime endpoints and apps affect execution contracts"
-    },
-    {
-      "category": "skills",
-      "count": 3,
-      "reason": "skill and registry drift changes governance surface"
-    },
-    {
-      "category": "tooling",
-      "count": 2,
-      "reason": "tooling/config changes can be isolated near the end"
-    },
-    {
-      "category": "spec",
-      "count": 1,
-      "reason": "spec changes should be grouped with their implementation"
-    },
-    {
-      "category": "experiments",
-      "count": 2,
-      "reason": "experimental assets can be settled separately"
-    },
-    {
-      "category": "repo_misc",
-      "count": 8,
-      "reason": "miscellaneous root-level changes need manual review"
     }
   ],
   "current_report": {
     "ok": false,
     "mode": "local_incremental",
-    "range_spec": "bdd1bbb7e573786a5560d5f07b9283a5f3ddf00a..HEAD",
+    "range_spec": "6569a1dcca92517fff33ef841daf3ff83bb6313d..HEAD",
     "missing": [
       {
-        "rev": "f7f50e15cafbd0b9dfb35af6c79823b3fddebd66",
-        "summary": "feat(RFC-012): add Resistance Engine + Phase II V2 modules",
-        "error": ""
-      },
-      {
-        "rev": "ac1abeff0b656e5cfcb81739af2e962fd5757570",
-        "summary": "refactor: architecture cleanup round 2 + V2 runtime wiring",
-        "error": ""
-      },
-      {
-        "rev": "d97240684c039b7850145fa524e144a1945e0701",
-        "summary": "docs: reconcile status handoff artifacts",
-        "error": ""
-      },
-      {
-        "rev": "04689f801d798ad77b703db530b1f8e754e05de2",
-        "summary": "fix: restore non-doc files from handoff commit",
-        "error": ""
-      },
-      {
-        "rev": "c225332e2f4c6854dba231b1805d0d1d97d4ad42",
-        "summary": "feat: add GovernanceKernel, LLM Router, Perception Layer, Agent Protocol",
+        "rev": "HEAD",
+        "summary": "Merge pull request #333 from Fan1234-1/claude/blindspot-patrol-20260710",
         "error": ""
       }
     ],
     "equivalence": {
       "head_revision": "HEAD",
       "compare_revision": "feat/env-perception-attribution-backfill",
-      "head_tree": "1a879968fcefbb32afac2745f86b6227ac5167b0",
-      "compare_tree": "1a879968fcefbb32afac2745f86b6227ac5167b0",
-      "tree_equal": true
+      "head_tree": "f807ec9efd36469c4391dbad75c160637bf967b4",
+      "compare_tree": null,
+      "tree_equal": false
     }
   },
   "backfill_report": {
-    "ok": true,
+    "ok": false,
     "mode": "local_incremental",
-    "range_spec": "bdd1bbb7e573786a5560d5f07b9283a5f3ddf00a..feat/env-perception-attribution-backfill",
-    "missing": [],
+    "range_spec": null,
+    "missing": [
+      {
+        "rev": "feat/env-perception-attribution-backfill",
+        "summary": "",
+        "error": "fatal: ambiguous argument 'feat/env-perception-attribution-backfill': unknown revision or path not in the working tree.\nUse '--' to separate paths from revisions, like this:\n'git <command> [<revision>...] -- [<file>...]'"
+      }
+    ],
     "equivalence": {
       "head_revision": "feat/env-perception-attribution-backfill",
       "compare_revision": "HEAD",
-      "head_tree": "1a879968fcefbb32afac2745f86b6227ac5167b0",
-      "compare_tree": "1a879968fcefbb32afac2745f86b6227ac5167b0",
-      "tree_equal": true
+      "head_tree": null,
+      "compare_tree": "f807ec9efd36469c4391dbad75c160637bf967b4",
+      "tree_equal": false
     }
   }
 }

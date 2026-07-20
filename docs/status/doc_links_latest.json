@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T21:36:39Z",
+  "generated_at": "2026-07-20T05:32:49Z",
   "source": "scripts/verify_doc_links.py",
   "overall_ok": true,
   "policy": {
@@ -8,7 +8,7 @@
     ]
   },
   "summary": {
-    "md_files_scanned": 847,
+    "md_files_scanned": 904,
     "md_files_exempt": 5,
     "violation_count": 0,
     "absolute": 0,

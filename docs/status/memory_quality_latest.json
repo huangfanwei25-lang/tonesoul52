@@ -1,33 +1,29 @@
 {
-  "generated_at": "2026-07-03T21:36:39Z",
+  "generated_at": "2026-07-20T05:32:49Z",
   "overall_ok": true,
   "inputs": {
-    "journal_path": "C:/Users/user/Desktop/倉庫/memory/self_journal.jsonl"
+    "journal_path": "/home/runner/work/tonesoul52/tonesoul52/memory/self_journal.jsonl"
   },
   "metrics": {
-    "entry_count": 149,
-    "failure_case_count": 146,
-    "learning_sample_count": 146,
+    "entry_count": 2,
+    "failure_case_count": 2,
+    "learning_sample_count": 2,
     "invalid_json_line_count": 0,
-    "high_risk_failure_count": 141,
+    "high_risk_failure_count": 2,
     "verdict_counts": {
-      "unknown": 1,
-      "block": 141,
-      "digest": 2,
-      "declare_stance": 5
+      "block": 2
     },
     "risk_level_counts": {
-      "high": 141,
-      "low": 5
+      "high": 2
     },
     "uncertainty_band_counts": {
-      "unknown": 146
+      "unknown": 2
     },
-    "average_failure_coherence": 0.7539
+    "average_failure_coherence": 0.766
   },
   "quality_signals": {
-    "failure_case_rate": 0.9799,
-    "provenance_coverage_rate": 0.9589,
+    "failure_case_rate": 1.0,
+    "provenance_coverage_rate": 1.0,
     "divergence_coverage_rate": 1.0,
     "contract_coverage_rate": 1.0,
     "contract_evidence_coverage_rate": 0.0

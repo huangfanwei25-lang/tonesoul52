@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T21:36:40Z",
+  "generated_at": "2026-07-20T05:32:49Z",
   "source": "scripts/run_memory_topology_fit_report.py",
   "overall_ok": true,
   "inputs": {
@@ -12,17 +12,17 @@
     "reflection_status_path": "docs/status/philosophical_reflection_latest.json"
   },
   "diagnostics": {
-    "governance_need_score": 0.1409,
+    "governance_need_score": 0.04,
     "resource_budget_score": 0.15,
-    "high_friction_rate": 0.0095,
-    "unresolved_topic_rate": 0.0357,
-    "identity_choice_index": 0.3564,
+    "high_friction_rate": 0.0,
+    "unresolved_topic_rate": 0.0,
+    "identity_choice_index": 0.8,
     "high_friction_escape_rate": 0.0,
     "route_change_rate": 0.0
   },
   "recommendation": {
     "topology": "flat",
-    "score": 0.7836,
+    "score": 0.713,
     "feasible_under_budget": true,
     "memory_stack": [
       "flat_jsonl_experience_log",
@@ -35,7 +35,7 @@
     {
       "name": "flat",
       "feasible": true,
-      "fit_score": 0.7836,
+      "fit_score": 0.713,
       "required_budget": 0.15,
       "governance_capacity": 0.45,
       "memory_stack": [
@@ -47,7 +47,7 @@
     {
       "name": "planar",
       "feasible": false,
-      "fit_score": 0.1556,
+      "fit_score": 0.085,
       "required_budget": 0.4,
       "governance_capacity": 0.74,
       "memory_stack": [
