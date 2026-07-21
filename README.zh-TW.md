@@ -43,9 +43,9 @@ ToneSoul 不能被描述成：
 
 ## 快速開始
 
-先看瀏覽器 demo：
+先玩公開遊戲（免安裝）：
 
-[https://fan1234-1.github.io/tonesoul52/demo/](https://fan1234-1.github.io/tonesoul52/demo/)
+[https://huangfanwei25-lang.github.io/tonesoul52/theater/](https://huangfanwei25-lang.github.io/tonesoul52/theater/)
 
 安裝：
 
@@ -53,7 +53,7 @@ ToneSoul 不能被描述成：
 pip install tonesoul52
 
 # 若你要使用這個 repo 的最新狀態，改用 source install
-git clone --depth 1 https://github.com/Fan1234-1/tonesoul52.git
+git clone --depth 1 https://github.com/huangfanwei25-lang/tonesoul52.git
 cd tonesoul52
 pip install -e .
 ```

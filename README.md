@@ -22,7 +22,7 @@ It focuses on three practical moves:
 
 ## Two Doors, No Install
 
-- **Play it** — [City of Switches 岔軌之城](https://fan1234-1.github.io/tonesoul52/theater/): a post-collapse rail city where every choice demands a stated reason, a black mirror reads your own words back when you contradict them, and your full run exports as a downloadable trace. Real rules-council verdicts under the hood; zero server; nothing auto-uploaded. 你拉桿,城市記得。
+- **Play it** — [City of Switches 岔軌之城](https://huangfanwei25-lang.github.io/tonesoul52/theater/): a post-collapse rail city where every choice demands a stated reason, a black mirror reads your own words back when you contradict them, and your full run exports as a downloadable trace. Real rules-council verdicts under the hood; zero server; nothing auto-uploaded. 你拉桿,城市記得。
 - **Take the data** — [tonesoul-accountability-traces](https://huggingface.co/datasets/Famwin/tonesoul-accountability-traces) (318 records, CC BY 4.0): an accountability-*event* corpus. Existing corpora label content; this one labels events — claim → bearing → verification → consequence, each record traceable to a file/commit/PR.
 
 ## Not This
@@ -95,9 +95,9 @@ Try it live, no install — paste your own draft and watch the real Council run 
 
 If your goal is to refute or inspect ToneSoul rather than use it, start with the [10-minute reviewer path](docs/EXTERNAL_REVIEW.md).
 
-Or see pre-baked samples in the browser:
+Or play the public, static accountability game in the browser:
 
-[https://fan1234-1.github.io/tonesoul52/demo/](https://fan1234-1.github.io/tonesoul52/demo/)
+[https://huangfanwei25-lang.github.io/tonesoul52/theater/](https://huangfanwei25-lang.github.io/tonesoul52/theater/)
 
 Install from PyPI, or use source install when you need the exact repository state:
 
@@ -105,7 +105,7 @@ Install from PyPI, or use source install when you need the exact repository stat
 pip install tonesoul52
 
 # source install
-git clone --depth 1 https://github.com/Fan1234-1/tonesoul52.git
+git clone --depth 1 https://github.com/huangfanwei25-lang/tonesoul52.git
 cd tonesoul52
 pip install -e ".[dev]"        # [dev] extras = pytest/hypothesis/freezegun etc.; needed to run the test suite
 

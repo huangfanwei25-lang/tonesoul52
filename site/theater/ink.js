@@ -1,6 +1,6 @@
 /* 程序化水墨 — 章節背景層(V05-A;工單 docs/plans/theater_ink_wash_rendering_2026-07-06.md)
    純渲染層:讀狀態、不寫狀態、不碰任何判定。
-   決定論:同 (撤回碼, 章節, 資源) → 同一幅畫;回讀你的軌痕=看見你當時的城。
+   決定論:同 (本局識別碼, 章節, 資源) → 同一幅畫;回讀你的軌痕=看見你當時的城。
    零資產零網路:純 SVG 字串,feTurbulence 做墨暈。 */
 
 (function () {
@@ -23,7 +23,7 @@
   /* 聯動表(工單 v0):
      能源 → 亮窗數與天空留白(低=城暗)
      信任 → 輪廓收斂(低=墨緣毛散,turbulence 強)
-     章節+撤回碼 → 構圖種子 */
+     章節+本局識別碼 → 構圖種子 */
   function chapterBackdrop(code, chapter, resources) {
     const r = rng(String(code || "anon") + "#" + String(chapter));
     const energy = Math.max(0, Math.min(10, (resources && resources.energy) ?? 5));

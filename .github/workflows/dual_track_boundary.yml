@@ -31,7 +31,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: recursive
+          # This gate evaluates Git metadata and changed paths. It must not
+          # require a private-memory submodule merely to verify a public PR.
+          submodules: false
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
