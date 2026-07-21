@@ -1,8 +1,9 @@
 /* 岔軌之城 v0 — 單人最小可玩版
  *
  * 純 vanilla JS、無建置步驟(demo_ui 範式)。誠實分層:
- *  - 責任節點 verdict:真 rules-council 引擎輸出,離線預算(gamedata/council_verdicts.json),
- *    本檔只重播,絕不偽造節點回應。
+ *  - 責任節點 verdict:真 rules-council 引擎輸出,離線預算後投影為
+ *    gamedata/council_player_projection.json;本頁只帶入玩家需要的決策與責任提示,
+ *    不把原始審計理由當成玩家資料重播。
  *  - 短句解析/黑鏡矛盾偵測/資源數值:遊戲層規則,關鍵詞級,如實標注。
  *  - 火花/共語 LLM 節點:absent(v0 未接)。
  * 正典:docs/theater/(天道 v0.2 > 機制書 > 世界書)。
@@ -20,6 +21,12 @@ const NODE_MAP = {
   axiomatic_inference: "城務AI",
 };
 const DECISION_ICON = { approve: "✓", concern: "⚠", object: "✕", abstain: "─" };
+const PLAYER_DECISION_CUE = {
+  approve: "此路徑暫可承擔；代價仍會留下。",
+  concern: "此路徑有未解的代價，需帶著它前進。",
+  object: "此路徑觸及界線；反對意見已被保留。",
+  abstain: "這個視角沒有形成額外主張。",
+};
 const VERDICT_LABEL = {
   approve: "節點放行",
   refine: "節點要求補充",
@@ -177,7 +184,7 @@ function materialRecord() {
 
 async function loadData() {
   const [events, npcs, locations, verdicts, entities] = await Promise.all(
-    ["events", "npcs", "locations", "council_verdicts", "entities"].map((n) =>
+    ["events", "npcs", "locations", "council_player_projection", "entities"].map((n) =>
       fetch(`gamedata/${n}.json`).then((r) => {
         if (!r.ok) throw new Error(`${n}.json ${r.status}`);
         return r.json();
@@ -1011,13 +1018,24 @@ function renderCouncil(key) {
   }
   box.append(el("p", `verdict-line v-${esc(v.verdict)}`, esc(VERDICT_LABEL[v.verdict] || v.verdict)));
   for (const vote of v.votes) {
-    const node = NODE_MAP[vote.perspective] || vote.perspective;
-    box.append(el("div", `vote d-${esc(vote.decision)}`,
-      `<b>${esc(node)}</b><i>${DECISION_ICON[vote.decision] || "?"}</i><span>${esc(vote.reasoning)}</span>`));
+    const playerVote = projectCouncilVoteForPlayer(vote);
+    const node = NODE_MAP[playerVote.perspective] || playerVote.perspective;
+    box.append(el("div", `vote d-${esc(playerVote.decision)}`,
+      `<b>${esc(node)}</b><i>${DECISION_ICON[playerVote.decision] || "?"}</i><span>${esc(playerVote.cue)}</span>`));
   }
   box.append(el("p", "council-meta",
-    "以上為真 rules-council 引擎輸出(離線預算重播)。火花/共語節點:absent(v0 未接 LLM;第三方案由事件卡承擔)。節點只讓代價可見——桿是你拉的(天道第四律)。"));
+    "以上為真 rules-council 引擎輸出的公開責任摘要；細部審計理由不在玩家當下揭露。火花/共語節點:absent(v0 未接 LLM;第三方案由事件卡承擔)。節點只讓代價可見——桿是你拉的(天道第四律)。"));
   return box;
+}
+
+// 玩家投影刻意是有損的：遊戲只需要這個視角的立場與可見責任提示，
+// 不需要、也不應在故事當下重新揭露原始審計理由或信心數值。
+function projectCouncilVoteForPlayer(vote) {
+  return {
+    perspective: vote.perspective,
+    decision: vote.decision,
+    cue: PLAYER_DECISION_CUE[vote.decision] || "此視角的意見已被保留。",
+  };
 }
 
 function renderMirror(record, mirror) {
@@ -1205,48 +1223,36 @@ function renderEnding() {
   }
   box.append(tr);
 
-  // 下載 + 撤回碼 + 自願提交(GitHub Issue 管道;門神審核,非自動上傳)
+  // 軌痕只由玩家保管：公開版本提供下載與本機檢視，沒有上傳端點。
   const dl = el("div", "ending-dl");
   dl.append(el("p", null,
-    `<b>撤回碼:</b><code>${esc(S.code)}</code> — 妥善保存。這座城不會自動上傳任何東西;
-     若你「自願」把這份軌痕交給作者(經審核才可能收錄進公開資料集,CC BY 4.0),
-     此碼是你隨時撤回它的鑰匙。`));
+    `<b>本局識別碼:</b><code>${esc(S.code)}</code> — 用來辨識你下載的檔案。這座城不會自動上傳或接收任何資料;
+     若要清除軌痕，請刪除瀏覽器中的本站資料或重新開一局。`));
   const dlBtn = el("button", "pick");
   dlBtn.textContent = "下載我的軌痕(JSON)";
   dlBtn.addEventListener("click", downloadTrace);
-  const submitBtn = el("button", "pick");
-  submitBtn.textContent = "自願提交軌痕(GitHub)";
-  submitBtn.title = "需要 GitHub 帳號。先下載 JSON,再貼進開啟的提交表單。";
-  submitBtn.addEventListener("click", () => {
-    downloadTrace(); // 先確保玩家手上有檔
-    const url = "https://github.com/Fan1234-1/tonesoul52/issues/new" +
-      "?template=trace-submission.yml&title=" +
-      encodeURIComponent(`軌痕提交:${S.code}`);
-    window.open(url, "_blank", "noopener");
-  });
   dl.append(el("p", "hint",
-    "提交是兩步:JSON 已自動下載到你的電腦 → 在開啟的 GitHub 表單裡勾同意、貼上 JSON 內容、送出。提交 ≠ 自動收錄;審核後才可能進資料集。"));
+    "你的理由、黑鏡回讀與本局記錄都只留在這個瀏覽器與你主動下載的檔案裡；本頁不提供公開提交。"));
   const showBtn = el("button", "pick");
   showBtn.textContent = "在網頁上顯示軌痕(可複製)";
-  showBtn.title = "下載被瀏覽器擋掉也拿得到;要提交 GitHub 時直接複製貼上,不必找檔案。";
+  showBtn.title = "下載被瀏覽器擋掉時，仍可在本機檢查或複製你的軌痕。";
   showBtn.addEventListener("click", () => showTraceInline(dl));
   const cardBtn = el("button", "pick");
-  cardBtn.textContent = "生成分享卡(不含理由與撤回碼)";
-  cardBtn.title = "一張可以貼出去的結局卡:終章畫+家族+事實計數。你的理由原文與撤回碼永遠不會在上面。";
+  cardBtn.textContent = "生成分享卡(不含理由與本局識別碼)";
+  cardBtn.title = "一張可以貼出去的結局卡:終章畫+家族+事實計數。你的理由原文與本局識別碼永遠不會在上面。";
   cardBtn.addEventListener("click", () => buildShareCard(cardBtn));
-  dl.append(showBtn, cardBtn);
   const again = el("button", "pick ghost");
   again.textContent = "再開一局";
   again.addEventListener("click", () => {
     if (!S.memoryOnly) { try { localStorage.removeItem(SAVE_KEY); } catch (_) {} }
     location.reload();
   });
-  dl.append(dlBtn, submitBtn, again);
+  dl.append(dlBtn, showBtn, cardBtn, again);
   box.append(dl);
   window.scrollTo(0, 0);
 }
 
-/* V05-C 分享卡:canvas 合成「我的責任結局」——隱私紅線:不含理由原文、不含撤回碼。
+/* V05-C 分享卡:canvas 合成「我的責任結局」——隱私紅線:不含理由原文、不含本局識別碼。
    內容只有:終章畫(城主手繪)+ 家族標題句 + 軌痕事實計數 + 三問封印狀態 + 城的網址。 */
 function buildShareCard(btn) {
   const fam = ENDING_FAMILIES[classifyEndingFamily()];
@@ -1281,7 +1287,7 @@ function buildShareCard(btn) {
       `醫療${S.resources.medical} 能源${S.resources.energy} 信任${S.resources.trust}`, cx, 1180);
     g.fillText(sealText + "・結局不評善惡,只保存後果", cx, 1228);
     g.fillStyle = "#7f7f88";
-    g.fillText("fan1234-1.github.io/tonesoul52/theater", cx, 1296);
+    g.fillText("huangfanwei25-lang.github.io/tonesoul52/theater", cx, 1296);
     cv.toBlob((blob) => {
       if (!blob) return;
       const file = new File([blob], `岔軌之城_${fam.title}.png`, { type: "image/png" });
@@ -1317,10 +1323,10 @@ function buildTracePayload() {
   return {
     format: "tonesoul-theater-trace-v0",
     generated_by: "site/theater (City of Switches playable v0)",
-    withdrawal_code: S.code,
+    trace_code: S.code,
     consent: { storage: S.memoryOnly ? "memory-only" : "localStorage", uploaded: false,
-      submission_lane: "github-issue (manual, opt-in, gatekeeper-reviewed)",
-      note: "此檔由玩家本人下載;無伺服器、無自動收集。提交=玩家親手經 GitHub Issue,審核後才可能收錄。" },
+      submission_lane: "none (download-only)",
+      note: "此檔由玩家本人下載；無伺服器、無自動收集，也沒有本頁的公開提交管道。" },
     prologue: S.prologue || null,
     turns: S.trace,
     anchors: S.anchors,
@@ -1363,13 +1369,13 @@ function downloadTrace() {
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
 
-// 網頁上直接顯示軌痕(可複製)——下載被瀏覽器擋掉也拿得到;GitHub 提交只需貼上。
+// 網頁上直接顯示軌痕(可複製)——下載被瀏覽器擋掉時仍可由玩家自己保管。
 function showTraceInline(mount) {
   const existing = mount.querySelector(".trace-inline");
   if (existing) { existing.scrollIntoView({ behavior: "smooth", block: "nearest" }); return; }
   const wrap = el("div", "trace-inline");
   wrap.append(el("p", "hint",
-    "這是你的完整軌痕(和下載檔一字不差)。可全選複製 → 貼進 GitHub 提交表單,不必先找下載的檔案。"));
+    "這是你的完整軌痕(和下載檔一字不差)。可全選複製到你自己選擇的位置；本頁不會傳送它。"));
   const ta = el("textarea", "trace-text");
   ta.readOnly = true;
   ta.value = traceJson();

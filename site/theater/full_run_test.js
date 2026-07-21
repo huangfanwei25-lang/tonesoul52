@@ -15,7 +15,7 @@ const path = require("path");
 
 const appSrc = fs.readFileSync(path.join(__dirname, "app.js"), "utf8");
 const gamedata = {};
-for (const n of ["events", "npcs", "locations", "council_verdicts", "entities"]) {
+for (const n of ["events", "npcs", "locations", "council_player_projection", "entities"]) {
   gamedata[n] = JSON.parse(fs.readFileSync(path.join(__dirname, `gamedata/${n}.json`), "utf8"));
 }
 
@@ -112,8 +112,8 @@ function makeSandbox(storeObj) {
     events: gamedata.events,
     npcs: Object.fromEntries(gamedata.npcs.map((n) => [n.id, n])),
     locations: Object.fromEntries(gamedata.locations.map((l) => [l.id, l])),
-    verdicts: gamedata.council_verdicts.verdicts,
-    verdictMeta: gamedata.council_verdicts._meta,
+    verdicts: gamedata.council_player_projection.verdicts,
+    verdictMeta: gamedata.council_player_projection._meta,
     entities: gamedata.entities.entities || [],
   };
   return { T, doc, sandbox };
@@ -234,7 +234,10 @@ function runGame(persona) {
   const payload = T.buildTracePayload();
   const turns = payload.turns.filter((t) => t.event_id !== "SEAL").length;
   if (turns !== 11) throw new Error(`trace turns=${turns}, expected 11 stations`);
-  if (!payload.withdrawal_code) throw new Error("trace missing withdrawal_code");
+  if (!payload.trace_code) throw new Error("trace missing trace_code");
+  if (payload.consent.submission_lane !== "none (download-only)") {
+    throw new Error("trace incorrectly advertises a public submission lane");
+  }
   // director-lite pilot: E01/E02 turns must carry entity_changes; entity state must move off baseline
   for (const eid of ["E01", "E02"]) {
     const turn = payload.turns.find((t) => t.event_id === eid);

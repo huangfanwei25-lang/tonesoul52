@@ -46,7 +46,6 @@ __ts_purpose__ = "Aegis hash-chain shield: tamper-evident audit trail."
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 _AEGIS_DIR = _REPO_ROOT / ".aegis"
-_KEYS_DIR = _AEGIS_DIR / "keys"
 
 # Prompt injection / poisoning patterns (defensive, not exhaustive)
 _AGENT_ID_RE = re.compile(r"^[a-zA-Z0-9_\-]+$")
@@ -145,13 +144,19 @@ def verify_chain(traces: List[Dict[str, Any]]) -> Tuple[bool, List[str]]:
 # ---------------------------------------------------------------------------
 
 
+def _keys_dir() -> Path:
+    """Derive the key directory from the current Aegis root."""
+    return _AEGIS_DIR / "keys"
+
+
 def _ensure_keys_dir() -> Path:
-    _KEYS_DIR.mkdir(parents=True, exist_ok=True)
+    keys_dir = _keys_dir()
+    keys_dir.mkdir(parents=True, exist_ok=True)
     # Ensure .aegis/keys/ is gitignored (private keys live here)
     gitignore = _AEGIS_DIR / ".gitignore"
     if not gitignore.exists():
         gitignore.write_text("keys/*.key\n", encoding="utf-8")
-    return _KEYS_DIR
+    return keys_dir
 
 
 def generate_agent_keys(agent_id: str) -> Tuple[str, str]:
@@ -172,7 +177,7 @@ def generate_agent_keys(agent_id: str) -> Tuple[str, str]:
 def load_signing_key(agent_id: str) -> Optional[Any]:
     """Load private key for signing. Returns SigningKey or None."""
     _validate_agent_id(agent_id)
-    key_file = _KEYS_DIR / f"{agent_id}.key"
+    key_file = _keys_dir() / f"{agent_id}.key"
     if not key_file.exists():
         return None
     try:
@@ -187,7 +192,7 @@ def load_signing_key(agent_id: str) -> Optional[Any]:
 def load_verify_key(agent_id: str) -> Optional[Any]:
     """Load public key for verification. Returns VerifyKey or None."""
     _validate_agent_id(agent_id)
-    pub_file = _KEYS_DIR / f"{agent_id}.pub"
+    pub_file = _keys_dir() / f"{agent_id}.pub"
     if not pub_file.exists():
         return None
     try:

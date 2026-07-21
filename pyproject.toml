@@ -74,10 +74,10 @@ ystm_viz = [
 ts = "tonesoul.cli.main:main"
 
 [project.urls]
-Homepage = "https://fan1234-1.github.io/tonesoul52/"
-Documentation = "https://fan1234-1.github.io/tonesoul52/getting-started.html"
-Repository = "https://github.com/Fan1234-1/tonesoul52"
-Issues = "https://github.com/Fan1234-1/tonesoul52/issues"
+Homepage = "https://huangfanwei25-lang.github.io/tonesoul52/"
+Documentation = "https://huangfanwei25-lang.github.io/tonesoul52/getting-started.html"
+Repository = "https://github.com/huangfanwei25-lang/tonesoul52"
+Issues = "https://github.com/huangfanwei25-lang/tonesoul52/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]

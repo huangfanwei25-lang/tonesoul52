@@ -33,8 +33,8 @@ def _isolate_aegis_chain_head(tmp_path, monkeypatch):
     diagnose reports as 'compromised' (the alarm word must not depreciate).
     Root cause + adjudicated fix shape (monkeypatch over env override):
     docs/plans/aegis_chain_head_test_pollution_2026-07-05.md.
-    _KEYS_DIR is intentionally NOT redirected: signing keys are read-only in
-    tests and live keys must keep working.
+    Signing-key paths derive from _AEGIS_DIR at use time, so they are isolated
+    together with the chain head and never written into the working tree.
     """
     import tonesoul.aegis_shield as aegis_shield_mod
 

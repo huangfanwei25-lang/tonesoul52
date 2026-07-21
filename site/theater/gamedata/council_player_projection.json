@@ -1,0 +1,1389 @@
+{
+  "_meta": {
+    "audience": "player",
+    "source": "ToneSoul rules-council offline budget",
+    "projection": "decision-and-perspective only",
+    "audit_reasoning": "not included in this public game build",
+    "note": "Lossy player projection: it preserves the visible decision shape without treating raw audit rationale or confidence as story data."
+  },
+  "verdicts": {
+    "E01:A": {
+      "verdict": "approve",
+      "summary": "Consensus achieved across perspectives.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E01:B": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "concern"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E01:C": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "concern"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E01:default": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "concern"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E02:A": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "concern"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E02:B": {
+      "verdict": "approve",
+      "summary": "Consensus achieved across perspectives.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E02:C": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "concern"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E02:default": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "concern"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E03:A": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E03:B": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E03:default": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "concern"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E04:A": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E04:B": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E04:C": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "concern"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E04:D": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E04:E": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E04:F": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E04:default": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "concern"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E05:A": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "concern"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E05:B": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E05:C": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "concern"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E05:default": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "concern"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E06:A": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "concern"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E06:B": {
+      "verdict": "approve",
+      "summary": "Consensus achieved across perspectives.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E06:C": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "concern"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E06:D": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "concern"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E06:default": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "concern"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E07:A": {
+      "verdict": "approve",
+      "summary": "Consensus achieved across perspectives.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E07:B": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E07:C": {
+      "verdict": "approve",
+      "summary": "Consensus achieved across perspectives.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E07:default": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "concern"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E08:A": {
+      "verdict": "approve",
+      "summary": "Consensus achieved across perspectives.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E08:B": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "concern"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E08:C": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "concern"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E08:default": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "concern"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E09:A": {
+      "verdict": "approve",
+      "summary": "Consensus achieved across perspectives.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E09:B": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E09:C": {
+      "verdict": "approve",
+      "summary": "Consensus achieved across perspectives.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E09:default": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "concern"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E10:A": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "concern"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E10:B": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E10:C": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E10:D": {
+      "verdict": "approve",
+      "summary": "Consensus achieved across perspectives.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E10:default": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "concern"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E11:A": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E11:B": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E11:default": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "concern"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E12:A": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E12:B": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E12:C": {
+      "verdict": "approve",
+      "summary": "Consensus achieved across perspectives.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E12:D": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "concern"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E12:E": {
+      "verdict": "refine",
+      "summary": "Actionable concern corroborated by another perspective.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "approve"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    },
+    "E12:default": {
+      "verdict": "declare_stance",
+      "summary": "Divergent perspectives detected; declaring stance.",
+      "votes": [
+        {
+          "perspective": "guardian",
+          "decision": "approve"
+        },
+        {
+          "perspective": "analyst",
+          "decision": "concern"
+        },
+        {
+          "perspective": "critic",
+          "decision": "concern"
+        },
+        {
+          "perspective": "advocate",
+          "decision": "concern"
+        },
+        {
+          "perspective": "axiomatic",
+          "decision": "approve"
+        }
+      ]
+    }
+  }
+}
