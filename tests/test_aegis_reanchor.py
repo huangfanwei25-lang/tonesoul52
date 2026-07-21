@@ -74,6 +74,17 @@ def test_intact_chain_is_left_alone(tmp_path, monkeypatch):
 
 
 @requires_nacl
+def test_signing_keys_follow_isolated_aegis_dir(tmp_path, monkeypatch):
+    store = _make_store(tmp_path, monkeypatch)
+    _seed_chain(store, n=1)
+
+    aegis_dir = tmp_path / ".aegis"
+    assert (aegis_dir / "keys" / "tester.key").is_file()
+    assert (aegis_dir / "keys" / "tester.pub").is_file()
+    assert (aegis_dir / ".gitignore").read_text(encoding="utf-8") == "keys/*.key\n"
+
+
+@requires_nacl
 def test_benign_gap_dry_run_writes_nothing(tmp_path, monkeypatch):
     store = _make_store(tmp_path, monkeypatch)
     _seed_chain(store)
