@@ -1,7 +1,6 @@
 # Public Pages player surface — 2026-07-21
 
-**Status:** owner-authorized implementation on a feature branch; deployment remains
-unverified until GitHub Pages has served the merged artifact.
+**Status:** deployed and live-verified through [PR #2](https://github.com/huangfanwei25-lang/tonesoul52/pull/2).
 
 ## Decision
 
@@ -98,3 +97,19 @@ checked the product change:
 The local strict dual-track verifier also passed after the workflow adjustment.
 The final authority for this release remains the re-run GitHub checks and the
 subsequent Pages deployment.
+
+## Deployment record
+
+- Merge commit: `4a6f0567d82e863bdaf18ea605c4fe78c8e24e90`.
+- Pages workflow: [Deploy public site to GitHub Pages](https://github.com/huangfanwei25-lang/tonesoul52/actions/runs/29849599810), passed on its first deployment attempt.
+- Live root: <https://huangfanwei25-lang.github.io/tonesoul52/> returned 200 and
+  contained the public game entry.
+- Live game: <https://huangfanwei25-lang.github.io/tonesoul52/theater/> returned
+  200; the player projection JSON also returned 200 and retained only
+  `perspective` and `decision` per vote.
+- Negative checks: the legacy raw verdict URL and `/demo/` both returned 404.
+
+This record establishes the scope of what was deployed. It does not change the
+earlier boundary statement: raw audit materials can still exist in public
+repository history or non-Pages paths, and client-delivered story data is not
+a secrecy mechanism against browser developer tools.
