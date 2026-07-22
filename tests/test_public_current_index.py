@@ -95,9 +95,7 @@ class _PublicCurrentHTMLParser(HTMLParser):
             kind: {} for kind in self._BOUND_ATTRIBUTES.values()
         }
         self.bound_text["history_principle"] = {}
-        self.binding_counts: dict[str, dict[str, int]] = {
-            kind: {} for kind in self.bound_text
-        }
+        self.binding_counts: dict[str, dict[str, int]] = {kind: {} for kind in self.bound_text}
         self.bound_source_refs: dict[str, dict[str, set[str]]] = {
             kind: {} for kind in self.bound_text
         }
@@ -146,9 +144,7 @@ class _PublicCurrentHTMLParser(HTMLParser):
             started.append(("history_principle", "principle"))
 
         for kind, identifier in started:
-            self.binding_counts[kind][identifier] = (
-                self.binding_counts[kind].get(identifier, 0) + 1
-            )
+            self.binding_counts[kind][identifier] = self.binding_counts[kind].get(identifier, 0) + 1
             self.bound_text[kind].setdefault(identifier, [])
             self._active_bindings.append((kind, identifier))
             if source_refs := attributes.get("data-source-refs"):
@@ -220,9 +216,9 @@ def _walk_json(value: Any):
 def _assert_closed_object_schemas(value: Any, path: str = "$") -> None:
     if isinstance(value, dict):
         if value.get("type") == "object":
-            assert value.get("additionalProperties") is False, (
-                f"object schema at {path} must set additionalProperties=false"
-            )
+            assert (
+                value.get("additionalProperties") is False
+            ), f"object schema at {path} must set additionalProperties=false"
         for key, child in value.items():
             _assert_closed_object_schemas(child, f"{path}.{key}")
     elif isinstance(value, list):
@@ -262,28 +258,22 @@ def _validate_schema_instance(
         assert required <= set(instance), f"missing keys at {path}: {required - set(instance)}"
         properties = schema.get("properties", {})
         if schema.get("additionalProperties") is False:
-            assert set(instance) <= set(properties), (
-                f"unexpected keys at {path}: {set(instance) - set(properties)}"
-            )
+            assert set(instance) <= set(
+                properties
+            ), f"unexpected keys at {path}: {set(instance) - set(properties)}"
         for key, value in instance.items():
             if key in properties:
-                _validate_schema_instance(
-                    value, properties[key], root_schema, f"{path}.{key}"
-                )
+                _validate_schema_instance(value, properties[key], root_schema, f"{path}.{key}")
     elif expected_type == "array":
         assert isinstance(instance, list), f"expected array at {path}"
         assert len(instance) >= schema.get("minItems", 0), f"too few items at {path}"
         if schema.get("uniqueItems"):
-            normalized = [
-                json.dumps(item, ensure_ascii=False, sort_keys=True) for item in instance
-            ]
+            normalized = [json.dumps(item, ensure_ascii=False, sort_keys=True) for item in instance]
             assert len(normalized) == len(set(normalized)), f"duplicate items at {path}"
         item_schema = schema.get("items")
         if item_schema:
             for index, value in enumerate(instance):
-                _validate_schema_instance(
-                    value, item_schema, root_schema, f"{path}[{index}]"
-                )
+                _validate_schema_instance(value, item_schema, root_schema, f"{path}[{index}]")
     elif expected_type == "string":
         assert isinstance(instance, str), f"expected string at {path}"
         assert len(instance) >= schema.get("minLength", 0), f"string too short at {path}"
@@ -406,22 +396,17 @@ def test_public_current_html_advertises_one_canonical_pair() -> None:
     parser.feed(html)
 
     assert parser.html_lang == "zh-Hant"
+    assert [link for link in parser.links if "canonical" in link.get("rel", "").split()] == [
+        {"rel": "canonical", "href": HUMAN_URL}
+    ]
     assert [
         link
         for link in parser.links
-        if "canonical" in link.get("rel", "").split()
-    ] == [{"rel": "canonical", "href": HUMAN_URL}]
-    assert [
-        link
-        for link in parser.links
-        if "alternate" in link.get("rel", "").split()
-        and link.get("type") == "application/json"
+        if "alternate" in link.get("rel", "").split() and link.get("type") == "application/json"
     ] == [{"rel": "alternate", "type": "application/json", "href": MACHINE_URL}]
-    assert [
-        meta.get("content")
-        for meta in parser.metas
-        if meta.get("property") == "og:url"
-    ] == [HUMAN_URL]
+    assert [meta.get("content") for meta in parser.metas if meta.get("property") == "og:url"] == [
+        HUMAN_URL
+    ]
     assert document["canonical"] == {"human": HUMAN_URL, "machine": MACHINE_URL}
     assert parser.as_of == document["as_of"]
     assert parser.reviewed_revision == document["reviewed_revision"]
@@ -435,16 +420,10 @@ def test_public_current_html_advertises_one_canonical_pair() -> None:
         "history",
         "for-machines",
     } <= parser.section_ids
-    assert parser.source_route_ids == {
-        route["id"] for route in document["source_routes"]
-    }
+    assert parser.source_route_ids == {route["id"] for route in document["source_routes"]}
     assert parser.limit_ids == {item["id"] for item in document["known_limits"]}
-    assert parser.tension_ids == {
-        item["id"] for item in document["open_tensions"]
-    }
-    assert parser.entrypoint_ids == {
-        item["id"] for item in document["entrypoints"]
-    }
+    assert parser.tension_ids == {item["id"] for item in document["open_tensions"]}
+    assert parser.entrypoint_ids == {item["id"] for item in document["entrypoints"]}
     assert parser.history_reference_ids == {
         item["id"] for item in document["history"]["references"]
     }
@@ -452,9 +431,7 @@ def test_public_current_html_advertises_one_canonical_pair() -> None:
     for route in document["source_routes"]:
         route_text = parser.text_for("source_route", route["id"])
         assert parser.binding_counts["source_route"][route["id"]] == 1
-        assert parser.bound_source_refs["source_route"][route["id"]] == set(
-            route["source_refs"]
-        )
+        assert parser.bound_source_refs["source_route"][route["id"]] == set(route["source_refs"])
         assert route["question_zh"] in route_text
         assert route["question_en"] in route_text
         assert route["summary_zh"] in route_text
@@ -468,9 +445,7 @@ def test_public_current_html_advertises_one_canonical_pair() -> None:
         for item in lane:
             item_text = parser.text_for(kind, item["id"])
             assert parser.binding_counts[kind][item["id"]] == 1
-            assert parser.bound_source_refs[kind][item["id"]] == set(
-                item["source_refs"]
-            )
+            assert parser.bound_source_refs[kind][item["id"]] == set(item["source_refs"])
             assert item["summary_zh"] in item_text
             assert item["summary_en"] in item_text
     for entrypoint in document["entrypoints"]:
@@ -483,9 +458,7 @@ def test_public_current_html_advertises_one_canonical_pair() -> None:
     assert parser.binding_counts["history_principle"]["principle"] == 1
     assert document["history"]["principle_zh"] in history_text
     assert document["history"]["principle_en"] in history_text
-    history_by_id = {
-        reference["id"]: reference for reference in document["history"]["references"]
-    }
+    history_by_id = {reference["id"]: reference for reference in document["history"]["references"]}
     sources_by_id = {source["id"]: source for source in document["sources"]}
     expected_source_hrefs = {
         source["id"]: (
@@ -524,10 +497,7 @@ def test_public_current_is_discoverable_from_home_readmes_and_sitemap() -> None:
     assert 'href="current/"' in home
     assert HUMAN_URL in root_readme
     assert HUMAN_URL in zh_readme
-    assert (
-        "Sitemap: https://huangfanwei25-lang.github.io/tonesoul52/sitemap.xml"
-        in robots
-    )
+    assert "Sitemap: https://huangfanwei25-lang.github.io/tonesoul52/sitemap.xml" in robots
 
     sitemap = ElementTree.parse(sitemap_path)
     namespace = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
@@ -540,22 +510,16 @@ def test_public_current_is_discoverable_from_home_readmes_and_sitemap() -> None:
         for entry in url_entries
         if entry.findtext("sm:loc", namespaces=namespace) == HUMAN_URL
     )
-    assert current_entry.findtext("sm:lastmod", namespaces=namespace) == _load_machine()[
-        "as_of"
-    ]
+    assert current_entry.findtext("sm:lastmod", namespaces=namespace) == _load_machine()["as_of"]
 
 
 def test_interactive_app_links_out_without_copying_the_projection() -> None:
     site_urls = (REPO_ROOT / "apps" / "web" / "src" / "lib" / "siteUrl.ts").read_text(
         encoding="utf-8"
     )
-    app_home = (REPO_ROOT / "apps" / "web" / "src" / "app" / "page.tsx").read_text(
-        encoding="utf-8"
-    )
+    app_home = (REPO_ROOT / "apps" / "web" / "src" / "app" / "page.tsx").read_text(encoding="utf-8")
     app_source_root = REPO_ROOT / "apps" / "web" / "src"
-    app_docs = (app_source_root / "app" / "docs" / "page.tsx").read_text(
-        encoding="utf-8"
-    )
+    app_docs = (app_source_root / "app" / "docs" / "page.tsx").read_text(encoding="utf-8")
 
     assert HUMAN_URL in site_urls
     assert "PUBLIC_CURRENT_URL" in app_home
