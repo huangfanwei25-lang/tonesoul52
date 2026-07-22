@@ -40,6 +40,11 @@ or authority constraint that shaped the decision.
 Use `Agent:` and `Trace-Topic:` trailers so later reviewers can connect a
 change to the collaborator that made it and the work line it belongs to.
 
+The attribution gate exempts only a merge commit that has more than one parent
+and introduces no file changes of its own. This covers hosting-provider merge
+commits even when their title is customized. An ordinary empty commit, or a
+merge that records conflict-resolution changes, still needs the trailers.
+
 ---
 
 ## What This Codebase Rewards
