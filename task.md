@@ -35,7 +35,7 @@
 
 ## Phase 5: Verification and draft publication
 - [x] Run repository and web quality gates.
-- [ ] Push an isolated branch and open a draft PR; do not self-merge.
+- [x] Push an isolated branch and open [draft PR #5](https://github.com/huangfanwei25-lang/tonesoul52/pull/5); do not self-merge.
 **成功標準**: all local and remote checks pass, with live deployment verification deferred until merge.
 
 ## Active Program: Reality Sync Patchset (2026-06-13)
