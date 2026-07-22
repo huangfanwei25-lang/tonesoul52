@@ -21,6 +21,14 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: Fetch reviewed public-current revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          revision="$(python -c 'import json, re; revision = json.load(open("site/current.json", encoding="utf-8"))["reviewed_revision"]; assert re.fullmatch(r"[0-9a-f]{40}", revision); print(revision)')"
+          git fetch --no-tags --depth=1 origin "$revision"
+          git cat-file -e "${revision}^{commit}"
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
