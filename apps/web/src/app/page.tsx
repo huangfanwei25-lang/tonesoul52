@@ -13,6 +13,7 @@ import TensionTimeline from "@/components/TensionTimeline";
 import DataManager from "@/components/DataManager";
 import PersonaSettings, { PersonaConfig, getStoredPersona } from "@/components/PersonaSettings";
 import TierModelPublicCue from "@/components/TierModelPublicCue";
+import { PUBLIC_CURRENT_URL } from "@/lib/siteUrl";
 import { SoulState, loadSoulState, getInitialSoulState } from "@/lib/soulEngine";
 import OnboardingGuide, { hasCompletedOnboarding } from "@/components/OnboardingGuide";
 import {
@@ -24,7 +25,7 @@ import {
   clearAllConversations,
   clearAllMemoryInsights,
 } from "@/lib/db";
-import { Menu, Settings, FileText, LogOut, Key, Layers, BarChart3, Database, Sliders, BookOpen } from "lucide-react";
+import { Menu, Settings, FileText, LogOut, Key, Layers, BarChart3, Database, Sliders, BookOpen, ExternalLink } from "lucide-react";
 
 const RESETTABLE_LOCAL_STORAGE_KEYS = [
   "tonesoul_consent",
@@ -251,6 +252,17 @@ export default function Home() {
 
         {/* Footer */}
         <div className="p-3 border-t border-slate-800 space-y-1">
+          <a
+            href={PUBLIC_CURRENT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors text-slate-400 hover:text-white text-sm"
+            title="ToneSoul 現行公開方向標"
+          >
+            <FileText className="w-4 h-4" />
+            <span>現行公開索引</span>
+            <ExternalLink className="ml-auto w-3.5 h-3.5" aria-hidden="true" />
+          </a>
           <Link
             href="/docs"
             className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors text-slate-400 hover:text-white text-sm"
@@ -382,4 +394,3 @@ export default function Home() {
     </div>
   );
 }
-
