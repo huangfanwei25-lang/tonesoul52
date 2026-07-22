@@ -198,10 +198,11 @@ def test_build_report_exempts_synthetic_merge_commit(monkeypatch) -> None:
         lambda revision: {
             "rev": revision,
             "ok": False,
-            "summary": "Merge feature-head into base-head",
+            "summary": "Record verified Pages deployment",
             "has_agent": False,
             "has_topic": False,
             "changed_files": [],
+            "parent_count": 2,
             "exempted": False,
             "exemption_reason": None,
         },
@@ -221,6 +222,74 @@ def test_build_report_exempts_synthetic_merge_commit(monkeypatch) -> None:
     assert report["results"][0]["ok"] is True
     assert report["results"][0]["exempted"] is True
     assert report["results"][0]["exemption_reason"] == "synthetic_merge_commit"
+
+
+def test_build_report_does_not_exempt_empty_non_merge_commit(monkeypatch) -> None:
+    monkeypatch.setattr(
+        incremental,
+        "resolve_revision_plan",
+        lambda **kwargs: {
+            "event_name": "push",
+            "mode": "push_incremental",
+            "range_spec": "before..HEAD",
+            "base_ref": "before",
+            "checked_revisions": ["empty-commit"],
+        },
+    )
+    monkeypatch.setattr(
+        incremental,
+        "_verify_revision",
+        lambda revision: {
+            "rev": revision,
+            "ok": False,
+            "summary": "Merge-shaped ordinary empty commit",
+            "has_agent": False,
+            "has_topic": False,
+            "changed_files": [],
+            "parent_count": 1,
+            "exempted": False,
+            "exemption_reason": None,
+        },
+    )
+
+    report = incremental.build_report(
+        event_name="push",
+        head_sha="HEAD",
+        before_sha="before",
+        pr_base_sha=None,
+        pr_head_sha=None,
+        local_base_candidates=["publish/master"],
+    )
+
+    assert report["ok"] is False
+    assert report["missing_count"] == 1
+    assert report["results"][0]["exempted"] is False
+
+
+def test_synthetic_merge_detection_requires_no_own_changes() -> None:
+    assert (
+        incremental._is_synthetic_merge_commit(
+            {
+                "summary": "Merge feature-head into base-head",
+                "parent_count": 2,
+                "changed_files": ["resolved-conflict.txt"],
+            }
+        )
+        is False
+    )
+
+
+def test_synthetic_merge_detection_accepts_traditional_merge_title() -> None:
+    assert (
+        incremental._is_synthetic_merge_commit(
+            {
+                "summary": "Merge feature-head into base-head",
+                "parent_count": 2,
+                "changed_files": [],
+            }
+        )
+        is True
+    )
 
 
 def test_build_report_can_include_tree_equivalence(monkeypatch) -> None:
