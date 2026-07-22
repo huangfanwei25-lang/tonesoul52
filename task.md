@@ -7,6 +7,37 @@
 
 ---
 
+## Active Short Board: Public Current Index (2026-07-22)
+
+> Owner-authorized in conversation on 2026-07-22. This is a bounded discovery
+> and projection task, not a new philosophy program. Design anchor:
+> `docs/plans/public_current_index_2026-07-22.md`.
+
+## Phase 1: Contract and authority boundary
+- [x] Separate public routing projection from code, tests, canonical contracts, and dated status.
+- [x] Define Pages as the public documentation origin and Vercel as an interactive app surface.
+**成功標準**: the plan states what `/current/` is, what it cannot outrank, and what stays private.
+
+## Phase 2: Red contract tests
+- [x] Add static human/machine discovery and privacy tests.
+- [x] Capture the expected missing-artifact failure before implementation.
+**成功標準**: tests fail only because the public current artifacts and links are absent.
+
+## Phase 3: Public current projection
+- [x] Add `/current/`, `/current.json`, home/README links, and sitemap discovery.
+- [x] Keep routing summaries, evidence roles, caveats, history, and open tensions distinct.
+**成功標準**: one bilingual human route and one closed machine projection agree.
+
+## Phase 4: Interactive-app handoff
+- [x] Link the app to the public current route without duplicating it.
+- [x] Correct stale public repository locators in the touched app surface.
+**成功標準**: the app is visibly a consumer/demo, not a second public truth source.
+
+## Phase 5: Verification and draft publication
+- [x] Run repository and web quality gates.
+- [x] Push an isolated branch and open [draft PR #5](https://github.com/huangfanwei25-lang/tonesoul52/pull/5); do not self-merge.
+**成功標準**: all local and remote checks pass, with live deployment verification deferred until merge.
+
 ## Active Program: Reality Sync Patchset (2026-06-13)
 > Ratified by owner 2026-06-13 after the 2026-06-12 eleven-agent external audit.
 > The constraint set below is an **active vow set**, not a task checklist — every
