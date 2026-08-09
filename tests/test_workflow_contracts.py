@@ -403,24 +403,23 @@ def test_post_release_monitor_workflow_uploads_logs() -> None:
     assert "post_release_preflight.log" in path_value
 
 
-def test_commit_attribution_workflow_uses_backfill_schedule_path() -> None:
+def test_commit_attribution_workflow_skips_non_mutating_schedule_runs() -> None:
     payload = _load_yaml(Path(".github/workflows/test.yml"))
+    on_section = _on_section(payload)
+    assert "push" in on_section
+    assert "pull_request" in on_section
+    job = payload["jobs"]["commit_attribution"]
+    assert job.get("if") == "github.event_name != 'schedule'"
     steps = _job_steps(payload, "commit_attribution")
 
-    fetch_step = _find_step(steps, "Fetch attribution backfill ref for scheduled checks")
-    assert fetch_step.get("if") == "github.event_name == 'schedule'"
-    fetch_cmd = fetch_step.get("run", "")
-    assert isinstance(fetch_cmd, str)
-    assert "feat/env-perception-attribution-backfill" in fetch_cmd
+    step_names = [str(step.get("name", "")) for step in steps]
+    assert "Fetch attribution backfill ref for scheduled checks" not in step_names
 
     run_step = _find_step(steps, "Evaluate incremental commit attribution trailers (blocking)")
     run_cmd = run_step.get("run", "")
     assert isinstance(run_cmd, str)
-    assert 'if [ "$EVENT_NAME" = "schedule" ]' in run_cmd
-    assert "--head-sha origin/feat/env-perception-attribution-backfill" in run_cmd
-    assert '--equivalent-ref "$GITHUB_SHA"' in run_cmd
-    assert "--require-tree-equivalence" in run_cmd
-    assert "python scripts/verify_incremental_commit_attribution.py --strict" in run_cmd
+    assert run_cmd.strip() == "python scripts/verify_incremental_commit_attribution.py --strict"
+    assert "feat/env-perception-attribution-backfill" not in run_cmd
     run_env = run_step.get("env", {})
     assert isinstance(run_env, dict)
     assert "COMMIT_ATTRIBUTION_ANCHOR" not in run_env
