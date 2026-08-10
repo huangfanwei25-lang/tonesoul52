@@ -20,10 +20,21 @@ It focuses on three practical moves:
 - **Dissent preservation** - the Council records Guardian, Analyst, Critic, Advocate, and Axiomatic perspectives with evidence-chain branches instead of hiding disagreement inside one smooth answer.
 - **Evidence-bounded reporting** - generated status files and audits distinguish tested behavior, runtime-present mechanisms, document-backed contracts, and philosophy.
 
-## Two Doors, No Install
+## Two Doors
 
-- **Play it** — [City of Switches 岔軌之城](https://huangfanwei25-lang.github.io/tonesoul52/theater/): a post-collapse rail city where every choice demands a stated reason, a black mirror reads your own words back when you contradict them, and your full run exports as a downloadable trace. Real rules-council verdicts under the hood; zero server; nothing auto-uploaded. 你拉桿,城市記得。
-- **Take the data** — [tonesoul-accountability-traces](https://huggingface.co/datasets/Famwin/tonesoul-accountability-traces) (318 records, CC BY 4.0): an accountability-*event* corpus. Existing corpora label content; this one labels events — claim → bearing → verification → consequence, each record traceable to a file/commit/PR.
+- **Experience it in 3 minutes** — [City of Switches 岔軌之城](https://huangfanwei25-lang.github.io/tonesoul52/theater/). Make one consequential choice and see a player-safe responsibility cue; nothing is auto-uploaded.
+- **Use it in 5 minutes** — run one model-free overclaim check, then generate a proportional verification receipt for a documentation change:
+
+```bash
+pip install tonesoul52
+echo "This system is guaranteed safe and cannot be jailbroken." > draft.txt
+ts validate draft.txt --json
+
+# from a cloned tonesoul52 repository
+python scripts/run_changed_surface_checks.py --repo-root . --changed-file README.md --out-dir temp/quickstart
+```
+
+The second command should derive `documentation`, `external_effect_status: not_assessed`, and four checks: `protected_paths`, `docs_consistency`, `doc_links`, `diff_check`. This experimental/shadow receipt is **not publication permission**.
 
 ## Not This
 

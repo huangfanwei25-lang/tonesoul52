@@ -229,6 +229,14 @@
 
     /* CARDS */
     .axiom-card, .step-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+    .entry-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; margin: 1.5rem 0 2rem; }
+    .entry-card { display: flex; flex-direction: column; align-items: flex-start; background: var(--glass-bg); border: 1px solid var(--stroke-soft); padding: 2rem; border-radius: 16px; }
+    .entry-card h2 { margin: 0 0 0.75rem; font-size: 1.8rem; }
+    .entry-card p { flex-grow: 1; }
+    .entry-time { font-family: 'JetBrains Mono'; color: var(--accent); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; }
+    .entry-action { display: inline-block; color: white; background: var(--accent); text-decoration: none; font-weight: 700; padding: 0.75rem 1rem; border-radius: 8px; }
+    .receipt-note { border-left: 4px solid var(--accent); padding-left: 1rem; font-weight: 700; }
+    @media (max-width: 760px) { .entry-grid { grid-template-columns: 1fr; } }
     .axiom-title { font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: 1rem; }
     .formula { font-family: 'JetBrains Mono'; font-size: 0.95rem; color: var(--accent); margin-bottom: 1rem; background: rgba(135,206,250,0.1); padding: 0.5rem 1rem; border-radius: 4px; display: inline-block;}
     .step-card h4 { margin-top: 0; color: var(--accent); }
@@ -663,27 +671,62 @@ posture = load()
     <!-- ==================== GETTING STARTED TAB ==================== -->
     <section id="getting-started" data-page="getting-started" class="page-section content-block" style="display: none;">
       <div class="page-hero">
-        <h1>Getting Started</h1>
-        <p>Try it in your browser with zero install, then add the model-free checks to your own workflow. The deeper runtime/governance pieces are optional and described further down.</p>
+        <h1><span class="l-en">Getting Started</span><span class="l-zh">開始使用</span></h1>
+        <p class="l-en">Try it in your browser with zero install, then add the model-free checks to your own workflow. The deeper runtime/governance pieces are optional and described further down.</p>
+        <p class="l-zh">先在瀏覽器免安裝體驗，再把不需模型的檢查放進自己的流程。完整 runtime 與治理細節都是第二步。</p>
       </div>
 
       <div class="content-sec">
-        <h2>Try it first — zero install</h2>
-        <p>Three ways to see what this system actually is, in increasing depth — no install, no API key:</p>
+        <div class="entry-grid">
+          <article class="entry-card">
+            <div class="entry-time"><span class="l-en">3 MIN · NO INSTALL</span><span class="l-zh">3 分鐘 · 免安裝</span></div>
+            <h2><span class="l-en">I want to experience it</span><span class="l-zh">我想先體驗</span></h2>
+            <p class="l-en">Enter City of Switches. Make one consequential choice, see a player-safe responsibility cue, and let the Black Mirror return a contradiction without exposing operator or private traces. Your run remains in this browser unless you download it.</p>
+            <p class="l-zh">進入《岔軌之城》，做一次有後果的選擇，看看玩家安全的責任提示，再讓黑鏡把矛盾還給你。除非你主動下載，遊玩紀錄只留在這個瀏覽器。</p>
+            <a class="entry-action" href="theater/"><span class="l-en">Enter the city →</span><span class="l-zh">進入岔軌之城 →</span></a>
+          </article>
+          <article class="entry-card">
+            <div class="entry-time"><span class="l-en">5 MIN · MODEL-FREE</span><span class="l-zh">5 分鐘 · 不需模型</span></div>
+            <h2><span class="l-en">I want to use it</span><span class="l-zh">我想實際使用</span></h2>
+            <p class="l-en">Run one narrow overclaim check, then ask the repository which checks a documentation change requires. The receipt is a verification plan, not permission to publish.</p>
+            <p class="l-zh">先檢查一句過度聲稱，再讓倉庫判斷文件變更需要哪些驗證。Receipt 是驗證計畫，不是發布許可。</p>
+            <a class="entry-action" href="#five-minute-check"><span class="l-en">Run two checks →</span><span class="l-zh">執行兩個檢查 →</span></a>
+          </article>
+        </div>
+
+        <h2 id="five-minute-check"><span class="l-en">The five-minute path</span><span class="l-zh">五分鐘實用路徑</span></h2>
+        <p class="l-en">The first command uses the published package. The second runs from a cloned repository and writes only to ignored <code>temp/</code>.</p>
+        <p class="l-zh">第一個命令使用已發布套件；第二個在 clone 後的倉庫執行，輸出只寫入已忽略的 <code>temp/</code>。</p>
+        <div class="terminal-box"><span class="cm">pip install tonesoul52</span>
+<span class="cm"># 1. Check one exact overclaim phrase</span>
+echo "This system is guaranteed safe and cannot be jailbroken." > draft.txt
+ts validate draft.txt --json
+
+<span class="cm"># 2. From a cloned tonesoul52 repository: plan checks for one doc change</span>
+python scripts/run_changed_surface_checks.py --repo-root . --changed-file README.md --out-dir temp/quickstart</div>
+        <p class="l-en">The lexical gate catches the exact overclaim phrasing; paraphrases may pass. The router is <code>experimental / shadow</code>: it derives a proportional plan while the existing full pre-push contract remains authoritative.</p>
+        <p class="l-zh">詞彙 gate 會抓到這個精確句型，改寫後可能漏失。比例路由仍是 <code>experimental / shadow</code>：它提出相稱計畫，但既有完整 pre-push 門檻仍是正式規則。</p>
+
+        <h3><span class="l-en">Deidentified sample receipt</span><span class="l-zh">去識別範例 Receipt</span></h3>
+        <div class="terminal-box">derived_level: documentation
+external_effect_status: not_assessed
+required_checks:
+  - protected_paths
+  - docs_consistency
+  - doc_links
+  - diff_check
+publish_ready: false</div>
+        <p class="receipt-note"><span class="l-en">Not publication permission. External actions require a separate scoped grant, exact target allowlist, owner review source, and publish/push preflight.</span><span class="l-zh">這不是發布許可。外部操作仍需獨立的範圍化授權、精確 target allowlist、owner review 來源與 publish/push preflight。</span></p>
+
+        <h2><span class="l-en">Continue exploring</span><span class="l-zh">繼續探索</span></h2>
         <div class="axiom-card">
           <ul>
-            <li><strong><a href="theater/" style="color:#38bdf8;">City of Switches 岔軌之城</a></strong> — a playable world where every choice leaves a readable trace: rules-council decisions appear as player-facing responsibility cues, a black mirror reads your own words back when they conflict, and your run stays in your browser unless you download it. 你拉桿，城市記得。</li>
-            <li><strong><a href="accountability.html" style="color:#38bdf8;">Accountability page</a></strong> — the ledger of times the AI working here was caught and corrected. This is the thesis, running on itself. 它自己也被問責。</li>
-            <li><strong><a href="judgments/" style="color:#38bdf8;">Judgments</a></strong> — structured honest judgments: both sides laid out first, verdict last, flip-conditions included. 攤開在前,判決在後。</li>
-            <li><strong><a href="https://weavai.app/world/%E5%B2%94%E8%BB%8C%E4%B9%8B%E5%9F%8E-the-city-of-switches/" target="_blank" rel="noopener" style="color:#38bdf8;">LLM-improvised City of Switches</a></strong> — the same canon also runs as a multiplayer world on weavai.app: there the story improvises; here the ledger holds. 同一世界，兩種引擎。</li>
+            <li><a href="accountability.html">Accountability</a> — <span class="l-en">corrections and consequences, not a perfection claim.</span><span class="l-zh">看修正與後果，不宣稱完美。</span></li>
+            <li><a href="judgments/">Judgments</a> — <span class="l-en">both sides, verdict, and flip conditions.</span><span class="l-zh">先攤開兩方，再給判斷與改判條件。</span></li>
+            <li><a href="https://weavai.app/world/%E5%B2%94%E8%BB%8C%E4%B9%8B%E5%9F%8E-the-city-of-switches/" target="_blank" rel="noopener">WeaveAI world</a> — <span class="l-en">the same canon with LLM improvisation on an external site.</span><span class="l-zh">同一世界觀在外部網站上的 LLM 即興版本。</span></li>
+            <li><a href="https://github.com/huangfanwei25-lang/tonesoul52#start-here" target="_blank" rel="noopener"><span class="l-en">Full runtime and reviewer paths</span><span class="l-zh">完整 runtime 與審查入口</span></a> — <span class="l-en">for developers and researchers after the first useful action.</span><span class="l-zh">完成第一次有用操作後再進入。</span></li>
           </ul>
         </div>
-        <p>Then run the model-free lexical gate on your own draft from the command line:</p>
-        <div class="terminal-box"><span class="cm">pip install tonesoul52</span>
-<span class="cm"># then, on any draft answer:</span>
-echo "This system is guaranteed safe and cannot be jailbroken." > draft.txt
-ts validate draft.txt --json</div>
-        <p>That catches the <em>exact</em> overclaim phrasing; paraphrase it and the flag disappears — the documented lexical limit. For catching your <em>own</em> unintended overclaims before you ship, that is exactly the point.</p>
 
         <h2>Prerequisites</h2>
         <div class="axiom-card">

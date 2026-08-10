@@ -134,6 +134,99 @@ def test_run_publish_push_preflight_agent_defaults(
     )
 
 
+def test_strict_mode_fails_when_review_is_still_required(tmp_path: Path) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    _write_state(state_path)
+    _write_traces(traces_path)
+
+    exit_code = module.main(
+        [
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--strict",
+        ]
+    )
+
+    assert exit_code == 1
+
+
+def test_review_before_push_is_boundedly_resolved_by_declared_owner_review(
+    capsys,
+    tmp_path: Path,
+) -> None:
+    module = _load_script_module()
+    state_path = tmp_path / "governance_state.json"
+    traces_path = tmp_path / "session_traces.jsonl"
+    _write_state(state_path)
+    _write_traces(traces_path)
+
+    exit_code = module.main(
+        [
+            "--state-path",
+            str(state_path),
+            "--traces-path",
+            str(traces_path),
+            "--owner-review-ref",
+            "owner-message:2026-08-10-three-product-bridge",
+            "--grant-ref",
+            "owner-message:2026-08-10-draft-pr",
+            "--strict",
+        ]
+    )
+
+    output = json.loads(capsys.readouterr().out)
+    assert exit_code == 0
+    assert output["preflight"]["classification"] == "review_before_push"
+    assert output["resolution"]["status"] == "bounded_owner_review_resolved"
+    assert output["resolution"]["publish_ready"] is True
+    assert output["resolution"]["assurance"] == "declared_source_not_identity_verified"
+
+
+def test_blocked_preflight_cannot_be_overridden_by_owner_review(monkeypatch) -> None:
+    module = _load_script_module()
+    monkeypatch.setattr(
+        module,
+        "run_publish_push_preflight",
+        lambda **_kwargs: {
+            "preflight": {"classification": "blocked"},
+            "resolution": {
+                "status": "blocked",
+                "publish_ready": False,
+                "assurance": "declared_source_not_identity_verified",
+            },
+        },
+    )
+
+    exit_code = module.main(
+        [
+            "--owner-review-ref",
+            "owner-message:cannot-override",
+            "--grant-ref",
+            "owner-message:scoped-grant",
+            "--strict",
+        ]
+    )
+
+    assert exit_code == 1
+
+
+def test_clear_preflight_keeps_clear_behavior_without_owner_review() -> None:
+    module = _load_script_module()
+
+    resolution = module.resolve_preflight(
+        classification="clear",
+        owner_review_ref=None,
+        grant_ref=None,
+    )
+
+    assert resolution["status"] == "clear"
+    assert resolution["publish_ready"] is True
+
+
 def test_run_publish_push_preflight_script_stays_lf_only() -> None:
     module_path = Path(__file__).resolve().parents[1] / "scripts" / "run_publish_push_preflight.py"
     data = module_path.read_bytes()

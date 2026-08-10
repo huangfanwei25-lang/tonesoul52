@@ -1,0 +1,19 @@
+{
+  "protocol_version": "proportional-validation-pilot.v0.1",
+  "status": "preregistered_synthetic_contract_cases",
+  "cases": [
+    {"case_id": "doc-01", "paths": ["docs/guide.md"], "expected_level": "documentation", "external": false},
+    {"case_id": "doc-02", "paths": ["README.md"], "expected_level": "documentation", "external": false},
+    {"case_id": "doc-03", "paths": ["docs/philosophy/note.txt"], "expected_level": "documentation", "external": false},
+    {"case_id": "local-01", "paths": ["tools/report.py"], "expected_level": "local_code", "external": false},
+    {"case_id": "local-02", "paths": ["tests/test_widget.py"], "expected_level": "local_code", "external": false},
+    {"case_id": "local-03", "paths": ["assets/custom.data"], "expected_level": "local_code", "external": false},
+    {"case_id": "core-01", "paths": ["tonesoul/governance/policy.py"], "expected_level": "core_boundary", "external": false},
+    {"case_id": "core-02", "paths": [".github/workflows/ci.yml"], "expected_level": "core_boundary", "external": false},
+    {"case_id": "core-03", "paths": ["scripts/run_changed_surface_checks.py"], "expected_level": "core_boundary", "external": false},
+    {"case_id": "external-01", "paths": ["docs/release.md"], "expected_level": "documentation", "external": true, "action": "push"},
+    {"case_id": "external-02", "paths": ["tools/publisher.py"], "expected_level": "local_code", "external": true, "action": "publish"},
+    {"case_id": "external-03", "paths": ["tonesoul/governance/policy.py"], "expected_level": "core_boundary", "external": true, "action": "remote_write"}
+  ]
+}
+
