@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tonesoul.dev/schema/proportional-validation-receipt/v0.1",
+  "title": "ToneSoul proportional validation receipt v0.1",
+  "type": "object",
+  "required": ["plan_ok", "overall_ok", "changed_paths", "routing", "checks", "metrics", "issues"],
+  "properties": {
+    "plan_ok": {"type": "boolean"},
+    "overall_ok": {"type": "boolean"},
+    "changed_paths": {"type": "array", "items": {"type": "string"}},
+    "routing": {
+      "type": "object",
+      "required": [
+        "protocol_version",
+        "adoption_status",
+        "derived_level",
+        "effective_level",
+        "matched_rules",
+        "external_effect",
+        "external_effect_status",
+        "external_target",
+        "grant_ref",
+        "owner_review_ref",
+        "missing_external_requirements",
+        "publish_ready",
+        "required_checks"
+      ],
+      "properties": {
+        "protocol_version": {"const": "proportional-validation-v0.1"},
+        "adoption_status": {"const": "experimental_shadow"},
+        "derived_level": {"enum": ["documentation", "local_code", "core_boundary"]},
+        "effective_level": {"enum": ["documentation", "local_code", "core_boundary"]},
+        "matched_rules": {"type": "array", "items": {"type": "string"}},
+        "external_effect": {"type": "boolean"},
+        "external_target": {"type": ["string", "null"]},
+        "grant_ref": {"type": ["string", "null"]},
+        "owner_review_ref": {"type": ["string", "null"]},
+        "external_effect_status": {
+          "enum": ["not_assessed", "not_external", "owner_gate", "preflight_pending", "preflight_passed"]
+        },
+        "missing_external_requirements": {"type": "array", "items": {"type": "string"}},
+        "publish_ready": {"type": "boolean"},
+        "required_checks": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "checks": {"type": "array", "items": {"type": "object"}},
+    "metrics": {"type": "object"},
+    "issues": {"type": "array", "items": {"type": "string"}}
+  }
+}
