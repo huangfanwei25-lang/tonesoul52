@@ -43,11 +43,23 @@ ToneSoul 不能被描述成：
 
 ## 快速開始
 
-先玩公開遊戲（免安裝）：
+只有兩扇主要入口：
 
-[https://huangfanwei25-lang.github.io/tonesoul52/theater/](https://huangfanwei25-lang.github.io/tonesoul52/theater/)
+- **我想先體驗（3 分鐘）**：[進入《岔軌之城》](https://huangfanwei25-lang.github.io/tonesoul52/theater/)，做一次有後果的選擇並看到玩家安全的責任提示；資料不會自動上傳。
+- **我想實際使用（5 分鐘）**：檢查一句過度聲稱，再替一項文件變更產生比例驗證 receipt。
 
-安裝：
+```bash
+pip install tonesoul52
+echo "This system is guaranteed safe and cannot be jailbroken." > draft.txt
+ts validate draft.txt --json
+
+# 在 clone 後的 tonesoul52 倉庫中執行
+python scripts/run_changed_surface_checks.py --repo-root . --changed-file README.md --out-dir temp/quickstart
+```
+
+第二個命令應推導出 `documentation`、`external_effect_status: not_assessed`，以及 `protected_paths`、`docs_consistency`、`doc_links`、`diff_check` 四項檢查。這份 `experimental / shadow` receipt **不是發布許可**。
+
+如果要進一步開發，再安裝 source：
 
 ```bash
 pip install tonesoul52
