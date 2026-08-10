@@ -21,7 +21,9 @@ def _median_savings(observations: list[dict[str, Any]]) -> float | None:
 
 
 def evaluate(observations: list[dict[str, Any]]) -> dict[str, Any]:
-    categories = {name: 0 for name in ("documentation", "local_code", "core_boundary", "external_effect")}
+    categories = {
+        name: 0 for name in ("documentation", "local_code", "core_boundary", "external_effect")
+    }
     false_negatives: list[str] = []
     gate_misses: list[str] = []
     low_risk: list[dict[str, Any]] = []
@@ -81,7 +83,9 @@ def evaluate(observations: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Evaluate proportional-validation shadow receipts.")
+    parser = argparse.ArgumentParser(
+        description="Evaluate proportional-validation shadow receipts."
+    )
     parser.add_argument("observations", type=Path)
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args(argv)
@@ -100,4 +104,3 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

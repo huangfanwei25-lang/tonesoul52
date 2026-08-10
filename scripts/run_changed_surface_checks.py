@@ -150,7 +150,10 @@ def _is_documentation_path(path: str) -> bool:
         return False
     if any(normalized.startswith(prefix) for prefix in CORE_CONTROL_PREFIXES):
         return False
-    return _is_doc_governance_path(normalized) and Path(normalized).suffix.lower() in DOCUMENT_EXTENSIONS
+    return (
+        _is_doc_governance_path(normalized)
+        and Path(normalized).suffix.lower() in DOCUMENT_EXTENSIONS
+    )
 
 
 def _path_risk(path: str) -> tuple[str, str]:
@@ -840,7 +843,9 @@ def build_report(
     failed_check_count = sum(1 for check in checks if check.get("status") == "fail")
     blocking_check_count = sum(1 for check in checks if check.get("blocking"))
     executed_check_count = sum(1 for check in checks if check.get("status") in {"pass", "fail"})
-    total_duration = round(sum(float(check.get("duration_seconds", 0.0) or 0.0) for check in checks), 2)
+    total_duration = round(
+        sum(float(check.get("duration_seconds", 0.0) or 0.0) for check in checks), 2
+    )
     proportional_checks = [check for check in checks if check.get("role") != "legacy_baseline"]
     legacy_checks = [
         check
@@ -852,13 +857,17 @@ def build_report(
         total = 0
         for item in items:
             text = f"{item.get('stdout_tail', '')}\n{item.get('stderr_tail', '')}"
-            total += sum(int(value) for value in re.findall(r"(\d+)\s+(?:passed|failed|error)", text))
+            total += sum(
+                int(value) for value in re.findall(r"(\d+)\s+(?:passed|failed|error)", text)
+            )
         return total
 
     pilot_observation: dict[str, Any] | None = None
     if shadow_full and execute and checks_ok is not None:
         routed_ok = all(check.get("status") == "pass" for check in proportional_checks)
-        legacy_ok = bool(legacy_checks) and all(check.get("status") == "pass" for check in legacy_checks)
+        legacy_ok = bool(legacy_checks) and all(
+            check.get("status") == "pass" for check in legacy_checks
+        )
         pilot_observation = {
             "case_id": str(pilot_case_id or "").strip() or None,
             "content_level": routing["effective_level"],
@@ -866,7 +875,10 @@ def build_report(
             "routed": {
                 "ok": routed_ok,
                 "duration_seconds": round(
-                    sum(float(check.get("duration_seconds", 0.0) or 0.0) for check in proportional_checks),
+                    sum(
+                        float(check.get("duration_seconds", 0.0) or 0.0)
+                        for check in proportional_checks
+                    ),
                     2,
                 ),
                 "test_count": test_count(proportional_checks),
@@ -874,7 +886,9 @@ def build_report(
             "legacy": {
                 "ok": legacy_ok,
                 "duration_seconds": round(
-                    sum(float(check.get("duration_seconds", 0.0) or 0.0) for check in legacy_checks),
+                    sum(
+                        float(check.get("duration_seconds", 0.0) or 0.0) for check in legacy_checks
+                    ),
                     2,
                 ),
                 "test_count": test_count(legacy_checks),

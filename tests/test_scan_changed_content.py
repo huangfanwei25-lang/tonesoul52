@@ -14,9 +14,7 @@ def test_scan_reports_kinds_without_leaking_values(tmp_path: Path) -> None:
     payload = scan_paths(tmp_path, ["docs/note.md"])
 
     assert payload["ok"] is False
-    assert payload["findings"] == [
-        {"path": "docs/note.md", "finding_count": 1, "kinds": ["email"]}
-    ]
+    assert payload["findings"] == [{"path": "docs/note.md", "finding_count": 1, "kinds": ["email"]}]
     assert sample_address not in str(payload)
 
 
@@ -36,4 +34,3 @@ def test_strict_cli_returns_nonzero_on_finding(tmp_path: Path) -> None:
     path.write_text("OPENAI_API_KEY=sk-" + "a" * 40 + "\n", encoding="utf-8")
 
     assert main(["--repo-root", str(tmp_path), "--changed-file", "config.txt", "--strict"]) == 1
-

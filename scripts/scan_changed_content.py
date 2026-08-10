@@ -58,7 +58,9 @@ def scan_paths(repo_root: Path, changed_files: list[str]) -> dict[str, Any]:
         result = redact(content, include_pii=True)
         if result.findings:
             kinds = sorted({finding.kind for finding in result.findings})
-            findings.append({"path": relative, "finding_count": len(result.findings), "kinds": kinds})
+            findings.append(
+                {"path": relative, "finding_count": len(result.findings), "kinds": kinds}
+            )
 
     return {
         "contract_version": "changed-content-scan-v0.1",
@@ -89,4 +91,3 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

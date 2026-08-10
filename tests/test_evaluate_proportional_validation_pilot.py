@@ -48,4 +48,3 @@ def test_high_risk_false_negative_blocks_eligibility() -> None:
 
     assert payload["conclusion"] == "inconclusive"
     assert payload["high_risk_false_negative_case_ids"] == ["core-0"]
-
