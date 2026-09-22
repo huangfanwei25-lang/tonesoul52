@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Brain, ExternalLink, Shield, Scale, Users } from "lucide-react";
+import { CANONICAL_REPOSITORY_URL } from "@/lib/siteUrl";
 
 type Stat = { value: string; label: string };
 type Point = { icon: string; title: string; desc: string };
@@ -111,7 +112,7 @@ export default function ShowcasePage() {
                             Open App
                         </Link>
                         <a
-                            href="https://github.com/Fan1234-1/tonesoul52"
+                            href={CANONICAL_REPOSITORY_URL}
                             target="_blank"
                             rel="noopener"
                             className="hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-700/50 bg-slate-900/30 hover:bg-slate-900/50 transition-colors text-sm"
@@ -321,4 +322,3 @@ export default function ShowcasePage() {
         </div>
     );
 }
-

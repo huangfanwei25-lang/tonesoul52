@@ -10,6 +10,8 @@
 
 [繁體中文](README.zh-TW.md)
 
+**Current public orientation:** [ToneSoul, now](https://huangfanwei25-lang.github.io/tonesoul52/current/) — a dated map of what exists, what remains unproven, how to read the evidence, and which older traces are historical. [Machine view](https://huangfanwei25-lang.github.io/tonesoul52/current.json).
+
 ## 90-Second Read
 
 **ToneSoul is an accountability layer for AI output.** It does not make a model correct. It makes the model's draft pass through visible governance surfaces before the answer is treated as acceptable.

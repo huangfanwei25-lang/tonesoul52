@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ToneSoul，現在｜Current Public Orientation</title>
+  <meta name="description" content="ToneSoul 的現行公開方向標：分開專案定位、runtime、測試、生成測量、限制、未解張力與歷史。">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://huangfanwei25-lang.github.io/tonesoul52/current/">
+  <link rel="alternate" type="application/json" href="https://huangfanwei25-lang.github.io/tonesoul52/current.json">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ToneSoul，現在｜Current Public Orientation">
+  <meta property="og:description" content="A dated public routing projection: what ToneSoul is, what exists, what remains unproven, and where to verify it.">
+  <meta property="og:url" content="https://huangfanwei25-lang.github.io/tonesoul52/current/">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "ToneSoul，現在",
+    "alternateName": "ToneSoul Current Public Orientation",
+    "description": "A dated public routing projection for ToneSoul sources, evidence boundaries, known limits, open tensions, and history.",
+    "url": "https://huangfanwei25-lang.github.io/tonesoul52/current/",
+    "dateModified": "2026-07-22",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "ToneSoul / 語魂",
+      "url": "https://huangfanwei25-lang.github.io/tonesoul52/"
+    },
+    "mainEntity": {
+      "@type": "SoftwareSourceCode",
+      "name": "ToneSoul / 語魂",
+      "codeRepository": "https://github.com/huangfanwei25-lang/tonesoul52"
+    }
+  }
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f7fb;
+      --paper: rgba(255, 255, 255, 0.82);
+      --text: #172033;
+      --muted: #526176;
+      --line: rgba(43, 108, 176, 0.18);
+      --accent: #2b6cb0;
+      --accent-soft: rgba(43, 108, 176, 0.09);
+      --warning: #8a5a11;
+      --warning-soft: rgba(218, 150, 47, 0.10);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        linear-gradient(rgba(43, 108, 176, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(43, 108, 176, 0.045) 1px, transparent 1px),
+        var(--bg);
+      background-size: 44px 44px;
+      font-family: Inter, "Noto Sans TC", system-ui, -apple-system, sans-serif;
+      line-height: 1.75;
+    }
+    a { color: var(--accent); }
+    a:hover { text-decoration-thickness: 2px; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .9rem 1.3rem;
+      align-items: center;
+      padding: .75rem max(1rem, calc((100vw - 920px) / 2));
+      border-bottom: 1px solid var(--line);
+      background: rgba(244, 247, 251, 0.92);
+      backdrop-filter: blur(12px);
+      font: 700 .82rem/1.3 "JetBrains Mono", ui-monospace, monospace;
+    }
+    .topbar a { text-decoration: none; }
+    .topbar .brand { color: var(--text); margin-right: auto; }
+    main { width: min(920px, calc(100% - 2rem)); margin: 0 auto; padding: 4.5rem 0 3rem; }
+    .hero { margin-bottom: 3rem; }
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 1rem;
+      padding: .25rem .7rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--accent);
+      background: var(--accent-soft);
+      font: 700 .76rem/1.4 "JetBrains Mono", ui-monospace, monospace;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    h1 { margin: 0 0 1rem; font-size: clamp(2.7rem, 8vw, 5.4rem); line-height: 1; letter-spacing: -.045em; }
+    .subtitle { max-width: 760px; color: var(--muted); font-size: clamp(1.08rem, 2vw, 1.3rem); }
+    .as-of { color: var(--muted); font: .82rem/1.7 "JetBrains Mono", ui-monospace, monospace; }
+    .boundary {
+      margin: 1.6rem 0 0;
+      padding: 1rem 1.2rem;
+      border-left: 4px solid var(--warning);
+      border-radius: 0 .7rem .7rem 0;
+      background: var(--warning-soft);
+      color: #65430f;
+    }
+    .local-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .55rem;
+      margin: 2rem 0 3.5rem;
+    }
+    .local-nav a {
+      padding: .4rem .7rem;
+      border-radius: .45rem;
+      background: var(--accent-soft);
+      text-decoration: none;
+      font-size: .88rem;
+    }
+    section { scroll-margin-top: 5rem; margin: 4rem 0; }
+    h2 { margin: 0 0 .7rem; font-size: clamp(1.7rem, 4vw, 2.45rem); line-height: 1.25; }
+    h3 { margin: 0 0 .4rem; font-size: 1.12rem; }
+    .section-lede { margin: 0 0 1.4rem; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .card {
+      padding: 1.25rem 1.35rem;
+      border: 1px solid var(--line);
+      border-radius: .9rem;
+      background: var(--paper);
+      box-shadow: 0 8px 24px rgba(35, 64, 105, 0.045);
+    }
+    .card p { margin: .45rem 0 0; color: var(--muted); }
+    .en-note { color: #66758a; font-size: .92rem; }
+    .sources { font: .78rem/1.65 "JetBrains Mono", ui-monospace, monospace; }
+    .type {
+      color: var(--accent);
+      font: 700 .72rem/1.4 "JetBrains Mono", ui-monospace, monospace;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .limit { margin-top: .7rem; padding-top: .7rem; border-top: 1px solid var(--line); font-size: .92rem; }
+    .source-lanes { display: grid; gap: .7rem; }
+    .source-lanes div { display: grid; grid-template-columns: 11rem 1fr; gap: 1rem; padding: .8rem 0; border-bottom: 1px solid var(--line); }
+    .source-lanes strong { color: var(--accent); font-family: "JetBrains Mono", ui-monospace, monospace; font-size: .86rem; }
+    ul { padding-left: 1.25rem; }
+    li { margin: .55rem 0; }
+    .entrypoints { display: grid; gap: .8rem; }
+    .entrypoints a { font-weight: 700; }
+    code { padding: .1rem .3rem; border-radius: .3rem; background: var(--accent-soft); font-family: "JetBrains Mono", ui-monospace, monospace; font-size: .88em; }
+    footer { margin-top: 5rem; padding-top: 1.4rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .86rem; }
+    @media (max-width: 680px) {
+      main { padding-top: 3rem; }
+      .grid { grid-template-columns: 1fr; }
+      .source-lanes div { grid-template-columns: 1fr; gap: .25rem; }
+      .topbar { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="主要導覽">
+    <a class="brand" href="../">ToneSoul / 語魂</a>
+    <a href="../current.json">current.json</a>
+    <a href="https://github.com/huangfanwei25-lang/tonesoul52">source</a>
+  </nav>
+
+  <main data-as-of="2026-07-22" data-reviewed-revision="892d2dcf82069046c4d2d06723762ac7fe503b20">
+    <header class="hero">
+      <span class="eyebrow">公開導覽投影 · Public orientation</span>
+      <h1>ToneSoul，現在</h1>
+      <p class="subtitle">ToneSoul 是 AI 輸出治理與問責層；它讓分歧、邊界、證據與失敗更可檢查，但不使模型成為真理來源。</p>
+      <p class="en-note" lang="en">ToneSoul is an accountability layer for AI output. It makes dissent, boundaries, evidence, and failures more inspectable; it does not make a model a source of truth.</p>
+      <p class="as-of">as_of 2026-07-22 · reviewed revision <a href="https://github.com/huangfanwei25-lang/tonesoul52/tree/892d2dcf82069046c4d2d06723762ac7fe503b20"><code>892d2dc</code></a></p>
+      <p class="boundary"><strong>這是公開方向標，不是架構真理。</strong>它選擇並解釋入口，但不凌駕它連結的程式、測試、規格與有日期的測量。</p>
+    </header>
+
+    <nav class="local-nav" aria-label="本頁段落">
+      <a href="#what-it-is">它是什麼</a>
+      <a href="#current-posture">現在已有</a>
+      <a href="#evidence">怎麼讀證據</a>
+      <a href="#limits">不能證明</a>
+      <a href="#open-tensions">未解張力</a>
+      <a href="#entrypoints">入口</a>
+      <a href="#history">歷史</a>
+      <a href="#for-machines">給機器</a>
+    </nav>
+
+    <section id="what-it-is">
+      <h2>它是什麼</h2>
+      <p class="section-lede">先說能被追問的現在式定義，再說限制。</p>
+      <article class="card" data-source-route-id="accountability-layer" data-source-refs="public-readme public-readme-zh positioning">
+        <span class="type">Source route · 來源路徑</span>
+        <h3>ToneSoul 現在如何公開定義？</h3>
+        <p class="en-note" lang="en">How is ToneSoul currently defined in public?</p>
+        <p>ToneSoul 是 AI 輸出治理與問責層；它讓分歧、邊界、證據與失敗更可檢查，但不使模型成為真理來源。</p>
+        <p class="en-note" lang="en">ToneSoul is an accountability layer for AI output. It makes dissent, boundaries, evidence, and failures more inspectable; it does not make a model a source of truth.</p>
+        <p class="limit"><strong>限制：</strong>這是專案定位與可觀察表面的有界描述，不是答案正確性或安全性的保證。</p>
+        <p class="en-note" lang="en">This is a bounded description of project posture and observable surfaces, not a guarantee of answer correctness or safety.</p>
+        <p class="sources">sources: <a data-source-ref="public-readme" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/README.md">README</a> · <a data-source-ref="public-readme-zh" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/README.zh-TW.md">README.zh-TW</a> · <a data-source-ref="positioning" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/POSITIONING.md">POSITIONING</a></p>
+      </article>
+      <article class="card" data-source-route-id="philosophical-compass" data-source-refs="axioms positioning principle-engineering" style="margin-top: 1rem;">
+        <span class="type">Source route · 哲學羅盤</span>
+        <h3>工程收斂時，哪些方向不應被抹平？</h3>
+        <p class="en-note" lang="en">Which directions should engineering convergence not flatten?</p>
+        <p>語魂以保留張力、選擇先於身份與語義責任作為設計羅盤；它們約束怎麼設計，不是假裝已取得的新能力。</p>
+        <p class="en-note" lang="en">ToneSoul uses preserved tension, choice before identity, and semantic responsibility as design bearings; they constrain how the system is built rather than pretending to be acquired capabilities.</p>
+        <p class="limit"><strong>限制：</strong>哲學方向可以要求工程留下可檢查結構，但不能替代 runtime、測試或效果證據。</p>
+        <p class="en-note" lang="en">Philosophical direction can require inspectable engineering structure, but it cannot replace runtime, tests, or outcome evidence.</p>
+        <p class="sources">sources: <a data-source-ref="axioms" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/AXIOMS.json">AXIOMS</a> · <a data-source-ref="positioning" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/POSITIONING.md">POSITIONING</a> · <a data-source-ref="principle-engineering" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/philosophy/principle_engineering.md">principle engineering</a></p>
+      </article>
+    </section>
+
+    <section id="current-posture">
+      <h2>現在已經存在</h2>
+      <p class="section-lede">「存在」只描述可定位的程式與測試，不把存在偷換成有效。</p>
+      <article class="card" data-source-route-id="bounded-mechanisms" data-source-refs="unified-pipeline council-runtime council-types council-runtime-tests council-evidence-chain-tests pipeline-runtime-tests">
+        <span class="type">Source route · 來源路徑</span>
+        <h3>哪些機制可從倉庫直接檢查？</h3>
+        <p class="en-note" lang="en">Which mechanisms can be inspected directly in the repository?</p>
+        <p>倉庫中已有 Council、輸出邊界與 evidence-chain 相關的執行路徑與測試。</p>
+        <p class="en-note" lang="en">The repository contains runtime paths and tests for Council, output boundaries, and evidence-chain mechanisms.</p>
+        <p class="limit"><strong>限制：</strong>機制存在與測試通過，不足以證明一般情境下的回答品質、校準或防越獄能力。</p>
+        <p class="en-note" lang="en">Mechanism presence and passing tests do not establish general answer quality, calibration, or jailbreak resistance.</p>
+        <p class="sources">sources: <a data-source-ref="unified-pipeline" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/tonesoul/unified_pipeline.py">Unified pipeline</a> · <a data-source-ref="council-runtime" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/tonesoul/council/runtime.py">Council runtime</a> · <a data-source-ref="council-types" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/tonesoul/council/types.py">Council types</a> · <a data-source-ref="council-runtime-tests" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/tests/test_council_runtime.py">runtime tests</a> · <a data-source-ref="council-evidence-chain-tests" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/tests/test_council_evidence_chain.py">evidence-chain tests</a> · <a data-source-ref="pipeline-runtime-tests" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/tests/test_unified_pipeline_v2_runtime.py">pipeline runtime tests</a></p>
+      </article>
+    </section>
+
+    <section id="evidence">
+      <h2>怎麼判斷來源</h2>
+      <p class="section-lede">不同來源回答不同問題；格式正式，不等於證據較強。</p>
+      <article class="card" data-source-route-id="evidence-lanes-stay-distinct" data-source-refs="evidence-ladder status-lane-policy receiver-boundary">
+        <span class="type">Source route · 來源路徑</span>
+        <h3>不同來源應如何閱讀？</h3>
+        <p class="en-note" lang="en">How should different source lanes be read?</p>
+        <p>設計意圖、runtime source、測試與有日期的生成測量必須分開閱讀；latest 檔名不會把測量升格成架構真理。</p>
+        <p class="en-note" lang="en">Design intent, runtime source, tests, and dated generated measurements must be read separately; a latest filename does not promote a measurement into architecture truth.</p>
+        <p class="limit"><strong>限制：</strong>本索引只指向來源，不替來源重新評分，也不保證所有生成測量仍新鮮。</p>
+        <p class="en-note" lang="en">This index routes to sources; it does not rescore them or guarantee that every generated measurement remains fresh.</p>
+        <p class="sources">sources: <a data-source-ref="evidence-ladder" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md">evidence ladder</a> · <a data-source-ref="status-lane-policy" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/status/README.md">status lane policy</a> · <a data-source-ref="receiver-boundary" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md">receiver boundary</a></p>
+      </article>
+      <div class="source-lanes" aria-label="來源角色">
+        <div><strong>canonical_intent</strong><span>README、DESIGN、AXIOMS 與架構契約：說明經審查的意圖與邊界。</span></div>
+        <div><strong>runtime_source</strong><span>程式碼：說明目前有哪些可觀察執行路徑。</span></div>
+        <div><strong>test</strong><span>測試：說明哪些條件在限定範圍內被自動檢查。</span></div>
+        <div><strong>generated_measurement</strong><span>有日期的輸出：只代表生成當時的測量，不自動成為現況。</span></div>
+        <div><strong>historical_context</strong><span>傳承與舊敘事：保留為可追溯歷史，不默默改寫。</span></div>
+      </div>
+    </section>
+
+    <section id="limits">
+      <h2>目前仍不能證明</h2>
+      <p class="section-lede">最重要的邊界不是「我們相信什麼」，而是「現有 Artifact 還不能支持什麼」。</p>
+      <div class="grid">
+        <article class="card" data-source-route-id="artifact-continuity-boundary" data-source-refs="design observable-shell receiver-boundary distillation-boundary lineage">
+          <span class="type">Source route · 來源路徑</span>
+          <h3>跨模型能延續的是什麼？</h3>
+          <p class="en-note" lang="en">What can continue across models?</p>
+          <p>跨模型可承接的是經授權的紀錄、Artifact 與公開規則；不能據此推定模型權重記憶或持續的主觀自我。</p>
+          <p class="en-note" lang="en">What can cross models is authorized records, artifacts, and public rules; this does not establish model-weight memory or a persistent subjective self.</p>
+          <p class="limit"><strong>限制：</strong>跨 session 脈絡保存的實際效果仍需要 outcome measurement，而不是只看檔案存在。</p>
+          <p class="en-note" lang="en">Effective cross-session context preservation still requires outcome measurement, not merely the presence of files.</p>
+          <p class="sources">sources: <a data-source-ref="design" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/DESIGN.md">DESIGN</a> · <a data-source-ref="observable-shell" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md">observable shell</a> · <a data-source-ref="receiver-boundary" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md">receiver boundary</a> · <a data-source-ref="distillation-boundary" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md">distillation boundary</a> · <a data-source-ref="lineage" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/LINEAGE.md">LINEAGE</a></p>
+        </article>
+        <article class="card" data-source-route-id="public-projection-boundary" data-source-refs="receiver-boundary distillation-boundary observable-shell">
+          <span class="type">Source route · 來源路徑</span>
+          <h3>哪些資訊可以進入公開投影？</h3>
+          <p class="en-note" lang="en">Which information may enter the public projection?</p>
+          <p>可讀取不等於獲准公開；現行索引只投影已審查的公開資訊，不搬運私人歷史。</p>
+          <p class="en-note" lang="en">Readable does not mean authorized for publication; the current index projects reviewed public information without transporting private history.</p>
+          <p class="limit"><strong>限制：</strong>這項邊界依賴維護者在每次更新時重新檢查來源、連結與最小揭露範圍。</p>
+          <p class="en-note" lang="en">This boundary depends on maintainers rechecking sources, links, and minimum disclosure on every update.</p>
+          <p class="sources">sources: <a data-source-ref="receiver-boundary" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md">receiver boundary</a> · <a data-source-ref="distillation-boundary" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md">distillation boundary</a> · <a data-source-ref="observable-shell" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md">observable shell</a></p>
+        </article>
+      </div>
+      <ul>
+        <li data-limit-id="no-general-effectiveness-proof" data-source-refs="public-readme evidence-ladder">目前沒有一般性證據證明 Council 或治理流程能在所有任務中提升回答品質。<span class="en-note" lang="en"> There is no general evidence that Council or the governance pipeline improves answer quality across all tasks.</span></li>
+        <li data-limit-id="no-safety-guarantee" data-source-refs="axioms public-readme">公開機制不是安全認證，也不保證抵抗提示注入或越獄。<span class="en-note" lang="en"> The public mechanisms are not a safety certification and do not guarantee resistance to prompt injection or jailbreaks.</span></li>
+        <li data-limit-id="no-subjective-self-evidence" data-source-refs="observable-shell design">Artifact 的連續性不是 AI 意識、主觀經驗或持續身份的證據。<span class="en-note" lang="en"> Artifact continuity is not evidence of AI consciousness, subjective experience, or persistent identity.</span></li>
+        <li data-limit-id="index-can-age" data-source-refs="status-lane-policy receiver-boundary">這是人工審查的日期化投影；若來源改變而未更新，它也會陳舊。<span class="en-note" lang="en"> This is a dated, human-reviewed projection; it can become stale when its sources change without a refresh.</span></li>
+      </ul>
+    </section>
+
+    <section id="open-tensions">
+      <h2>仍保留的張力</h2>
+      <div class="grid">
+        <article class="card" data-tension-id="split-public-surfaces" data-source-refs="static-site-boundary pages-deployment public-readme">
+          <h3>文件站 ↔ 互動應用</h3>
+          <p>GitHub Pages 承擔文件與公開方向，Vercel 承擔互動應用；雙方仍需要穩定回鏈避免再次漂移。</p>
+          <p class="en-note" lang="en">GitHub Pages carries documentation and public orientation while Vercel carries the interactive app; stable backlinks are still needed to prevent renewed drift.</p>
+        </article>
+        <article class="card" data-tension-id="historical-search-drift" data-source-refs="successor-map lineage">
+          <h3>歷史可見 ↔ 現況清楚</h3>
+          <p>倉庫保留歷史材料；如何讓舊材料可追溯又讓現行入口清楚，仍是持續的張力。</p>
+          <p class="en-note" lang="en">The repository preserves historical material; keeping it traceable while making the current entrypoint clear remains an ongoing tension.</p>
+        </article>
+        <article class="card" data-tension-id="retrieval-is-not-shared-memory" data-source-refs="receiver-boundary observable-shell">
+          <h3>可檢索 ↔ 不等於共享記憶</h3>
+          <p>公開可讀的 Artifact 不代表任何模型已實際檢索或採用，也不形成跨模型共享內在。</p>
+          <p class="en-note" lang="en">A publicly readable artifact does not mean any model has actually retrieved or adopted it, nor does it create a shared inner state across models.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="entrypoints">
+      <h2>從這裡進入</h2>
+      <div class="entrypoints">
+        <div data-entrypoint-id="current-human"><a href="https://huangfanwei25-lang.github.io/tonesoul52/current/">Current human orientation</a> — 人類閱讀的現行公開方向標。<span class="en-note" lang="en"> The human-readable current public orientation.</span></div>
+        <div data-entrypoint-id="current-machine"><a href="https://huangfanwei25-lang.github.io/tonesoul52/current.json">Machine projection</a> — 同一方向標的封閉機器投影。<span class="en-note" lang="en"> The closed machine projection of the same orientation.</span></div>
+        <div data-entrypoint-id="source-repository"><a href="https://github.com/huangfanwei25-lang/tonesoul52">Source repository</a> — 程式、測試、規格與版本歷史。<span class="en-note" lang="en"> Source, tests, specifications, and version history.</span></div>
+        <div data-entrypoint-id="design-reference"><a href="https://github.com/huangfanwei25-lang/tonesoul52/blob/master/DESIGN.md">Design reference</a> — 設計中心；仍需與 runtime 和測試交叉閱讀。<span class="en-note" lang="en"> Design center; read it alongside runtime source and tests.</span></div>
+        <div data-entrypoint-id="external-review"><a href="https://github.com/huangfanwei25-lang/tonesoul52/blob/master/docs/EXTERNAL_REVIEW.md">10-minute external review</a> — 用最短路徑反駁、重現或檢查公開宣稱。<span class="en-note" lang="en"> The shortest path to challenge, reproduce, or inspect public claims.</span></div>
+        <div data-entrypoint-id="interactive-app"><a href="https://tonesoul52.vercel.app">Interactive app</a> — 互動應用；不是現行公開立場的第二份正典。<span class="en-note" lang="en"> Interactive app; not a second canon for the current public posture.</span></div>
+        <div data-entrypoint-id="city-of-switches"><a href="https://huangfanwei25-lang.github.io/tonesoul52/theater/">City of Switches / 岔軌之城</a> — 把責任、張力與選擇做成可玩的公開劇場。<span class="en-note" lang="en"> A public playable theater for responsibility, tension, and choice.</span></div>
+        <div data-entrypoint-id="accountability-dataset"><a href="https://huggingface.co/datasets/Famwin/tonesoul-accountability-traces">Accountability traces dataset</a> — 公開的問責事件資料集；資料集不等於整個系統。<span class="en-note" lang="en"> A public accountability-event dataset; the dataset is not the whole system.</span></div>
+        <div data-entrypoint-id="historical-essay"><a href="https://vocus.cc/article/6935a419fd89780001d7e8bb">Historical essay</a> — 早期公開敘事；用來理解歷史，不替代本頁。<span class="en-note" lang="en"> An earlier public narrative for history, not a replacement for this page.</span></div>
+      </div>
+    </section>
+
+    <section id="history">
+      <h2>歷史如何保留</h2>
+      <div data-history-principle>
+        <p>本投影保留舊材料，也不會把舊主張標示為已正式取代，除非能引用明確的替代事件與後繼來源。</p>
+        <p class="en-note" lang="en">This projection preserves older material and does not mark an older claim as formally replaced unless it can cite an explicit replacement event and successor source.</p>
+      </div>
+      <p><a data-history-reference-id="repository-lineage" data-source-ref="lineage" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/LINEAGE.md">公開倉庫傳承脈絡 / Public repository lineage</a></p>
+      <p><a data-history-reference-id="successor-policy" data-source-ref="successor-map" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/SUCCESSOR_MAP.md">後繼來源與舊材料的閱讀規則 / Rules for reading successor sources and older material</a></p>
+    </section>
+
+    <section id="for-machines">
+      <h2>給機器與後續 AI</h2>
+      <p>讀取 <a href="../current.json"><code>/current.json</code></a> 取得同一方向標的封閉投影；用 <a href="https://github.com/huangfanwei25-lang/tonesoul52/blob/master/spec/governance/public_current_index_v0.schema.json">JSON Schema</a> 檢查 shape。它是 read-only routing，不是人格狀態、成熟度分數或 continuity ledger。</p>
+      <details>
+        <summary>Reviewed source registry · 已審查來源（固定於 <code>892d2dc</code>）</summary>
+        <ul>
+          <li><a data-source-id="public-readme" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/README.md">README.md</a></li>
+          <li><a data-source-id="public-readme-zh" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/README.zh-TW.md">README.zh-TW.md</a></li>
+          <li><a data-source-id="positioning" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/POSITIONING.md">POSITIONING</a></li>
+          <li><a data-source-id="design" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/DESIGN.md">DESIGN</a></li>
+          <li><a data-source-id="axioms" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/AXIOMS.json">AXIOMS</a></li>
+          <li><a data-source-id="unified-pipeline" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/tonesoul/unified_pipeline.py">Unified pipeline</a></li>
+          <li><a data-source-id="council-runtime" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/tonesoul/council/runtime.py">Council runtime</a></li>
+          <li><a data-source-id="council-types" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/tonesoul/council/types.py">Council types</a></li>
+          <li><a data-source-id="council-runtime-tests" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/tests/test_council_runtime.py">Council runtime tests</a></li>
+          <li><a data-source-id="council-evidence-chain-tests" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/tests/test_council_evidence_chain.py">Council evidence-chain tests</a></li>
+          <li><a data-source-id="pipeline-runtime-tests" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/tests/test_unified_pipeline_v2_runtime.py">Pipeline runtime tests</a></li>
+          <li><a data-source-id="evidence-ladder" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/architecture/TONESOUL_EVIDENCE_LADDER_AND_VERIFIABILITY_CONTRACT.md">Evidence ladder</a></li>
+          <li><a data-source-id="status-lane-policy" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/status/README.md">Status lane policy</a></li>
+          <li><a data-source-id="observable-shell" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/architecture/TONESOUL_OBSERVABLE_SHELL_OPACITY_CONTRACT.md">Observable shell boundary</a></li>
+          <li><a data-source-id="receiver-boundary" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/architecture/TONESOUL_RECEIVER_INTERPRETATION_BOUNDARY_CONTRACT.md">Receiver interpretation boundary</a></li>
+          <li><a data-source-id="distillation-boundary" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/architecture/TONESOUL_L8_DISTILLATION_BOUNDARY_CONTRACT.md">Distillation boundary</a></li>
+          <li><a data-source-id="principle-engineering" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/philosophy/principle_engineering.md">Principle engineering</a></li>
+          <li><a data-source-id="successor-map" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/SUCCESSOR_MAP.md">Successor map</a></li>
+          <li><a data-source-id="lineage" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/docs/LINEAGE.md">Lineage</a></li>
+          <li><a data-source-id="static-site-boundary" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/site/README.md">Static site boundary</a></li>
+          <li><a data-source-id="pages-deployment" href="https://github.com/huangfanwei25-lang/tonesoul52/blob/892d2dcf82069046c4d2d06723762ac7fe503b20/.github/workflows/pages.yml">Pages deployment</a></li>
+        </ul>
+      </details>
+      <p>更新條件包括：公開定義或證據邊界有實質變化、入口或來源角色改變、出現可驗證的替代事件，以及每次發布前重新確認最小揭露。</p>
+    </section>
+
+    <footer>
+      <p><strong>claim ≤ evidence</strong> 也適用於這一頁。建立入口不等於已被搜尋引擎收錄；寫下連續性不等於創造持續自我。</p>
+      <p>Public projection v0 · as_of 2026-07-22 · <a href="../current.json">machine view</a></p>
+    </footer>
+  </main>
+</body>
+</html>

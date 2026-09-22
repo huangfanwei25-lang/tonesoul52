@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CANONICAL_REPOSITORY_URL } from "@/lib/siteUrl";
 
 const RESEARCH_CARDS = [
     {
@@ -51,7 +52,7 @@ export default function AboutPage() {
                 </p>
                 <div className="flex items-center justify-center gap-4">
                     <a
-                        href="https://github.com/Fan1234-1/tonesoul52"
+                        href={CANONICAL_REPOSITORY_URL}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="rounded-lg bg-white/5 px-4 py-2 text-sm text-gray-300 transition hover:bg-white/10"

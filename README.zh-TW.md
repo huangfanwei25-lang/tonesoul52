@@ -8,6 +8,8 @@
 
 [English](README.md)
 
+**現行公開方向標：**[ToneSoul，現在](https://huangfanwei25-lang.github.io/tonesoul52/current/)——用日期化投影分開「已存在、仍未證明、證據怎麼讀、哪些是歷史」。另有 [機器可讀版](https://huangfanwei25-lang.github.io/tonesoul52/current.json)。
+
 ## 90 秒看懂
 
 ToneSoul 的核心不是「讓 AI 更會回答」，而是讓 AI 的輸出在送出前留下可審查的痕跡：誰反對、為什麼反對、哪些 claim 超過邊界、哪些只是 advisory 訊號。

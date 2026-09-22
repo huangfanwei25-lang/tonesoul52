@@ -1,0 +1,400 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/huangfanwei25-lang/tonesoul52/master/spec/governance/public_current_index_v0.schema.json",
+  "title": "ToneSoul Public Current Index v0",
+  "description": "A closed, read-only public routing projection. It is not an architecture truth, maturity report, or continuity ledger.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "format",
+    "artifact_type",
+    "as_of",
+    "reviewed_revision",
+    "canonical",
+    "projection",
+    "project",
+    "scope",
+    "sources",
+    "source_routes",
+    "entrypoints",
+    "known_limits",
+    "open_tensions",
+    "history",
+    "does_not_claim",
+    "change_conditions"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "https://raw.githubusercontent.com/huangfanwei25-lang/tonesoul52/master/spec/governance/public_current_index_v0.schema.json"
+    },
+    "format": {
+      "const": "tonesoul/public-current-index-v0"
+    },
+    "artifact_type": {
+      "const": "public_current_projection"
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date"
+    },
+    "reviewed_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "canonical": {
+      "$ref": "#/$defs/canonical"
+    },
+    "projection": {
+      "$ref": "#/$defs/projection"
+    },
+    "project": {
+      "$ref": "#/$defs/project"
+    },
+    "scope": {
+      "$ref": "#/$defs/scope"
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    },
+    "source_routes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/source_route"
+      }
+    },
+    "entrypoints": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/entrypoint"
+      }
+    },
+    "known_limits": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/bounded_note"
+      }
+    },
+    "open_tensions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/bounded_note"
+      }
+    },
+    "history": {
+      "$ref": "#/$defs/history"
+    },
+    "does_not_claim": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "change_conditions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "$defs": {
+    "canonical": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["human", "machine"],
+      "properties": {
+        "human": {
+          "const": "https://huangfanwei25-lang.github.io/tonesoul52/current/"
+        },
+        "machine": {
+          "const": "https://huangfanwei25-lang.github.io/tonesoul52/current.json"
+        }
+      }
+    },
+    "projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "derived", "writable", "source_of_truth"],
+      "properties": {
+        "kind": {
+          "const": "public_navigation"
+        },
+        "derived": {
+          "const": true
+        },
+        "writable": {
+          "const": false
+        },
+        "source_of_truth": {
+          "const": false
+        }
+      }
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "summary_zh", "summary_en"],
+      "properties": {
+        "name": {
+          "const": "ToneSoul / 語魂"
+        },
+        "summary_zh": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary_en": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["includes", "excludes"],
+      "properties": {
+        "includes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "excludes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "projection_role", "locator", "revision"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "projection_role": {
+          "enum": [
+            "canonical_intent",
+            "runtime_source",
+            "test",
+            "generated_measurement",
+            "historical_context",
+            "proposed_external_contract"
+          ]
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\\\]+$"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      }
+    },
+    "source_route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "question_zh",
+        "question_en",
+        "summary_zh",
+        "summary_en",
+        "source_refs",
+        "caveats_zh",
+        "caveats_en"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "question_zh": {
+          "type": "string",
+          "minLength": 1
+        },
+        "question_en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary_zh": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary_en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          }
+        },
+        "caveats_zh": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "caveats_en": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "entrypoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "role", "url", "note_zh", "note_en"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "role": {
+          "enum": [
+            "canonical_orientation",
+            "machine_projection",
+            "source_repository",
+            "architecture_reference",
+            "review_path",
+            "interactive_demo",
+            "public_game",
+            "public_dataset",
+            "historical_narrative"
+          ]
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "note_zh": {
+          "type": "string",
+          "minLength": 1
+        },
+        "note_en": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "bounded_note": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "summary_zh", "summary_en", "source_refs"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "summary_zh": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary_en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          }
+        }
+      }
+    },
+    "history_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label_zh", "label_en", "source_ref"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "label_zh": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label_en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_ref": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        }
+      }
+    },
+    "history": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principle_zh", "principle_en", "references"],
+      "properties": {
+        "principle_zh": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principle_en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "references": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/history_reference"
+          }
+        }
+      }
+    }
+  }
+}

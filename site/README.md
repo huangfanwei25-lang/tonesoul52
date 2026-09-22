@@ -7,6 +7,8 @@ It is a multi-page HTML/CSS site intended for GitHub Pages or other static hosti
 ## Canonical Files
 
 - `index.html`
+- `current/index.html` - human-readable current public orientation
+- `current.json` - closed machine projection of the same orientation
 - `concepts.html`
 - `getting-started.html`
 - `story.html`
@@ -17,6 +19,7 @@ It is a multi-page HTML/CSS site intended for GitHub Pages or other static hosti
 Use `site/` for:
 
 - public landing pages
+- a dated public routing projection that points to, but does not outrank, its sources
 - philosophy and concepts pages
 - static onboarding and getting-started content
 - SEO-facing content and static hosting
@@ -26,6 +29,7 @@ Do not use `site/` as:
 - the app/chat frontend
 - the operator workspace
 - a backend observability console
+- a private continuity store or a second architecture truth
 
 ## Neighbor Surfaces
 

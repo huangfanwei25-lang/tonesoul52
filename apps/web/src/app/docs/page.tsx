@@ -3,6 +3,7 @@ import { Brain, Mail, Github, ExternalLink, BookOpen, Shield, BarChart3, FileTex
 import SevenDimensionCards from "@/components/SevenDimensionCards";
 import SevenParadoxCards from "@/components/SevenParadoxCards";
 import TierModelPublicCue from "@/components/TierModelPublicCue";
+import { CANONICAL_REPOSITORY_URL, PUBLIC_CURRENT_URL } from "@/lib/siteUrl";
 
 // Schema.org JSON-LD for AI Search Optimization
 const jsonLd = {
@@ -11,7 +12,7 @@ const jsonLd = {
     "name": "ToneSoul Integrity Framework",
     "alternateName": ["語魂系統", "ToneSoul", "TSAP", "ToneSoul-Audit Protocol"],
     "description": "A governance middleware for auditable, self-correcting AI agents. Implements STREI vector analysis, multi-perspective deliberation, and entropy-based tension metrics.",
-    "codeRepository": "https://github.com/Fan1234-1/tonesoul52",
+    "codeRepository": CANONICAL_REPOSITORY_URL,
     "programmingLanguage": ["TypeScript", "Python"],
     "applicationCategory": "AI Governance",
     "license": "https://opensource.org/licenses/Apache-2.0",
@@ -82,11 +83,19 @@ export default function DocsPage() {
                             <Link href="/showcase" className="hidden sm:inline text-slate-300 hover:text-white transition-colors">
                                 Showcase
                             </Link>
+                            <a
+                                href={PUBLIC_CURRENT_URL}
+                                target="_blank"
+                                rel="noopener"
+                                className="hidden sm:inline text-slate-300 hover:text-white transition-colors"
+                            >
+                                Current
+                            </a>
                             <Link href="/" className="text-slate-300 hover:text-white transition-colors">
                                 App
                             </Link>
                             <a
-                                href="https://github.com/Fan1234-1/tonesoul52"
+                                href={CANONICAL_REPOSITORY_URL}
                                 target="_blank"
                                 rel="noopener"
                                 className="flex items-center gap-1 text-slate-300 hover:text-white"
@@ -184,7 +193,7 @@ export default function DocsPage() {
                             <a href="mailto:xsw123zaq@gmail.com" className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors">
                                 <Mail className="w-4 h-4" /> xsw123zaq@gmail.com
                             </a>
-                            <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener" className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors">
+                            <a href={CANONICAL_REPOSITORY_URL} target="_blank" rel="noopener" className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors">
                                 <Github className="w-4 h-4" /> GitHub Repository
                             </a>
                         </div>
@@ -467,7 +476,7 @@ export default function DocsPage() {
                             <a href="mailto:xsw123zaq@gmail.com" className="hover:text-white flex items-center gap-1">
                                 <Mail className="w-4 h-4" /> Contact
                             </a>
-                            <a href="https://github.com/Fan1234-1/tonesoul52" target="_blank" rel="noopener" className="hover:text-white flex items-center gap-1">
+                            <a href={CANONICAL_REPOSITORY_URL} target="_blank" rel="noopener" className="hover:text-white flex items-center gap-1">
                                 <Github className="w-4 h-4" /> GitHub
                             </a>
                             <span>Apache 2.0</span>

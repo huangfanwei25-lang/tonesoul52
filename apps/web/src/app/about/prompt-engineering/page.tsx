@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { CANONICAL_REPOSITORY_URL } from "@/lib/siteUrl";
 
 export const metadata: Metadata = {
     title: "提示工程 | ToneSoul Research",
@@ -155,7 +156,7 @@ export default function PromptEngineeringPage() {
                 <h2 className="text-xl font-bold">🔧 實用資源</h2>
                 <div className="grid gap-3 sm:grid-cols-2 text-sm">
                     <a
-                        href="https://github.com/Fan1234-1/tonesoul52"
+                        href={CANONICAL_REPOSITORY_URL}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="rounded-lg bg-white/5 p-4 transition hover:bg-white/10"
