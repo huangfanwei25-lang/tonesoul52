@@ -103,11 +103,11 @@ def _verify_revision(revision: str) -> dict[str, Any]:
 
 
 def _is_synthetic_merge_commit(payload: dict[str, Any]) -> bool:
-    summary = str(payload.get("summary") or "")
     changed_files = payload.get("changed_files")
     if not isinstance(changed_files, list):
         return False
-    return summary.startswith("Merge ") and not changed_files
+    parent_count = payload.get("parent_count")
+    return isinstance(parent_count, int) and parent_count > 1 and not changed_files
 
 
 def _normalize_payload(payload: dict[str, Any]) -> dict[str, Any]:

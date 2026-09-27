@@ -46,6 +46,23 @@ def _list_changed_files(rev: str) -> list[str]:
     return [line.strip() for line in proc.stdout.splitlines() if line.strip()]
 
 
+def _count_parents(rev: str) -> int:
+    proc = subprocess.run(
+        ["git", "rev-list", "--parents", "-n", "1", rev],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        check=False,
+    )
+    if proc.returncode != 0:
+        raise RuntimeError(proc.stderr.strip() or "failed to inspect commit parents")
+    fields = proc.stdout.strip().split()
+    if not fields:
+        raise RuntimeError("git returned no commit while inspecting parents")
+    return len(fields) - 1
+
+
 def _is_docs_path(path: str) -> bool:
     normalized = path.replace("\\", "/").lower()
     return normalized.startswith("docs/") or normalized.endswith(".md")
@@ -112,12 +129,14 @@ def main() -> int:
     try:
         message = _read_commit_message(args.rev)
         changed_files = _list_changed_files(args.rev)
+        parent_count = _count_parents(args.rev)
     except RuntimeError as exc:
         payload = {"ok": False, "error": str(exc), "rev": args.rev}
         print(json.dumps(payload, ensure_ascii=False, indent=2))
         return 1
 
     report = apply_docs_only_exemption(parse_commit_message(message), changed_files)
+    report["parent_count"] = parent_count
     report["rev"] = args.rev
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
