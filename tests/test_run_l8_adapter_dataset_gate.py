@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
+
+import pytest
 
 import scripts.run_l8_adapter_dataset_gate as runner
 
@@ -430,3 +433,73 @@ def test_main_writes_adapter_gate_artifacts(monkeypatch, tmp_path: Path) -> None
     assert payload["ok"] is True
     assert payload["records"][0]["row_id"] == "adapter-row-001"
     assert "# L8 Adapter Dataset Gate Latest" in markdown
+
+
+def _real_contract_fixture(tmp_path: Path) -> tuple[Path, Path]:
+    root = Path(__file__).resolve().parents[1]
+    schema_path = tmp_path / "schema.json"
+    input_path = tmp_path / "rows.json"
+    schema_path.write_bytes(
+        (root / "spec/governance/adapter_dataset_record_v1.schema.json").read_bytes()
+    )
+    input_path.write_bytes(
+        (root / "spec/governance/adapter_dataset_record_v1.example.json").read_bytes()
+    )
+    return input_path, schema_path
+
+
+@pytest.mark.parametrize("mode", ["rejected", "empty", "malformed_jsonl"])
+def test_failure_summary_never_says_ready(tmp_path: Path, mode: str) -> None:
+    input_path, schema_path = _real_contract_fixture(tmp_path)
+    if mode == "rejected":
+        record = json.loads(input_path.read_text())
+        record["distillation_review"]["privacy_cleared"] = False
+        _write_json(input_path, record)
+    elif mode == "empty":
+        _write_json(input_path, [])
+    else:
+        input_path = tmp_path / "rows.jsonl"
+        input_path.write_text("not JSON\n", encoding="utf-8")
+    report = runner.build_report(repo_root=tmp_path, input_path=input_path, schema_path=schema_path)
+    assert report["ok"] is False
+    assert report["primary_status_line"].startswith("l8_dataset_gate_blocked | ")
+    assert "l8_dataset_gate_ready" not in runner.render_markdown(report)
+
+
+@pytest.mark.parametrize("suffix", [".json", ".jsonl"])
+def test_report_binds_exact_parsed_bytes_even_if_input_changes(
+    tmp_path: Path, monkeypatch, suffix: str
+) -> None:
+    input_path, schema_path = _real_contract_fixture(tmp_path)
+    record = json.loads(input_path.read_text())
+    # v1 flags are declarations, even without a reviewer or a real source file.
+    record["distillation_review"].pop("reviewer", None)
+    record["source_artifact"]["path"] = "docs/not-present.json"
+    record["provenance"]["source_path"] = "docs/not-present.json"
+    input_path = tmp_path / ("records" + suffix)
+    original = (json.dumps(record, ensure_ascii=False) + "\r\n").encode("utf-8")
+    input_path.write_bytes(original)
+    schema_bytes = schema_path.read_bytes()
+    original_read_bytes = Path.read_bytes
+    reads = []
+
+    def read_then_replace(path):
+        data = original_read_bytes(path)
+        if path in (input_path, schema_path):
+            reads.append(path)
+            path.write_bytes(b"changed after read")
+        return data
+
+    monkeypatch.setattr(Path, "read_bytes", read_then_replace)
+    report = runner.build_report(repo_root=tmp_path, input_path=input_path, schema_path=schema_path)
+    assert report["ok"] is True
+    assert reads.count(input_path) == reads.count(schema_path) == 1
+    assert report["input_sha256"] == hashlib.sha256(original).hexdigest()
+    assert report["schema_sha256"] == hashlib.sha256(schema_bytes).hexdigest()
+    assert report["verification_scope"] == "schema_and_declared_policy_only"
+    assert report["source_content_verified"] is False
+    assert report["review_authenticity_verified"] is False
+    markdown = runner.render_markdown(report)
+    assert report["input_sha256"] in markdown
+    assert "review_authenticity_verified: `false`" in markdown
+    assert "source_content_verified: `false`" in markdown

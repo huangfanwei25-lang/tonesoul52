@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from datetime import datetime, timezone
@@ -64,16 +65,16 @@ def _emit(payload: dict[str, Any]) -> None:
         print(text.encode("ascii", errors="backslashreplace").decode("ascii"))
 
 
-def _load_json(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def _load_records(path: Path) -> tuple[str, list[dict[str, Any]], list[str]]:
+def _load_records(
+    path: Path, *, content: str | None = None
+) -> tuple[str, list[dict[str, Any]], list[str]]:
     issues: list[str] = []
+    if content is None:
+        content = path.read_text(encoding="utf-8")
     suffix = path.suffix.lower()
     if suffix == ".jsonl":
         records: list[dict[str, Any]] = []
-        for index, raw_line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        for index, raw_line in enumerate(content.splitlines(), start=1):
             line = raw_line.strip()
             if not line:
                 continue
@@ -88,7 +89,7 @@ def _load_records(path: Path) -> tuple[str, list[dict[str, Any]], list[str]]:
             records.append(payload)
         return "jsonl", records, issues
 
-    payload = _load_json(path)
+    payload = json.loads(content)
     if isinstance(payload, dict):
         return "json", [payload], issues
     if isinstance(payload, list):
@@ -270,8 +271,13 @@ def build_report(
     input_path: Path,
     schema_path: Path,
 ) -> dict[str, Any]:
-    schema = _load_json(schema_path)
-    input_format, records, load_issues = _load_records(input_path)
+    # Hash the same bytes we parse, not a second read of a possibly replaced file.
+    schema_bytes = schema_path.read_bytes()
+    input_bytes = input_path.read_bytes()
+    schema = json.loads(schema_bytes.decode("utf-8"))
+    input_format, records, load_issues = _load_records(
+        input_path, content=input_bytes.decode("utf-8")
+    )
     allowed_behavior_classes = _allowed_behavior_classes(repo_root, schema)
 
     record_reports = [
@@ -288,7 +294,7 @@ def build_report(
     rejected_count = len(record_reports) - approved_count
     ok = not load_issues and rejected_count == 0 and len(record_reports) > 0
     primary_status_line = (
-        "l8_dataset_gate_ready | "
+        f"l8_dataset_gate_{'ready' if ok else 'blocked'} | "
         f"records={len(record_reports)} approved={approved_count} rejected={rejected_count} "
         f"load_issues={len(load_issues)}"
     )
@@ -311,6 +317,11 @@ def build_report(
         "dataset_schema_ref": _normalize_path(str(schema_path.relative_to(repo_root))),
         "input_path": _normalize_path(str(input_path.relative_to(repo_root))),
         "input_format": input_format,
+        "input_sha256": hashlib.sha256(input_bytes).hexdigest(),
+        "schema_sha256": hashlib.sha256(schema_bytes).hexdigest(),
+        "verification_scope": "schema_and_declared_policy_only",
+        "source_content_verified": False,
+        "review_authenticity_verified": False,
         "required_review_flags": list(REQUIRED_REVIEW_FLAGS),
         "minimum_verifier_pass_rate_floor": MIN_VERIFIER_PASS_RATE_FLOOR,
         "blocked_source_exact": list(BLOCKED_SOURCE_EXACT),
@@ -342,6 +353,17 @@ def render_markdown(payload: dict[str, Any]) -> str:
         f"- primary_status_line: `{payload['primary_status_line']}`",
         f"- runtime_status_line: `{payload['runtime_status_line']}`",
         f"- artifact_policy_status_line: `{payload['artifact_policy_status_line']}`",
+        "",
+        "## Evidence Boundary",
+        f"- verification_scope: `{payload['verification_scope']}`",
+        f"- input_sha256: `{payload['input_sha256']}`",
+        f"- schema_sha256: `{payload['schema_sha256']}`",
+        f"- source_content_verified: `{str(payload['source_content_verified']).lower()}`",
+        f"- review_authenticity_verified: `{str(payload['review_authenticity_verified']).lower()}`",
+        "",
+        "Passing checks validate declarations, not reviewer authority, source contents, "
+        "semantic privacy, or training readiness. Hashes identify checked bytes; "
+        "they do not authenticate approval or protect this report from tampering.",
         "",
         "## Metrics",
         f"- record_count: `{payload['metrics']['record_count']}`",
