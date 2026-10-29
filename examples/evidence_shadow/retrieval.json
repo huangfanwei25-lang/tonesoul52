@@ -1,0 +1,11 @@
+{
+  "source_url": "https://pr.tsmc.com/schinese/news/3287",
+  "retrieval_method": "urllib HTTPS with default certificate validation",
+  "response_status": 200,
+  "raw_html_sha256": "59c6494804199f6393bc854a68217b558e650116d696dd39277b5296f9ea5d10",
+  "raw_html_bytes": 184522,
+  "retrieved_at": "2026-10-29T05:22:00.938545+00:00",
+  "release_date_from_page": "2026-02-10",
+  "extraction": "HTML tags removed, entities unescaped; each snippet exact-matched; snippets noncontiguous",
+  "limitations": "Hash is byte identity, not a trusted timestamp. Claims and semantic verdicts were curated with knowledge of source; not a blinded evaluation."
+}

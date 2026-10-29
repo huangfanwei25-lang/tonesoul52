@@ -241,6 +241,7 @@ def _cmd_review(argv: List[str]) -> int:
     )
     parser.add_argument("file", type=Path, help="Path to the text or markdown file to review")
     parser.add_argument("--json", action="store_true", help="Emit machine-readable report JSON")
+    parser.add_argument("--evidence-case", type=Path, help="Optional offline evidence sidecar JSON")
     args = parser.parse_args(argv)
 
     if not args.file.exists():
@@ -254,8 +255,17 @@ def _cmd_review(argv: List[str]) -> int:
         from tonesoul.reviewer.report import review_file
 
         report = review_file(args.file)
+        if args.evidence_case:
+            from tonesoul.reviewer.shadow import review_shadow
+
+            report["evidence_shadow"] = review_shadow(
+                args.file.read_text(encoding="utf-8"), dict(report), args.evidence_case
+            )["evidence"]
     except UnicodeDecodeError as exc:
         print(f"ts review: cannot decode {args.file} as UTF-8: {exc}", file=sys.stderr)
+        return 3
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        print(f"ts review: invalid evidence input: {exc}", file=sys.stderr)
         return 3
 
     def _emit(text: str) -> None:
@@ -271,6 +281,8 @@ def _cmd_review(argv: List[str]) -> int:
     else:
         count = len(report["findings"])
         _emit(f"claim-to-evidence findings: {count}")
+        if "evidence_shadow" in report:
+            _emit("Evidence shadow attached (advisory only); use --json for details.")
         if count:
             _emit("Run with --json for structured details.")
     return 0

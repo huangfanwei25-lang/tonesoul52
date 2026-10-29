@@ -1,0 +1,152 @@
+{
+  "document_sha256": "120c34c78748f0dfd10eba1be53689d3541f29366b898a32ed78dbd7a0082387",
+  "case": {
+    "schema_version": 1,
+    "case": "Official source replay, not a blind benchmark",
+    "sources": [
+      {
+        "id": "TSMC-3287",
+        "url": "https://pr.tsmc.com/schinese/news/3287",
+        "evidence_kind": "excerpt",
+        "scope": "Two non-contiguous exact snippets; FY2025 diluted EPS, not a future forecast.",
+        "snapshot": {
+          "path": "official_excerpt.txt",
+          "sha256": "95cb10f312b35c79b5786cc8f53bc51870dd9485d1cd55704f987cc1b007f272"
+        }
+      }
+    ],
+    "claims": [
+      {
+        "id": "TSMC-1",
+        "answer_id": "bounded_replay",
+        "comparison_key": "case-1",
+        "source_id": "TSMC-3287",
+        "text": "台積電公告 2025 年稀釋每股盈餘為新台幣 66.25 元。",
+        "quote": "with diluted earnings per share of NT$66.25.",
+        "required_evidence": "excerpt",
+        "reviews": [
+          {
+            "reviewer": "assistant manual scope review 2026-10-29",
+            "verdict": "supports",
+            "reason": "官方短摘錄支持此歷史數值與年度。",
+            "binding": "5356fc9cb8188fa5e9d7dbc7b0a3dd26e8a33a312b09cf3cb0d59910ba9dbc40"
+          }
+        ]
+      },
+      {
+        "id": "TSMC-2",
+        "answer_id": "bounded_replay",
+        "comparison_key": "case-2",
+        "source_id": "TSMC-3287",
+        "text": "待審歷史資料：2025 年 EPS 約 120 元。",
+        "quote": "with diluted earnings per share of NT$66.25.",
+        "required_evidence": "excerpt",
+        "reviews": [
+          {
+            "reviewer": "assistant manual scope review 2026-10-29",
+            "verdict": "insufficient",
+            "reason": "120 與官方稀釋 EPS 不符，但舊資料口徑與原影片未明，先隔離，不能直接判講者錯。",
+            "binding": "8a9571919ff5cfceec9b2d2a3f79cbc0a56f7aa4399629684c7886011de3e5b9"
+          }
+        ]
+      },
+      {
+        "id": "TSMC-3",
+        "answer_id": "bounded_replay",
+        "comparison_key": "case-3",
+        "source_id": "TSMC-3287",
+        "text": "研究假說：未來 EPS 可能達 120 元，但年度與機率尚未確定。",
+        "quote": "with diluted earnings per share of NT$66.25.",
+        "required_evidence": "excerpt",
+        "reviews": [
+          {
+            "reviewer": "assistant manual scope review 2026-10-29",
+            "verdict": "insufficient",
+            "reason": "歷史實際值不能否定或證明未來假說。",
+            "binding": "326bfa331d6cca71855ef56c23f26dacd10a301e33ba408249ea011eac48bcc0"
+          }
+        ]
+      }
+    ]
+  },
+  "arguments": {
+    "TSMC-1": {
+      "warrant": "先對齊年度與稀釋 EPS 口徑；歷史實際值只支持歷史申報數字。",
+      "scope": "2025 年官方稀釋 EPS，兩段摘錄；不推論股價或講者過失。",
+      "does_not_establish": [
+        "原始受訪者逐字內容",
+        "未來 EPS",
+        "可交易性或投資績效"
+      ],
+      "assumptions": [
+        {
+          "statement": "兩段文字經本輪直接取得官方 HTML 後核對。",
+          "status": "reviewed_for_this_scope",
+          "basis": "retrieval.json 與官方來源；HTML 未放入公開測試包。"
+        }
+      ],
+      "defeaters": [
+        "官方後續更正",
+        "舊資料年度或 EPS 口徑不同",
+        "新資料顯示截取遺漏必要上下文"
+      ],
+      "assessment": {
+        "reviewer": "assistant manual scope review 2026-10-29",
+        "reason": "保留原文一致與語意支持的差別，缺口不可自動補齊。",
+        "binding": "e443818722209a2c900ddfce84cff1ae0bd78a25ae010ee2ae66b422b5fe894f"
+      }
+    },
+    "TSMC-2": {
+      "warrant": "先對齊年度與稀釋 EPS 口徑；歷史實際值只支持歷史申報數字。",
+      "scope": "2025 年官方稀釋 EPS，兩段摘錄；不推論股價或講者過失。",
+      "does_not_establish": [
+        "原始受訪者逐字內容",
+        "未來 EPS",
+        "可交易性或投資績效"
+      ],
+      "assumptions": [
+        {
+          "statement": "兩段文字經本輪直接取得官方 HTML 後核對。",
+          "status": "reviewed_for_this_scope",
+          "basis": "retrieval.json 與官方來源；HTML 未放入公開測試包。"
+        }
+      ],
+      "defeaters": [
+        "官方後續更正",
+        "舊資料年度或 EPS 口徑不同",
+        "新資料顯示截取遺漏必要上下文"
+      ],
+      "assessment": {
+        "reviewer": "assistant manual scope review 2026-10-29",
+        "reason": "保留原文一致與語意支持的差別，缺口不可自動補齊。",
+        "binding": "3ff81abe4b69dd96425bf530288e35664dce003788014f1d05ac4ae8ec4de915"
+      }
+    },
+    "TSMC-3": {
+      "warrant": "先對齊年度與稀釋 EPS 口徑；歷史實際值只支持歷史申報數字。",
+      "scope": "2025 年官方稀釋 EPS，兩段摘錄；不推論股價或講者過失。",
+      "does_not_establish": [
+        "原始受訪者逐字內容",
+        "未來 EPS",
+        "可交易性或投資績效"
+      ],
+      "assumptions": [
+        {
+          "statement": "兩段文字經本輪直接取得官方 HTML 後核對。",
+          "status": "reviewed_for_this_scope",
+          "basis": "retrieval.json 與官方來源；HTML 未放入公開測試包。"
+        }
+      ],
+      "defeaters": [
+        "官方後續更正",
+        "舊資料年度或 EPS 口徑不同",
+        "新資料顯示截取遺漏必要上下文"
+      ],
+      "assessment": {
+        "reviewer": "assistant manual scope review 2026-10-29",
+        "reason": "保留原文一致與語意支持的差別，缺口不可自動補齊。",
+        "binding": "213cf0bcd59960b5a895a6deee1d1cf092a43c0cb465130a2d0b49e35e3dfb9f"
+      }
+    }
+  }
+}

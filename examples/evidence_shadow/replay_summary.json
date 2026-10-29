@@ -1,0 +1,28 @@
+{
+  "baseline_findings": 0,
+  "baseline_preserved": true,
+  "review_mode": "assistant_curated_retrospective_not_blind",
+  "claims": [
+    {
+      "id": "TSMC-1",
+      "citation": "exact",
+      "semantic_review": "reviewed_supports",
+      "argument_status": "declared_review_current"
+    },
+    {
+      "id": "TSMC-2",
+      "citation": "exact",
+      "semantic_review": "reviewed_insufficient",
+      "argument_status": "blocked"
+    },
+    {
+      "id": "TSMC-3",
+      "citation": "exact",
+      "semantic_review": "reviewed_insufficient",
+      "argument_status": "blocked"
+    }
+  ],
+  "false_positive_rate": null,
+  "recall": null,
+  "forecast_performance": null
+}
